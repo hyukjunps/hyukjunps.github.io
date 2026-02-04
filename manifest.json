@@ -9,9 +9,5 @@
   "start_url": "https://hyukjunps.github.io",
   "theme_color": "#ffffff"
   "lang": "ko"
-  "icons":
-      "src": "android/android-launchericon-512-512.png",
-      "sizes": "512x512",
-      "type": "image/png"
     
 }
