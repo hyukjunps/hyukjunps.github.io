@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="google-adsense-account" content="ca-pub-1782174943963691">
+<title>풍산고등학교 급식 안내</title>
+<style>
+  /* 🎨 기본 스타일 및 시인성 개선 */
+  :root { 
+    --bg: #f5f7fa; 
+    --card: #ffffff; 
+    --muted: #6b7280; 
+    --line: #e5e7eb; 
+    --pri: #1e40af; /* 진한 파랑 */
+    --pri-light: #eff6ff; /* 연한 파랑 */
+    --success: #059669; 
+    --alert: #f87171; /* 알레르기 경고 색상 */
+    --morning: #fef3c7; /* 연한 노랑 */
+    --lunch: #e0f2f1; /* 연한 청록 */
+    --dinner: #f3e8ff; /* 연한 보라 */
+  }
+  body{
+    margin:0;
+    background:var(--bg);
+    font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans KR',sans-serif;
+    color: #1f2937;
+  }
+  .wrap{max-width:860px;margin:24px auto;padding:0 16px}
+  .panel{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    box-shadow:0 8px 24px rgba(0,0,0,.08);
+  }
+  .head{padding:18px}
+  h1{margin:0;font-size:22px;color:#111;text-align:center}
+  
+  /* 날짜 선택 및 이동 버튼 영역 */
+  .bar{
+    display:flex;
+    gap:8px; 
+    flex-wrap:wrap;
+    justify-content:center;
+    padding:16px 16px 20px;
+    border-bottom:1px solid var(--line);
+  }
+  /* input, button 기본 스타일 */
+  input[type="date"],button{
+    font-size:15px;
+    padding:10px 14px;
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:#fff;
+    transition: all 0.2s;
+  }
+  /* ✨ 버튼 색상 통일: navBtn 외 일반 버튼도 pri 색상 적용 */
+  button{background:var(--pri);color:#fff;border:none;cursor:pointer}
+  button:hover{opacity:0.9}
+  .copyBtn{background:var(--success)!important}
+  
+  /* 🎁 카드 디자인 개선 */
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:12px;
+    padding:16px;
+    margin:16px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  }
+  .muted{color:var(--muted)}
+  .ok{background:#d1fae5;border:1px solid #6ee7b7;color:#065f46}
+  .err{background:#fee2e2;border:1px solid #fca5a5;color:#991b1b}
+  .pill{
+    display:inline-block;
+    margin-left:8px;
+    padding:4px 10px;
+    border-radius:999px;
+    background:var(--pri-light);
+    color:var(--pri);
+    font-size:13px;
+    font-weight: 600;
+  }
+  .allergy-pill {
+    display: inline-block;
+    margin-top: 8px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: #fee2e2;
+    color: var(--alert);
+    font-size: 13px;
+    font-weight: 600;
+  }
+     
+  /* ⭐ 학교 정보 카드 축소 및 간결화 스타일 */
+  #schoolInfoCard {
+      padding: 12px 16px; 
+      margin: 10px 16px; 
+  }
+  #schoolInfoCard strong {
+      display: none; 
+  }
+  #schoolInfo {
+      text-align: center;
+      font-size: 14px; 
+      line-height: 1.4;
+      margin-top: 0 !important;
+  }
+  #schoolInfo b {
+      font-size: 16px; 
+  }
+  
+  /* 🍚 급식 메뉴 카드 (가장 중요한 부분) */
+  .meal-item {
+    display: flex;
+    margin: 16px 0; 
+    padding: 18px; 
+    border-radius: 12px;
+    border: 1px solid #e0e7ee;
+  }
+  .meal-item.morning { background: var(--morning); }
+  .meal-item.lunch { background: var(--lunch); }
+  .meal-item.dinner { background: var(--dinner); }
+  
+  .meal-icon {
+    font-size: 28px; 
+    margin-right: 15px;
+    flex-shrink: 0;
+  }
+  .meal-content strong { font-size: 18px; font-weight: 700; } 
+  .meal-content ul {
+    list-style: none;
+    padding: 0;
+    margin: 8px 0 0 0;
+    line-height: 1.7;
+    font-size: 16px; 
+  }
+  .meal-content ul li::before {
+    content: "•";
+    color: var(--muted);
+    font-weight: bold;
+    display: inline-block;
+    width: 1em;
+    margin-left: -1em;
+  }
+  
+  /* ✨ 피드백 반영 (설문 5번): 복사용 텍스트 영역을 시각적으로 숨김 */
+  #shareText{display: none;}
+  
+  /* 숨은 텍스트영역(폴백용) */
+  #copyHelper{position:absolute;left:-9999px;top:-9999px;opacity:0;height:1px;width:1px}
+</style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="panel">
+      <div class="head"><h1>🏫 풍산고등학교 급식 안내 서비스</h1></div>
+     
+      <div class="bar">
+        <button id="btnPrevDay" type="button" class="navBtn">◀ 어제</button>
+        <input type="date" id="date" />
+        <button id="btnNextDay" type="button" class="navBtn">내일 ▶</button>
+        <button id="btnDay" type="button">선택일 조회</button>
+      </div>
+     
+      <div id="notice" class="card muted">초기화 중…</div>
+     
+      <div id="schoolInfoCard" class="card" style="display:none">
+        <strong>📌 학교 기본 정보</strong> <div id="schoolInfo"></div>
+      </div>
+      
+      <div id="mainContentCard" class="card" style="display:none">
+        <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom: 12px;">
+          <strong>🍽 <span id="displayDate"></span> 급식 정보</strong>
+          <button id="btnCopy" class="copyBtn" type="button">복사</button>
+        </div>
+        
+        <div class="allergy-pill">
+            ⚠ 알레르기 번호: (1.난류 2.우유 3.메밀 4.땅콩 5.대두 6.밀 7.고등어 8.게 9.새우 10.돼지고기 11.복숭아 12.토마토 13.아황산염 14.호두 15.닭고기 16.쇠고기 17.오징어 18.조개류(굴, 전복, 홍합 등))
+        </div>
+     
+        <div id="meals" class="muted" style="margin-top:12px">-</div>
+        
+        <div id="shareText"></div> 
+      </div>
+     
+      <div class="foot">데이터 출처: NEIS(나이스) OpenAPI · 경북교육청 R10</div>
+    </div>
+  </div>
+     
+  <textarea id="copyHelper" aria-hidden="true"></textarea>
+     
+<script>
+/* ====== 고정값 ====== */
+const API_KEY = "c5eac2fb880e4aa185e7957a756dd126";
+const ATPT = "R10";
+const SCHOOL_NAME = "풍산고등학교";
+     
+/* ====== 유틸 ====== */
+const $ = s => document.querySelector(s);
+const escapeHtml = s => String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;' }[m]));
+const ymd2str = ymd => `${ymd.slice(0,4)}년 ${ymd.slice(4,6)}월 ${ymd.slice(6,8)}일`;
+const getMealClass = type => {
+    if (type.includes("조식") || type.includes("아침")) return "morning";
+    if (type.includes("중식") || type.includes("점심")) return "lunch";
+    if (type.includes("석식") || type.includes("저녁")) return "dinner";
+    return "";
+};
+     
+function dateToYMD(dateObj) {
+  const y=dateObj.getFullYear(),m=("0"+(dateObj.getMonth()+1)).slice(-2),d=("0"+dateObj.getDate()).slice(-2);
+  return `${y}-${m}-${d}`;
+}
+     
+function ymdToDateObj(ymdStr) {
+    const [y, m, d] = ymdStr.split('-');
+    return new Date(y, m - 1, d);
+}
+     
+function today() {
+  return dateToYMD(new Date());
+}
+     
+/* 날짜 이동 핸들러 */
+function moveDate(days) {
+    const currentDate = $("#date").value;
+    const dateObj = ymdToDateObj(currentDate);
+    dateObj.setDate(dateObj.getDate() + days);
+    $("#date").value = dateToYMD(dateObj);
+    onDay();
+}
+     
+     
+/* ====== NEIS fetch ====== */
+async function neis(endpoint, params) {
+  const base = `https://open.neis.go.kr/hub/${endpoint}`;
+  const q = new URLSearchParams({ KEY: API_KEY, Type: "json", pIndex: "1", pSize: "100", ...params });
+  const url = `${base}?${q.toString()}`;
+  const res = await fetch(url);
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+     
+/* 학교 기본정보 */
+async function getSchoolInfo() {
+  const data = await neis("schoolInfo", { ATPT_OFCDC_SC_CODE: ATPT, SCHUL_NM: SCHOOL_NAME });
+  const row = data?.schoolInfo?.[1]?.row?.[0];
+  if (!row) throw new Error("학교 정보 없음");
+  return { 
+    code: row.SD_SCHUL_CODE, 
+    name: row.SCHUL_NM, 
+    kind: row.SCHUL_KND_SC_NM, 
+    fond: row.FOND_SC_NM, 
+    addr: row.ORG_RDNMA, 
+    tel: row.ORG_TELNO,
+    url: row.HOMEPAGE_URL || '#'
+  };
+}
+     
+/* 하루 급식 */
+async function fetchMealsDay(sdCode, ymd) {
+  const data = await neis("mealServiceDietInfo", { ATPT_OFCDC_SC_CODE: ATPT, SD_SCHUL_CODE: sdCode, MLSV_YMD: ymd });
+  const rows = data?.mealServiceDietInfo?.[1]?.row || [];
+  rows.sort((a,b)=>String(a.MMEAL_SC_CODE||"").localeCompare(String(b.MMEAL_SC_CODE||"")));
+  return rows.map(r => {
+    // 알레르기 정보를 포함한 메뉴 리스트
+    const fullMenu = String(r.DDISH_NM||"").replace(/<br\s*\/?>/gi,"\n").split("\n").map(s=>s.trim()).filter(Boolean);
+    
+    return {
+      type: r.MMEAL_SC_NM || "",
+      cal: r.CAL_INFO || "",
+      // 메뉴 항목별로 알레르기 번호가 포함된 원본 리스트 사용
+      menuWithAllergy: fullMenu
+    };
+  });
+}
+     
+/* ====== UI/로직 ====== */
+let SD_SCHUL_CODE = null;
+     
+function getMealIcon(type) {
+    if (type.includes("조식") || type.includes("아침")) return "☀";
+    if (type.includes("중식") || type.includes("점심")) return "🍚";
+    if (type.includes("석식") || type.includes("저녁")) return "🌙";
+    return "🍽";
+}
+     
+     
+async function init() {
+  try {
+    $("#date").value = today();
+    $("#notice").textContent = "학교 정보 불러오는 중…";
+    const info = await getSchoolInfo();
+    SD_SCHUL_CODE = info.code;
+     
+    $("#schoolInfoCard").style.display = "block";
+    
+    // ⭐ 학교 기본 정보 최소화: 학교 이름, 종류, 설립 구분만 표시
+    $("#schoolInfo").innerHTML = `
+      <b>${escapeHtml(info.name)}</b> (${escapeHtml(info.kind)})
+      <span class="pill">${escapeHtml(info.fond)}</span>
+    `;
+     
+    $("#notice").className="card ok";
+    $("#notice").textContent = `${info.name} 정보 확인 완료. 오늘의 급식 정보를 자동으로 조회합니다.`;
+     
+    await onDay();
+  } catch (err) {
+    $("#notice").className="card err";
+    $("#notice").textContent = "초기화 오류: "+(err.message||err);
+  }
+}
+     
+async function onDay() {
+  if (!SD_SCHUL_CODE) {
+    $("#notice").className="card err";
+    $("#notice").textContent = "학교 코드가 확인되지 않았습니다. 새로고침 후 다시 시도해 주세요.";
+    return;
+  }
+  
+  try {
+    const selectedDate = $("#date").value;
+    const ymd = selectedDate.replace(/-/g,"");
+    
+    $("#mainContentCard").style.display="block";
+    $("#displayDate").textContent = ymd2str(ymd);
+    
+    // 급식 조회 UI 업데이트
+    $("#meals").innerHTML="<span class='muted'>급식 정보 불러오는 중…</span>";
+    
+    // 1. 급식 정보 조회
+    const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
+     
+    // --- 급식 표시 ---
+    if(!meals.length){
+      $("#meals").innerHTML="<div class='muted'>급식 정보 없음</div>";
+      $("#shareText").textContent="";
+    } else {
+      $("#meals").innerHTML=meals.map(m=>{
+        const mealClass = getMealClass(m.type);
+        const icon = getMealIcon(m.type);
+        return `<div class="meal-item ${mealClass}">
+          <div class="meal-icon">${icon}</div>
+          <div class="meal-content">
+            <strong>${escapeHtml(m.type)}</strong>${m.cal?` <span class="pill">${escapeHtml(m.cal)}</span>`:""}
+            <ul>${m.menuWithAllergy.map(x=>`<li>${escapeHtml(x)}`).join("")}</ul> 
+          </div>
+        </div>`;
+      }).join("");
+     
+      // 전송/복사용 텍스트 (시각적으로는 숨겨져 있음)
+      let txt = `[풍산고등학교] ${ymd2str(ymd)} 급식\n`;
+      meals.forEach(m=>{
+        txt += `\n[${m.type}] ${m.cal||""}\n- ${m.menuWithAllergy.join("\n- ")}\n`;
+      });
+      $("#shareText").textContent = txt.trim();
+    }
+    
+  } catch(err){
+    $("#notice").className="card err";
+    $("#notice").textContent="조회 오류: "+(err.message||err);
+  }
+}
+     
+/* 신뢰성 높은 복사 함수 */
+async function copyTextReliable(text) {
+  // 1) 최신 API (가능하면 이걸로)
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return true;
+    }
+  } catch (_) { /* 무시하고 폴백 */ }
+     
+  // 2) 폴백: 숨은 textarea 선택 후 복사
+  try {
+    const ta = $("#copyHelper");
+    ta.value = text;
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length); // iOS 대응
+    const ok = document.execCommand("copy");
+    ta.blur();
+    return ok;
+  } catch (_) {
+    return false;
+  }
+}
+     
+document.addEventListener("DOMContentLoaded",()=>{
+  $("#btnDay").addEventListener("click", onDay);
+  
+  // 날짜 이동 버튼 이벤트 리스너
+  $("#btnPrevDay").addEventListener("click", () => moveDate(-1));
+  $("#btnNextDay").addEventListener("click", () => moveDate(1));
+  
+  // 날짜 변경 시 자동 조회
+  $("#date").addEventListener("change", onDay);
+     
+  // 복사 버튼 클릭 시
+  $("#btnCopy").addEventListener("click", async ()=>{
+    const txt = $("#shareText").textContent || "";
+    if(!txt.trim()){ alert("복사할 급식 내용이 없습니다."); return; }
+    const ok = await copyTextReliable(txt);
+    const btn = $("#btnCopy");
+    const old = btn.textContent;
+    btn.textContent = ok ? "✅ 복사됨!" : "❌ 복사 실패";
+    setTimeout(()=>{ btn.textContent = old; }, 1500);
+  });
+  
+  init();
+});
+</script>
+</body>
+</html>
