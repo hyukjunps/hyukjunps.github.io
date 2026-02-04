@@ -1,0 +1,11 @@
+{
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "display": "standalone",
+  "name": "오늘풍산",
+  "orientation": "any",
+  "scope": "/",
+  "short_name": "풍산고등학교 편의 앱",
+  "start_url": "https://hyukjunps.github.io",
+  "theme_color": "#ffffff"
+}
