@@ -8,4 +8,19 @@
   "short_name": "풍산고등학교 편의 앱",
   "start_url": "https://hyukjunps.github.io",
   "theme_color": "#ffffff"
+    "icons": [
+    {
+      "src": "https://hyukjunps.github.io/android/android-launchericon-192-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "https://hyukjunps.github.io/android/android-launchericon-512-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+
 }
