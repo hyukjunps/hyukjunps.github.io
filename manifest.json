@@ -8,12 +8,4 @@
   "short_name": "오풍",
   "start_url": "https://hyukjunps.github.io",
   "theme_color": "#ffffff"
-  "icons": [
-  {
-      "src": "ios/512.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
-  }
-]
 }
