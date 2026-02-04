@@ -5,7 +5,7 @@
   "name": "오늘풍산",
   "orientation": "any",
   "scope": "/",
-  "short_name": "오늘풍산",
+  "short_name": "오풍",
   "start_url": "https://hyukjunps.github.io",
   "theme_color": "#ffffff"
 }
