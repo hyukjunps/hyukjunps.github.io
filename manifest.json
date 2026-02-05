@@ -90,10 +90,6 @@
       "sizes": "176x176"
     },
     {
-      "src": "windows11/StoreLogo.scale-100.png",
-      "sizes": "50x50"
-    },
-    {
       "src": "windows11/StoreLogo.scale-125.png",
       "sizes": "63x63"
     },
