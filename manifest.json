@@ -50,22 +50,6 @@
       "sizes": "600x600"
     },
     {
-      "src": "windows11/Wide310x150Logo.scale-125.png",
-      "sizes": "388x188"
-    },
-    {
-      "src": "windows11/Wide310x150Logo.scale-150.png",
-      "sizes": "465x225"
-    },
-    {
-      "src": "windows11/Wide310x150Logo.scale-200.png",
-      "sizes": "620x300"
-    },
-    {
-      "src": "windows11/Wide310x150Logo.scale-400.png",
-      "sizes": "1240x600"
-    },
-    {
       "src": "windows11/LargeTile.scale-100.png",
       "sizes": "310x310"
     },
