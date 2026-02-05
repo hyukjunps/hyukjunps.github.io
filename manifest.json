@@ -50,10 +50,6 @@
       "sizes": "600x600"
     },
     {
-      "src": "windows11/Wide310x150Logo.scale-100.png",
-      "sizes": "310x150"
-    },
-    {
       "src": "windows11/Wide310x150Logo.scale-125.png",
       "sizes": "388x188"
     },
