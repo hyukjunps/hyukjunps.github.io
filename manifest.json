@@ -158,10 +158,6 @@
       "sizes": "72x72"
     },
     {
-      "src": "windows11/Square44x44Logo.targetsize-80.png",
-      "sizes": "80x80"
-    },
-    {
       "src": "windows11/Square44x44Logo.targetsize-96.png",
       "sizes": "96x96"
     },
