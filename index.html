@@ -26,15 +26,11 @@
     --shadow:0 18px 50px rgba(2,6,23,.10);
     --shadow2:0 10px 22px rgba(2,6,23,.08);
 
-    --r32:32px;
     --r28:28px;
     --r22:22px;
     --r18:18px;
 
-    --max: 920px;
-
-    --tap: 64px;     /* 큰 버튼 */
-    --tapSm: 56px;   /* 컨트롤 버튼 */
+    --max: 860px;
   }
 
   html[data-theme="dark"]{
@@ -56,10 +52,9 @@
   *{box-sizing:border-box}
   body{
     margin:0;
-    background:
-      radial-gradient(900px 450px at 18% 0%, color-mix(in srgb, var(--pri) 12%, transparent), transparent 55%),
-      radial-gradient(900px 450px at 82% 0%, color-mix(in srgb, var(--ok) 12%, transparent), transparent 55%),
-      var(--bg);
+    background: radial-gradient(900px 450px at 20% 0%, color-mix(in srgb, var(--pri) 10%, transparent), transparent 55%),
+                radial-gradient(900px 450px at 80% 0%, color-mix(in srgb, var(--ok) 10%, transparent), transparent 55%),
+                var(--bg);
     color:var(--text);
     font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans KR',sans-serif;
   }
@@ -70,13 +65,13 @@
     padding: 18px 14px 30px;
   }
 
-  /* === 상단부 === */
+  /* === 상단부(브랜드 + 설치 + 모드) === */
   .topbar{
     position: sticky;
     top: 12px;
     z-index: 20;
     padding: 14px;
-    border-radius: var(--r32);
+    border-radius: var(--r28);
     border: 1px solid var(--line);
     background: color-mix(in srgb, var(--card) 86%, transparent);
     backdrop-filter: blur(12px);
@@ -95,6 +90,7 @@
     min-width:0;
   }
 
+  /* iOS 앱 아이콘 느낌 */
   .logoWrap{
     width:64px; height:64px;
     border-radius: 20px;
@@ -104,7 +100,12 @@
     background: color-mix(in srgb, var(--card) 95%, transparent);
     flex:0 0 auto;
   }
-  .logo{ width:100%; height:100%; display:block; object-fit:cover; }
+  .logo{
+    width:100%;
+    height:100%;
+    display:block;
+    object-fit:cover;
+  }
 
   .brandText{
     display:flex;
@@ -137,11 +138,10 @@
 
   .btn{
     border:1px solid transparent;
-    border-radius: 20px;
-    padding: 14px 16px;
-    min-height: var(--tapSm);
-    font-size: 15px;
-    font-weight: 950;
+    border-radius: 18px;
+    padding: 12px 14px;
+    font-size: 14.5px;
+    font-weight: 900;
     cursor:pointer;
     display:inline-flex;
     align-items:center;
@@ -171,55 +171,62 @@
     box-shadow: 0 10px 22px rgba(2,6,23,.06);
   }
 
-  /* === 패널 === */
+  /* === 구조 고정: 상단부 → 버튼 → 설명 === */
   .panel{
     margin-top: 16px;
     background: var(--card);
     border: 1px solid var(--line);
-    border-radius: var(--r32);
+    border-radius: var(--r28);
     box-shadow: var(--shadow);
     overflow:hidden;
   }
 
-  .section{ padding: 18px 16px; }
+  .section{
+    padding: 18px 16px;
+  }
   .section + .section{
     border-top: 1px solid var(--line);
     background: color-mix(in srgb, var(--bg) 55%, transparent);
   }
 
-  /* 카드 버튼 */
+  /* 아래 버튼 영역(키오스크 느낌: 큰 버튼 3개) */
   .ctaGrid{
     display:grid;
     grid-template-columns: 1fr;
-    gap: 12px;
+    gap: 14px;
   }
+
   .cta{
     border:1px solid var(--line);
-    border-radius: var(--r32);
-    background:
-      linear-gradient(180deg, color-mix(in srgb, var(--card) 96%, transparent), color-mix(in srgb, var(--card) 86%, transparent));
-    box-shadow: 0 14px 30px rgba(2,6,23,.06);
-    padding: 16px;
+    border-radius: var(--r28);
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+    box-shadow: 0 12px 26px rgba(2,6,23,.06);
+    padding: 18px;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap: 12px;
+    gap: 14px;
   }
-  .ctaLeft{ min-width:0; }
-  .ctaLeft b{ font-size: 19px; letter-spacing:-.3px; }
+  .ctaLeft{
+    min-width:0;
+  }
+  .ctaLeft b{
+    font-size: 19px;
+    letter-spacing:-.3px;
+  }
   .ctaLeft p{
-    margin: 8px 0 0;
+    margin: 10px 0 0;
     color: var(--muted);
-    line-height: 1.75;
-    font-size: 14px;
+    line-height: 1.85;
+    font-size: 14.5px;
+    font-weight: 700;
   }
 
+  /* ✅ 버튼 크기 키움 */
   .bigBtn{
     border:none;
-    border-radius: 22px;
+    border-radius: 20px;
     padding: 16px 18px;
-    min-height: var(--tap);
-    min-width: 110px;
     font-size: 16px;
     font-weight: 1000;
     cursor:pointer;
@@ -227,21 +234,23 @@
     background: linear-gradient(135deg, var(--pri), var(--pri2));
     box-shadow: 0 16px 34px color-mix(in srgb, var(--pri) 22%, transparent);
     white-space:nowrap;
+    min-width: 110px;
   }
   .bigBtn:active{ transform: translateY(1px); }
   .bigBtn:hover{ opacity:.96; }
 
   .note{
     color: var(--muted);
-    line-height: 1.85;
+    line-height: 1.9;
     font-size: 14.5px;
   }
   .note b{ color: var(--text); }
 
+  /* 화면은 보일 때만 */
   .view{ display:none; }
   .view.active{ display:block; }
 
-  /* 급식 컨트롤 */
+  /* 급식/시간표 공용 컨트롤 */
   .controls{
     display:flex;
     gap:10px;
@@ -249,49 +258,44 @@
     justify-content:center;
     padding: 14px;
     border:1px solid var(--line);
-    border-radius: var(--r32);
+    border-radius: var(--r28);
     background: var(--card);
     box-shadow: var(--shadow2);
   }
-  input[type="date"], .smallbtn{
-    font-size: 16px;
-    padding: 14px 16px;
-    border-radius: 18px;
+  input[type="date"], .smallbtn, input[type="text"], input[type="number"]{
+    font-size: 15px;
+    padding: 12px 14px;
+    border-radius: 16px;
     border: 1px solid var(--line);
     background: color-mix(in srgb, var(--card) 92%, transparent);
     color: var(--text);
-    min-height: var(--tapSm);
   }
-  input[type="date"]{ min-width: 170px; }
-
   .smallbtn{
     border:none;
     color:#fff;
     font-weight: 1000;
     cursor:pointer;
     background: linear-gradient(135deg, var(--pri), var(--pri2));
-    box-shadow: 0 12px 26px color-mix(in srgb, var(--pri) 20%, transparent);
+    padding: 13px 16px;
+    border-radius: 18px;
   }
-  .smallbtn.ok{
-    background: linear-gradient(135deg, var(--ok), color-mix(in srgb, var(--ok) 70%, #000));
-    box-shadow: 0 12px 26px color-mix(in srgb, var(--ok) 16%, transparent);
-  }
+  .smallbtn.ok{ background: linear-gradient(135deg, var(--ok), color-mix(in srgb, var(--ok) 70%, #000)); }
   .smallbtn.ghost{
     background: color-mix(in srgb, var(--card) 92%, transparent);
     color: var(--text);
-    border: 1px solid var(--line);
-    box-shadow: 0 10px 22px rgba(2,6,23,.06);
+    border:1px solid var(--line);
   }
   .smallbtn:hover{ opacity:.95; }
 
   .notice{
     margin-top: 14px;
     border: 1px solid var(--line);
-    border-radius: var(--r32);
+    border-radius: var(--r28);
     padding: 14px;
     background: var(--card);
     color: var(--muted);
-    line-height: 1.8;
+    line-height: 1.85;
+    font-weight: 800;
   }
   .notice.ok{
     border-color: color-mix(in srgb, var(--ok) 35%, var(--line));
@@ -302,70 +306,6 @@
     border-color: color-mix(in srgb, var(--warn) 35%, var(--line));
     background: color-mix(in srgb, var(--warn) 12%, var(--card));
     color: color-mix(in srgb, var(--warn) 70%, var(--text));
-  }
-
-  /* 급식 카드 */
-  .mealHeader{
-    display:flex;
-    align-items:flex-end;
-    justify-content:space-between;
-    gap:12px;
-    margin-top: 14px;
-  }
-  .mealHeader .title{
-    font-weight: 1000;
-    font-size: 20px;
-    letter-spacing:-.3px;
-  }
-  .mealHeader .sub{
-    font-size: 13px;
-    color: var(--muted);
-    font-weight: 900;
-    white-space:nowrap;
-  }
-
-  .mealCard{
-    margin-top: 12px;
-    border: 1px solid var(--line);
-    border-radius: var(--r32);
-    overflow:hidden;
-    box-shadow: 0 14px 30px rgba(2,6,23,.06);
-    background: var(--card);
-  }
-  .mealCardHead{
-    padding: 14px 14px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    background: color-mix(in srgb, var(--bg) 55%, transparent);
-    border-bottom: 1px solid var(--line);
-  }
-  .mealCardHead b{ font-size: 16px; letter-spacing:-.2px; }
-  .pill{
-    font-size: 12.5px;
-    font-weight: 1000;
-    color: color-mix(in srgb, var(--pri) 85%, var(--text));
-    border: 1px solid color-mix(in srgb, var(--pri) 25%, var(--line));
-    background: color-mix(in srgb, var(--pri) 10%, var(--card));
-    padding: 8px 10px;
-    border-radius: 999px;
-    white-space:nowrap;
-  }
-  .mealCardBody{ padding: 14px; }
-  .mealList{
-    margin:0;
-    padding:0;
-    list-style:none;
-    line-height:1.9;
-    font-size: 14.5px;
-  }
-  .mealList li{
-    padding: 10px 10px;
-    border: 1px solid color-mix(in srgb, var(--line) 75%, transparent);
-    border-radius: 18px;
-    margin-top: 10px;
-    background: color-mix(in srgb, var(--card) 92%, transparent);
   }
 
   #shareText{display:none;}
@@ -386,7 +326,7 @@
     width:min(720px, 100%);
     background: var(--card);
     border:1px solid var(--line);
-    border-radius: var(--r32);
+    border-radius: var(--r28);
     box-shadow: var(--shadow);
     overflow:hidden;
   }
@@ -404,11 +344,16 @@
     color: var(--muted);
     line-height: 1.9;
     font-size: 14.5px;
+    font-weight: 800;
   }
-  .steps{ margin: 12px 0 0; padding:0; list-style:none; }
+  .steps{
+    margin: 12px 0 0;
+    padding:0;
+    list-style:none;
+  }
   .steps li{
     border:1px solid var(--line);
-    border-radius: 18px;
+    border-radius: 16px;
     padding: 12px 12px;
     margin-top: 10px;
     background: color-mix(in srgb, var(--card) 92%, transparent);
@@ -453,7 +398,7 @@
           <div class="cta">
             <div class="ctaLeft">
               <b>🍽 급식 확인</b>
-              <p>날짜를 선택하면 조식·중식·석식을 카드로 보기 좋게 보여 드립니다.</p>
+              <p>날짜를 선택하시면 조식·중식·석식을 보기 좋게 정리해 보여 드립니다.</p>
             </div>
             <div class="ctaRight">
               <button class="bigBtn" type="button" onclick="go('meal'); setTodayAndLoad();">열기</button>
@@ -462,8 +407,18 @@
 
           <div class="cta">
             <div class="ctaLeft">
+              <b>📚 시간표</b>
+              <p>요일별 시간표를 저장하고, 교시 수(예: 7/8/9교시)도 설정합니다.</p>
+            </div>
+            <div class="ctaRight">
+              <button class="bigBtn" type="button" onclick="go('timetable'); initTimetableView();">열기</button>
+            </div>
+          </div>
+
+          <div class="cta">
+            <div class="ctaLeft">
               <b>온웨이에듀</b>
-              <p>풍산고등학교 상벌점, 외출 관리 시스템으로 이동합니다.</p>
+              <p>풍산고등학교 상벌점, 외출 관리 시스템입니다.</p>
             </div>
             <div class="ctaRight">
               <button class="bigBtn" type="button" onclick="go('onway')">열기</button>
@@ -476,30 +431,30 @@
       <div class="section">
         <div class="note">
           <b>앱 설치(PWA)</b>를 하시면 홈 화면에서 아이콘으로 바로 실행하실 수 있습니다.
-          iPhone은 Safari에서 “공유 → 홈 화면에 추가”, Android는 브라우저 메뉴의 “앱 설치”를 사용하세요.
+          iPhone은 Safari에서 “공유 → 홈 화면에 추가”로 설치하실 수 있으며,
+          Android는 브라우저 메뉴에 “앱 설치”가 표시될 수 있습니다.
         </div>
         <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
           <button id="btnGuide" class="btn ok" type="button">설치 방법 자세히 보기</button>
         </div>
 
-        <div style="margin-top:14px;color:var(--muted);font-size:12.5px;">
+        <div style="margin-top:14px;color:var(--muted);font-size:12.5px;font-weight:900;">
           by @hyukjun._.ps
         </div>
       </div>
 
-      <!-- 기능 화면(선택 표시) -->
+      <!-- 급식 -->
       <div class="section view" id="view-meal">
         <div class="controls">
           <button class="smallbtn" type="button" onclick="moveDate(-1)">◀ 어제</button>
           <input type="date" id="date" />
           <button class="smallbtn" type="button" onclick="moveDate(1)">내일 ▶</button>
-
-          <button class="smallbtn ok" type="button" onclick="onDay()">조회</button>
-          <button class="smallbtn" type="button" id="btnCopy">복사</button>
+          <button class="smallbtn" type="button" onclick="onDay()">조회</button>
+          <button class="smallbtn ok" type="button" id="btnCopy">복사</button>
           <button class="smallbtn ghost" type="button" onclick="go('home')">닫기</button>
         </div>
 
-        <div id="notice" class="notice">학교 정보를 불러오는 중입니다…</div>
+        <div id="notice" class="notice">급식 정보를 불러오는 중입니다…</div>
 
         <div id="allergyBox" class="notice" style="margin-top:12px;">
           <b style="color:var(--text);">⚠ 알레르기 번호 안내</b><br/>
@@ -512,9 +467,35 @@
         <div id="shareText"></div>
       </div>
 
+      <!-- 시간표 -->
+      <div class="section view" id="view-timetable">
+        <div class="controls" style="justify-content:space-between;">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="smallbtn" type="button" onclick="ttSetDay('mon')">월</button>
+            <button class="smallbtn" type="button" onclick="ttSetDay('tue')">화</button>
+            <button class="smallbtn" type="button" onclick="ttSetDay('wed')">수</button>
+            <button class="smallbtn" type="button" onclick="ttSetDay('thu')">목</button>
+            <button class="smallbtn" type="button" onclick="ttSetDay('fri')">금</button>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end;">
+            <button class="smallbtn ok" type="button" onclick="openTTConfig()">교시 설정</button>
+            <button class="smallbtn" type="button" onclick="ttSave()">저장</button>
+            <button class="smallbtn ghost" type="button" onclick="go('home')">닫기</button>
+          </div>
+        </div>
+
+        <div id="ttNotice" class="notice">시간표를 불러오는 중입니다…</div>
+        <div id="ttGrid" style="margin-top:14px;"></div>
+      </div>
+
+      <!-- 온웨이에듀 -->
       <div class="section view" id="view-onway">
         <div class="notice">
           온웨이에듀는 풍산고등학교 상벌점·외출 관리 시스템입니다. 아래 버튼을 누르시면 새 탭에서 열립니다.
+          <div style="margin-top:8px;font-size:12.5px;">
+            ※ 일부 환경(PWA/브라우저)에서 http 사이트가 차단될 수 있어, https→http 순서로 자동 시도합니다.
+          </div>
         </div>
         <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
           <button class="btn primary" type="button" onclick="openOnway()">온웨이에듀 열기</button>
@@ -555,11 +536,40 @@
     </div>
   </div>
 
+  <!-- 시간표 설정 모달 -->
+  <div id="ttModalBack" class="modalBack" role="dialog" aria-modal="true" aria-label="시간표 설정">
+    <div class="modal">
+      <div class="modalHead">
+        <b>시간표 설정</b>
+        <button class="btn ghost" type="button" onclick="closeTTConfig()">닫기</button>
+      </div>
+      <div class="modalBody">
+        <div style="color:var(--muted);line-height:1.8;">
+          교시 수를 설정하면 시간표 입력 칸이 그 수에 맞게 바뀝니다.
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <label style="font-weight:1000;color:var(--text);">교시 수</label>
+          <input id="ttPeriodCount" type="number" min="1" max="12" />
+          <button class="btn ok" type="button" onclick="applyTTConfig()">적용</button>
+        </div>
+
+        <div style="margin-top:10px;color:var(--muted);font-size:12.5px;line-height:1.6;">
+          예: 7교시(기본) / 8교시 / 9교시 등
+        </div>
+      </div>
+      <div class="modalFoot">
+        <button class="btn ghost" type="button" onclick="closeTTConfig()">확인</button>
+      </div>
+    </div>
+  </div>
+
 <script>
-/* ====== 고정값(NEIS) ====== */
-const API_KEY = "c5eac2fb880e4aa185e7957a756dd126"; // ✅ 다시 사용
+/* ====== 고정값 (NEIS API 사용) ====== */
+const API_KEY = "c5eac2fb880e4aa185e7957a756dd126";
 const ATPT = "R10";
-const SCHOOL_NAME = "풍산고등학교";
+const SD_SCHUL_CODE = "8750475"; // 풍산고
+const SCHOOL_LABEL = "풍산고등학교";
 
 /* ====== 유틸 ====== */
 const $ = s => document.querySelector(s);
@@ -580,182 +590,131 @@ function today() { return dateToYMD(new Date()); }
 function go(view){
   const meal = $("#view-meal");
   const onway = $("#view-onway");
+  const tt = $("#view-timetable");
 
   meal.classList.toggle("active", view === "meal");
   onway.classList.toggle("active", view === "onway");
+  tt.classList.toggle("active", view === "timetable");
 
   if (view === "home") {
     meal.classList.remove("active");
     onway.classList.remove("active");
+    tt.classList.remove("active");
   }
 
   history.replaceState(null, "", `#${view}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
+
 function initRoute(){
   const h = (location.hash || "#home").replace("#","");
-  if (h === "meal" || h === "onway" || h === "home") go(h);
-  else go("home");
+  if (h === "meal" || h === "onway" || h === "timetable" || h === "home") {
+    go(h);
+    if (h === "timetable") initTimetableView();
+  } else {
+    go("home");
+  }
 }
 
-/* ====== 온웨이에듀 ====== */
+/* ====== 온웨이에듀 (https→http fallback + 팝업차단 대응) ====== */
 function openOnway(){
-  window.open("https://ps.onwayedu.co.kr/login/login.php", "_blank", "noopener,noreferrer");
+  const httpsUrl = "https://ps.onwayedu.co.kr/login/login.php";
+  const httpUrl  = "http://ps.onwayedu.co.kr/login/login.php";
+
+  // 유저 클릭 이벤트 안에서 실행되므로 팝업 허용률 높음
+  const w = window.open(httpsUrl, "_blank", "noopener,noreferrer");
+
+  // 팝업 차단이면 현재 탭 이동
+  if (!w) {
+    location.href = httpUrl;
+    return;
+  }
+
+  // https가 실제로 안 되는 환경이면, 새 탭에서 http로 fallback
+  setTimeout(() => {
+    try { w.location.href = httpUrl; } catch (_) {}
+  }, 800);
 }
 
 /* ====== NEIS fetch ====== */
 async function neis(endpoint, params) {
   const base = `https://open.neis.go.kr/hub/${endpoint}`;
-  const q = new URLSearchParams({
-    KEY: API_KEY,
-    Type: "json",
-    pIndex: "1",
-    pSize: "100",
-    ...params
-  });
+  const q = new URLSearchParams({ KEY: API_KEY, Type: "json", pIndex: "1", pSize: "100", ...params });
   const url = `${base}?${q.toString()}`;
-
-  const res = await fetch(url, { method: "GET", cache: "no-store" });
+  const res = await fetch(url);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
 
-/* ====== 상태 ====== */
-let SD_SCHUL_CODE = null;
+/* 하루 급식 */
+async function fetchMealsDay(sdCode, ymd) {
+  const data = await neis("mealServiceDietInfo", { ATPT_OFCDC_SC_CODE: ATPT, SD_SCHUL_CODE: sdCode, MLSV_YMD: ymd });
+  const rows = data?.mealServiceDietInfo?.[1]?.row || [];
+  rows.sort((a,b)=>String(a.MMEAL_SC_CODE||"").localeCompare(String(b.MMEAL_SC_CODE||"")));
+  return rows.map(r => {
+    const fullMenu = String(r.DDISH_NM||"")
+      .replace(/<br\s*\/?>/gi,"\n")
+      .split("\n").map(s=>s.trim()).filter(Boolean);
+    return { type: r.MMEAL_SC_NM || "", cal: r.CAL_INFO || "", menu: fullMenu };
+  });
+}
 
-/* 안내 */
 function setNotice(kind, text){
   const box = $("#notice");
   box.className = "notice" + (kind ? ` ${kind}` : "");
   box.textContent = text;
 }
 
-/* 학교 기본정보 */
-async function getSchoolInfo() {
-  const data = await neis("schoolInfo", {
-    ATPT_OFCDC_SC_CODE: ATPT,
-    SCHUL_NM: SCHOOL_NAME
-  });
-  const row = data?.schoolInfo?.[1]?.row?.[0];
-  if (!row) throw new Error("학교 코드를 찾지 못했습니다. SCHOOL_NAME/ATPT 확인 필요");
-  return { code: row.SD_SCHUL_CODE, name: row.SCHUL_NM };
-}
-
-/* 하루 급식 */
-async function fetchMealsDay(sdCode, ymd) {
-  const data = await neis("mealServiceDietInfo", {
-    ATPT_OFCDC_SC_CODE: ATPT,
-    SD_SCHUL_CODE: sdCode,
-    MLSV_YMD: ymd
-  });
-  const rows = data?.mealServiceDietInfo?.[1]?.row || [];
-  rows.sort((a,b)=>String(a.MMEAL_SC_CODE||"").localeCompare(String(b.MMEAL_SC_CODE||"")));
-
-  return rows.map(r => {
-    const menu = String(r.DDISH_NM||"")
-      .replace(/<br\s*\/?>/gi,"\n")
-      .split("\n").map(s=>s.trim()).filter(Boolean);
-    return { type: r.MMEAL_SC_NM || "", cal: r.CAL_INFO || "", menu };
-  });
-}
-
-/* 렌더 */
-function renderMeals(ymd, meals){
-  const header = `
-    <div class="mealHeader">
-      <div class="title">${ymd2str(ymd)} 급식</div>
-      <div class="sub">${escapeHtml(SCHOOL_NAME)} · ${SD_SCHUL_CODE}</div>
-    </div>
-  `;
-
-  const cards = meals.map(m=>{
-    const pill = m.cal ? `<span class="pill">${escapeHtml(m.cal)}</span>` : `<span class="pill">칼로리 정보 없음</span>`;
-    const items = (m.menu||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("");
-    return `
-      <div class="mealCard">
-        <div class="mealCardHead">
-          <b>${escapeHtml(m.type)}</b>
-          ${pill}
-        </div>
-        <div class="mealCardBody">
-          <ul class="mealList">
-            ${items || `<li>메뉴 정보가 없습니다.</li>`}
-          </ul>
-        </div>
-      </div>
-    `;
-  }).join("");
-
-  $("#meals").innerHTML = header + cards;
-
-  // 복사용 텍스트
-  let txt = `[${SCHOOL_NAME}] ${ymd2str(ymd)} 급식\n`;
-  meals.forEach(m=>{
-    txt += `\n[${m.type}] ${m.cal||""}\n- ${(m.menu||[]).join("\n- ")}\n`;
-  });
-  $("#shareText").textContent = txt.trim();
-}
-
-/* 초기화 */
 async function initMeals(){
   try{
     $("#date").value = today();
-    setNotice("", "학교 정보를 불러오는 중입니다…");
-
-    const info = await getSchoolInfo();
-    SD_SCHUL_CODE = info.code;
-
-    setNotice("ok", `${info.name} 급식 조회가 준비되었습니다. 날짜를 선택해 주세요.`);
+    setNotice("ok", `${SCHOOL_LABEL} 급식 조회가 준비되었습니다. 날짜를 선택해 확인해 주세요.`);
   }catch(err){
-    setNotice("err", (err?.message) ? err.message : String(err));
+    setNotice("err", "초기화 중 오류가 발생했습니다: " + (err.message||err));
   }
 }
 
-/* 조회 */
 async function onDay(){
-  if (!SD_SCHUL_CODE) {
-    setNotice("err", "학교 코드가 확인되지 않았습니다. 새로고침 후 다시 시도해 주세요.");
-    return;
-  }
-
   try{
     const selectedDate = $("#date").value;
     const ymd = selectedDate.replace(/-/g,"");
-
-    setNotice("", "급식 정보를 불러오는 중입니다…");
     $("#meals").innerHTML = `<div class="notice">급식 정보를 불러오는 중입니다. 잠시만 기다려 주세요…</div>`;
 
     const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
 
     if(!meals.length){
-      setNotice("ok", "선택하신 날짜에는 급식 정보가 없습니다. (휴일/방학/미제공일 수 있습니다)");
-      $("#meals").innerHTML = `
-        <div class="mealHeader">
-          <div class="title">${ymd2str(ymd)} 급식</div>
-          <div class="sub">정보 없음</div>
-        </div>
-        <div class="notice">급식 정보가 없습니다.</div>
-      `;
+      $("#meals").innerHTML = `<div class="notice">선택하신 날짜에는 급식 정보가 없습니다. (휴일/방학/미제공일 수 있습니다)</div>`;
       $("#shareText").textContent = "";
       return;
     }
 
-    setNotice("ok", "불러오기 완료!");
-    renderMeals(ymd, meals);
+    const html = meals.map(m=>{
+      const items = (m.menu||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("");
+      return `
+        <div class="notice" style="margin-top:12px;">
+          <b style="color:var(--text);">${escapeHtml(m.type)}</b>
+          ${m.cal ? `<span style="margin-left:8px;color:var(--muted);font-weight:1000;">${escapeHtml(m.cal)}</span>` : ""}
+          <ul style="margin:10px 0 0;padding:0;list-style:none;line-height:1.85;font-weight:800;">
+            ${items}
+          </ul>
+        </div>
+      `;
+    }).join("");
 
+    $("#meals").innerHTML = `<div style="font-weight:1000;font-size:20px;letter-spacing:-.3px;">${ymd2str(ymd)} 급식</div>` + html;
+
+    let txt = `[${SCHOOL_LABEL}] ${ymd2str(ymd)} 급식\n`;
+    meals.forEach(m=>{
+      txt += `\n[${m.type}] ${m.cal||""}\n- ${(m.menu||[]).join("\n- ")}\n`;
+    });
+    $("#shareText").textContent = txt.trim();
+
+    setNotice("ok", "조회 완료! 필요하면 ‘복사’로 공유하세요.");
   }catch(err){
-    const msg = (err?.message) ? err.message : String(err);
-
-    // 네트워크/혼잡/키 제한 등 사용자 친화 메시지
-    if (msg.includes("Failed to fetch")) {
-      setNotice("err", "조회에 실패했습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.");
-    } else {
-      setNotice("err", "조회 중 오류가 발생했습니다: " + msg);
-    }
+    setNotice("err", "조회 중 오류가 발생했습니다: " + (err.message||err));
   }
 }
 
-/* 날짜 이동 */
 function moveDate(days){
   const currentDate = $("#date").value;
   const dateObj = ymdToDateObj(currentDate);
@@ -791,9 +750,9 @@ async function copyTextReliable(text){
 }
 $("#btnCopy").addEventListener("click", async ()=>{
   const txt = $("#shareText").textContent || "";
-  if(!txt.trim()){ setNotice("err", "복사할 급식 내용이 없습니다. 먼저 조회해 주세요."); return; }
+  if(!txt.trim()){ alert("복사할 급식 내용이 없습니다. 먼저 급식을 조회해 주세요."); return; }
   const ok = await copyTextReliable(txt);
-  setNotice(ok ? "ok" : "err", ok ? "급식 내용이 복사되었습니다." : "복사에 실패했습니다. 다시 시도해 주세요.");
+  alert(ok ? "급식 내용이 복사되었습니다." : "복사에 실패했습니다. 다시 시도해 주세요.");
 });
 
 /* 라이트/다크 */
@@ -810,7 +769,7 @@ function initTheme(){
 $("#btnLight").addEventListener("click", ()=>applyTheme("light"));
 $("#btnDark").addEventListener("click", ()=>applyTheme("dark"));
 
-/* PWA 설치 */
+/* ====== PWA 설치(상단 버튼 고정) ====== */
 let deferredPrompt = null;
 function isIos(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
 function isStandalone(){
@@ -891,6 +850,210 @@ if ("serviceWorker" in navigator) {
   });
 }
 
+/* =========================
+   시간표(로컬 저장) 기능
+   ========================= */
+const TT_CONFIG_KEY = "todayps_tt_config_v1";
+const TT_DATA_KEY   = "todayps_tt_data_v1";
+
+const TT_DAYS = ["mon","tue","wed","thu","fri"];
+const TT_DAY_LABEL = { mon:"월", tue:"화", wed:"수", thu:"목", fri:"금" };
+
+let ttCurrentDay = "mon";
+let ttDirty = false;
+
+function ttDefaultConfig(){ return { periodCount: 7 }; }
+
+function ttLoadConfig(){
+  try{
+    const raw = localStorage.getItem(TT_CONFIG_KEY);
+    if(!raw) return ttDefaultConfig();
+    const j = JSON.parse(raw);
+    const pc = Number(j.periodCount);
+    if(!Number.isFinite(pc) || pc < 1 || pc > 12) return ttDefaultConfig();
+    return { periodCount: pc };
+  }catch(_){
+    return ttDefaultConfig();
+  }
+}
+function ttSaveConfig(cfg){
+  localStorage.setItem(TT_CONFIG_KEY, JSON.stringify(cfg));
+}
+
+function ttDefaultData(periodCount){
+  const make = ()=> Array.from({length: periodCount}, ()=> "");
+  return { mon: make(), tue: make(), wed: make(), thu: make(), fri: make() };
+}
+
+function ttLoadData(periodCount){
+  try{
+    const raw = localStorage.getItem(TT_DATA_KEY);
+    if(!raw) return ttDefaultData(periodCount);
+    const j = JSON.parse(raw);
+
+    const out = {};
+    TT_DAYS.forEach(d=>{
+      const arr = Array.isArray(j[d]) ? j[d].map(x=>String(x||"")) : [];
+      const fixed = Array.from({length: periodCount}, (_,i)=> arr[i] ?? "");
+      out[d] = fixed;
+    });
+    return out;
+  }catch(_){
+    return ttDefaultData(periodCount);
+  }
+}
+
+function ttSaveData(data){
+  localStorage.setItem(TT_DATA_KEY, JSON.stringify(data));
+}
+
+function ttSetNotice(kind, text){
+  const box = document.querySelector("#ttNotice");
+  if(!box) return;
+  box.className = "notice" + (kind ? ` ${kind}` : "");
+  box.textContent = text;
+}
+
+function initTimetableView(){
+  const cfg = ttLoadConfig();
+  const data = ttLoadData(cfg.periodCount);
+
+  const day = new Date().getDay(); // 0일 1월 ... 5금 6토
+  if (day >= 1 && day <= 5) ttCurrentDay = TT_DAYS[day-1];
+
+  renderTimetable(cfg, data);
+  ttSetNotice("ok", `시간표가 준비되었습니다. (${TT_DAY_LABEL[ttCurrentDay]}요일)`);
+}
+
+function renderTimetable(cfg, data){
+  const grid = document.querySelector("#ttGrid");
+  if(!grid) return;
+
+  const dayArr = data[ttCurrentDay] || [];
+  const rows = dayArr.map((val, idx)=>{
+    const p = idx + 1;
+    return `
+      <div style="
+        display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+        border:1px solid var(--line);border-radius:22px;padding:12px 12px;
+        background:color-mix(in srgb, var(--card) 92%, transparent);
+        margin-top:10px;
+      ">
+        <div style="
+          min-width:82px;
+          font-weight:1000;
+          color:var(--text);
+          background:color-mix(in srgb, var(--pri) 10%, var(--card));
+          border:1px solid color-mix(in srgb, var(--pri) 25%, var(--line));
+          border-radius:999px;
+          padding:10px 12px;
+          text-align:center;
+        ">${p}교시</div>
+
+        <input
+          data-tt-period="${idx}"
+          type="text"
+          value="${escapeHtml(val)}"
+          placeholder="과목/활동 입력 (예: 수학, 영어, 자습)"
+          style="
+            flex:1;
+            min-width:220px;
+            font-size:16px;
+            padding:14px 16px;
+            border-radius:18px;
+            border:1px solid var(--line);
+            background:color-mix(in srgb, var(--card) 92%, transparent);
+            color:var(--text);
+            font-weight:900;
+          "
+          oninput="ttDirty=true"
+        />
+      </div>
+    `;
+  }).join("");
+
+  grid.innerHTML = `
+    <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <div style="font-weight:1000;font-size:20px;letter-spacing:-.3px;">${TT_DAY_LABEL[ttCurrentDay]}요일 시간표</div>
+      <div style="font-size:12.5px;color:var(--muted);font-weight:1000;">교시 수: ${cfg.periodCount}</div>
+    </div>
+    ${rows}
+  `;
+}
+
+function ttSetDay(day){
+  const cfg = ttLoadConfig();
+  const data = ttLoadData(cfg.periodCount);
+
+  if(ttDirty){
+    const ok = confirm("저장하지 않은 변경 사항이 있습니다.\n이동하면 사라질 수 있어요. 이동할까요?");
+    if(!ok) return;
+    ttDirty = false;
+  }
+
+  ttCurrentDay = day;
+  renderTimetable(cfg, data);
+  ttSetNotice("ok", `${TT_DAY_LABEL[ttCurrentDay]}요일 시간표를 수정하세요.`);
+}
+
+function ttReadInputsIntoData(cfg, data){
+  const inputs = document.querySelectorAll("#ttGrid input[data-tt-period]");
+  inputs.forEach(inp=>{
+    const idx = Number(inp.getAttribute("data-tt-period"));
+    if(!Number.isFinite(idx)) return;
+    const v = String(inp.value || "").trim();
+    data[ttCurrentDay][idx] = v;
+  });
+}
+
+function ttSave(){
+  const cfg = ttLoadConfig();
+  const data = ttLoadData(cfg.periodCount);
+
+  ttReadInputsIntoData(cfg, data);
+  ttSaveData(data);
+
+  ttDirty = false;
+  ttSetNotice("ok", "저장 완료! (이 기기에서 계속 유지됩니다)");
+}
+
+/* 교시 설정 모달 */
+function openTTConfig(){
+  const cfg = ttLoadConfig();
+  const el = document.querySelector("#ttPeriodCount");
+  if(el) el.value = String(cfg.periodCount);
+  const back = document.querySelector("#ttModalBack");
+  if(back) back.style.display = "flex";
+}
+function closeTTConfig(){
+  const back = document.querySelector("#ttModalBack");
+  if(back) back.style.display = "none";
+}
+function applyTTConfig(){
+  const el = document.querySelector("#ttPeriodCount");
+  let pc = Number(el ? el.value : 7);
+  if(!Number.isFinite(pc)) pc = 7;
+  pc = Math.max(1, Math.min(12, Math.floor(pc)));
+
+  // 기존 교시 기준 입력값 저장
+  const oldCfg = ttLoadConfig();
+  const oldData = ttLoadData(oldCfg.periodCount);
+  ttReadInputsIntoData(oldCfg, oldData);
+  ttSaveData(oldData);
+
+  // 새 교시 수 저장
+  const newCfg = { periodCount: pc };
+  ttSaveConfig(newCfg);
+
+  // 새 교시 수로 데이터 로드(길이 자동 보정)
+  const newData = ttLoadData(newCfg.periodCount);
+  renderTimetable(newCfg, newData);
+
+  ttDirty = false;
+  ttSetNotice("ok", `교시 수가 ${pc}로 적용되었습니다.`);
+  closeTTConfig();
+}
+
 /* 시작 */
 window.addEventListener("load", ()=>{
   initTheme();
@@ -900,3 +1063,4 @@ window.addEventListener("load", ()=>{
 </script>
 </body>
 </html>
+```0
