@@ -33,8 +33,8 @@
 
     --max: 920px;
 
-    --tap: 64px;         /* ✅ 터치 영역 크게 */
-    --tapSm: 56px;
+    --tap: 64px;     /* 큰 버튼 */
+    --tapSm: 56px;   /* 컨트롤 버튼 */
   }
 
   html[data-theme="dark"]{
@@ -187,7 +187,7 @@
     background: color-mix(in srgb, var(--bg) 55%, transparent);
   }
 
-  /* ✅ 더 예쁜 카드 버튼 */
+  /* 카드 버튼 */
   .ctaGrid{
     display:grid;
     grid-template-columns: 1fr;
@@ -218,7 +218,7 @@
     border:none;
     border-radius: 22px;
     padding: 16px 18px;
-    min-height: var(--tap); /* ✅ 더 크게 */
+    min-height: var(--tap);
     min-width: 110px;
     font-size: 16px;
     font-weight: 1000;
@@ -241,7 +241,7 @@
   .view{ display:none; }
   .view.active{ display:block; }
 
-  /* ✅ 급식 컨트롤: 버튼 크게 + 가독성 */
+  /* 급식 컨트롤 */
   .controls{
     display:flex;
     gap:10px;
@@ -253,7 +253,6 @@
     background: var(--card);
     box-shadow: var(--shadow2);
   }
-
   input[type="date"], .smallbtn{
     font-size: 16px;
     padding: 14px 16px;
@@ -305,7 +304,7 @@
     color: color-mix(in srgb, var(--warn) 70%, var(--text));
   }
 
-  /* ✅ 급식 카드 */
+  /* 급식 카드 */
   .mealHeader{
     display:flex;
     align-items:flex-end;
@@ -369,32 +368,6 @@
     background: color-mix(in srgb, var(--card) 92%, transparent);
   }
 
-  /* 로딩 스켈레톤 */
-  .skeleton{
-    margin-top: 12px;
-    border: 1px solid var(--line);
-    border-radius: var(--r32);
-    padding: 14px;
-    background: color-mix(in srgb, var(--card) 92%, transparent);
-    overflow:hidden;
-    position:relative;
-  }
-  .skeleton::after{
-    content:"";
-    position:absolute;
-    inset:-40%;
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.35), transparent);
-    transform: translateX(-60%);
-    animation: shimmer 1.2s infinite;
-  }
-  html[data-theme="dark"] .skeleton::after{
-    background: linear-gradient(90deg, transparent, rgba(255,255,255,.12), transparent);
-  }
-  @keyframes shimmer{
-    0%{ transform: translateX(-60%); }
-    100%{ transform: translateX(60%); }
-  }
-
   #shareText{display:none;}
   #copyHelper{position:absolute;left:-9999px;top:-9999px;opacity:0;height:1px;width:1px}
 
@@ -440,7 +413,7 @@
     margin-top: 10px;
     background: color-mix(in srgb, var(--card) 92%, transparent);
   }
-  .steps li b troubled{ color: var(--text); }
+  .steps li b{ color: var(--text); }
   .modalFoot{
     padding: 14px 16px;
     border-top:1px solid var(--line);
@@ -526,7 +499,7 @@
           <button class="smallbtn ghost" type="button" onclick="go('home')">닫기</button>
         </div>
 
-        <div id="notice" class="notice ok">급식 조회가 준비되었습니다. 날짜를 선택해 주세요.</div>
+        <div id="notice" class="notice">학교 정보를 불러오는 중입니다…</div>
 
         <div id="allergyBox" class="notice" style="margin-top:12px;">
           <b style="color:var(--text);">⚠ 알레르기 번호 안내</b><br/>
@@ -583,9 +556,10 @@
   </div>
 
 <script>
-/* ====== 고정값 ====== */
-const WORKER_MEAL_URL = "https://meal-push-worker.yyhhi1068.workers.dev"; // 너 Worker 주소
-let SD_SCHUL_CODE = "8750475"; // 유지용
+/* ====== 고정값(NEIS) ====== */
+const API_KEY = "c5eac2fb880e4aa185e7957a756dd126"; // ✅ 다시 사용
+const ATPT = "R10";
+const SCHOOL_NAME = "풍산고등학교";
 
 /* ====== 유틸 ====== */
 const $ = s => document.querySelector(s);
@@ -629,80 +603,74 @@ function openOnway(){
   window.open("https://ps.onwayedu.co.kr/login/login.php", "_blank", "noopener,noreferrer");
 }
 
-/* ====== 안내 메시지 ====== */
+/* ====== NEIS fetch ====== */
+async function neis(endpoint, params) {
+  const base = `https://open.neis.go.kr/hub/${endpoint}`;
+  const q = new URLSearchParams({
+    KEY: API_KEY,
+    Type: "json",
+    pIndex: "1",
+    pSize: "100",
+    ...params
+  });
+  const url = `${base}?${q.toString()}`;
+
+  const res = await fetch(url, { method: "GET", cache: "no-store" });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
+}
+
+/* ====== 상태 ====== */
+let SD_SCHUL_CODE = null;
+
+/* 안내 */
 function setNotice(kind, text){
   const box = $("#notice");
   box.className = "notice" + (kind ? ` ${kind}` : "");
   box.textContent = text;
 }
 
-/* ====== 급식(Worker fetch) ====== */
-async function fetchMealsDay(_, ymd) {
-  const dashed = `${ymd.slice(0,4)}-${ymd.slice(4,6)}-${ymd.slice(6,8)}`;
-  const url = `${WORKER_MEAL_URL}/?date=${encodeURIComponent(dashed)}`;
-
-  // ✅ CORS/네트워크 변동에 대비해 옵션 추가
-  const res = await fetch(url, {
-    method: "GET",
-    mode: "cors",
-    cache: "no-store",
-    headers: { "accept": "application/json" }
+/* 학교 기본정보 */
+async function getSchoolInfo() {
+  const data = await neis("schoolInfo", {
+    ATPT_OFCDC_SC_CODE: ATPT,
+    SCHUL_NM: SCHOOL_NAME
   });
-
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const j = await res.json();
-
-  const rawMeals = j?.데이터?.식사 || j?.data?.meals || [];
-
-  // ✅ Worker 응답(메뉴/칼로리/식사 등)이 어떤 형태여도 화면이 깨지지 않게 표준화
-  return rawMeals.map(m => ({
-    type: m.type ?? m.구분 ?? m.식사구분 ?? m.MMEAL_SC_NM ?? "",
-    cal:  m.cal  ?? m.칼로리 ?? m.CAL_INFO ?? "",
-    menu: m.menu ?? m.메뉴 ?? m.items ?? [],
-  }));
+  const row = data?.schoolInfo?.[1]?.row?.[0];
+  if (!row) throw new Error("학교 코드를 찾지 못했습니다. SCHOOL_NAME/ATPT 확인 필요");
+  return { code: row.SD_SCHUL_CODE, name: row.SCHUL_NM };
 }
 
-/* ====== 초기화/조회 ====== */
-async function initMeals(){
-  $("#date").value = today();
-  setNotice("ok", "급식 조회가 준비되었습니다. 날짜를 선택해 주세요.");
+/* 하루 급식 */
+async function fetchMealsDay(sdCode, ymd) {
+  const data = await neis("mealServiceDietInfo", {
+    ATPT_OFCDC_SC_CODE: ATPT,
+    SD_SCHUL_CODE: sdCode,
+    MLSV_YMD: ymd
+  });
+  const rows = data?.mealServiceDietInfo?.[1]?.row || [];
+  rows.sort((a,b)=>String(a.MMEAL_SC_CODE||"").localeCompare(String(b.MMEAL_SC_CODE||"")));
+
+  return rows.map(r => {
+    const menu = String(r.DDISH_NM||"")
+      .replace(/<br\s*\/?>/gi,"\n")
+      .split("\n").map(s=>s.trim()).filter(Boolean);
+    return { type: r.MMEAL_SC_NM || "", cal: r.CAL_INFO || "", menu };
+  });
 }
 
-function renderLoading(){
-  $("#meals").innerHTML = `
-    <div class="mealHeader">
-      <div class="title">급식 불러오는 중…</div>
-      <div class="sub">잠시만 기다려 주세요</div>
-    </div>
-    <div class="skeleton" style="height:90px;"></div>
-    <div class="skeleton" style="height:90px;"></div>
-    <div class="skeleton" style="height:90px;"></div>
-  `;
-}
-
+/* 렌더 */
 function renderMeals(ymd, meals){
-  const safeMeals = meals.map(m => {
-    const list = Array.isArray(m.menu)
-      ? m.menu
-      : String(m.menu || "").split("\n").map(s=>s.trim()).filter(Boolean);
-
-    return {
-      type: String(m.type || "").trim() || "식사",
-      cal: String(m.cal || "").trim(),
-      menu: list
-    };
-  });
-
   const header = `
     <div class="mealHeader">
       <div class="title">${ymd2str(ymd)} 급식</div>
-      <div class="sub">학교코드: ${SD_SCHUL_CODE}</div>
+      <div class="sub">${escapeHtml(SCHOOL_NAME)} · ${SD_SCHUL_CODE}</div>
     </div>
   `;
 
-  const cards = safeMeals.map(m=>{
+  const cards = meals.map(m=>{
     const pill = m.cal ? `<span class="pill">${escapeHtml(m.cal)}</span>` : `<span class="pill">칼로리 정보 없음</span>`;
-    const items = (m.menu || []).map(x=>`<li>${escapeHtml(x)}</li>`).join("");
+    const items = (m.menu||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("");
     return `
       <div class="mealCard">
         <div class="mealCardHead">
@@ -721,25 +689,41 @@ function renderMeals(ymd, meals){
   $("#meals").innerHTML = header + cards;
 
   // 복사용 텍스트
-  let txt = `[풍산고등학교] ${ymd2str(ymd)} 급식\n`;
-  safeMeals.forEach(m=>{
+  let txt = `[${SCHOOL_NAME}] ${ymd2str(ymd)} 급식\n`;
+  meals.forEach(m=>{
     txt += `\n[${m.type}] ${m.cal||""}\n- ${(m.menu||[]).join("\n- ")}\n`;
   });
   $("#shareText").textContent = txt.trim();
 }
 
+/* 초기화 */
+async function initMeals(){
+  try{
+    $("#date").value = today();
+    setNotice("", "학교 정보를 불러오는 중입니다…");
+
+    const info = await getSchoolInfo();
+    SD_SCHUL_CODE = info.code;
+
+    setNotice("ok", `${info.name} 급식 조회가 준비되었습니다. 날짜를 선택해 주세요.`);
+  }catch(err){
+    setNotice("err", (err?.message) ? err.message : String(err));
+  }
+}
+
+/* 조회 */
 async function onDay(){
   if (!SD_SCHUL_CODE) {
     setNotice("err", "학교 코드가 확인되지 않았습니다. 새로고침 후 다시 시도해 주세요.");
     return;
   }
 
-  const selectedDate = $("#date").value;
-  const ymd = selectedDate.replace(/-/g,"");
-
   try{
+    const selectedDate = $("#date").value;
+    const ymd = selectedDate.replace(/-/g,"");
+
     setNotice("", "급식 정보를 불러오는 중입니다…");
-    renderLoading();
+    $("#meals").innerHTML = `<div class="notice">급식 정보를 불러오는 중입니다. 잠시만 기다려 주세요…</div>`;
 
     const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
 
@@ -760,37 +744,18 @@ async function onDay(){
     renderMeals(ymd, meals);
 
   }catch(err){
-    const msg = (err && err.message) ? err.message : String(err);
+    const msg = (err?.message) ? err.message : String(err);
 
-    // ✅ Failed to fetch 를 사용자 친화적으로 안내
-    setNotice("err",
-      msg.includes("Failed to fetch")
-        ? "조회에 실패했습니다. 네트워크 또는 Worker(CORS) 설정 문제일 수 있습니다."
-        : ("조회 중 오류가 발생했습니다: " + msg)
-    );
-
-    $("#meals").innerHTML = `
-      <div class="mealHeader">
-        <div class="title">${ymd2str(ymd)} 급식</div>
-        <div class="sub">오류</div>
-      </div>
-
-      <div class="notice err">
-        <b style="color:var(--text);">문제 해결 체크</b><br/>
-        1) Worker 주소가 정확한지 확인<br/>
-        2) Worker를 브라우저에서 직접 열어 JSON이 뜨는지 확인: <br/>
-        <span style="word-break:break-all;">${escapeHtml(WORKER_MEAL_URL)}/?date=${escapeHtml(selectedDate)}</span><br/>
-        3) 그래도 안 되면 Worker에서 CORS 헤더(Access-Control-Allow-Origin) 설정 필요
-      </div>
-
-      <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
-        <button class="btn primary" type="button" onclick="onDay()">🔁 다시 시도</button>
-        <button class="btn ghost" type="button" onclick="go('home')">닫기</button>
-      </div>
-    `;
+    // 네트워크/혼잡/키 제한 등 사용자 친화 메시지
+    if (msg.includes("Failed to fetch")) {
+      setNotice("err", "조회에 실패했습니다. 네트워크 상태를 확인한 뒤 다시 시도해 주세요.");
+    } else {
+      setNotice("err", "조회 중 오류가 발생했습니다: " + msg);
+    }
   }
 }
 
+/* 날짜 이동 */
 function moveDate(days){
   const currentDate = $("#date").value;
   const dateObj = ymdToDateObj(currentDate);
@@ -803,7 +768,7 @@ function setTodayAndLoad(){
   onDay();
 }
 
-/* ====== 복사 ====== */
+/* 복사 */
 async function copyTextReliable(text){
   try {
     if (navigator.clipboard && window.isSecureContext) {
@@ -824,18 +789,14 @@ async function copyTextReliable(text){
     return false;
   }
 }
-
 $("#btnCopy").addEventListener("click", async ()=>{
   const txt = $("#shareText").textContent || "";
-  if(!txt.trim()){
-    setNotice("err", "복사할 급식 내용이 없습니다. 먼저 조회해 주세요.");
-    return;
-  }
+  if(!txt.trim()){ setNotice("err", "복사할 급식 내용이 없습니다. 먼저 조회해 주세요."); return; }
   const ok = await copyTextReliable(txt);
   setNotice(ok ? "ok" : "err", ok ? "급식 내용이 복사되었습니다." : "복사에 실패했습니다. 다시 시도해 주세요.");
 });
 
-/* ====== 라이트/다크 ====== */
+/* 라이트/다크 */
 function applyTheme(theme){
   document.documentElement.setAttribute("data-theme", theme);
   localStorage.setItem("theme", theme);
@@ -849,7 +810,7 @@ function initTheme(){
 $("#btnLight").addEventListener("click", ()=>applyTheme("light"));
 $("#btnDark").addEventListener("click", ()=>applyTheme("dark"));
 
-/* ====== PWA 설치 ====== */
+/* PWA 설치 */
 let deferredPrompt = null;
 function isIos(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
 function isStandalone(){
@@ -939,4 +900,3 @@ window.addEventListener("load", ()=>{
 </script>
 </body>
 </html>
-```0
