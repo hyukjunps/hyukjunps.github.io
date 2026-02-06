@@ -772,6 +772,28 @@ window.addEventListener("load", ()=>{
   initTheme();
   initRoute();
   initMeals();
+
+  // ✅ 알림 버튼 상태 반영 + 예약 시작
+  updateAlarmButton();
+  scheduleMealAlarm();
+
+  // ✅ 상단 알림 토글 버튼 클릭 연결(로드 후 확실히 연결)
+  const alarmBtn = document.querySelector("#btnMealAlarmTop");
+  if (alarmBtn) {
+    alarmBtn.addEventListener("click", async ()=>{
+      if (!supportsNotification()){
+        alert("이 기기/브라우저에서는 웹 알림을 지원하지 않습니다.");
+        return;
+      }
+
+      if (isAlarmEnabled()){
+        const off = confirm("현재 7:20 급식 알림이 켜져 있습니다.\n알림을 끄시겠습니까?");
+        if (off) disableMealAlarm();
+      } else {
+        await enableMealAlarm();
+      }
+    });
+  }
 });
 /* ====== 7:20 급식 알림(상단 토글) ====== */
 const ALARM_KEY = "mealAlarmEnabled";
