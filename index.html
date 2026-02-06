@@ -65,7 +65,6 @@
     padding: 18px 14px 30px;
   }
 
-  /* === 상단부(브랜드 + 설치 + 모드) === */
   .topbar{
     position: sticky;
     top: 12px;
@@ -90,7 +89,6 @@
     min-width:0;
   }
 
-  /* iOS 앱 아이콘 느낌 */
   .logoWrap{
     width:64px; height:64px;
     border-radius: 20px;
@@ -171,7 +169,6 @@
     box-shadow: 0 10px 22px rgba(2,6,23,.06);
   }
 
-  /* === 구조 고정: 상단부 → 버튼 → 설명 === */
   .panel{
     margin-top: 16px;
     background: var(--card);
@@ -189,7 +186,6 @@
     background: color-mix(in srgb, var(--bg) 55%, transparent);
   }
 
-  /* 아래 버튼 영역(키오스크 느낌: 큰 버튼 3개) */
   .ctaGrid{
     display:grid;
     grid-template-columns: 1fr;
@@ -207,9 +203,7 @@
     justify-content:space-between;
     gap: 14px;
   }
-  .ctaLeft{
-    min-width:0;
-  }
+  .ctaLeft{ min-width:0; }
   .ctaLeft b{
     font-size: 19px;
     letter-spacing:-.3px;
@@ -222,7 +216,7 @@
     font-weight: 700;
   }
 
-  /* ✅ 버튼 크기 키움 */
+  /* ✅ 큰 버튼 */
   .bigBtn{
     border:none;
     border-radius: 20px;
@@ -234,7 +228,7 @@
     background: linear-gradient(135deg, var(--pri), var(--pri2));
     box-shadow: 0 16px 34px color-mix(in srgb, var(--pri) 22%, transparent);
     white-space:nowrap;
-    min-width: 110px;
+    min-width: 112px;
   }
   .bigBtn:active{ transform: translateY(1px); }
   .bigBtn:hover{ opacity:.96; }
@@ -243,14 +237,13 @@
     color: var(--muted);
     line-height: 1.9;
     font-size: 14.5px;
+    font-weight: 800;
   }
   .note b{ color: var(--text); }
 
-  /* 화면은 보일 때만 */
   .view{ display:none; }
   .view.active{ display:block; }
 
-  /* 급식/시간표 공용 컨트롤 */
   .controls{
     display:flex;
     gap:10px;
@@ -311,7 +304,6 @@
   #shareText{display:none;}
   #copyHelper{position:absolute;left:-9999px;top:-9999px;opacity:0;height:1px;width:1px}
 
-  /* Modal */
   .modalBack{
     position:fixed;
     inset:0;
@@ -372,7 +364,6 @@
 
 <body>
   <div class="wrap">
-    <!-- 상단부 -->
     <div class="topbar">
       <div class="brand">
         <div class="logoWrap" aria-hidden="true">
@@ -392,7 +383,6 @@
     </div>
 
     <div class="panel">
-      <!-- 아래 버튼(고정) -->
       <div class="section">
         <div class="ctaGrid">
           <div class="cta">
@@ -427,7 +417,6 @@
         </div>
       </div>
 
-      <!-- 아래 설명(고정) -->
       <div class="section">
         <div class="note">
           <b>앱 설치(PWA)</b>를 하시면 홈 화면에서 아이콘으로 바로 실행하실 수 있습니다.
@@ -454,7 +443,7 @@
           <button class="smallbtn ghost" type="button" onclick="go('home')">닫기</button>
         </div>
 
-        <div id="notice" class="notice">급식 정보를 불러오는 중입니다…</div>
+        <div id="notice" class="notice">급식 조회가 준비되었습니다.</div>
 
         <div id="allergyBox" class="notice" style="margin-top:12px;">
           <b style="color:var(--text);">⚠ 알레르기 번호 안내</b><br/>
@@ -485,7 +474,7 @@
           </div>
         </div>
 
-        <div id="ttNotice" class="notice">시간표를 불러오는 중입니다…</div>
+        <div id="ttNotice" class="notice">시간표가 준비되었습니다.</div>
         <div id="ttGrid" style="margin-top:14px;"></div>
       </div>
 
@@ -493,9 +482,6 @@
       <div class="section view" id="view-onway">
         <div class="notice">
           온웨이에듀는 풍산고등학교 상벌점·외출 관리 시스템입니다. 아래 버튼을 누르시면 새 탭에서 열립니다.
-          <div style="margin-top:8px;font-size:12.5px;">
-            ※ 일부 환경(PWA/브라우저)에서 http 사이트가 차단될 수 있어, https→http 순서로 자동 시도합니다.
-          </div>
         </div>
         <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
           <button class="btn primary" type="button" onclick="openOnway()">온웨이에듀 열기</button>
@@ -616,24 +602,11 @@ function initRoute(){
   }
 }
 
-/* ====== 온웨이에듀 (https→http fallback + 팝업차단 대응) ====== */
+/* ====== 온웨이에듀 (HTTPS ONLY) ====== */
 function openOnway(){
-  const httpsUrl = "https://ps.onwayedu.co.kr/login/login.php";
-  const httpUrl  = "https://ps.onwayedu.co.kr/login/login.php";
-
-  // 유저 클릭 이벤트 안에서 실행되므로 팝업 허용률 높음
+  const httpsUrl = "https://ps.onwayedu.co.kr";
   const w = window.open(httpsUrl, "_blank", "noopener,noreferrer");
-
-  // 팝업 차단이면 현재 탭 이동
-  if (!w) {
-    location.href = httpUrl;
-    return;
-  }
-
-  // https가 실제로 안 되는 환경이면, 새 탭에서 http로 fallback
-  setTimeout(() => {
-    try { w.location.href = httpUrl; } catch (_) {}
-  }, 800);
+  if (!w) location.href = httpsUrl; // 팝업 차단이면 현재 탭 이동
 }
 
 /* ====== NEIS fetch ====== */
@@ -666,12 +639,8 @@ function setNotice(kind, text){
 }
 
 async function initMeals(){
-  try{
-    $("#date").value = today();
-    setNotice("ok", `${SCHOOL_LABEL} 급식 조회가 준비되었습니다. 날짜를 선택해 확인해 주세요.`);
-  }catch(err){
-    setNotice("err", "초기화 중 오류가 발생했습니다: " + (err.message||err));
-  }
+  $("#date").value = today();
+  setNotice("ok", `${SCHOOL_LABEL} 급식 조회가 준비되었습니다. 날짜를 선택해 확인해 주세요.`);
 }
 
 async function onDay(){
@@ -769,7 +738,7 @@ function initTheme(){
 $("#btnLight").addEventListener("click", ()=>applyTheme("light"));
 $("#btnDark").addEventListener("click", ()=>applyTheme("dark"));
 
-/* ====== PWA 설치(상단 버튼 고정) ====== */
+/* ====== PWA 설치 ====== */
 let deferredPrompt = null;
 function isIos(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
 function isStandalone(){
@@ -918,7 +887,7 @@ function initTimetableView(){
   const cfg = ttLoadConfig();
   const data = ttLoadData(cfg.periodCount);
 
-  const day = new Date().getDay(); // 0일 1월 ... 5금 6토
+  const day = new Date().getDay();
   if (day >= 1 && day <= 5) ttCurrentDay = TT_DAYS[day-1];
 
   renderTimetable(cfg, data);
@@ -1035,17 +1004,14 @@ function applyTTConfig(){
   if(!Number.isFinite(pc)) pc = 7;
   pc = Math.max(1, Math.min(12, Math.floor(pc)));
 
-  // 기존 교시 기준 입력값 저장
   const oldCfg = ttLoadConfig();
   const oldData = ttLoadData(oldCfg.periodCount);
   ttReadInputsIntoData(oldCfg, oldData);
   ttSaveData(oldData);
 
-  // 새 교시 수 저장
   const newCfg = { periodCount: pc };
   ttSaveConfig(newCfg);
 
-  // 새 교시 수로 데이터 로드(길이 자동 보정)
   const newData = ttLoadData(newCfg.periodCount);
   renderTimetable(newCfg, newData);
 
@@ -1063,4 +1029,3 @@ window.addEventListener("load", ()=>{
 </script>
 </body>
 </html>
-```0
