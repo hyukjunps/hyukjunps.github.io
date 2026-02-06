@@ -2,237 +2,638 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="google-adsense-account" content="ca-pub-1782174943963691">
-<link rel="manifest" href="https://hyukjunps.github.io/manifest.json">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>오늘풍산</title>
 
-<title>풍산고등학교 급식 안내</title>
+<!-- PWA -->
+<link rel="manifest" href="./manifest.json">
+<meta name="theme-color" content="#1e40af" />
+<link rel="icon" href="./Android-launchericon-512-512.png">
+
 <style>
-  /* 🎨 기본 스타일 및 시인성 개선 */
-  :root { 
-    --bg: #f5f7fa; 
-    --card: #ffffff; 
-    --muted: #6b7280; 
-    --line: #e5e7eb; 
-    --pri: #1e40af; /* 진한 파랑 */
-    --pri-light: #eff6ff; /* 연한 파랑 */
-    --success: #059669; 
-    --alert: #f87171; /* 알레르기 경고 색상 */
-    --morning: #fef3c7; /* 연한 노랑 */
-    --lunch: #e0f2f1; /* 연한 청록 */
-    --dinner: #f3e8ff; /* 연한 보라 */
+  :root{
+    /* Light */
+    --bg:#f5f7fa;
+    --card:#ffffff;
+    --text:#0f172a;
+    --muted:#64748b;
+    --line:#e5e7eb;
+
+    --pri:#1e40af;
+    --pri2:#15358f;
+    --ok:#059669;
+    --warn:#b91c1c;
+
+    --morning:#fef3c7;
+    --lunch:#e0f2f1;
+    --dinner:#f3e8ff;
+
+    --shadow:0 16px 40px rgba(2,6,23,.10);
+    --shadow2:0 10px 22px rgba(2,6,23,.08);
+    --r24:24px;
+    --r18:18px;
+    --r14:14px;
+
+    --kioskMax: 980px;
   }
+
+  /* Dark */
+  html[data-theme="dark"]{
+    --bg:#0b1220;
+    --card:#0f172a;
+    --text:#e5e7eb;
+    --muted:#9ca3af;
+    --line:#243244;
+
+    --pri:#3b82f6;
+    --pri2:#2563eb;
+    --ok:#10b981;
+    --warn:#f87171;
+
+    --morning:#2a230f;
+    --lunch:#0b2a28;
+    --dinner:#221033;
+
+    --shadow:0 18px 52px rgba(0,0,0,.40);
+    --shadow2:0 10px 24px rgba(0,0,0,.30);
+  }
+
+  *{box-sizing:border-box}
   body{
     margin:0;
     background:var(--bg);
+    color:var(--text);
     font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans KR',sans-serif;
-    color: #1f2937;
   }
-  .wrap{max-width:860px;margin:24px auto;padding:0 16px}
-  .panel{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:16px;
-    box-shadow:0 8px 24px rgba(0,0,0,.08);
+
+  .wrap{
+    max-width: var(--kioskMax);
+    margin: 0 auto;
+    padding: 18px 14px 26px;
   }
-  .head{padding:18px}
-  h1{margin:0;font-size:22px;color:#111;text-align:center}
-  
-  /* 날짜 선택 및 이동 버튼 영역 */
-  .bar{
+
+  /* Top */
+  .topbar{
+    position: sticky;
+    top: 10px;
+    z-index: 20;
     display:flex;
-    gap:8px; 
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding: 14px 14px;
+    background: color-mix(in srgb, var(--card) 88%, transparent);
+    border: 1px solid var(--line);
+    border-radius: var(--r24);
+    box-shadow: var(--shadow2);
+    backdrop-filter: blur(10px);
+  }
+
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:0;
+  }
+  .logo{
+    width:44px;height:44px;border-radius:16px;
+    border:1px solid var(--line);
+    background:#fff;
+    object-fit:cover;
+    flex:0 0 auto;
+  }
+  html[data-theme="dark"] .logo{ background:#0b1220; }
+
+  .brandText{
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+  .brandText b{
+    font-size:18px;
+    letter-spacing:-.3px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .brandText span{
+    margin-top:2px;
+    font-size:13px;
+    color:var(--muted);
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .actions{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    justify-content:flex-end;
+    align-items:center;
+  }
+
+  .btn, button.btn{
+    border:1px solid transparent;
+    border-radius: 18px;
+    padding: 12px 14px;
+    font-size: 14.5px;
+    font-weight: 900;
+    cursor:pointer;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    user-select:none;
+    text-decoration:none;
+    transition: transform .08s ease, opacity .15s ease;
+    white-space:nowrap;
+  }
+  .btn:active{ transform: translateY(1px); }
+  .btn:hover{ opacity:.95; }
+
+  .btn.primary{
+    color:#fff;
+    background: linear-gradient(135deg, var(--pri), var(--pri2));
+    box-shadow: 0 12px 26px color-mix(in srgb, var(--pri) 25%, transparent);
+  }
+  .btn.ok{
+    color:#fff;
+    background: linear-gradient(135deg, var(--ok), color-mix(in srgb, var(--ok) 70%, #000));
+    box-shadow: 0 12px 26px color-mix(in srgb, var(--ok) 18%, transparent);
+  }
+  .btn.ghost{
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+    color: var(--text);
+    border-color: var(--line);
+    box-shadow: 0 10px 22px rgba(2,6,23,.06);
+  }
+
+  /* Kiosk hero */
+  .hero{
+    margin-top: 16px;
+    background: var(--card);
+    border:1px solid var(--line);
+    border-radius: var(--r24);
+    box-shadow: var(--shadow);
+    overflow:hidden;
+  }
+  .heroHead{
+    padding: 18px 16px 14px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:12px;
+    flex-wrap:wrap;
+  }
+  .heroTitle{
+    min-width: 240px;
+    flex: 1 1 auto;
+  }
+  .heroTitle h1{
+    margin:0;
+    font-size: 26px;
+    letter-spacing:-.5px;
+  }
+  .heroTitle p{
+    margin: 10px 0 0;
+    color: var(--muted);
+    line-height: 1.85;
+    font-size: 15px;
+    max-width: 72ch;
+  }
+
+  .kioskGrid{
+    padding: 16px;
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  @media (min-width: 860px){
+    .kioskGrid{ grid-template-columns: 1fr 1fr; }
+    .heroTitle h1{ font-size: 28px; }
+  }
+
+  .tile{
+    border:1px solid var(--line);
+    border-radius: var(--r24);
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+    box-shadow: 0 10px 24px rgba(2,6,23,.06);
+    padding: 18px;
+    display:flex;
+    flex-direction:column;
+    gap: 12px;
+    min-height: 190px;
+  }
+  .tileTop{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+  }
+  .tileTop b{
+    font-size: 18px;
+    letter-spacing:-.3px;
+  }
+  .badge{
+    font-size: 12px;
+    font-weight: 900;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--pri) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--pri) 20%, var(--line));
+    color: var(--pri);
+    white-space:nowrap;
+  }
+
+  .tile p{
+    margin:0;
+    color: var(--muted);
+    line-height: 1.85;
+    font-size: 14.5px;
+  }
+  .tile .tileBtns{
+    margin-top:auto;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  /* View switching */
+  .view{ display:none; padding: 16px; border-top:1px solid var(--line); background: color-mix(in srgb, var(--bg) 50%, transparent); }
+  .view.active{ display:block; }
+
+  /* Meal UI */
+  .controls{
+    display:flex;
+    gap:10px;
     flex-wrap:wrap;
     justify-content:center;
-    padding:16px 16px 20px;
-    border-bottom:1px solid var(--line);
-  }
-  /* input, button 기본 스타일 */
-  input[type="date"],button{
-    font-size:15px;
-    padding:10px 14px;
+    padding: 14px;
     border:1px solid var(--line);
-    border-radius:12px;
-    background:#fff;
-    transition: all 0.2s;
+    border-radius: var(--r24);
+    background: var(--card);
+    box-shadow: var(--shadow2);
   }
-  /* ✨ 버튼 색상 통일: navBtn 외 일반 버튼도 pri 색상 적용 */
-  button{background:var(--pri);color:#fff;border:none;cursor:pointer}
-  button:hover{opacity:0.9}
-  .copyBtn{background:var(--success)!important}
-  
-  /* 🎁 카드 디자인 개선 */
-  .card{
-    background:var(--card);
-    border:1px solid var(--line);
-    border-radius:12px;
-    padding:16px;
-    margin:16px;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+  input[type="date"], .smallbtn{
+    font-size: 15px;
+    padding: 12px 14px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+    color: var(--text);
   }
-  .muted{color:var(--muted)}
-  .ok{background:#d1fae5;border:1px solid #6ee7b7;color:#065f46}
-  .err{background:#fee2e2;border:1px solid #fca5a5;color:#991b1b}
+  .smallbtn{
+    border:none;
+    color:#fff;
+    font-weight: 950;
+    cursor:pointer;
+    background: linear-gradient(135deg, var(--pri), var(--pri2));
+  }
+  .smallbtn.ok{ background: linear-gradient(135deg, var(--ok), color-mix(in srgb, var(--ok) 70%, #000)); }
+  .smallbtn:hover{ opacity:.95; }
+
+  .notice{
+    margin-top: 14px;
+    border: 1px solid var(--line);
+    border-radius: var(--r24);
+    padding: 14px;
+    background: var(--card);
+    color: var(--muted);
+    line-height: 1.85;
+  }
+  .notice.ok{
+    border-color: color-mix(in srgb, var(--ok) 35%, var(--line));
+    background: color-mix(in srgb, var(--ok) 12%, var(--card));
+    color: color-mix(in srgb, var(--ok) 70%, var(--text));
+  }
+  .notice.err{
+    border-color: color-mix(in srgb, var(--warn) 35%, var(--line));
+    background: color-mix(in srgb, var(--warn) 12%, var(--card));
+    color: color-mix(in srgb, var(--warn) 70%, var(--text));
+  }
+
+  .meta{
+    margin-top: 14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .meta .date{
+    font-size: 18px;
+    font-weight: 950;
+    letter-spacing:-.3px;
+  }
   .pill{
     display:inline-block;
-    margin-left:8px;
-    padding:4px 10px;
-    border-radius:999px;
-    background:var(--pri-light);
-    color:var(--pri);
-    font-size:13px;
-    font-weight: 600;
+    margin-top:8px;
+    padding: 6px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--pri) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--pri) 20%, var(--line));
+    color: var(--pri);
+    font-weight: 950;
+    font-size: 12px;
   }
-  .allergy-pill {
-    display: inline-block;
-    margin-top: 8px;
-    padding: 4px 10px;
-    border-radius: 6px;
-    background: #fee2e2;
-    color: var(--alert);
+  .allergy{
+    margin-top: 12px;
+    padding: 10px 12px;
+    border-radius: 18px;
+    border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--line));
+    background: color-mix(in srgb, var(--warn) 10%, var(--card));
+    color: color-mix(in srgb, var(--warn) 70%, var(--text));
+    font-weight: 900;
     font-size: 13px;
-    font-weight: 600;
+    line-height: 1.75;
   }
-     
-  /* ⭐ 학교 정보 카드 축소 및 간결화 스타일 */
-  #schoolInfoCard {
-      padding: 12px 16px; 
-      margin: 10px 16px; 
+
+  .meals{ margin-top: 14px; }
+  .meal{
+    display:flex;
+    gap: 14px;
+    padding: 16px;
+    border-radius: var(--r24);
+    border:1px solid var(--line);
+    box-shadow: 0 8px 18px rgba(2,6,23,.05);
+    margin-bottom: 12px;
+    background: var(--card);
   }
-  #schoolInfoCard strong {
-      display: none; 
+  .meal.morning{ background: color-mix(in srgb, var(--morning) 85%, var(--card)); }
+  .meal.lunch{ background: color-mix(in srgb, var(--lunch) 85%, var(--card)); }
+  .meal.dinner{ background: color-mix(in srgb, var(--dinner) 85%, var(--card)); }
+
+  .icon{ font-size: 30px; flex:0 0 auto; }
+  .meal h3{ margin:0; font-size:18px; font-weight:950; }
+  .meal ul{ margin: 10px 0 0; padding:0; list-style:none; line-height:1.85; }
+  .meal li{ position:relative; padding-left: 14px; }
+  .meal li::before{ content:"•"; position:absolute; left:0; color: var(--muted); font-weight: 950; }
+
+  /* Modal */
+  .modalBack{
+    position:fixed;
+    inset:0;
+    background: rgba(0,0,0,.45);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding: 16px;
+    z-index: 50;
   }
-  #schoolInfo {
-      text-align: center;
-      font-size: 14px; 
-      line-height: 1.4;
-      margin-top: 0 !important;
+  .modal{
+    width:min(720px, 100%);
+    background: var(--card);
+    border:1px solid var(--line);
+    border-radius: var(--r24);
+    box-shadow: var(--shadow);
+    overflow:hidden;
   }
-  #schoolInfo b {
-      font-size: 16px; 
+  .modalHead{
+    padding: 16px;
+    border-bottom:1px solid var(--line);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:10px;
   }
-  
-  /* 🍚 급식 메뉴 카드 (가장 중요한 부분) */
-  .meal-item {
-    display: flex;
-    margin: 16px 0; 
-    padding: 18px; 
-    border-radius: 12px;
-    border: 1px solid #e0e7ee;
-  }
-  .meal-item.morning { background: var(--morning); }
-  .meal-item.lunch { background: var(--lunch); }
-  .meal-item.dinner { background: var(--dinner); }
-  
-  .meal-icon {
-    font-size: 28px; 
-    margin-right: 15px;
-    flex-shrink: 0;
-  }
-  .meal-content strong { font-size: 18px; font-weight: 700; } 
-  .meal-content ul {
-    list-style: none;
-    padding: 0;
-    margin: 8px 0 0 0;
-    line-height: 1.7;
-    font-size: 16px; 
-  }
-  .meal-content ul li::before {
-    content: "•";
+  .modalHead b{ font-size: 16px; letter-spacing:-.2px; }
+  .modalBody{
+    padding: 16px;
     color: var(--muted);
-    font-weight: bold;
-    display: inline-block;
-    width: 1em;
-    margin-left: -1em;
+    line-height: 1.9;
+    font-size: 14.5px;
   }
-  
-  /* ✨ 피드백 반영 (설문 5번): 복사용 텍스트 영역을 시각적으로 숨김 */
-  #shareText{display: none;}
-  
-  /* 숨은 텍스트영역(폴백용) */
+  .steps{
+    margin: 12px 0 0;
+    padding:0;
+    list-style:none;
+  }
+  .steps li{
+    border:1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px 12px;
+    margin-top: 10px;
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+  }
+  .steps li b{ color: var(--text); }
+  .modalFoot{
+    padding: 14px 16px;
+    border-top:1px solid var(--line);
+    display:flex;
+    justify-content:flex-end;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+
+  /* Hide share text */
+  #shareText{display:none;}
   #copyHelper{position:absolute;left:-9999px;top:-9999px;opacity:0;height:1px;width:1px}
 </style>
 </head>
+
 <body>
   <div class="wrap">
-    <div class="panel">
-      <div class="head"><h1>🏫 풍산고등학교 급식 안내 서비스</h1></div>
-     
-      <div class="bar">
-        <button id="btnPrevDay" type="button" class="navBtn">◀ 어제</button>
-        <input type="date" id="date" />
-        <button id="btnNextDay" type="button" class="navBtn">내일 ▶</button>
-        <button id="btnDay" type="button">선택일 조회</button>
-      </div>
-     
-      <div id="notice" class="card muted">초기화 중…</div>
-     
-      <div id="schoolInfoCard" class="card" style="display:none">
-        <strong>📌 학교 기본 정보</strong> <div id="schoolInfo"></div>
-      </div>
-      
-      <div id="mainContentCard" class="card" style="display:none">
-        <div style="display:flex;justify-content:space-between;align-items:center; margin-bottom: 12px;">
-          <strong>🍽 <span id="displayDate"></span> 급식 정보</strong>
-          <button id="btnCopy" class="copyBtn" type="button">복사</button>
+    <div class="topbar">
+      <div class="brand">
+        <img class="logo" src="./Android-launchericon-512-512.png" alt="오늘풍산 로고">
+        <div class="brandText">
+          <b>오늘풍산</b>
+          <span>급식 · 온웨이에듀 · 설치형(PWA) 빠른 이용</span>
         </div>
-        
-        <div class="allergy-pill">
-            ⚠ 알레르기 번호: (1.난류 2.우유 3.메밀 4.땅콩 5.대두 6.밀 7.고등어 8.게 9.새우 10.돼지고기 11.복숭아 12.토마토 13.아황산염 14.호두 15.닭고기 16.쇠고기 17.오징어 18.조개류(굴, 전복, 홍합 등))
-        </div>
-     
-        <div id="meals" class="muted" style="margin-top:12px">-</div>
-        
-        <div id="shareText"></div> 
       </div>
-     
-      <div class="foot">데이터 출처: NEIS(나이스) OpenAPI · 경북교육청 R10</div>
+
+      <div class="actions">
+        <button id="btnInstall" class="btn ok" type="button" style="display:none;">📲 설치 안내</button>
+
+        <!-- 라이트/다크 모드 -->
+        <button id="btnLight" class="btn ghost" type="button" aria-label="라이트 모드">☀ 라이트</button>
+        <button id="btnDark" class="btn ghost" type="button" aria-label="다크 모드">🌙 다크</button>
+      </div>
+    </div>
+
+    <div class="hero">
+      <!-- 시작 화면(키오스크) -->
+      <div class="heroHead">
+        <div class="heroTitle">
+          <h1>필요한 정보만, 신속하고 품격 있게 안내해 드립니다.</h1>
+          <p>
+            아래 버튼을 선택하시면 원하시는 기능으로 바로 이동합니다.
+            설치형(PWA)으로 추가하시면 홈 화면에서 앱처럼 더 빠르게 이용하실 수 있습니다.
+          </p>
+        </div>
+      </div>
+
+      <div class="kioskGrid" id="home">
+        <div class="tile">
+          <div class="tileTop">
+            <b>🍽 급식</b>
+            <span class="badge">NEIS OpenAPI</span>
+          </div>
+          <p>날짜를 선택하시면 조식·중식·석식을 보기 좋게 정리해 보여 드립니다.</p>
+          <div class="tileBtns">
+            <button class="btn primary" type="button" onclick="go('meal'); setTodayAndLoad();">급식 확인하기</button>
+          </div>
+        </div>
+
+        <div class="tile">
+          <div class="tileTop">
+            <b>🔐 온웨이에듀</b>
+            <span class="badge">새 탭 열기</span>
+          </div>
+          <p>외부 로그인 사이트이므로, 선택 시 새 탭에서 안전하게 열립니다.</p>
+          <div class="tileBtns">
+            <button class="btn primary" type="button" onclick="go('onway')">온웨이에듀로 이동</button>
+          </div>
+        </div>
+
+        <div class="tile" style="grid-column:1/-1;">
+          <div class="tileTop">
+            <b>📲 설치형(PWA) 이용 안내</b>
+            <span class="badge">홈 화면 추가</span>
+          </div>
+          <p>
+            설치 후에는 홈 화면에서 아이콘을 눌러 바로 실행하실 수 있습니다.
+            아래 버튼을 누르시면 기기별 설치 방법을 안내해 드립니다.
+          </p>
+          <div class="tileBtns">
+            <button id="btnGuide" class="btn ok" type="button">설치 방법 보기</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 급식 화면 -->
+      <div class="view" id="view-meal">
+        <div class="controls">
+          <button class="smallbtn" type="button" onclick="moveDate(-1)">◀ 어제</button>
+          <input type="date" id="date" />
+          <button class="smallbtn" type="button" onclick="moveDate(1)">내일 ▶</button>
+          <button class="smallbtn" type="button" onclick="onDay()">조회</button>
+          <button class="smallbtn ok" type="button" id="btnCopy">복사</button>
+          <button class="smallbtn" type="button" onclick="go('home')">처음으로</button>
+        </div>
+
+        <div id="notice" class="notice">학교 정보를 불러오는 중입니다…</div>
+
+        <div class="meta" id="meta" style="display:none;">
+          <div>
+            <div class="date" id="displayDate"></div>
+            <div class="pill" id="schoolBadge"></div>
+          </div>
+        </div>
+
+        <div class="allergy" id="allergyBox" style="display:none;">
+          ⚠ 알레르기 번호: 1 난류 · 2 우유 · 3 메밀 · 4 땅콩 · 5 대두 · 6 밀 · 7 고등어 · 8 게 · 9 새우 · 10 돼지고기 · 11 복숭아 · 12 토마토 · 13 아황산염 · 14 호두 · 15 닭고기 · 16 쇠고기 · 17 오징어 · 18 조개류
+        </div>
+
+        <div class="meals" id="meals"></div>
+        <div id="shareText"></div>
+      </div>
+
+      <!-- 온웨이에듀 화면 -->
+      <div class="view" id="view-onway">
+        <div class="notice">
+          온웨이에듀는 풍산고등학교 상벌점, 외출 관리 시스템입니다. 아래 버튼을 누르시면 새 탭에서 열립니다.
+        </div>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+          <button class="btn primary" type="button" onclick="openOnway()">온웨이에듀 열기</button>
+          <button class="btn ghost" type="button" onclick="go('home')">처음으로</button>
+        </div>
+      </div>
+
+      <div style="text-align:center;color:var(--muted);font-size:12.5px;padding:14px 10px 18px;">
+        데이터 출처: NEIS OpenAPI
+      </div>
     </div>
   </div>
-     
+
   <textarea id="copyHelper" aria-hidden="true"></textarea>
-     
+
+  <!-- 설치 방법 모달 -->
+  <div id="modalBack" class="modalBack" role="dialog" aria-modal="true" aria-label="설치 안내">
+    <div class="modal">
+      <div class="modalHead">
+        <b>앱 설치 방법 안내</b>
+        <button class="btn ghost" type="button" onclick="closeModal()">닫기</button>
+      </div>
+      <div class="modalBody">
+        <div>
+          본 서비스는 앱 설치를 지원합니다. 설치하시면 홈 화면에서 앱처럼 더 빠르게 실행하실 수 있습니다.
+        </div>
+
+        <ul class="steps" id="installSteps"></ul>
+
+        <div style="margin-top:12px;">
+          <b style="color:var(--text);">설치 버튼이 보이는 경우</b><br/>
+          주소창 또는 메뉴에 “설치”가 표시될 수 있습니다. 해당 버튼을 선택하시면 바로 설치가 진행됩니다.
+        </div>
+      </div>
+      <div class="modalFoot">
+        <button id="btnInstallNow" class="btn ok" type="button" style="display:none;">지금 설치하기</button>
+        <button class="btn ghost" type="button" onclick="closeModal()">확인</button>
+      </div>
+    </div>
+  </div>
+
 <script>
 /* ====== 고정값 ====== */
 const API_KEY = "c5eac2fb880e4aa185e7957a756dd126";
 const ATPT = "R10";
 const SCHOOL_NAME = "풍산고등학교";
-     
+
 /* ====== 유틸 ====== */
 const $ = s => document.querySelector(s);
 const escapeHtml = s => String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;' }[m]));
 const ymd2str = ymd => `${ymd.slice(0,4)}년 ${ymd.slice(4,6)}월 ${ymd.slice(6,8)}일`;
 const getMealClass = type => {
-    if (type.includes("조식") || type.includes("아침")) return "morning";
-    if (type.includes("중식") || type.includes("점심")) return "lunch";
-    if (type.includes("석식") || type.includes("저녁")) return "dinner";
-    return "";
+  if (type.includes("조식") || type.includes("아침")) return "morning";
+  if (type.includes("중식") || type.includes("점심")) return "lunch";
+  if (type.includes("석식") || type.includes("저녁")) return "dinner";
+  return "";
 };
-     
+function getMealIcon(type) {
+  if (type.includes("조식") || type.includes("아침")) return "☀";
+  if (type.includes("중식") || type.includes("점심")) return "🍚";
+  if (type.includes("석식") || type.includes("저녁")) return "🌙";
+  return "🍽";
+}
+
 function dateToYMD(dateObj) {
   const y=dateObj.getFullYear(),m=("0"+(dateObj.getMonth()+1)).slice(-2),d=("0"+dateObj.getDate()).slice(-2);
   return `${y}-${m}-${d}`;
 }
-     
 function ymdToDateObj(ymdStr) {
-    const [y, m, d] = ymdStr.split('-');
-    return new Date(y, m - 1, d);
+  const [y, m, d] = ymdStr.split('-');
+  return new Date(y, m - 1, d);
 }
-     
-function today() {
-  return dateToYMD(new Date());
+function today() { return dateToYMD(new Date()); }
+
+/* ====== 화면 전환 ====== */
+function go(view){
+  const home = $("#home");
+  const meal = $("#view-meal");
+  const onway = $("#view-onway");
+
+  home.style.display = (view === "home") ? "grid" : "none";
+  meal.classList.toggle("active", view === "meal");
+  onway.classList.toggle("active", view === "onway");
+
+  history.replaceState(null, "", `#${view}`);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
-     
-/* 날짜 이동 핸들러 */
-function moveDate(days) {
-    const currentDate = $("#date").value;
-    const dateObj = ymdToDateObj(currentDate);
-    dateObj.setDate(dateObj.getDate() + days);
-    $("#date").value = dateToYMD(dateObj);
-    onDay();
+
+function initRoute(){
+  const h = (location.hash || "#home").replace("#","");
+  if (h === "meal" || h === "onway" || h === "home") go(h);
+  else go("home");
 }
-     
-     
+
+/* ====== 온웨이에듀 ====== */
+function openOnway(){
+  window.open("https://ps.onwayedu.co.kr/login/login.php", "_blank", "noopener,noreferrer");
+}
+
 /* ====== NEIS fetch ====== */
 async function neis(endpoint, params) {
   const base = `https://open.neis.go.kr/hub/${endpoint}`;
@@ -242,145 +643,139 @@ async function neis(endpoint, params) {
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   return res.json();
 }
-     
+
 /* 학교 기본정보 */
 async function getSchoolInfo() {
   const data = await neis("schoolInfo", { ATPT_OFCDC_SC_CODE: ATPT, SCHUL_NM: SCHOOL_NAME });
   const row = data?.schoolInfo?.[1]?.row?.[0];
-  if (!row) throw new Error("학교 정보 없음");
-  return { 
-    code: row.SD_SCHUL_CODE, 
-    name: row.SCHUL_NM, 
-    kind: row.SCHUL_KND_SC_NM, 
-    fond: row.FOND_SC_NM, 
-    addr: row.ORG_RDNMA, 
-    tel: row.ORG_TELNO,
-    url: row.HOMEPAGE_URL || '#'
+  if (!row) throw new Error("학교 정보를 찾지 못했습니다.");
+  return {
+    code: row.SD_SCHUL_CODE,
+    name: row.SCHUL_NM,
+    kind: row.SCHUL_KND_SC_NM,
+    fond: row.FOND_SC_NM
   };
 }
-     
+
 /* 하루 급식 */
 async function fetchMealsDay(sdCode, ymd) {
   const data = await neis("mealServiceDietInfo", { ATPT_OFCDC_SC_CODE: ATPT, SD_SCHUL_CODE: sdCode, MLSV_YMD: ymd });
   const rows = data?.mealServiceDietInfo?.[1]?.row || [];
   rows.sort((a,b)=>String(a.MMEAL_SC_CODE||"").localeCompare(String(b.MMEAL_SC_CODE||"")));
   return rows.map(r => {
-    // 알레르기 정보를 포함한 메뉴 리스트
-    const fullMenu = String(r.DDISH_NM||"").replace(/<br\s*\/?>/gi,"\n").split("\n").map(s=>s.trim()).filter(Boolean);
-    
+    const fullMenu = String(r.DDISH_NM||"")
+      .replace(/<br\s*\/?>/gi,"\n")
+      .split("\n").map(s=>s.trim()).filter(Boolean);
     return {
       type: r.MMEAL_SC_NM || "",
       cal: r.CAL_INFO || "",
-      // 메뉴 항목별로 알레르기 번호가 포함된 원본 리스트 사용
       menuWithAllergy: fullMenu
     };
   });
 }
-     
-/* ====== UI/로직 ====== */
+
 let SD_SCHUL_CODE = null;
-     
-function getMealIcon(type) {
-    if (type.includes("조식") || type.includes("아침")) return "☀";
-    if (type.includes("중식") || type.includes("점심")) return "🍚";
-    if (type.includes("석식") || type.includes("저녁")) return "🌙";
-    return "🍽";
+
+function setNotice(kind, text){
+  const box = $("#notice");
+  box.className = "notice" + (kind ? ` ${kind}` : "");
+  box.textContent = text;
 }
-     
-     
-async function init() {
+
+async function initMeals() {
   try {
     $("#date").value = today();
-    $("#notice").textContent = "학교 정보 불러오는 중…";
+    setNotice("", "학교 정보를 불러오는 중입니다…");
+
     const info = await getSchoolInfo();
     SD_SCHUL_CODE = info.code;
-     
-    $("#schoolInfoCard").style.display = "block";
-    
-    // ⭐ 학교 기본 정보 최소화: 학교 이름, 종류, 설립 구분만 표시
-    $("#schoolInfo").innerHTML = `
-      <b>${escapeHtml(info.name)}</b> (${escapeHtml(info.kind)})
-      <span class="pill">${escapeHtml(info.fond)}</span>
-    `;
-     
-    $("#notice").className="card ok";
-    $("#notice").textContent = `${info.name} 정보 확인 완료. 오늘의 급식 정보를 자동으로 조회합니다.`;
-     
+
+    $("#meta").style.display = "flex";
+    $("#allergyBox").style.display = "block";
+    $("#schoolBadge").textContent = `${escapeHtml(info.name)} · ${escapeHtml(info.kind)} · ${escapeHtml(info.fond)}`;
+
+    setNotice("ok", "준비가 완료되었습니다. 날짜를 선택하시면 급식을 확인하실 수 있습니다.");
     await onDay();
   } catch (err) {
-    $("#notice").className="card err";
-    $("#notice").textContent = "초기화 오류: "+(err.message||err);
+    setNotice("err", "초기화 중 오류가 발생했습니다: " + (err.message||err));
   }
 }
-     
+
 async function onDay() {
   if (!SD_SCHUL_CODE) {
-    $("#notice").className="card err";
-    $("#notice").textContent = "학교 코드가 확인되지 않았습니다. 새로고침 후 다시 시도해 주세요.";
+    setNotice("err", "학교 코드가 확인되지 않았습니다. 새로고침 후 다시 시도해 주세요.");
     return;
   }
-  
+
   try {
     const selectedDate = $("#date").value;
     const ymd = selectedDate.replace(/-/g,"");
-    
-    $("#mainContentCard").style.display="block";
+
     $("#displayDate").textContent = ymd2str(ymd);
-    
-    // 급식 조회 UI 업데이트
-    $("#meals").innerHTML="<span class='muted'>급식 정보 불러오는 중…</span>";
-    
-    // 1. 급식 정보 조회
+    $("#meals").innerHTML = `<div class="notice">급식 정보를 불러오는 중입니다. 잠시만 기다려 주세요…</div>`;
+
     const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
-     
-    // --- 급식 표시 ---
+
     if(!meals.length){
-      $("#meals").innerHTML="<div class='muted'>급식 정보 없음</div>";
-      $("#shareText").textContent="";
-    } else {
-      $("#meals").innerHTML=meals.map(m=>{
-        const mealClass = getMealClass(m.type);
-        const icon = getMealIcon(m.type);
-        return `<div class="meal-item ${mealClass}">
-          <div class="meal-icon">${icon}</div>
-          <div class="meal-content">
-            <strong>${escapeHtml(m.type)}</strong>${m.cal?` <span class="pill">${escapeHtml(m.cal)}</span>`:""}
-            <ul>${m.menuWithAllergy.map(x=>`<li>${escapeHtml(x)}`).join("")}</ul> 
-          </div>
-        </div>`;
-      }).join("");
-     
-      // 전송/복사용 텍스트 (시각적으로는 숨겨져 있음)
-      let txt = `[풍산고등학교] ${ymd2str(ymd)} 급식\n`;
-      meals.forEach(m=>{
-        txt += `\n[${m.type}] ${m.cal||""}\n- ${m.menuWithAllergy.join("\n- ")}\n`;
-      });
-      $("#shareText").textContent = txt.trim();
+      $("#meals").innerHTML = `<div class="notice">선택하신 날짜에는 급식 정보가 없습니다. (휴일/방학/미제공일 수 있습니다)</div>`;
+      $("#shareText").textContent = "";
+      return;
     }
-    
+
+    $("#meals").innerHTML = meals.map(m=>{
+      const mealClass = getMealClass(m.type);
+      const icon = getMealIcon(m.type);
+      return `<div class="meal ${mealClass}">
+        <div class="icon">${icon}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <h3>${escapeHtml(m.type)}</h3>
+            ${m.cal ? `<span class="pill">${escapeHtml(m.cal)}</span>` : ""}
+          </div>
+          <ul>${m.menuWithAllergy.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+        </div>
+      </div>`;
+    }).join("");
+
+    let txt = `[풍산고등학교] ${ymd2str(ymd)} 급식\n`;
+    meals.forEach(m=>{
+      txt += `\n[${m.type}] ${m.cal||""}\n- ${m.menuWithAllergy.join("\n- ")}\n`;
+    });
+    $("#shareText").textContent = txt.trim();
+
   } catch(err){
-    $("#notice").className="card err";
-    $("#notice").textContent="조회 오류: "+(err.message||err);
+    setNotice("err", "조회 중 오류가 발생했습니다: " + (err.message||err));
   }
 }
-     
-/* 신뢰성 높은 복사 함수 */
+
+function moveDate(days) {
+  const currentDate = $("#date").value;
+  const dateObj = ymdToDateObj(currentDate);
+  dateObj.setDate(dateObj.getDate() + days);
+  $("#date").value = dateToYMD(dateObj);
+  onDay();
+}
+
+function setTodayAndLoad(){
+  $("#date").value = today();
+  onDay();
+}
+
+/* 복사 */
 async function copyTextReliable(text) {
-  // 1) 최신 API (가능하면 이걸로)
   try {
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(text);
       return true;
     }
-  } catch (_) { /* 무시하고 폴백 */ }
-     
-  // 2) 폴백: 숨은 textarea 선택 후 복사
+  } catch (_) {}
+
   try {
     const ta = $("#copyHelper");
     ta.value = text;
     ta.focus();
     ta.select();
-    ta.setSelectionRange(0, ta.value.length); // iOS 대응
+    ta.setSelectionRange(0, ta.value.length);
     const ok = document.execCommand("copy");
     ta.blur();
     return ok;
@@ -388,29 +783,115 @@ async function copyTextReliable(text) {
     return false;
   }
 }
-     
-document.addEventListener("DOMContentLoaded",()=>{
-  $("#btnDay").addEventListener("click", onDay);
-  
-  // 날짜 이동 버튼 이벤트 리스너
-  $("#btnPrevDay").addEventListener("click", () => moveDate(-1));
-  $("#btnNextDay").addEventListener("click", () => moveDate(1));
-  
-  // 날짜 변경 시 자동 조회
-  $("#date").addEventListener("change", onDay);
-     
-  // 복사 버튼 클릭 시
-  $("#btnCopy").addEventListener("click", async ()=>{
-    const txt = $("#shareText").textContent || "";
-    if(!txt.trim()){ alert("복사할 급식 내용이 없습니다."); return; }
-    const ok = await copyTextReliable(txt);
-    const btn = $("#btnCopy");
-    const old = btn.textContent;
-    btn.textContent = ok ? "✅ 복사됨!" : "❌ 복사 실패";
-    setTimeout(()=>{ btn.textContent = old; }, 1500);
+
+$("#btnCopy").addEventListener("click", async ()=>{
+  const txt = $("#shareText").textContent || "";
+  if(!txt.trim()){ alert("복사할 급식 내용이 없습니다. 먼저 급식을 조회해 주세요."); return; }
+  const ok = await copyTextReliable(txt);
+  alert(ok ? "급식 내용이 복사되었습니다." : "복사에 실패했습니다. 다시 시도해 주세요.");
+});
+
+/* ====== 라이트/다크 모드 ====== */
+function applyTheme(theme){
+  document.documentElement.setAttribute("data-theme", theme);
+  localStorage.setItem("theme", theme);
+  // theme-color도 같이 맞추기
+  const meta = document.querySelector('meta[name="theme-color"]');
+  meta.setAttribute("content", theme === "dark" ? "#0b1220" : "#1e40af");
+}
+function initTheme(){
+  const saved = localStorage.getItem("theme");
+  if(saved === "dark" || saved === "light") applyTheme(saved);
+}
+$("#btnLight").addEventListener("click", ()=>applyTheme("light"));
+$("#btnDark").addEventListener("click", ()=>applyTheme("dark"));
+
+/* ====== PWA 설치 안내(모달 + 설치 버튼) ====== */
+let deferredPrompt = null;
+
+function isIos(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
+function isStandalone(){
+  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+
+function openModal(){
+  $("#modalBack").style.display = "flex";
+  renderInstallSteps();
+}
+function closeModal(){
+  $("#modalBack").style.display = "none";
+}
+
+function renderInstallSteps(){
+  const ul = $("#installSteps");
+  ul.innerHTML = "";
+
+  const steps = [];
+
+  if (isStandalone()){
+    steps.push({ t: "이미 설치되어 있습니다.", d: "홈 화면의 ‘오늘풍산’ 아이콘으로 바로 실행하실 수 있습니다." });
+  } else if (isIos()){
+    steps.push({ t: "iPhone / iPad (Safari)", d: "Safari에서 본 페이지를 여신 뒤, 하단의 공유 버튼(⬆️)을 선택해 주세요." });
+    steps.push({ t: "홈 화면에 추가", d: "메뉴에서 “홈 화면에 추가”를 선택하시면 설치가 완료됩니다." });
+    steps.push({ t: "실행", d: "홈 화면에 생성된 ‘오늘풍산’ 아이콘으로 실행하실 수 있습니다." });
+  } else {
+    steps.push({ t: "Android (Chrome/Edge)", d: "주소창 오른쪽 또는 브라우저 메뉴(⋮)에 “앱 설치/설치” 항목이 표시되는지 확인해 주세요." });
+    steps.push({ t: "설치 진행", d: "“설치”를 선택하시면 홈 화면에 아이콘이 추가됩니다." });
+    steps.push({ t: "설치 버튼이 보이지 않는 경우", d: "브라우저를 Chrome/Edge로 변경하거나, 새로고침 후 다시 확인해 주세요." });
+  }
+
+  steps.forEach(s=>{
+    const li = document.createElement("li");
+    li.innerHTML = `<b>${escapeHtml(s.t)}</b><div style="margin-top:6px;">${escapeHtml(s.d)}</div>`;
+    ul.appendChild(li);
   });
-  
-  init();
+
+  // 즉시 설치 가능(deferredPrompt 있음)하면 모달 하단 버튼 노출
+  $("#btnInstallNow").style.display = deferredPrompt ? "inline-flex" : "none";
+}
+
+$("#btnGuide").addEventListener("click", openModal);
+$("#modalBack").addEventListener("click", (e)=>{
+  if(e.target === $("#modalBack")) closeModal();
+});
+
+window.addEventListener("beforeinstallprompt", (e)=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  // 상단 설치 버튼 노출
+  $("#btnInstall").style.display = isStandalone() ? "none" : "inline-flex";
+  renderInstallSteps();
+});
+
+$("#btnInstall").addEventListener("click", openModal);
+
+$("#btnInstallNow").addEventListener("click", async ()=>{
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  await deferredPrompt.userChoice.catch(()=>{});
+  deferredPrompt = null;
+  $("#btnInstallNow").style.display = "none";
+  $("#btnInstall").style.display = "none";
+  renderInstallSteps();
+});
+
+/* ====== Service Worker 등록 ====== */
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./service-worker.js");
+  });
+}
+
+/* ====== 시작 ====== */
+window.addEventListener("load", ()=>{
+  initTheme();
+  initRoute();
+  initMeals();
+
+  // iOS는 beforeinstallprompt가 없을 수 있으므로, 설치 버튼은 항상 안내용으로 보여드림(설치되어 있지 않을 때)
+  if(!isStandalone() && isIos()){
+    $("#btnInstall").style.display = "inline-flex";
+  }
 });
 </script>
 </body>
