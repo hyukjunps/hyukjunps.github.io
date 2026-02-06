@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>오늘풍산(BETA)</title>
+<title>오늘풍산(BETA버전)</title>
 
 <!-- PWA -->
 <link rel="manifest" href="./manifest.json">
@@ -12,7 +12,6 @@
 
 <style>
   :root{
-    /* Light */
     --bg:#f5f7fa;
     --card:#ffffff;
     --text:#0f172a;
@@ -24,20 +23,16 @@
     --ok:#059669;
     --warn:#b91c1c;
 
-    --morning:#fef3c7;
-    --lunch:#e0f2f1;
-    --dinner:#f3e8ff;
-
-    --shadow:0 16px 40px rgba(2,6,23,.10);
+    --shadow:0 18px 50px rgba(2,6,23,.10);
     --shadow2:0 10px 22px rgba(2,6,23,.08);
-    --r24:24px;
-    --r18:18px;
-    --r14:14px;
 
-    --kioskMax: 980px;
+    --r28:28px;
+    --r22:22px;
+    --r18:18px;
+
+    --max: 860px;
   }
 
-  /* Dark */
   html[data-theme="dark"]{
     --bg:#0b1220;
     --card:#0f172a;
@@ -50,59 +45,67 @@
     --ok:#10b981;
     --warn:#f87171;
 
-    --morning:#2a230f;
-    --lunch:#0b2a28;
-    --dinner:#221033;
-
-    --shadow:0 18px 52px rgba(0,0,0,.40);
-    --shadow2:0 10px 24px rgba(0,0,0,.30);
+    --shadow:0 22px 60px rgba(0,0,0,.45);
+    --shadow2:0 12px 26px rgba(0,0,0,.32);
   }
 
   *{box-sizing:border-box}
   body{
     margin:0;
-    background:var(--bg);
+    background: radial-gradient(900px 450px at 20% 0%, color-mix(in srgb, var(--pri) 10%, transparent), transparent 55%),
+                radial-gradient(900px 450px at 80% 0%, color-mix(in srgb, var(--ok) 10%, transparent), transparent 55%),
+                var(--bg);
     color:var(--text);
     font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans KR',sans-serif;
   }
 
   .wrap{
-    max-width: var(--kioskMax);
+    max-width: var(--max);
     margin: 0 auto;
-    padding: 18px 14px 26px;
+    padding: 18px 14px 30px;
   }
 
-  /* Top */
+  /* === 상단부(브랜드 + 설치 + 모드) === */
   .topbar{
     position: sticky;
-    top: 10px;
+    top: 12px;
     z-index: 20;
+    padding: 14px;
+    border-radius: var(--r28);
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--card) 86%, transparent);
+    backdrop-filter: blur(12px);
+    box-shadow: var(--shadow2);
+
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:12px;
-    padding: 14px 14px;
-    background: color-mix(in srgb, var(--card) 88%, transparent);
-    border: 1px solid var(--line);
-    border-radius: var(--r24);
-    box-shadow: var(--shadow2);
-    backdrop-filter: blur(10px);
   }
 
   .brand{
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:14px;
     min-width:0;
   }
-  .logo{
-    width:44px;height:44px;border-radius:14px;
-    border:1px solid var(--line);
-    background:#fff;
-    object-fit:cover;
+
+  /* iOS 앱 아이콘 느낌 */
+  .logoWrap{
+    width:64px; height:64px;
+    border-radius: 20px;
+    overflow:hidden;                 /* ⭐ 핵심: 모양에 완벽히 맞게 잘림 */
+    box-shadow: 0 10px 24px rgba(2,6,23,.14);
+    border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
+    background: color-mix(in srgb, var(--card) 95%, transparent);
     flex:0 0 auto;
   }
-  html[data-theme="dark"] .logo{ background:#0b1220; }
+  .logo{
+    width:100%;
+    height:100%;
+    display:block;                   /* ⭐ 공백 제거 */
+    object-fit:cover;
+  }
 
   .brandText{
     display:flex;
@@ -110,14 +113,14 @@
     min-width:0;
   }
   .brandText b{
-    font-size:18px;
-    letter-spacing:-.3px;
+    font-size:20px;
+    letter-spacing:-.4px;
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
   }
   .brandText span{
-    margin-top:2px;
+    margin-top:4px;
     font-size:13px;
     color:var(--muted);
     white-space:nowrap;
@@ -127,13 +130,13 @@
 
   .actions{
     display:flex;
+    align-items:center;
+    justify-content:flex-end;
     gap:10px;
     flex-wrap:wrap;
-    justify-content:flex-end;
-    align-items:center;
   }
 
-  .btn, button.btn{
+  .btn{
     border:1px solid transparent;
     border-radius: 18px;
     padding: 12px 14px;
@@ -145,7 +148,6 @@
     justify-content:center;
     gap:10px;
     user-select:none;
-    text-decoration:none;
     transition: transform .08s ease, opacity .15s ease;
     white-space:nowrap;
   }
@@ -169,102 +171,90 @@
     box-shadow: 0 10px 22px rgba(2,6,23,.06);
   }
 
-  /* Kiosk hero */
-  .hero{
+  /* === 구조 고정: 상단부 → 버튼 → 설명 === */
+  .panel{
     margin-top: 16px;
     background: var(--card);
-    border:1px solid var(--line);
-    border-radius: var(--r24);
+    border: 1px solid var(--line);
+    border-radius: var(--r28);
     box-shadow: var(--shadow);
     overflow:hidden;
   }
-  .heroHead{
-    padding: 18px 16px 14px;
-    border-bottom:1px solid var(--line);
-    display:flex;
-    align-items:flex-start;
-    justify-content:space-between;
-    gap:12px;
-    flex-wrap:wrap;
+
+  .section{
+    padding: 18px 16px;
   }
-  .heroTitle{
-    min-width: 240px;
-    flex: 1 1 auto;
-  }
-  .heroTitle h1{
-    margin:0;
-    font-size: 26px;
-    letter-spacing:-.5px;
-  }
-  .heroTitle p{
-    margin: 10px 0 0;
-    color: var(--muted);
-    line-height: 1.85;
-    font-size: 15px;
-    max-width: 72ch;
+  .section + .section{
+    border-top: 1px solid var(--line);
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
   }
 
-  .kioskGrid{
-    padding: 16px;
+  /* 아래 버튼 영역(키오스크 느낌: 큰 버튼 2개) */
+  .ctaGrid{
     display:grid;
     grid-template-columns: 1fr;
-    gap: 14px;
-  }
-  @media (min-width: 860px){
-    .kioskGrid{ grid-template-columns: 1fr 1fr; }
-    .heroTitle h1{ font-size: 28px; }
+    gap: 12px;
   }
 
-  .tile{
+  .cta{
     border:1px solid var(--line);
-    border-radius: var(--r24);
+    border-radius: var(--r28);
     background: color-mix(in srgb, var(--card) 92%, transparent);
-    box-shadow: 0 10px 24px rgba(2,6,23,.06);
-    padding: 18px;
+    box-shadow: 0 12px 26px rgba(2,6,23,.06);
+    padding: 16px;
     display:flex;
-    flex-direction:column;
-    gap: 12px;
-    min-height: 190px;
-  }
-  .tileTop{
-    display:flex;
-    justify-content:space-between;
     align-items:center;
-    gap:10px;
+    justify-content:space-between;
+    gap: 12px;
   }
-  .tileTop b{
+  .ctaLeft{
+    min-width:0;
+  }
+  .ctaLeft b{
     font-size: 18px;
     letter-spacing:-.3px;
   }
-  .badge{
-    font-size: 12px;
-    font-weight: 900;
-    padding: 6px 10px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--pri) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--pri) 20%, var(--line));
-    color: var(--pri);
-    white-space:nowrap;
-  }
-
-  .tile p{
-    margin:0;
+  .ctaLeft p{
+    margin: 8px 0 0;
     color: var(--muted);
     line-height: 1.85;
-    font-size: 14.5px;
+    font-size: 14px;
   }
-  .tile .tileBtns{
-    margin-top:auto;
+  .ctaRight{
+    flex:0 0 auto;
     display:flex;
     gap:10px;
-    flex-wrap:wrap;
+    align-items:center;
   }
 
-  /* View switching */
-  .view{ display:none; padding: 16px; border-top:1px solid var(--line); background: color-mix(in srgb, var(--bg) 50%, transparent); }
+  .bigBtn{
+    border:none;
+    border-radius: 18px;
+    padding: 14px 16px;
+    font-size: 15px;
+    font-weight: 950;
+    cursori
+    cursor:pointer;
+    color:#fff;
+    background: linear-gradient(135deg, var(--pri), var(--pri2));
+    box-shadow: 0 14px 30px color-mix(in srgb, var(--pri) 22%, transparent);
+    white-space:nowrap;
+  }
+  .bigBtn:active{ transform: translateY(1px); }
+  .bigBtn:hover{ opacity:.96; }
+
+  .note{
+    color: var(--muted);
+    line-height: 1.9;
+    font-size: 14.5px;
+  }
+  .note b{ color: var(--text); }
+
+  /* 급식 화면은 그대로 두되, 보일 때만 */
+  .view{ display:none; }
   .view.active{ display:block; }
 
-  /* Meal UI */
+  /* 급식 컨트롤 */
   .controls{
     display:flex;
     gap:10px;
@@ -272,7 +262,7 @@
     justify-content:center;
     padding: 14px;
     border:1px solid var(--line);
-    border-radius: var(--r24);
+    border-radius: var(--r28);
     background: var(--card);
     box-shadow: var(--shadow2);
   }
@@ -297,7 +287,7 @@
   .notice{
     margin-top: 14px;
     border: 1px solid var(--line);
-    border-radius: var(--r24);
+    border-radius: var(--r28);
     padding: 14px;
     background: var(--card);
     color: var(--muted);
@@ -314,62 +304,9 @@
     color: color-mix(in srgb, var(--warn) 70%, var(--text));
   }
 
-  .meta{
-    margin-top: 14px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:10px;
-    flex-wrap:wrap;
-  }
-  .meta .date{
-    font-size: 18px;
-    font-weight: 950;
-    letter-spacing:-.3px;
-  }
-  .pill{
-    display:inline-block;
-    margin-top:8px;
-    padding: 6px 10px;
-    border-radius: 999px;
-    background: color-mix(in srgb, var(--pri) 12%, transparent);
-    border: 1px solid color-mix(in srgb, var(--pri) 20%, var(--line));
-    color: var(--pri);
-    font-weight: 950;
-    font-size: 12px;
-  }
-  .allergy{
-    margin-top: 12px;
-    padding: 10px 12px;
-    border-radius: 18px;
-    border: 1px solid color-mix(in srgb, var(--warn) 35%, var(--line));
-    background: color-mix(in srgb, var(--warn) 10%, var(--card));
-    color: color-mix(in srgb, var(--warn) 70%, var(--text));
-    font-weight: 900;
-    font-size: 13px;
-    line-height: 1.75;
-  }
-
-  .meals{ margin-top: 14px; }
-  .meal{
-    display:flex;
-    gap: 14px;
-    padding: 16px;
-    border-radius: var(--r24);
-    border:1px solid var(--line);
-    box-shadow: 0 8px 18px rgba(2,6,23,.05);
-    margin-bottom: 12px;
-    background: var(--card);
-  }
-  .meal.morning{ background: color-mix(in srgb, var(--morning) 85%, var(--card)); }
-  .meal.lunch{ background: color-mix(in srgb, var(--lunch) 85%, var(--card)); }
-  .meal.dinner{ background: color-mix(in srgb, var(--dinner) 85%, var(--card)); }
-
-  .icon{ font-size: 30px; flex:0 0 auto; }
-  .meal h3{ margin:0; font-size:18px; font-weight:950; }
-  .meal ul{ margin: 10px 0 0; padding:0; list-style:none; line-height:1.85; }
-  .meal li{ position:relative; padding-left: 14px; }
-  .meal li::before{ content:"•"; position:absolute; left:0; color: var(--muted); font-weight: 950; }
+  /* Hide share text */
+  #shareText{display:none;}
+  #copyHelper{position:absolute;left:-9999px;top:-9999px;opacity:0;height:1px;width:1px}
 
   /* Modal */
   .modalBack{
@@ -386,7 +323,7 @@
     width:min(720px, 100%);
     background: var(--card);
     border:1px solid var(--line);
-    border-radius: var(--r24);
+    border-radius: var(--r28);
     box-shadow: var(--shadow);
     overflow:hidden;
   }
@@ -426,18 +363,17 @@
     gap:10px;
     flex-wrap:wrap;
   }
-
-  /* Hide share text */
-  #shareText{display:none;}
-  #copyHelper{position:absolute;left:-9999px;top:-9999px;opacity:0;height:1px;width:1px}
 </style>
 </head>
 
 <body>
   <div class="wrap">
+    <!-- 상단부 -->
     <div class="topbar">
       <div class="brand">
-        <img class="logo" src="./android-launchericon-512-512.png" alt="오늘풍산 로고">
+        <div class="logoWrap" aria-hidden="true">
+          <img class="logo" src="./android-launchericon-512-512.png" alt="오늘풍산 로고">
+        </div>
         <div class="brandText">
           <b>오늘풍산</b>
           <span>급식 · 온웨이에듀 · 설치형(PWA) 빠른 이용</span>
@@ -445,105 +381,81 @@
       </div>
 
       <div class="actions">
-        <button id="btnInstall" class="btn ok" type="button" style="display:none;">📲 설치 안내</button>
+        <!-- 항상 보이는 앱 설치 버튼 -->
+        <button id="btnInstallTop" class="btn ok" type="button">📲 앱 설치</button>
 
-        <!-- 라이트/다크 모드 -->
-        <button id="btnLight" class="btn ghost" type="button" aria-label="라이트 모드">☀ 라이트</button>
-        <button id="btnDark" class="btn ghost" type="button" aria-label="다크 모드">🌙 다크</button>
+        <!-- 라이트/다크 -->
+        <button id="btnLight" class="btn ghost" type="button">☀ 라이트</button>
+        <button id="btnDark" class="btn ghost" type="button">🌙 다크</button>
       </div>
     </div>
 
-    <div class="hero">
-      <!-- 시작 화면(키오스크) -->
-      <div class="heroHead">
-        <div class="heroTitle">
-          <h1>필요한 정보만, 신속하고 품격 있게 안내해 드립니다.</h1>
-          <p>
-            아래 버튼을 선택하시면 원하시는 기능으로 바로 이동합니다.
-            설치형(PWA)으로 추가하시면 홈 화면에서 앱처럼 더 빠르게 이용하실 수 있습니다.
-          </p>
-        </div>
-      </div>
+    <div class="panel">
+      <!-- 아래 버튼(고정) -->
+      <div class="section">
+        <div class="ctaGrid">
+          <div class="cta">
+            <div class="ctaLeft">
+              <b>🍽 급식 확인</b>
+              <p>날짜를 선택하시면 조식·중식·석식을 보기 좋게 정리해 보여 드립니다.</p>
+            </div>
+            <div class="ctaRight">
+              <button class="bigBtn" type="button" onclick="go('meal'); setTodayAndLoad();">열기</button>
+            </div>
+          </div>
 
-      <div class="kioskGrid" id="home">
-        <div class="tile">
-          <div class="tileTop">
-            <b>🍽 급식</b>
-            <span class="badge">NEIS OpenAPI</span>
-          </div>
-          <p>날짜를 선택하시면 조식·중식·석식을 보기 좋게 정리해 보여 드립니다.</p>
-          <div class="tileBtns">
-            <button class="btn primary" type="button" onclick="go('meal'); setTodayAndLoad();">급식 확인하기</button>
-          </div>
-        </div>
-
-        <div class="tile">
-          <div class="tileTop">
-            <b>🔐 온웨이에듀</b>
-            <span class="badge">새 탭 열기</span>
-          </div>
-          <p>외부 로그인 사이트이므로, 선택 시 새 탭에서 안전하게 열립니다.</p>
-          <div class="tileBtns">
-            <button class="btn primary" type="button" onclick="go('onway')">온웨이에듀로 이동</button>
-          </div>
-        </div>
-
-        <div class="tile" style="grid-column:1/-1;">
-          <div class="tileTop">
-            <b>📲 설치형(PWA) 이용 안내</b>
-            <span class="badge">홈 화면 추가</span>
-          </div>
-          <p>
-            설치 후에는 홈 화면에서 아이콘을 눌러 바로 실행하실 수 있습니다.
-            아래 버튼을 누르시면 기기별 설치 방법을 안내해 드립니다.
-          </p>
-          <div class="tileBtns">
-            <button id="btnGuide" class="btn ok" type="button">설치 방법 보기</button>
+          <div class="cta">
+            <div class="ctaLeft">
+              <b>온웨이에듀</b>
+              <p>풍산고등학교 상벌점, 외출 관리 시스템입니다.</p>
+            </div>
+            <div class="ctaRight">
+              <button class="bigBtn" type="button" onclick="go('onway')">열기</button>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- 급식 화면 -->
-      <div class="view" id="view-meal">
+      <!-- 아래 설명(고정) -->
+      <div class="section">
+        <div class="note">
+          <b>앱 설치(PWA)</b>를 하시면 홈 화면에서 아이콘으로 바로 실행하실 수 있습니다.
+          iPhone은 Safari에서 “공유 → 홈 화면에 추가”로 설치하실 수 있으며,
+          Android는 브라우저 메뉴에 “앱 설치”가 표시될 수 있습니다.
+        </div>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+          <button id="btnGuide" class="btn ok" type="button">설치 방법 자세히 보기</button>
+        </div>
+
+        <div style="margin-top:14px;color:var(--muted);font-size:12.5px;">
+          데이터 출처: NEIS OpenAPI
+        </div>
+      </div>
+
+      <!-- 기능 화면(선택 표시) -->
+      <div class="section view" id="view-meal">
         <div class="controls">
           <button class="smallbtn" type="button" onclick="moveDate(-1)">◀ 어제</button>
           <input type="date" id="date" />
           <button class="smallbtn" type="button" onclick="moveDate(1)">내일 ▶</button>
           <button class="smallbtn" type="button" onclick="onDay()">조회</button>
           <button class="smallbtn ok" type="button" id="btnCopy">복사</button>
-          <button class="smallbtn" type="button" onclick="go('home')">처음으로</button>
+          <button class="smallbtn" type="button" onclick="go('home')">닫기</button>
         </div>
 
         <div id="notice" class="notice">학교 정보를 불러오는 중입니다…</div>
-
-        <div class="meta" id="meta" style="display:none;">
-          <div>
-            <div class="date" id="displayDate"></div>
-            <div class="pill" id="schoolBadge"></div>
-          </div>
-        </div>
-
-        <div class="allergy" id="allergyBox" style="display:none;">
-          ⚠ 알레르기 번호: 1 난류 · 2 우유 · 3 메밀 · 4 땅콩 · 5 대두 · 6 밀 · 7 고등어 · 8 게 · 9 새우 · 10 돼지고기 · 11 복숭아 · 12 토마토 · 13 아황산염 · 14 호두 · 15 닭고기 · 16 쇠고기 · 17 오징어 · 18 조개류
-        </div>
-
-        <div class="meals" id="meals"></div>
+        <div id="meals" style="margin-top:14px;"></div>
         <div id="shareText"></div>
       </div>
 
-      <!-- 온웨이에듀 화면 -->
-      <div class="view" id="view-onway">
+      <div class="section view" id="view-onway">
         <div class="notice">
-          온웨이에듀는 풍산고등학교 상벌점, 외출 관리 시스템입니다. 아래 버튼을 누르시면 새 탭에서 열립니다.
+          온웨이에듀는 풍산고등학교 상벌점·외출 관리 시스템입니다. 아래 버튼을 누르시면 새 탭에서 열립니다.
         </div>
-        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;justify-content:center;">
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
           <button class="btn primary" type="button" onclick="openOnway()">온웨이에듀 열기</button>
-          <button class="btn ghost" type="button" onclick="go('home')">처음으로</button>
+          <button class="btn ghost" type="button" onclick="go('home')">닫기</button>
         </div>
-      </div>
-
-      <div style="text-align:center;color:var(--muted);font-size:12.5px;padding:14px 10px 18px;">
-        데이터 출처: NEIS OpenAPI
       </div>
     </div>
   </div>
@@ -559,14 +471,12 @@
       </div>
       <div class="modalBody">
         <div>
-          본 서비스는 앱 설치를 지원합니다. 설치하시면 홈 화면에서 앱처럼 더 빠르게 실행하실 수 있습니다.
+          앱 설치가 가능합니다. 설치하시면 홈 화면에서 앱처럼 더 빠르게 실행하실 수 있습니다.
         </div>
-
         <ul class="steps" id="installSteps"></ul>
-
         <div style="margin-top:12px;">
           <b style="color:var(--text);">설치 버튼이 보이는 경우</b><br/>
-          주소창 또는 메뉴에 “설치”가 표시될 수 있습니다. 해당 버튼을 선택하시면 바로 설치가 진행됩니다.
+          주소창 또는 메뉴에 “앱 설치/설치”가 표시될 수 있습니다. 해당 버튼을 선택하시면 설치가 진행됩니다.
         </div>
       </div>
       <div class="modalFoot">
@@ -586,18 +496,6 @@ const SCHOOL_NAME = "풍산고등학교";
 const $ = s => document.querySelector(s);
 const escapeHtml = s => String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;' }[m]));
 const ymd2str = ymd => `${ymd.slice(0,4)}년 ${ymd.slice(4,6)}월 ${ymd.slice(6,8)}일`;
-const getMealClass = type => {
-  if (type.includes("조식") || type.includes("아침")) return "morning";
-  if (type.includes("중식") || type.includes("점심")) return "lunch";
-  if (type.includes("석식") || type.includes("저녁")) return "dinner";
-  return "";
-};
-function getMealIcon(type) {
-  if (type.includes("조식") || type.includes("아침")) return "☀";
-  if (type.includes("중식") || type.includes("점심")) return "🍚";
-  if (type.includes("석식") || type.includes("저녁")) return "🌙";
-  return "🍽";
-}
 
 function dateToYMD(dateObj) {
   const y=dateObj.getFullYear(),m=("0"+(dateObj.getMonth()+1)).slice(-2),d=("0"+dateObj.getDate()).slice(-2);
@@ -609,20 +507,22 @@ function ymdToDateObj(ymdStr) {
 }
 function today() { return dateToYMD(new Date()); }
 
-/* ====== 화면 전환 ====== */
+/* ====== 화면 전환(고정 구조: home 상태에서는 view 숨김) ====== */
 function go(view){
-  const home = $("#home");
   const meal = $("#view-meal");
   const onway = $("#view-onway");
 
-  home.style.display = (view === "home") ? "grid" : "none";
   meal.classList.toggle("active", view === "meal");
   onway.classList.toggle("active", view === "onway");
+
+  if (view === "home") {
+    meal.classList.remove("active");
+    onway.classList.remove("active");
+  }
 
   history.replaceState(null, "", `#${view}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-
 function initRoute(){
   const h = (location.hash || "#home").replace("#","");
   if (h === "meal" || h === "onway" || h === "home") go(h);
@@ -649,12 +549,7 @@ async function getSchoolInfo() {
   const data = await neis("schoolInfo", { ATPT_OFCDC_SC_CODE: ATPT, SCHUL_NM: SCHOOL_NAME });
   const row = data?.schoolInfo?.[1]?.row?.[0];
   if (!row) throw new Error("학교 정보를 찾지 못했습니다.");
-  return {
-    code: row.SD_SCHUL_CODE,
-    name: row.SCHUL_NM,
-    kind: row.SCHUL_KND_SC_NM,
-    fond: row.FOND_SC_NM
-  };
+  return { code: row.SD_SCHUL_CODE, name: row.SCHUL_NM };
 }
 
 /* 하루 급식 */
@@ -666,11 +561,7 @@ async function fetchMealsDay(sdCode, ymd) {
     const fullMenu = String(r.DDISH_NM||"")
       .replace(/<br\s*\/?>/gi,"\n")
       .split("\n").map(s=>s.trim()).filter(Boolean);
-    return {
-      type: r.MMEAL_SC_NM || "",
-      cal: r.CAL_INFO || "",
-      menuWithAllergy: fullMenu
-    };
+    return { type: r.MMEAL_SC_NM || "", cal: r.CAL_INFO || "", menu: fullMenu };
   });
 }
 
@@ -682,36 +573,26 @@ function setNotice(kind, text){
   box.textContent = text;
 }
 
-async function initMeals() {
-  try {
+async function initMeals(){
+  try{
     $("#date").value = today();
     setNotice("", "학교 정보를 불러오는 중입니다…");
-
     const info = await getSchoolInfo();
     SD_SCHUL_CODE = info.code;
-
-    $("#meta").style.display = "flex";
-    $("#allergyBox").style.display = "block";
-    $("#schoolBadge").textContent = `${escapeHtml(info.name)} · ${escapeHtml(info.kind)} · ${escapeHtml(info.fond)}`;
-
-    setNotice("ok", "준비가 완료되었습니다. 날짜를 선택하시면 급식을 확인하실 수 있습니다.");
-    await onDay();
-  } catch (err) {
+    setNotice("ok", `${info.name} 급식 조회가 준비되었습니다. 날짜를 선택해 확인해 주세요.`);
+  }catch(err){
     setNotice("err", "초기화 중 오류가 발생했습니다: " + (err.message||err));
   }
 }
 
-async function onDay() {
+async function onDay(){
   if (!SD_SCHUL_CODE) {
     setNotice("err", "학교 코드가 확인되지 않았습니다. 새로고침 후 다시 시도해 주세요.");
     return;
   }
-
-  try {
+  try{
     const selectedDate = $("#date").value;
     const ymd = selectedDate.replace(/-/g,"");
-
-    $("#displayDate").textContent = ymd2str(ymd);
     $("#meals").innerHTML = `<div class="notice">급식 정보를 불러오는 중입니다. 잠시만 기다려 주세요…</div>`;
 
     const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
@@ -722,54 +603,52 @@ async function onDay() {
       return;
     }
 
-    $("#meals").innerHTML = meals.map(m=>{
-      const mealClass = getMealClass(m.type);
-      const icon = getMealIcon(m.type);
-      return `<div class="meal ${mealClass}">
-        <div class="icon">${icon}</div>
-        <div style="flex:1;min-width:0">
-          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
-            <h3>${escapeHtml(m.type)}</h3>
-            ${m.cal ? `<span class="pill">${escapeHtml(m.cal)}</span>` : ""}
-          </div>
-          <ul>${m.menuWithAllergy.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>
+    const html = meals.map(m=>{
+      const items = m.menu.map(x=>`<li>${escapeHtml(x)}</li>`).join("");
+      return `
+        <div class="notice" style="margin-top:12px;">
+          <b style="color:var(--text);">${escapeHtml(m.type)}</b>
+          ${m.cal ? `<span style="margin-left:8px;color:var(--muted);font-weight:900;">${escapeHtml(m.cal)}</span>` : ""}
+          <ul style="margin:10px 0 0;padding:0;list-style:none;line-height:1.85;">
+            ${items}
+          </ul>
         </div>
-      </div>`;
+      `;
     }).join("");
+
+    $("#meals").innerHTML = `<div style="font-weight:950;font-size:18px;letter-spacing:-.3px;">${ymd2str(ymd)} 급식</div>` + html;
 
     let txt = `[풍산고등학교] ${ymd2str(ymd)} 급식\n`;
     meals.forEach(m=>{
-      txt += `\n[${m.type}] ${m.cal||""}\n- ${m.menuWithAllergy.join("\n- ")}\n`;
+      txt += `\n[${m.type}] ${m.cal||""}\n- ${m.menu.join("\n- ")}\n`;
     });
     $("#shareText").textContent = txt.trim();
 
-  } catch(err){
+  }catch(err){
     setNotice("err", "조회 중 오류가 발생했습니다: " + (err.message||err));
   }
 }
 
-function moveDate(days) {
+function moveDate(days){
   const currentDate = $("#date").value;
   const dateObj = ymdToDateObj(currentDate);
   dateObj.setDate(dateObj.getDate() + days);
   $("#date").value = dateToYMD(dateObj);
   onDay();
 }
-
 function setTodayAndLoad(){
   $("#date").value = today();
   onDay();
 }
 
 /* 복사 */
-async function copyTextReliable(text) {
+async function copyTextReliable(text){
   try {
     if (navigator.clipboard && window.isSecureContext) {
       await navigator.clipboard.writeText(text);
       return true;
     }
   } catch (_) {}
-
   try {
     const ta = $("#copyHelper");
     ta.value = text;
@@ -783,7 +662,6 @@ async function copyTextReliable(text) {
     return false;
   }
 }
-
 $("#btnCopy").addEventListener("click", async ()=>{
   const txt = $("#shareText").textContent || "";
   if(!txt.trim()){ alert("복사할 급식 내용이 없습니다. 먼저 급식을 조회해 주세요."); return; }
@@ -791,11 +669,10 @@ $("#btnCopy").addEventListener("click", async ()=>{
   alert(ok ? "급식 내용이 복사되었습니다." : "복사에 실패했습니다. 다시 시도해 주세요.");
 });
 
-/* ====== 라이트/다크 모드 ====== */
+/* 라이트/다크 */
 function applyTheme(theme){
   document.documentElement.setAttribute("data-theme", theme);
   localStorage.setItem("theme", theme);
-  // theme-color도 같이 맞추기
   const meta = document.querySelector('meta[name="theme-color"]');
   meta.setAttribute("content", theme === "dark" ? "#0b1220" : "#1e40af");
 }
@@ -806,9 +683,8 @@ function initTheme(){
 $("#btnLight").addEventListener("click", ()=>applyTheme("light"));
 $("#btnDark").addEventListener("click", ()=>applyTheme("dark"));
 
-/* ====== PWA 설치 안내(모달 + 설치 버튼) ====== */
+/* ====== PWA 설치(상단 버튼 고정) ====== */
 let deferredPrompt = null;
-
 function isIos(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
 function isStandalone(){
   return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
@@ -825,19 +701,16 @@ function closeModal(){
 function renderInstallSteps(){
   const ul = $("#installSteps");
   ul.innerHTML = "";
-
   const steps = [];
 
   if (isStandalone()){
     steps.push({ t: "이미 설치되어 있습니다.", d: "홈 화면의 ‘오늘풍산’ 아이콘으로 바로 실행하실 수 있습니다." });
   } else if (isIos()){
-    steps.push({ t: "iPhone / iPad (Safari)", d: "Safari에서 본 페이지를 여신 뒤, 하단의 공유 버튼(⬆️)을 선택해 주세요." });
+    steps.push({ t: "iPhone / iPad (Safari)", d: "Safari에서 본 페이지를 여신 뒤, 하단 공유 버튼(⬆️)을 선택해 주세요." });
     steps.push({ t: "홈 화면에 추가", d: "메뉴에서 “홈 화면에 추가”를 선택하시면 설치가 완료됩니다." });
-    steps.push({ t: "실행", d: "홈 화면에 생성된 ‘오늘풍산’ 아이콘으로 실행하실 수 있습니다." });
   } else {
-    steps.push({ t: "Android (Chrome/Edge)", d: "주소창 오른쪽 또는 브라우저 메뉴(⋮)에 “앱 설치/설치” 항목이 표시되는지 확인해 주세요." });
+    steps.push({ t: "Android (Chrome/Edge)", d: "주소창 또는 메뉴(⋮)에 “앱 설치/설치”가 표시될 수 있습니다." });
     steps.push({ t: "설치 진행", d: "“설치”를 선택하시면 홈 화면에 아이콘이 추가됩니다." });
-    steps.push({ t: "설치 버튼이 보이지 않는 경우", d: "브라우저를 Chrome/Edge로 변경하거나, 새로고침 후 다시 확인해 주세요." });
   }
 
   steps.forEach(s=>{
@@ -846,7 +719,6 @@ function renderInstallSteps(){
     ul.appendChild(li);
   });
 
-  // 즉시 설치 가능(deferredPrompt 있음)하면 모달 하단 버튼 노출
   $("#btnInstallNow").style.display = deferredPrompt ? "inline-flex" : "none";
 }
 
@@ -858,12 +730,25 @@ $("#modalBack").addEventListener("click", (e)=>{
 window.addEventListener("beforeinstallprompt", (e)=>{
   e.preventDefault();
   deferredPrompt = e;
-  // 상단 설치 버튼 노출
-  $("#btnInstall").style.display = isStandalone() ? "none" : "inline-flex";
   renderInstallSteps();
 });
 
-$("#btnInstall").addEventListener("click", openModal);
+$("#btnInstallTop").addEventListener("click", async ()=>{
+  if (isStandalone()){
+    openModal();
+    return;
+  }
+  // Android 등: 실제 설치 prompt 가능하면 prompt, 아니면 안내
+  if (deferredPrompt){
+    deferredPrompt.prompt();
+    await deferredPrompt.userChoice.catch(()=>{});
+    deferredPrompt = null;
+    openModal();
+    return;
+  }
+  // iOS/그 외: 안내 모달
+  openModal();
+});
 
 $("#btnInstallNow").addEventListener("click", async ()=>{
   if(!deferredPrompt) return;
@@ -871,27 +756,21 @@ $("#btnInstallNow").addEventListener("click", async ()=>{
   await deferredPrompt.userChoice.catch(()=>{});
   deferredPrompt = null;
   $("#btnInstallNow").style.display = "none";
-  $("#btnInstall").style.display = "none";
   renderInstallSteps();
 });
 
-/* ====== Service Worker 등록 ====== */
+/* Service Worker 등록 */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./service-worker.js");
   });
 }
 
-/* ====== 시작 ====== */
+/* 시작 */
 window.addEventListener("load", ()=>{
   initTheme();
   initRoute();
   initMeals();
-
-  // iOS는 beforeinstallprompt가 없을 수 있으므로, 설치 버튼은 항상 안내용으로 보여드림(설치되어 있지 않을 때)
-  if(!isStandalone() && isIos()){
-    $("#btnInstall").style.display = "inline-flex";
-  }
 });
 </script>
 </body>
