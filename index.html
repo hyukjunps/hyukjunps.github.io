@@ -604,7 +604,7 @@ function initRoute(){
 
 /* ====== 온웨이에듀 (HTTPS ONLY) ====== */
 function openOnway(){
-  const httpsUrl = "https://ps.onwayedu.co.kr";
+  const httpsUrl = "http://ps.onwayedu.co.kr/login/login.php";
   const w = window.open(httpsUrl, "_blank", "noopener,noreferrer");
   if (!w) location.href = httpsUrl; // 팝업 차단이면 현재 탭 이동
 }
