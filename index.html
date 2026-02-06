@@ -555,6 +555,11 @@
           <b style="color:var(--text);">설치 버튼이 보이는 경우</b><br/>
           주소창 또는 메뉴에 “앱 설치/설치”가 표시될 수 있습니다. 해당 버튼을 선택하시면 설치가 진행됩니다.
         </div>
+
+        <!-- ✅ 추가 문구 -->
+        <div style="margin-top:10px;color:var(--muted);font-size:12.5px;line-height:1.6;">
+          이 프로그램은 Chrome/Safari에 최적화되어 있습니다.
+        </div>
       </div>
       <div class="modalFoot">
         <button id="btnInstallNow" class="btn ok" type="button" style="display:none;">지금 설치하기</button>
@@ -1037,7 +1042,7 @@ window.addEventListener("load", ()=>{
   initRoute();
   initMeals();
 
-  initAlarmTimeUI();      // ✅ 추가
+  initAlarmTimeUI();
   bindAlarmButtonOnce();
   updateAlarmUI();
   scheduleMealAlarm();
