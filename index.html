@@ -619,7 +619,7 @@ function initRoute(){
 /* ====== 온웨이에듀 (https→http fallback + 팝업차단 대응) ====== */
 function openOnway(){
   const httpsUrl = "https://ps.onwayedu.co.kr/login/login.php";
-  const httpUrl  = "http://ps.onwayedu.co.kr/login/login.php";
+  const httpUrl  = "https://ps.onwayedu.co.kr/login/login.php";
 
   // 유저 클릭 이벤트 안에서 실행되므로 팝업 허용률 높음
   const w = window.open(httpsUrl, "_blank", "noopener,noreferrer");
