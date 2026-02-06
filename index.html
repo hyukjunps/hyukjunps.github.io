@@ -570,9 +570,9 @@
 
 <script>
 /* ====== 고정값 ====== */
-const API_KEY = "c5eac2fb880e4aa185e7957a756dd126";
-const ATPT = "R10";
-const SCHOOL_NAME = "풍산고등학교";
+/* ✅ 이제 index.html에서 나이스 API 키/학교검색은 사용하지 않음(Worker가 처리) */
+const WORKER_MEAL_URL = "https://meal-push-worker.yyhhjj1068.workers.dev/"; // 너 Worker 주소
+let SD_SCHUL_CODE = "8750475"; // 기존 로직(체크) 유지용
 
 /* ====== 유틸 ====== */
 const $ = s => document.querySelector(s);
@@ -616,38 +616,18 @@ function openOnway(){
   window.open("https://ps.onwayedu.co.kr/login/login.php", "_blank", "noopener,noreferrer");
 }
 
-/* ====== NEIS fetch ====== */
-async function neis(endpoint, params) {
-  const base = `https://open.neis.go.kr/hub/${endpoint}`;
-  const q = new URLSearchParams({ KEY: API_KEY, Type: "json", pIndex: "1", pSize: "100", ...params });
-  const url = `${base}?${q.toString()}`;
-  const res = await fetch(url);
+/* ====== 급식(Worker fetch) ====== */
+/* ✅ 기존 렌더링/복사/알림 로직은 그대로 두고, "데이터 가져오기"만 Worker로 교체 */
+async function fetchMealsDay(_, ymd) {
+  const dashed = `${ymd.slice(0,4)}-${ymd.slice(4,6)}-${ymd.slice(6,8)}`;
+  const res = await fetch(`${WORKER_MEAL_URL}/?date=${dashed}`);
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
-}
+  const j = await res.json();
 
-/* 학교 기본정보 */
-async function getSchoolInfo() {
-  const data = await neis("schoolInfo", { ATPT_OFCDC_SC_CODE: ATPT, SCHUL_NM: SCHOOL_NAME });
-  const row = data?.schoolInfo?.[1]?.row?.[0];
-  if (!row) throw new Error("학교 정보를 찾지 못했습니다.");
-  return { code: row.SD_SCHUL_CODE, name: row.SCHUL_NM };
+  // Worker 응답(네가 보여준 형태): { 데이터: { 식사: [...] } }
+  // 혹시 다른 키로 오면 아래 2줄 중 하나가 잡힘
+  return j?.데이터?.식사 || j?.data?.meals || [];
 }
-
-/* 하루 급식 */
-async function fetchMealsDay(sdCode, ymd) {
-  const data = await neis("mealServiceDietInfo", { ATPT_OFCDC_SC_CODE: ATPT, SD_SCHUL_CODE: sdCode, MLSV_YMD: ymd });
-  const rows = data?.mealServiceDietInfo?.[1]?.row || [];
-  rows.sort((a,b)=>String(a.MMEAL_SC_CODE||"").localeCompare(String(b.MMEAL_SC_CODE||"")));
-  return rows.map(r => {
-    const fullMenu = String(r.DDISH_NM||"")
-      .replace(/<br\s*\/?>/gi,"\n")
-      .split("\n").map(s=>s.trim()).filter(Boolean);
-    return { type: r.MMEAL_SC_NM || "", cal: r.CAL_INFO || "", menu: fullMenu };
-  });
-}
-
-let SD_SCHUL_CODE = null;
 
 function setNotice(kind, text){
   const box = $("#notice");
@@ -658,10 +638,7 @@ function setNotice(kind, text){
 async function initMeals(){
   try{
     $("#date").value = today();
-    setNotice("", "학교 정보를 불러오는 중입니다…");
-    const info = await getSchoolInfo();
-    SD_SCHUL_CODE = info.code;
-    setNotice("ok", `${info.name} 급식 조회가 준비되었습니다. 날짜를 선택해 확인해 주세요.`);
+    setNotice("ok", "급식 조회가 준비되었습니다. 날짜를 선택해 확인해 주세요.");
   }catch(err){
     setNotice("err", "초기화 중 오류가 발생했습니다: " + (err.message||err));
   }
@@ -1050,3 +1027,4 @@ window.addEventListener("load", ()=>{
 </script>
 </body>
 </html>
+```0
