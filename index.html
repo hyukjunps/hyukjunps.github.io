@@ -976,21 +976,16 @@ function homeRenderTodayTimetable(){
    홈 위젯 (급식/일정/시간표)
 ====================== */
 function homeRenderTodayMeal(meals, ymd){
-  const pill = $("#homeMealDate");
-  const body = $("#homeMealBody");
-  if(!pill || !body) return;
-
-  pill.textContent = ymd2str(ymd);
-
-  if(!meals || !meals.length){
-    body.innerHTML = `<div class="muted">오늘 급식 정보가 없습니다.</div>`;
-    return;
-  }
-
   const compact = meals.map(m=>{
-    const top = (m.menu||[]).slice(0,4).join(" · ");
-    return `<div style="margin-bottom:8px;"><b>${escapeHtml(m.type)}</b><div class="muted" style="margin-top:4px;">${escapeHtml(top || "메뉴 없음")}</div></div>`;
-  }).join("");
+  const all = (m.menu||[]).join(" · "); // ✅ slice 제거
+  return `
+    <div style="margin-bottom:8px;">
+      <b>${escapeHtml(m.type)}</b>
+      <div class="muted" style="margin-top:4px;line-height:1.6;">
+        ${escapeHtml(all || "메뉴 없음")}
+      </div>
+    </div>`;
+}).join("");
 
   body.innerHTML = compact;
 }
