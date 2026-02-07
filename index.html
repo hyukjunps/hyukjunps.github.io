@@ -65,7 +65,6 @@
     padding: 18px 14px 30px;
   }
 
-  /* 상단바 */
   .topbar{
     position: sticky;
     top: 12px;
@@ -109,7 +108,6 @@
   .btn.ok{color:#fff;background: linear-gradient(135deg, var(--ok), color-mix(in srgb, var(--ok) 70%, #000));box-shadow: 0 12px 26px color-mix(in srgb, var(--ok) 18%, transparent);}
   .btn.ghost{background: color-mix(in srgb, var(--card) 92%, transparent);color: var(--text);border-color: var(--line);box-shadow: 0 10px 22px rgba(2,6,23,.06);}
 
-  /* 레이아웃: 좌측 메뉴 + 우측 콘텐츠 */
   .layout{
     margin-top:16px;
     display:grid;
@@ -176,7 +174,6 @@
   .note{color: var(--muted);line-height:1.9;font-size:14.5px;}
   .note b{color: var(--text);}
 
-  /* 공통 컨트롤 */
   .controls{
     display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-start;align-items:center;
     padding: 14px;
@@ -207,7 +204,6 @@
   }
   .smallbtn:hover{opacity:.95;}
 
-  /* Notice */
   .notice{
     margin-top: 14px;
     border: 1px solid var(--line);
@@ -244,6 +240,8 @@
     box-shadow: 0 12px 26px rgba(2,6,23,.06);
     padding: 14px;
     min-height: 150px;
+    display:flex;
+    flex-direction:column;
   }
   .widgetHead{
     display:flex;
@@ -264,13 +262,20 @@
     white-space:nowrap;
   }
   .muted{color:var(--muted);font-weight:900;}
-  .widgetBody{font-size:14px;line-height:1.75;color:var(--text);}
 
-  /* 복사 */
+  /* ✅ 핵심: 위젯 내용 안 잘리게 스크롤 */
+  .widgetBody{
+    font-size:14px;
+    line-height:1.75;
+    color:var(--text);
+    overflow:auto;
+    max-height: 240px;
+    padding-right: 6px;
+  }
+
   #shareText{display:none;}
   #copyHelper{position:absolute;left:-9999px;top:-9999px;opacity:0;height:1px;width:1px}
 
-  /* Modal */
   .modalBack{
     position:fixed;inset:0;background: rgba(0,0,0,.45);
     display:none;align-items:center;justify-content:center;padding: 16px;z-index: 50;
@@ -297,17 +302,16 @@
     display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;
   }
 
-  /* 반응형 */
   @media (max-width: 920px){
     .layout{grid-template-columns: 1fr;}
     .side{position:relative;top:auto;}
+    .widgetBody{max-height: 260px;}
   }
 </style>
 </head>
 
 <body>
   <div class="wrap">
-    <!-- 상단바 -->
     <div class="topbar">
       <div class="brand">
         <div class="logoWrap" aria-hidden="true">
@@ -327,11 +331,8 @@
     </div>
 
     <div class="layout">
-      <!-- 좌측 메뉴 -->
       <aside class="side">
-        <div class="sideHead">
-          <b>메뉴</b>
-        </div>
+        <div class="sideHead"><b>메뉴</b></div>
         <div class="sideNav">
           <button class="navBtn" data-view="home" type="button" onclick="go('home')">
             <span>🏠 홈</span><span class="hint">위젯</span>
@@ -346,16 +347,14 @@
             <span>📘 시간표</span><span class="hint">저장됨</span>
           </button>
           <button class="navBtn" data-view="onway" type="button" onclick="go('onway')">
-            <span>🧾 온웨이에듀</span><span class="hint">HTTPS</span>
+            <span>🧾 온웨이에듀</span><span class="hint">상벌점, 외출 관리</span>
           </button>
         </div>
       </aside>
 
-      <!-- 우측 콘텐츠 -->
       <main class="panel">
         <!-- HOME -->
         <div class="section view" id="view-home">
-          <!-- ✅ 위젯: 버튼보다 위 -->
           <div class="widgets">
             <div class="widget">
               <div class="widgetHead">
@@ -388,7 +387,6 @@
             </div>
           </div>
 
-          <!-- 빠른 버튼 -->
           <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
             <button class="btn primary" type="button" onclick="setTodayAndLoad();">오늘 급식 새로고침</button>
             <button class="btn primary" type="button" onclick="scheduleLoadToday();">오늘 학사일정 새로고침</button>
@@ -467,7 +465,7 @@
         <!-- ONWAY -->
         <div class="section view" id="view-onway">
           <div class="notice">
-            온웨이에듀는 <b style="color:var(--text);">HTTPS에서만</b> 정상 동작하는 경우가 많습니다.<br/>
+            온웨이에듀는 <b style="color:var(--text);">풍산고등학교의</b> 상벌점, 외출 관리 서비스입니다..<br/>
             아래 버튼은 <b style="color:var(--text);">https://ps.onwayedu.co.kr</b>로 열립니다.
           </div>
           <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
@@ -481,7 +479,6 @@
 
   <textarea id="copyHelper" aria-hidden="true"></textarea>
 
-  <!-- 설치 방법 모달 -->
   <div id="modalBack" class="modalBack" role="dialog" aria-modal="true" aria-label="설치 안내">
     <div class="modal">
       <div class="modalHead">
@@ -489,9 +486,7 @@
         <button class="btn ghost" type="button" onclick="closeModal()">닫기</button>
       </div>
       <div class="modalBody">
-        <div>
-          설치하면 홈 화면에서 앱처럼 더 빠르게 실행할 수 있습니다.
-        </div>
+        <div>설치하면 홈 화면에서 앱처럼 더 빠르게 실행할 수 있습니다.</div>
         <ul class="steps" id="installSteps"></ul>
 
         <div style="margin-top:12px;">
@@ -511,17 +506,11 @@
   </div>
 
 <script>
-/* ======================
-   고정값 (NEIS)
-====================== */
 const API_KEY = "c5eac2fb880e4aa185e7957a756dd126";
 const ATPT = "R10";
 const SD_SCHUL_CODE = "8750475";
 const SCHOOL_NAME = "풍산고등학교";
 
-/* ======================
-   유틸
-====================== */
 const $ = s => document.querySelector(s);
 const escapeHtml = s => String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;' }[m]));
 const ymd2str = ymd => `${ymd.slice(0,4)}년 ${ymd.slice(4,6)}월 ${ymd.slice(6,8)}일`;
@@ -548,9 +537,6 @@ function monthBounds(yyyy_mm){
   };
 }
 
-/* ======================
-   라우팅 / 메뉴 강조
-====================== */
 function setActiveNav(view){
   document.querySelectorAll(".navBtn").forEach(b=>{
     b.dataset.active = (b.dataset.view === view) ? "1" : "0";
@@ -565,7 +551,6 @@ function go(view){
   history.replaceState(null, "", `#${view}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
 
-  // view 진입 시 갱신
   if(view === "home") renderHomeWidgets();
   if(view === "timetable") ttRenderTable();
 }
@@ -575,9 +560,6 @@ function initRoute(){
   go(allowed.includes(h) ? h : "home");
 }
 
-/* ======================
-   THEME
-====================== */
 function applyTheme(theme){
   document.documentElement.setAttribute("data-theme", theme);
   localStorage.setItem("theme", theme);
@@ -591,9 +573,6 @@ function initTheme(){
 $("#btnLight").addEventListener("click", ()=>applyTheme("light"));
 $("#btnDark").addEventListener("click", ()=>applyTheme("dark"));
 
-/* ======================
-   PWA 설치 모달
-====================== */
 let deferredPrompt = null;
 function isIos(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
 function isStandalone(){
@@ -661,16 +640,12 @@ $("#btnInstallNow").addEventListener("click", async ()=>{
   renderInstallSteps();
 });
 
-/* Service Worker 등록 */
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("./service-worker.js");
   });
 }
 
-/* ======================
-   NEIS 공통 fetch
-====================== */
 async function neis(endpoint, params) {
   const base = `https://open.neis.go.kr/hub/${endpoint}`;
   const q = new URLSearchParams({ KEY: API_KEY, Type: "json", pIndex: "1", pSize: "200", ...params });
@@ -680,9 +655,6 @@ async function neis(endpoint, params) {
   return res.json();
 }
 
-/* ======================
-   급식
-====================== */
 function setNotice(kind, text){
   const box = $("#notice");
   box.className = "notice" + (kind ? ` ${kind}` : "");
@@ -758,7 +730,6 @@ function setTodayAndLoad(){
   onDay();
 }
 
-/* 복사 */
 async function copyTextReliable(text){
   try {
     if (navigator.clipboard && window.isSecureContext) {
@@ -786,9 +757,6 @@ $("#btnCopy").addEventListener("click", async ()=>{
   alert(ok ? "급식 내용이 복사되었습니다." : "복사에 실패했습니다. 다시 시도해 주세요.");
 });
 
-/* ======================
-   학사일정 (SchoolSchedule)
-====================== */
 function setSchNotice(kind, text){
   const box = $("#schNotice");
   box.className = "notice" + (kind ? ` ${kind}` : "");
@@ -802,7 +770,6 @@ async function fetchScheduleRange(fromYmd, toYmd){
     AA_TO_YMD: toYmd
   });
   const rows = data?.SchoolSchedule?.[1]?.row || [];
-  // 정렬
   rows.sort((a,b)=>String(a.AA_YMD||"").localeCompare(String(b.AA_YMD||"")));
   return rows.map(r=>({
     ymd: String(r.AA_YMD||""),
@@ -849,7 +816,6 @@ async function scheduleLoadMonth(){
     const rows = await fetchScheduleRange(from,to);
     setSchNotice("ok", `${label} 학사일정 (${rows.length}건)`);
     renderScheduleList(rows);
-    // 홈 위젯도 갱신
     homeRenderTodaySchedule(rows);
   }catch(err){
     setSchNotice("err", "학사일정 오류: " + (err.message||err));
@@ -875,9 +841,6 @@ async function initSchedule(){
   setSchNotice("ok", "학사일정 조회가 준비되었습니다.");
 }
 
-/* ======================
-   시간표 (표 + 저장소)
-====================== */
 const TT_KEY = "tt_table_v2";
 const TT_DAYS = ["월","화","수","목","금","토","일"];
 
@@ -947,8 +910,8 @@ function homeRenderTodayTimetable(){
   if(!body || !pill) return;
 
   const store = ttLoad();
-  const today = new Date().getDay(); // 0=일
-  const map = [6,0,1,2,3,4,5]; // 월=0 기준 변환
+  const today = new Date().getDay();
+  const map = [6,0,1,2,3,4,5];
   const dayIdx = map[today];
   const dayName = TT_DAYS[dayIdx];
 
@@ -972,23 +935,32 @@ function homeRenderTodayTimetable(){
   `;
 }
 
-/* ======================
-   홈 위젯 (급식/일정/시간표)
-====================== */
+/* ✅ 핵심 수정: 홈 급식 위젯에서 더 이상 slice로 자르지 않음 + 줄바꿈 형태로 표시 */
 function homeRenderTodayMeal(meals, ymd){
-  const compact = meals.map(m=>{
-  const all = (m.menu||[]).join(" · "); // ✅ slice 제거
-  return `
-    <div style="margin-bottom:8px;">
-      <b>${escapeHtml(m.type)}</b>
-      <div class="muted" style="margin-top:4px;line-height:1.6;">
-        ${escapeHtml(all || "메뉴 없음")}
-      </div>
-    </div>`;
-}).join("");
+  const pill = $("#homeMealDate");
+  const body = $("#homeMealBody");
+  if(!pill || !body) return;
 
-  body.innerHTML = compact;
+  pill.textContent = ymd2str(ymd);
+
+  if(!meals || !meals.length){
+    body.innerHTML = `<div class="muted">오늘 급식 정보가 없습니다.</div>`;
+    return;
+  }
+
+  body.innerHTML = meals.map(m=>{
+    const list = (m.menu||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("");
+    return `
+      <div style="margin-bottom:10px;">
+        <b>${escapeHtml(m.type)}</b>
+        <ul style="margin:8px 0 0;padding-left:18px;line-height:1.75;">
+          ${list || "<li>메뉴 없음</li>"}
+        </ul>
+      </div>
+    `;
+  }).join("");
 }
+
 function homeRenderTodaySchedule(rows){
   const pill = $("#homeSchDate");
   const body = $("#homeSchBody");
@@ -1005,8 +977,8 @@ function homeRenderTodaySchedule(rows){
   const list = rows.map(r=>`<li><b>${escapeHtml(r.name)}</b>${r.content ? ` - ${escapeHtml(r.content)}` : ""}</li>`).join("");
   body.innerHTML = `<ul style="padding-left:18px;line-height:1.8;margin:0;">${list}</ul>`;
 }
+
 async function renderHomeWidgets(){
-  // 급식
   try{
     const ymd = toYMDNoDash(todayStr());
     $("#homeMealDate").textContent = "오늘";
@@ -1017,7 +989,6 @@ async function renderHomeWidgets(){
     $("#homeMealBody").innerHTML = `<div class="muted">급식 불러오기 실패</div>`;
   }
 
-  // 학사일정 (오늘만)
   try{
     $("#homeSchDate").textContent = "오늘";
     $("#homeSchBody").innerHTML = `<div class="muted">불러오는 중…</div>`;
@@ -1028,21 +999,13 @@ async function renderHomeWidgets(){
     $("#homeSchBody").innerHTML = `<div class="muted">학사일정 불러오기 실패</div>`;
   }
 
-  // 시간표
   homeRenderTodayTimetable();
 }
 
-/* ======================
-   온웨이에듀
-====================== */
 function openOnway(){
-  // ✅ https로 고정
   window.open("https://ps.onwayedu.co.kr/login/login.php", "_blank", "noopener,noreferrer");
 }
 
-/* ======================
-   시작
-====================== */
 window.addEventListener("load", async ()=>{
   initTheme();
   initRoute();
@@ -1050,13 +1013,9 @@ window.addEventListener("load", async ()=>{
   await initMeals();
   await initSchedule();
 
-  // 홈 위젯 초기 갱신
   renderHomeWidgets();
-
-  // 시간표 기본 렌더는 필요할 때(뷰 진입 시) 하지만 홈 위젯엔 즉시 반영
   homeRenderTodayTimetable();
 });
 </script>
 </body>
 </html>
-```0
