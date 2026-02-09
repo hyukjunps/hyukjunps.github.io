@@ -862,7 +862,16 @@ function ttRenderTable(){
   const periodsInput = $("#ttPeriods");
 
   let store = ttLoad();
-  store.periods = Number(periodsInput.value || store.periods || 7);
+
+  /* ✅ 여기만 수정: 재실행 시 기본 7로 저장값(periods)을 덮어쓰는 문제 방지 */
+  const savedPeriods = Number(store.periods || 7);
+  const inputPeriods = Number(periodsInput.value || 0);
+  if(!inputPeriods || inputPeriods === 7){
+    periodsInput.value = String(savedPeriods);
+  }
+  store.periods = Number(periodsInput.value || savedPeriods || 7);
+  /* ✅ 여기만 수정 끝 */
+
   ttSave(store);
 
   let html = `
