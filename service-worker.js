@@ -1,47 +1,45 @@
-/* 오늘풍산 PWA Service Worker (GitHub Pages용) */
-const CACHE_VERSION = "v2";
+/* 오늘풍산 PWA Service Worker - v2 강제 업데이트 버전 */
+const CACHE_VERSION = "v2"; // 버전을 올려서 브라우저가 새 SW를 인식하게 합니다.
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
-// 최소 캐시(필수 정적 파일)
 const CORE_ASSETS = [
   "./",
   "./index.html",
-  "./manifest.json",
-  "android/Android-launchericon-512-512.png"
+  "./manifest.json?v=2", // 쿼리 스트링으로 매니페스트 갱신 강제
+  "android/android-launchericon-512-512.png?v=2" // 파일명 소문자 확인 필수!
 ];
 
-// 설치 시 기본 파일 캐시
 self.addEventListener("install", (event) => {
+  self.skipWaiting(); // 새로운 서비스 워커가 발견되면 즉시 활성화
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(CORE_ASSETS))
   );
-  self.skipWaiting();
 });
 
-// 활성화: 이전 캐시 정리
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((keys) =>
       Promise.all(
-        keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null))
+        keys.map((k) => {
+          if (k !== CACHE_NAME) {
+            console.log("Old cache deleted:", k);
+            return caches.delete(k);
+          }
+        })
       )
     )
   );
-  self.clients.claim();
+  self.clients.claim(); // 즉시 모든 탭 제어권을 가져옴
 });
 
-// fetch 전략
-// - 페이지 이동(navigate): 네트워크 우선(최신 반영), 실패 시 캐시 폴백
-// - 정적 자원: 캐시 우선, 없으면 네트워크 후 캐시 저장
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
 
-  // 같은 origin만 처리(NEIS 등 외부 API는 브라우저가 직접 처리)
   if (url.origin !== self.location.origin) return;
 
-  // HTML 네비게이션
-  if (req.mode === "navigate") {
+  // 업데이트 핵심: manifest.json이나 아이콘은 네트워크에서 먼저 확인하도록 전략 변경
+  if (url.pathname.includes('manifest.json') || url.pathname.includes('launchericon')) {
     event.respondWith(
       fetch(req)
         .then((res) => {
@@ -49,16 +47,15 @@ self.addEventListener("fetch", (event) => {
           caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
           return res;
         })
-        .catch(() => caches.match(req).then((r) => r || caches.match("./index.html")))
+        .catch(() => caches.match(req))
     );
     return;
   }
 
-  // 그 외(아이콘/manifest 등)
+  // 기본 전략: 캐시 우선 (성능 최적화)
   event.respondWith(
     caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req).then((res) => {
+      return cached || fetch(req).then((res) => {
         const copy = res.clone();
         caches.open(CACHE_NAME).then((cache) => cache.put(req, copy));
         return res;
