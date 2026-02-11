@@ -3,6 +3,7 @@
   "dir": "ltr",
   "display": "standalone",
   "name": "O.Poong",
+  "description": "풍산고 생활, 한 화면에서.", 
   "orientation": "any",
   "scope": "/",
   "short_name": "O.Poong",
