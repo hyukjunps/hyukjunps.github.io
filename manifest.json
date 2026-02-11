@@ -2,10 +2,10 @@
   "background_color": "#ffffff",
   "dir": "ltr",
   "display": "standalone",
-  "name": "오늘풍산",
+  "name": "O.Poong",
   "orientation": "any",
   "scope": "/",
-  "short_name": "오늘풍산",
+  "short_name": "O.Poong",
   "start_url": "https://hyukjunps.github.io",
   "theme_color": "#ffffff",
   "icons": [
