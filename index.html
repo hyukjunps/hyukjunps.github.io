@@ -18,11 +18,12 @@
     --muted:#64748b;
     --line:#e5e7eb;
 
-    /* ✅ 오늘풍산 메인 컬러 = 보라 */
+    /* ✅ 보라 테마 */
     --pri:#7c3aed;
     --pri2:#5b21b6;
+    --priSoft: color-mix(in srgb, var(--pri) 14%, var(--card));
 
-    --ok:#059669;
+    --ok:#7c3aed;   /* ✅ ok도 보라로 통일 */
     --warn:#b91c1c;
 
     --shadow:0 18px 50px rgba(2,6,23,.10);
@@ -42,11 +43,11 @@
     --muted:#9ca3af;
     --line:#243244;
 
-    /* ✅ 다크에서도 보라 유지 */
     --pri:#a78bfa;
     --pri2:#7c3aed;
+    --priSoft: color-mix(in srgb, var(--pri) 14%, var(--card));
 
-    --ok:#10b981;
+    --ok:#a78bfa;
     --warn:#f87171;
 
     --shadow:0 22px 60px rgba(0,0,0,.45);
@@ -56,41 +57,32 @@
   *{box-sizing:border-box}
   body{
     margin:0;
-    background: radial-gradient(900px 450px at 20% 0%, color-mix(in srgb, var(--pri) 12%, transparent), transparent 55%),
-                radial-gradient(900px 450px at 80% 0%, color-mix(in srgb, var(--ok) 8%, transparent), transparent 55%),
+    background: radial-gradient(900px 450px at 20% 0%, color-mix(in srgb, var(--pri) 14%, transparent), transparent 55%),
+                radial-gradient(900px 450px at 80% 0%, color-mix(in srgb, var(--pri2) 10%, transparent), transparent 55%),
                 var(--bg);
     color:var(--text);
     font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans KR',sans-serif;
   }
 
-  .wrap{
-    max-width: var(--max);
-    margin: 0 auto;
-    padding: 18px 14px 30px;
-  }
+  .wrap{ max-width: var(--max); margin: 0 auto; padding: 18px 14px 30px; }
 
   .topbar{
-    position: sticky;
-    top: 12px;
-    z-index: 20;
+    position: sticky; top: 12px; z-index: 20;
     padding: 14px;
     border-radius: var(--r28);
-    border: 1px solid var(--line);
+    border: 1px solid color-mix(in srgb, var(--pri) 22%, var(--line));
     background: color-mix(in srgb, var(--card) 86%, transparent);
     backdrop-filter: blur(12px);
     box-shadow: var(--shadow2);
 
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
+    display:flex; align-items:center; justify-content:space-between; gap:12px;
   }
   .brand{display:flex;align-items:center;gap:14px;min-width:0;}
   .logoWrap{
     width:64px;height:64px;border-radius:20px;overflow:hidden;
     box-shadow: 0 10px 24px rgba(2,6,23,.14);
-    border: 1px solid color-mix(in srgb, var(--line) 70%, transparent);
-    background: color-mix(in srgb, var(--card) 95%, transparent);
+    border: 1px solid color-mix(in srgb, var(--pri) 24%, var(--line));
+    background: color-mix(in srgb, var(--pri) 8%, var(--card));
     flex:0 0 auto;
   }
   .logo{width:100%;height:100%;display:block;object-fit:cover;}
@@ -108,9 +100,22 @@
   }
   .btn:active{ transform: translateY(1px); }
   .btn:hover{ opacity:.95; }
-  .btn.primary{color:#fff;background: linear-gradient(135deg, var(--pri), var(--pri2));box-shadow: 0 12px 26px color-mix(in srgb, var(--pri) 22%, transparent);}
-  .btn.ok{color:#fff;background: linear-gradient(135deg, var(--ok), color-mix(in srgb, var(--ok) 70%, #000));box-shadow: 0 12px 26px color-mix(in srgb, var(--ok) 18%, transparent);}
-  .btn.ghost{background: color-mix(in srgb, var(--card) 92%, transparent);color: var(--text);border-color: var(--line);box-shadow: 0 10px 22px rgba(2,6,23,.06);}
+  .btn.primary{
+    color:#fff;
+    background: linear-gradient(135deg, var(--pri), var(--pri2));
+    box-shadow: 0 12px 26px color-mix(in srgb, var(--pri) 26%, transparent);
+  }
+  .btn.ok{
+    color:#fff;
+    background: linear-gradient(135deg, var(--pri), var(--pri2)); /* ✅ 설치도 보라 */
+    box-shadow: 0 12px 26px color-mix(in srgb, var(--pri) 22%, transparent);
+  }
+  .btn.ghost{
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--pri) 18%, var(--line));
+    box-shadow: 0 10px 22px rgba(2,6,23,.06);
+  }
 
   .layout{
     margin-top:16px;
@@ -123,7 +128,7 @@
   .side{
     position: sticky;
     top: 98px;
-    border:1px solid var(--line);
+    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
     border-radius: var(--r28);
     background: var(--card);
     box-shadow: var(--shadow);
@@ -131,14 +136,14 @@
   }
   .sideHead{
     padding: 14px 14px 12px;
-    border-bottom:1px solid var(--line);
-    background: color-mix(in srgb, var(--bg) 55%, transparent);
+    border-bottom:1px solid color-mix(in srgb, var(--pri) 14%, var(--line));
+    background: color-mix(in srgb, var(--pri) 6%, var(--bg));
   }
   .sideHead b{font-size:14.5px;letter-spacing:-.2px;}
   .sideNav{padding: 12px;display:flex;flex-direction:column;gap:10px;}
   .navBtn{
     width:100%;
-    border:1px solid var(--line);
+    border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
     background: color-mix(in srgb, var(--card) 92%, transparent);
     color: var(--text);
     border-radius: 18px;
@@ -157,20 +162,23 @@
   .navBtn:active{ transform: translateY(1px); }
   .navBtn:hover{ opacity:.96; }
   .navBtn[data-active="1"]{
-    border-color: color-mix(in srgb, var(--pri) 45%, var(--line));
-    background: color-mix(in srgb, var(--pri) 10%, var(--card));
+    border-color: color-mix(in srgb, var(--pri) 55%, var(--line));
+    background: color-mix(in srgb, var(--pri) 12%, var(--card));
   }
   .navBtn .hint{font-size:12.5px;font-weight:900;color:var(--muted);}
 
   .panel{
     background: var(--card);
-    border: 1px solid var(--line);
+    border: 1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
     border-radius: var(--r28);
     box-shadow: var(--shadow);
     overflow:hidden;
   }
   .section{padding: 18px 16px;}
-  .section + .section{border-top:1px solid var(--line);background: color-mix(in srgb, var(--bg) 55%, transparent);}
+  .section + .section{
+    border-top:1px solid color-mix(in srgb, var(--pri) 14%, var(--line));
+    background: color-mix(in srgb, var(--pri) 4%, var(--bg));
+  }
 
   .view{display:none;}
   .view.active{display:block;}
@@ -178,7 +186,7 @@
   .controls{
     display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-start;align-items:center;
     padding: 14px;
-    border:1px solid var(--line);
+    border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
     border-radius: var(--r28);
     background: var(--card);
     box-shadow: var(--shadow2);
@@ -187,7 +195,7 @@
     font-size: 15px;
     padding: 12px 14px;
     border-radius: 16px;
-    border: 1px solid var(--line);
+    border: 1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
     background: color-mix(in srgb, var(--card) 92%, transparent);
     color: var(--text);
     min-height: 50px;
@@ -197,27 +205,27 @@
     border:none;color:#fff;font-weight: 950;cursor:pointer;
     background: linear-gradient(135deg, var(--pri), var(--pri2));
   }
-  .smallbtn.ok{ background: linear-gradient(135deg, var(--ok), color-mix(in srgb, var(--ok) 70%, #000)); }
+  .smallbtn.ok{ background: linear-gradient(135deg, var(--pri), var(--pri2)); }
   .smallbtn.ghost{
     color: var(--text);
-    border:1px solid var(--line);
+    border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
     background: color-mix(in srgb, var(--card) 92%, transparent);
   }
   .smallbtn:hover{opacity:.95;}
 
   .notice{
     margin-top: 14px;
-    border: 1px solid var(--line);
+    border: 1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
     border-radius: var(--r28);
     padding: 14px;
-    background: var(--card);
-    color: var(--muted);
+    background: color-mix(in srgb, var(--pri) 6%, var(--card)); /* ✅ 안내 박스도 보라 톤 */
+    color: color-mix(in srgb, var(--text) 80%, var(--muted));
     line-height: 1.85;
   }
   .notice.ok{
-    border-color: color-mix(in srgb, var(--ok) 35%, var(--line));
-    background: color-mix(in srgb, var(--ok) 12%, var(--card));
-    color: color-mix(in srgb, var(--ok) 70%, var(--text));
+    border-color: color-mix(in srgb, var(--pri) 40%, var(--line));
+    background: color-mix(in srgb, var(--pri) 10%, var(--card));
+    color: color-mix(in srgb, var(--text) 88%, var(--muted));
   }
   .notice.err{
     border-color: color-mix(in srgb, var(--warn) 35%, var(--line));
@@ -225,39 +233,27 @@
     color: color-mix(in srgb, var(--warn) 70%, var(--text));
   }
 
-  .widgets{
-    display:grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-  }
-  @media (min-width: 920px){
-    .widgets{ grid-template-columns: 1fr 1fr 1fr; }
-  }
+  .widgets{display:grid;grid-template-columns: 1fr;gap: 12px;}
+  @media (min-width: 920px){ .widgets{ grid-template-columns: 1fr 1fr 1fr; } }
   .widget{
-    border:1px solid var(--line);
+    border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
     border-radius: var(--r28);
-    background: color-mix(in srgb, var(--card) 92%, transparent);
+    background: color-mix(in srgb, var(--pri) 5%, var(--card));
     box-shadow: 0 12px 26px rgba(2,6,23,.06);
     padding: 14px;
     min-height: 150px;
     display:flex;
     flex-direction:column;
   }
-  .widgetHead{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    margin-bottom: 10px;
-  }
+  .widgetHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom: 10px;}
   .widgetHead b{font-size:15px;letter-spacing:-.2px;}
   .pill{
     font-size:12.5px;
     font-weight:950;
     padding:8px 10px;
     border-radius: 999px;
-    border:1px solid var(--line);
-    background: color-mix(in srgb, var(--card) 92%, transparent);
+    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
+    background: color-mix(in srgb, var(--pri) 8%, var(--card));
     color: var(--muted);
     white-space:nowrap;
   }
@@ -281,23 +277,29 @@
   }
   .modal{
     width:min(720px, 100%);background: var(--card);
-    border:1px solid var(--line);border-radius: var(--r28);
-    box-shadow: var(--shadow);overflow:hidden;
+    border:1px solid color-mix(in srgb, var(--pri) 22%, var(--line));
+    border-radius: var(--r28);
+    box-shadow: var(--shadow);
+    overflow:hidden;
   }
   .modalHead{
-    padding: 16px;border-bottom:1px solid var(--line);
+    padding: 16px;border-bottom:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
     display:flex;justify-content:space-between;align-items:center;gap:10px;
+    background: color-mix(in srgb, var(--pri) 6%, var(--card)); /* ✅ 모달도 보라 */
   }
   .modalHead b{ font-size: 16px; letter-spacing:-.2px; }
   .modalBody{ padding: 16px; color: var(--muted); line-height: 1.9; font-size: 14.5px; }
   .steps{ margin: 12px 0 0; padding:0; list-style:none; }
   .steps li{
-    border:1px solid var(--line);border-radius: 16px;padding: 12px 12px;margin-top: 10px;
-    background: color-mix(in srgb, var(--card) 92%, transparent);
+    border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
+    border-radius: 16px;
+    padding: 12px 12px;
+    margin-top: 10px;
+    background: color-mix(in srgb, var(--pri) 6%, var(--card));
   }
   .steps li b{ color: var(--text); }
   .modalFoot{
-    padding: 14px 16px;border-top:1px solid var(--line);
+    padding: 14px 16px;border-top:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
     display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;
   }
 
@@ -308,19 +310,19 @@
   }
 
   /* ==========================
-     ✅ NEIS 글자수(요청 반영: 간소/상자 크게/바이트 UI 쌈빡)
+     ✅ NEIS 글자수 UI
      ========================== */
   .neisBox{
-    border:1px solid var(--line);
+    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
     border-radius: var(--r28);
-    background: color-mix(in srgb, var(--card) 92%, transparent);
+    background: color-mix(in srgb, var(--pri) 6%, var(--card));
     box-shadow: 0 12px 26px rgba(2,6,23,.06);
     padding: 14px;
   }
   .neisTabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
   .neisTab{
-    border:1px solid var(--line);
-    background: color-mix(in srgb, var(--card) 92%, transparent);
+    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
+    background: color-mix(in srgb, var(--pri) 6%, var(--card));
     color: var(--muted);
     border-radius: 999px;
     padding: 10px 12px;
@@ -331,14 +333,14 @@
   .neisTab[aria-selected="true"]{
     color: var(--text);
     border-color: color-mix(in srgb, var(--pri) 55%, var(--line));
-    background: color-mix(in srgb, var(--pri) 12%, var(--card));
+    background: color-mix(in srgb, var(--pri) 14%, var(--card));
   }
   .neisText{
     width:100%;
-    min-height: 520px;   /* ✅ 상자 크게 */
+    min-height: 520px;
     resize: vertical;
     border-radius: var(--r22);
-    border: 1px solid var(--line);
+    border: 1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
     background: color-mix(in srgb, var(--card) 92%, transparent);
     color: var(--text);
     font-size: 15.5px;
@@ -348,66 +350,43 @@
     outline:none;
   }
   .neisText:focus{
-    border-color: color-mix(in srgb, var(--pri) 65%, var(--line));
-    box-shadow: 0 0 0 5px color-mix(in srgb, var(--pri) 16%, transparent);
+    border-color: color-mix(in srgb, var(--pri) 70%, var(--line));
+    box-shadow: 0 0 0 5px color-mix(in srgb, var(--pri) 18%, transparent);
   }
-  .neisFooter{
-    margin-top: 12px;
-    display:flex;
-    flex-direction:column;
-    gap: 10px;
-  }
-  .neisByteRow{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    align-items:stretch;
-  }
+  .neisFooter{ margin-top: 12px; display:flex; flex-direction:column; gap: 10px; }
+
+  .neisByteRow{ display:flex; gap:10px; flex-wrap:wrap; align-items:stretch; }
   .neisByteCard{
     flex: 1 1 180px;
-    border:1px solid var(--line);
+    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
     border-radius: 18px;
-    background: color-mix(in srgb, var(--bg) 55%, var(--card));
+    background: color-mix(in srgb, var(--pri) 6%, var(--card));
     padding: 12px 12px;
     box-shadow: var(--shadow2);
   }
   .neisByteCard .k{font-size:12.5px;font-weight:950;color:var(--muted);}
-  .neisByteCard .v{
-    margin-top:6px;
-    font-size:18px;
-    font-weight:1000;
-    letter-spacing:-.3px;
-    color: var(--text);
-  }
+  .neisByteCard .v{ margin-top:6px; font-size:18px; font-weight:1000; letter-spacing:-.3px; color: var(--text); }
   .neisByteCard .v small{font-size:13px;font-weight:950;color:var(--muted);margin-left:4px;}
-  .neisActions{
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    justify-content:flex-end;
-  }
+
+  .neisActions{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
   .neisBar{
     width:100%;
     height: 12px;
     border-radius: 999px;
-    border:1px solid var(--line);
-    background: color-mix(in srgb, var(--card) 92%, transparent);
+    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
+    background: color-mix(in srgb, var(--pri) 6%, var(--card));
     overflow:hidden;
   }
   .neisBar > div{
     height:100%;
     width:0%;
-    background: linear-gradient(135deg, var(--pri), color-mix(in srgb, var(--pri) 55%, var(--ok)));
+    background: linear-gradient(135deg, var(--pri), var(--pri2));
     transition: width .12s ease;
   }
   .neisBar > div.over{
     background: linear-gradient(135deg, var(--warn), color-mix(in srgb, var(--warn) 65%, #000));
   }
-  .neisResultLine{
-    font-size: 13.5px;
-    font-weight: 950;
-    color: var(--muted);
-  }
+  .neisResultLine{ font-size: 13.5px; font-weight: 950; color: var(--muted); }
   .neisResultLine b{color:var(--text);}
 </style>
 </head>
@@ -579,7 +558,7 @@
           </div>
         </div>
 
-        <!-- ✅ NEIS COUNTER -->
+        <!-- NEIS COUNTER -->
         <div class="section view" id="view-neis">
           <div class="neisBox">
             <div class="neisTabs" role="tablist" aria-label="NEIS 항목">
@@ -611,7 +590,6 @@
                   <div class="v"><span id="neisLimit">1500</span><small>byte</small></div>
                 </div>
                 <div class="neisActions" style="flex: 1 1 220px;">
-                  <button class="smallbtn ok" type="button" id="neisCopyBtn">복사</button>
                   <button class="smallbtn ghost" type="button" id="neisClearBtn">전체 지우기</button>
                 </div>
               </div>
@@ -714,7 +692,7 @@ function applyTheme(theme){
   document.documentElement.setAttribute("data-theme", theme);
   localStorage.setItem("theme", theme);
   const meta = document.querySelector('meta[name="theme-color"]');
-  meta.setAttribute("content", theme === "dark" ? "#0b1220" : "#7c3aed"); /* ✅ 라이트 보라 */
+  meta.setAttribute("content", theme === "dark" ? "#0b1220" : "#7c3aed");
 }
 function initTheme(){
   const saved = localStorage.getItem("theme");
@@ -805,7 +783,7 @@ async function neis(endpoint, params) {
   return res.json();
 }
 
-/* ===== 급식/학사/시간표 기존 로직 그대로 ===== */
+/* ===== 기존 기능들(급식/학사/시간표) 그대로 ===== */
 function setNotice(kind, text){
   const box = $("#notice");
   box.className = "notice" + (kind ? ` ${kind}` : "");
@@ -1039,7 +1017,7 @@ function ttRenderTable(){
             data-key="${key}"
             value="${escapeHtml(val)}"
             placeholder="과목/교실"
-            style="width:100%;padding:12px 12px;border-radius:14px;border:1px solid var(--line);background:color-mix(in srgb, var(--card) 92%, transparent);color:var(--text);font-size:14.5px;font-weight:900;"
+            style="width:100%;padding:12px 12px;border-radius:14px;border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));background:color-mix(in srgb, var(--card) 92%, transparent);color:var(--text);font-size:14.5px;font-weight:900;"
           />
         </td>`;
     });
@@ -1161,19 +1139,8 @@ function openOnway(){
   window.open("https://ps.onwayedu.co.kr/login/login.php", "_blank", "noopener,noreferrer");
 }
 
-/* ==========================
-   ✅ NEIS 글자수 (요청 반영)
-   - iPad paste 보정 코드 제거
-   - byte/남은/총 byte 표시
-   - 1500b -> 1500byte 표기
-   ========================== */
-const NEIS_LIMITS = {
-  autonomy: 1500,
-  club: 1500,
-  career: 2100,
-  subject: 1500,
-  personal: 1500
-};
+/* ✅ NEIS 글자수 */
+const NEIS_LIMITS = { autonomy:1500, club:1500, career:2100, subject:1500, personal:1500 };
 let neisActiveKey = "autonomy";
 let neisWired = false;
 
@@ -1211,12 +1178,6 @@ function neisInit(){
       ta.value = "";
       localStorage.setItem("ps_neis_save", "");
       neisCounter("");
-    });
-
-    $("#neisCopyBtn").addEventListener("click", async ()=>{
-      const txt = $("#neisResultLine").textContent || "";
-      const ok = await copyTextReliable(txt);
-      alert(ok ? "요약이 복사되었습니다." : "복사에 실패했습니다. 다시 시도해 주세요.");
     });
 
     neisWired = true;
