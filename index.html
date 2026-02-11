@@ -23,7 +23,7 @@
     --pri2:#5b21b6;
     --priSoft: color-mix(in srgb, var(--pri) 14%, var(--card));
 
-    --ok:#7c3aed;   /* ✅ ok도 보라로 통일 */
+    --ok:#7c3aed;
     --warn:#b91c1c;
 
     --shadow:0 18px 50px rgba(2,6,23,.10);
@@ -107,7 +107,7 @@
   }
   .btn.ok{
     color:#fff;
-    background: linear-gradient(135deg, var(--pri), var(--pri2)); /* ✅ 설치도 보라 */
+    background: linear-gradient(135deg, var(--pri), var(--pri2));
     box-shadow: 0 12px 26px color-mix(in srgb, var(--pri) 22%, transparent);
   }
   .btn.ghost{
@@ -218,7 +218,7 @@
     border: 1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
     border-radius: var(--r28);
     padding: 14px;
-    background: color-mix(in srgb, var(--pri) 6%, var(--card)); /* ✅ 안내 박스도 보라 톤 */
+    background: color-mix(in srgb, var(--pri) 6%, var(--card));
     color: color-mix(in srgb, var(--text) 80%, var(--muted));
     line-height: 1.85;
   }
@@ -285,7 +285,7 @@
   .modalHead{
     padding: 16px;border-bottom:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
     display:flex;justify-content:space-between;align-items:center;gap:10px;
-    background: color-mix(in srgb, var(--pri) 6%, var(--card)); /* ✅ 모달도 보라 */
+    background: color-mix(in srgb, var(--pri) 6%, var(--card));
   }
   .modalHead b{ font-size: 16px; letter-spacing:-.2px; }
   .modalBody{ padding: 16px; color: var(--muted); line-height: 1.9; font-size: 14.5px; }
@@ -388,6 +388,18 @@
   }
   .neisResultLine{ font-size: 13.5px; font-weight: 950; color: var(--muted); }
   .neisResultLine b{color:var(--text);}
+
+  /* ✅ 요청: 바이트 규칙 문구 */
+  .neisRule{
+    font-size: 12.8px;
+    font-weight: 900;
+    color: var(--muted);
+    line-height: 1.65;
+    padding: 10px 12px;
+    border: 1px solid color-mix(in srgb, var(--pri) 14%, var(--line));
+    border-radius: 16px;
+    background: color-mix(in srgb, var(--pri) 5%, var(--card));
+  }
 </style>
 </head>
 
@@ -595,7 +607,12 @@
               </div>
 
               <div class="neisResultLine" id="neisResultLine">
-                공백 제외 <b>0</b>자, 공백 포함 <b>0</b>자, <b>0</b>바이트 ㅣ 영어, 숫자, 특수문자, 띄어쓰기 1바이트/ 엔터키 2바이트 / 한글 3바이트
+                공백 제외 <b>0</b>자, 공백 포함 <b>0</b>자, <b>0</b>바이트
+              </div>
+
+              <!-- ✅ 요청 문구 추가 -->
+              <div class="neisRule">
+                영어, 숫자, 특수문자, 띄어쓰기 1바이트 / 엔터키 2바이트 / 한글 3바이트
               </div>
             </div>
           </div>
