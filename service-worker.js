@@ -1,5 +1,5 @@
 /* 오늘풍산 PWA Service Worker (GitHub Pages용) */
-const CACHE_VERSION = "v1";
+const CACHE_VERSION = "v2";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 // 최소 캐시(필수 정적 파일)
@@ -7,7 +7,7 @@ const CORE_ASSETS = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./Android-launchericon-512-512.png"
+  "android/Android-launchericon-512-512.png"
 ];
 
 // 설치 시 기본 파일 캐시
