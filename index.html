@@ -305,6 +305,93 @@
     .side{position:relative;top:auto;}
     .widgetBody{max-height: 260px;}
   }
+
+  /* ==========================
+     ✅ NEIS 글자수(추가) - 기존 스타일 건드리지 않음
+     ========================== */
+  .neisWrap{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 920px){
+    .neisWrap{ grid-template-columns: 1.25fr .75fr; align-items:start; }
+  }
+  .neisBox{
+    border:1px solid var(--line);
+    border-radius: var(--r28);
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+    box-shadow: 0 12px 26px rgba(2,6,23,.06);
+    padding: 14px;
+  }
+  .neisTabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;}
+  .neisTab{
+    border:1px solid var(--line);
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+    color: var(--muted);
+    border-radius: 999px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-weight: 950;
+    cursor:pointer;
+  }
+  .neisTab[aria-selected="true"]{
+    color: var(--text);
+    border-color: color-mix(in srgb, var(--pri) 45%, var(--line));
+    background: color-mix(in srgb, var(--pri) 10%, var(--card));
+  }
+  .neisText{
+    width:100%;
+    min-height: 260px;
+    resize: vertical;
+    border-radius: var(--r22);
+    border: 1px solid var(--line);
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+    color: var(--text);
+    font-size: 15px;
+    font-weight: 850;
+    line-height: 1.6;
+    padding: 14px 14px;
+    outline:none;
+
+    /* ✅ iPad 붙여넣기/선택 안정화 */
+    -webkit-user-select: text;
+    user-select: text;
+    -webkit-touch-callout: default;
+  }
+  .neisText:focus{
+    border-color: color-mix(in srgb, var(--pri) 55%, var(--line));
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--pri) 15%, transparent);
+  }
+  .neisRow{
+    display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;
+    margin-top: 10px;
+  }
+  .neisBar{
+    width:100%;
+    height: 10px;
+    border-radius: 999px;
+    border:1px solid var(--line);
+    background: color-mix(in srgb, var(--card) 92%, transparent);
+    overflow:hidden;
+    margin-top: 10px;
+  }
+  .neisBar > div{
+    height:100%;
+    width:0%;
+    background: linear-gradient(135deg, var(--pri), var(--ok));
+    transition: width .12s ease;
+  }
+  .neisBar > div.over{
+    background: linear-gradient(135deg, var(--warn), color-mix(in srgb, var(--warn) 70%, #000));
+  }
+  .neisStat{
+    font-size: 14px;
+    font-weight: 950;
+    color: var(--muted);
+    line-height: 1.7;
+  }
+  .neisStat b{color: var(--text);}
 </style>
 </head>
 
@@ -346,6 +433,11 @@
           </button>
           <button class="navBtn" data-view="onway" type="button" onclick="go('onway')">
             <span>🧾 온웨이에듀</span><span class="hint">onwayedu</span>
+          </button>
+
+          <!-- ✅ NEIS 글자수 계산기(추가) -->
+          <button class="navBtn" data-view="neis" type="button" onclick="go('neis'); neisInit();">
+            <span>✍️ 글자수(NEIS)</span><span class="hint">바이트</span>
           </button>
         </div>
       </aside>
@@ -472,6 +564,54 @@
             <button class="btn ghost" type="button" onclick="go('home')">홈</button>
           </div>
         </div>
+
+        <!-- ✅ NEIS COUNTER (추가) -->
+        <div class="section view" id="view-neis">
+          <div class="notice">
+            나이스 입력용 바이트 계산기입니다. <b style="color:var(--text);">자동 저장</b>되고, iPad에서도 붙여넣기 되도록 보정했습니다.
+          </div>
+
+          <div class="neisWrap" style="margin-top:14px;">
+            <div class="neisBox">
+              <div class="neisTabs" role="tablist" aria-label="NEIS 항목">
+                <button class="neisTab" type="button" data-k="autonomy" aria-selected="true">자율활동</button>
+                <button class="neisTab" type="button" data-k="club" aria-selected="false">동아리활동</button>
+                <button class="neisTab" type="button" data-k="career" aria-selected="false">진로활동</button>
+                <button class="neisTab" type="button" data-k="subject" aria-selected="false">교과세특</button>
+                <button class="neisTab" type="button" data-k="personal" aria-selected="false">개인별세특</button>
+              </div>
+
+              <textarea id="neisText" class="neisText" placeholder="여기에 내용을 붙여넣으면 즉시 계산됩니다."></textarea>
+
+              <div class="neisRow">
+                <span class="pill" id="neisPill">여유: 1500B</span>
+                <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                  <button class="smallbtn ok" type="button" id="neisCopyBtn">결과 복사</button>
+                  <button class="smallbtn ghost" type="button" id="neisClearBtn">전체 지우기</button>
+                </div>
+              </div>
+
+              <div class="neisBar" aria-label="바이트 사용량">
+                <div id="neisBarFill"></div>
+              </div>
+            </div>
+
+            <div class="neisBox">
+              <div class="neisStat" id="neisResultLine">공백 제외 0자, 공백 포함 0자, 0바이트</div>
+              <div class="notice" style="margin-top:12px;">
+                <b style="color:var(--text);">계산 규칙</b><br/>
+                영어/숫자/특수문자/띄어쓰기: 1바이트<br/>
+                엔터: 2바이트<br/>
+                한글: 3바이트
+              </div>
+              <div class="notice" style="margin-top:12px;">
+                <b style="color:var(--text);">팁</b><br/>
+                iPad에서 붙여넣기 이슈가 있는 경우를 대비해, 붙여넣기(paste) 이벤트를 직접 처리합니다.
+              </div>
+            </div>
+          </div>
+        </div>
+
       </main>
     </div>
   </div>
@@ -552,10 +692,11 @@ function go(view){
 
   if(view === "home") renderHomeWidgets();
   if(view === "timetable") ttRenderTable();
+  if(view === "neis") neisInit();
 }
 function initRoute(){
   const h = (location.hash || "#home").replace("#","");
-  const allowed = ["home","meal","schedule","timetable","onway"];
+  const allowed = ["home","meal","schedule","timetable","onway","neis"];
   go(allowed.includes(h) ? h : "home");
 }
 
@@ -1019,6 +1160,199 @@ function openOnway(){
   window.open("https://ps.onwayedu.co.kr/login/login.php", "_blank", "noopener,noreferrer");
 }
 
+/* ==========================
+   ✅ NEIS 글자수(추가)
+   - iPad 붙여넣기 보정 포함
+   ========================== */
+const NEIS_LIMITS = {
+  autonomy: 1500,
+  club: 1500,
+  career: 2100,
+  subject: 1500,
+  personal: 1500
+};
+let neisActiveKey = "autonomy";
+let neisWired = false;
+
+function neisSetTab(key){
+  neisActiveKey = key;
+  localStorage.setItem("ps_neis_active", key);
+  document.querySelectorAll(".neisTab").forEach(b=>{
+    b.setAttribute("aria-selected", b.dataset.k === key ? "true" : "false");
+  });
+  neisCounter($("#neisText").value || "");
+}
+
+function neisInit(){
+  // 여러 번 호출돼도 이벤트 중복 안 되게
+  if(!$("#neisText")) return;
+
+  const savedTab = localStorage.getItem("ps_neis_active");
+  if(savedTab && NEIS_LIMITS[savedTab]) neisActiveKey = savedTab;
+
+  document.querySelectorAll(".neisTab").forEach(b=>{
+    b.setAttribute("aria-selected", b.dataset.k === neisActiveKey ? "true" : "false");
+  });
+
+  const ta = $("#neisText");
+  const savedText = localStorage.getItem("ps_neis_save") || "";
+  if(ta.value !== savedText) ta.value = savedText;
+
+  if(!neisWired){
+    // 탭
+    document.querySelectorAll(".neisTab").forEach(b=>{
+      b.addEventListener("click", ()=> neisSetTab(b.dataset.k));
+    });
+
+    // 입력
+    ta.addEventListener("input", (e)=> neisCounter(e.target.value));
+
+    // ✅ iPad 붙여넣기 이슈 보정: paste 이벤트 직접 처리
+    ta.addEventListener("paste", (e)=>{
+      try{
+        const cd = e.clipboardData || window.clipboardData;
+        if(!cd) return; // 기본 동작
+        const text = cd.getData("text/plain");
+        if(typeof text !== "string") return;
+        e.preventDefault();
+        const start = ta.selectionStart ?? ta.value.length;
+        const end = ta.selectionEnd ?? ta.value.length;
+        const next = ta.value.slice(0, start) + text + ta.value.slice(end);
+        ta.value = next;
+        // 커서 이동
+        const pos = start + text.length;
+        ta.setSelectionRange(pos, pos);
+        neisCounter(next);
+      }catch(_){}
+    }, { passive: false });
+
+    // 버튼
+    $("#neisClearBtn").addEventListener("click", ()=>{
+      ta.value = "";
+      localStorage.setItem("ps_neis_save", "");
+      neisCounter("");
+    });
+
+    $("#neisCopyBtn").addEventListener("click", async ()=>{
+      const txt = $("#neisResultLine").textContent || "";
+      const ok = await copyTextReliable(txt);
+      alert(ok ? "결과가 복사되었습니다." : "복사에 실패했습니다. 다시 시도해 주세요.");
+    });
+
+    neisWired = true;
+  }
+
+  neisCounter(ta.value || "");
+}
+
+function neisCounter(content){
+  // 원본 로직과 동일한 trimming
+  if (content == "\n" && content.startsWith('\n')) {
+    content = content.slice(1);
+  }
+  if (content != "\n" && content.endsWith('\n')) {
+    content = content.slice(0, -1);
+  }
+
+  localStorage.setItem("ps_neis_save", content);
+
+  // 수학/그리스 기호 정의 (원본 유지)
+  var math_symbols = /[\+\-\*\/=<>∞∑∏∫√∂∆πθΩαβγδεζηλμνξοπρστυφχψω·]/g;
+  var other_symbols = /[‘’“”]/g;
+
+  // 카테고리별 필터링 (원본 유지)
+  var english = content
+    .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "")
+    .replace(/[0-9]/g, "")
+    .replace(math_symbols, "")
+    .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, "")
+    .replace(/\s/g, "")
+    .replace(other_symbols, "");
+
+  var korean = content
+    .replace(/[a-zA-Z]/g, "")
+    .replace(/[0-9]/g, "")
+    .replace(math_symbols, "")
+    .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, "")
+    .replace(/\s/g, "")
+    .replace(other_symbols, "");
+
+  var number = content
+    .replace(/[a-zA-Z]/g, "")
+    .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "")
+    .replace(math_symbols, "")
+    .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, "")
+    .replace(/\s/g, "")
+    .replace(other_symbols, "");
+
+  var onebyte_special = content
+    .replace(/[a-zA-Z]/g, "")
+    .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "")
+    .replace(/[0-9]/g, "")
+    .replace(/[\n\t\r\s]/g, "");
+
+  var threebyte_special = content
+    .replace(/[a-zA-Z]/g, "")
+    .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "")
+    .replace(/[0-9]/g, "")
+    .replace(math_symbols, "")
+    .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, "")
+    .replace(/[\n\t\r\s]/g, "")
+    .replace(other_symbols, "");
+
+  var space = content
+    .replace(/[a-zA-Z]/g, "")
+    .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "")
+    .replace(/[0-9]/g, "")
+    .replace(math_symbols, "")
+    .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, "")
+    .replace(other_symbols, "")
+    .replace(/[^\s]/g, "")
+    .replace(/[\n\r]/g, "");
+
+  var line = content
+    .replace(/[a-zA-Z]/g, "")
+    .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "")
+    .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, "")
+    .replace(/[0-9]/g, "")
+    .replace(math_symbols, "")
+    .replace(/[^\n]/g, "")
+    .replace(other_symbols, "");
+
+  var bytes =
+    english.length +
+    (korean.length * 3) +
+    number.length +
+    onebyte_special.length +
+    (threebyte_special.length * 3) +
+    space.length +
+    (line.length * 2);
+
+  const noSpace = content
+    .replace(/(\r\n\t|\n|\r\t)/gm,"")
+    .replace(/ /gi, "").length;
+
+  const withSpace = content.length;
+
+  $("#neisResultLine").textContent = `공백 제외 ${noSpace}자, 공백 포함 ${withSpace}자, ${bytes}바이트`;
+
+  const limit = NEIS_LIMITS[neisActiveKey] || 1500;
+  const diff = limit - bytes;
+
+  const pill = $("#neisPill");
+  const fill = $("#neisBarFill");
+
+  if(diff >= 0){
+    pill.textContent = `여유: ${diff}B (제한 ${limit}B)`;
+  }else{
+    pill.textContent = `초과: ${Math.abs(diff)}B (제한 ${limit}B)`;
+  }
+
+  const pct = Math.max(0, Math.min(100, Math.round((bytes / limit) * 100)));
+  fill.style.width = pct + "%";
+  fill.classList.toggle("over", bytes > limit);
+}
+
 window.addEventListener("load", async ()=>{
   initTheme();
   initRoute();
@@ -1028,6 +1362,9 @@ window.addEventListener("load", async ()=>{
 
   renderHomeWidgets();
   homeRenderTodayTimetable();
+
+  // 해시로 neis로 들어온 경우 대비
+  if((location.hash||"") === "#neis") neisInit();
 });
 </script>
 </body>
