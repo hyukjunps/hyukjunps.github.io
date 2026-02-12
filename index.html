@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>서비스 점검 안내</title>
+
+<style>
+  :root{
+    --bg:#f5f7fa;
+    --card:#ffffff;
+    --text:#0f172a;
+    --muted:#64748b;
+    --pri:#7c3aed;
+  }
+
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;
+    background:linear-gradient(135deg,#ede9fe,#f5f7fa);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    height:100vh;
+  }
+
+  .card{
+    background:var(--card);
+    width:92%;
+    max-width:480px;
+    border-radius:28px;
+    padding:40px 30px;
+    box-shadow:0 25px 60px rgba(0,0,0,.08);
+    text-align:center;
+  }
+
+  .icon{
+    font-size:56px;
+    margin-bottom:20px;
+  }
+
+  h1{
+    font-size:22px;
+    margin:0 0 14px;
+    color:var(--text);
+  }
+
+  p{
+    font-size:15px;
+    line-height:1.6;
+    color:var(--muted);
+    margin:0 0 20px;
+  }
+
+  .period{
+    background:#f3e8ff;
+    color:#5b21b6;
+    padding:14px;
+    border-radius:16px;
+    font-weight:600;
+    font-size:14px;
+  }
+
+  .footer{
+    margin-top:24px;
+    font-size:13px;
+    color:#94a3b8;
+  }
+</style>
+</head>
+<body>
+
+<div class="card">
+  <div class="icon">🛠</div>
+  <h1>서비스 일시 중단 안내</h1>
+  <p>
+    나이스 정보공개 서비스의 점검과
+    보다 안정적이고 편리한 서비스 제공을 위해<br>
+    시스템 점검을 진행하고 있습니다.<br>
+    이용에 불편을 드려 죄송합니다.
+  </p>
+
+  <div class="period">
+    26.2.12.(목) 11:00 ~ 당일 작업 종료 시점
+  </div>
+
+  <div class="footer">
+    작업 완료 후 자동으로 정상 서비스가 재개됩니다.
+  </div>
+</div>
+
+</body>
+</html>
