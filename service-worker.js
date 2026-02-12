@@ -1,6 +1,6 @@
 /* 오늘풍산 PWA Service Worker (GitHub Pages용 - 최신반영 안정화 버전) */
 
-const CACHE_VERSION = "v4";   // 🔥 수정할 때마다 숫자 올리기
+const CACHE_VERSION = "v5";   // 🔥 수정할 때마다 숫자 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 // HTML은 캐시하지 않는다 (업데이트 문제 방지)
