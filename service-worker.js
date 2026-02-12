@@ -1,5 +1,5 @@
 /* 오늘풍산 PWA Service Worker (GitHub Pages용) */
-const CACHE_VERSION = "v2";
+const CACHE_VERSION = "v3";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 // 최소 캐시(필수 정적 파일)
