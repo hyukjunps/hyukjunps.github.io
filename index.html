@@ -1337,17 +1337,3 @@ window.addEventListener("load", async ()=>{
 </body>
 </html>
 <script>
-  // 업데이트 버전 관리 도장
-  const VER = 'v2_force_update'; 
-  if (localStorage.getItem('app_version') !== VER) {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistrations().then(registrations => {
-        for (let registration of registrations) {
-          registration.unregister(); // 기존 SW 제거
-        }
-        localStorage.setItem('app_version', VER);
-        window.location.reload(true); // 강제 새로고침으로 새 SW 설치
-      });
-    }
-  }
-</script>
