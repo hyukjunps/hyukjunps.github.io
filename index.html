@@ -390,7 +390,6 @@
   .neisResultLine{ font-size: 13.5px; font-weight: 950; color: var(--muted); }
   .neisResultLine b{color:var(--text);}
 
-  /* ✅ 요청: 바이트 규칙 문구 */
   .neisRule{
     font-size: 12.8px;
     font-weight: 900;
@@ -402,17 +401,14 @@
     background: color-mix(in srgb, var(--pri) 5%, var(--card));
   }
 
-  /* ✅ 카카오 광고 래퍼(보이게/가운데 정렬) */
+  /* ✅ 광고 자리(가운데 정렬) */
   .adWrap{
     margin-top: 12px;
+    width:100%;
     display:flex;
     justify-content:center;
     align-items:center;
-    width:100%;
     overflow:hidden;
-  }
-  .adWrap.neis{
-    margin: 8px 0 12px;
   }
 </style>
 </head>
@@ -457,7 +453,6 @@
             <span>🧾 온웨이에듀</span><span class="hint">onwayedu</span>
           </button>
 
-          <!-- ✅ 추가: 학교 홈페이지 -->
           <button class="navBtn" data-view="school" type="button" onclick="go('school')">
             <span>🏫 학교 홈페이지</span><span class="hint">풍산고</span>
           </button>
@@ -503,13 +498,8 @@
             </div>
           </div>
 
-          <!-- ✅ 홈(위젯 아래) 카카오 광고 320x50 -->
-          <div class="adWrap">
-            <ins class="kakao_ad_area" style="display:none;"
-              data-ad-unit="DAN-ps0PRxwqtGCGkBq2"
-              data-ad-width="320"
-              data-ad-height="50"></ins>
-          </div>
+          <!-- ✅ 홈(위젯 아래) 광고 자리 -->
+          <div class="adWrap" id="ad-home"></div>
 
           <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;"></div>
 
@@ -594,7 +584,7 @@
           </div>
         </div>
 
-        <!-- ✅ 추가: SCHOOL HOME -->
+        <!-- SCHOOL HOME -->
         <div class="section view" id="view-school">
           <div class="notice">
             <b style="color:var(--text);">풍산고등학교 홈페이지</b>로 이동합니다.<br/>
@@ -620,13 +610,8 @@
               <button class="neisTab" type="button" data-k="personal" aria-selected="false">개인별세특</button>
             </div>
 
-            <!-- ✅ NEIS 카카오 광고 160x600 (바로 보이게: textarea 위로 올림) -->
-            <ins class="kakao_ad_area" style="display:none;"
-data-ad-unit = "DAN-JHm84g3AMFrqUZsb"
-data-ad-width = "160"
-data-ad-height = "600"></ins>
-<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-            </div>
+            <!-- ✅ NEIS 광고 자리(NEIS 들어오면 자동 생성/표시) -->
+            <div class="adWrap" id="ad-neis"></div>
 
             <textarea id="neisText" class="neisText" placeholder="여기에 내용을 붙여넣으면 즉시 계산됩니다. (자동 저장)"></textarea>
 
@@ -724,8 +709,6 @@ const API_KEY = "c5eac2fb880e4aa185e7957a756dd126";
 const ATPT = "R10";
 const SD_SCHUL_CODE = "8750475";
 const SCHOOL_NAME = "풍산고등학교";
-
-/* ✅ 추가: 학교 홈페이지 URL */
 const SCHOOL_HOME_URL = "https://school.gyo6.net/poongsanhs/main.do?sysId=poongsanhs";
 
 const $ = s => document.querySelector(s);
@@ -753,9 +736,47 @@ function monthBounds(yyyy_mm){
   };
 }
 
-/* ✅ 추가: 학교 홈페이지 열기 */
 function openSchoolHome(){
   window.open(SCHOOL_HOME_URL, "_blank", "noopener,noreferrer");
+}
+
+/* ==========================
+   ✅ 카카오 광고 (핵심 수정)
+   - 스크립트는 1번만 로드
+   - 화면 전환(SPA) 때문에 숨겨진 뷰에서는 광고가 초기 로드 때 렌더링 안 될 수 있어서,
+     홈/NEIS 진입할 때 해당 자리(#ad-home/#ad-neis)에 ins를 "그때" 만들어서 붙임
+   ========================== */
+const KAKAO_AD_UNITS = {
+  home: { unit: "DAN-ps0PRxwqtGCGkBq2", w: 320, h: 50 },
+  neis: { unit: "DAN-JHm84g3AMFrqUZsb", w: 160, h: 600 }
+};
+
+function ensureKakaoAd(targetId, conf){
+  const host = document.getElementById(targetId);
+  if(!host) return;
+
+  // 이미 같은 유닛이 있으면 재생성 안 함
+  const existed = host.querySelector('ins.kakao_ad_area');
+  if(existed && existed.getAttribute("data-ad-unit") === conf.unit) return;
+
+  host.innerHTML = "";
+
+  const ins = document.createElement("ins");
+  ins.className = "kakao_ad_area";
+  ins.style.display = "none";
+  ins.setAttribute("data-ad-unit", conf.unit);
+  ins.setAttribute("data-ad-width", String(conf.w));
+  ins.setAttribute("data-ad-height", String(conf.h));
+  host.appendChild(ins);
+
+  // ba.min.js는 보통 DOM 변경을 감지/재스캔하므로,
+  // SPA 전환 직후 1틱 뒤에 한번 더 보장
+  setTimeout(()=>{}, 0);
+}
+
+function renderAdsForView(view){
+  if(view === "home") ensureKakaoAd("ad-home", KAKAO_AD_UNITS.home);
+  if(view === "neis") ensureKakaoAd("ad-neis", KAKAO_AD_UNITS.neis);
 }
 
 function setActiveNav(view){
@@ -763,6 +784,7 @@ function setActiveNav(view){
     b.dataset.active = (b.dataset.view === view) ? "1" : "0";
   });
 }
+
 function go(view){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
   const el = document.querySelector(`#view-${view}`);
@@ -772,10 +794,14 @@ function go(view){
   history.replaceState(null, "", `#${view}`);
   window.scrollTo({ top: 0, behavior: "smooth" });
 
+  // ✅ 광고 렌더(뷰가 보여진 뒤에)
+  renderAdsForView(view);
+
   if(view === "home") renderHomeWidgets();
   if(view === "timetable") ttRenderTable();
   if(view === "neis") neisInit();
 }
+
 function initRoute(){
   const h = (location.hash || "#home").replace("#","");
   const allowed = ["home","meal","schedule","timetable","onway","school","neis"];
@@ -1382,14 +1408,20 @@ window.addEventListener("load", async ()=>{
   await initMeals();
   await initSchedule();
 
+  // ✅ 첫 화면(home) 광고 생성 보장
+  renderAdsForView("home");
+
   renderHomeWidgets();
   homeRenderTodayTimetable();
 
-  if((location.hash||"") === "#neis") neisInit();
+  if((location.hash||"") === "#neis") {
+    renderAdsForView("neis");
+    neisInit();
+  }
 });
 </script>
 
-<!-- ✅ 카카오 광고 스크립트는 1회만 -->
+<!-- ✅ 카카오 광고 스크립트: 1회만 -->
 <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
 
 </body>
