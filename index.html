@@ -490,6 +490,13 @@
             </div>
           </div>
 
+          <!-- ✅ (삽입) 위젯 아래 광고 320x50 -->
+          <ins class="kakao_ad_area" style="display:none;"
+           data-ad-unit="DAN-ps0PRxwqtGCGkBq2"
+           data-ad-width="320"
+           data-ad-height="50"></ins>
+          <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+
           <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
         
           </div>
@@ -602,6 +609,13 @@
             </div>
 
             <textarea id="neisText" class="neisText" placeholder="여기에 내용을 붙여넣으면 즉시 계산됩니다. (자동 저장)"></textarea>
+
+            <!-- ✅ (삽입) NEIS 영역 광고 160x600 -->
+            <ins class="kakao_ad_area" style="display:none;"
+            data-ad-unit = "DAN-JHm84g3AMFrqUZsb"
+            data-ad-width = "160"
+            data-ad-height = "600"></ins>
+            <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
 
             <div class="neisFooter">
               <div class="neisBar" aria-label="바이트 사용량">
@@ -1196,7 +1210,7 @@ async function renderHomeWidgets(){
     const rows = await fetchScheduleRange(ymd, ymd);
     homeRenderTodaySchedule(rows);
   }catch{
-    $("#homeSchBody").innerHTML = `<div class="muted">학사일정 불러오기 실패</div>`;
+    $("#homeSchBody").innerHTML = `<div class="muted">학사일정 불러오는 중…</div>`;
   }
 
   homeRenderTodayTimetable();
@@ -1361,18 +1375,5 @@ window.addEventListener("load", async ()=>{
   if((location.hash||"") === "#neis") neisInit();
 });
 </script>
-</body>
-</html>
-
-</script>
-
-<!-- 카카오 애드핏 광고 영역 -->
-<ins class="kakao_ad_area" style="display:none;"
- data-ad-unit="DAN-ps0PRxwqtGCGkBq2"
- data-ad-width="320"
- data-ad-height="50"></ins>
-
-<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-
 </body>
 </html>
