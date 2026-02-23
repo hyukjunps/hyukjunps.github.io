@@ -401,6 +401,16 @@
     border-radius: 16px;
     background: color-mix(in srgb, var(--pri) 5%, var(--card));
   }
+
+  /* ✅ 광고가 숨김(display:none)에서 안전하게 보이도록 래핑 */
+  .adWrap{
+    margin-top:14px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    width:100%;
+    overflow:hidden;
+  }
 </style>
 </head>
 
@@ -490,16 +500,15 @@
             </div>
           </div>
 
-          <!-- ✅ (삽입) 위젯 아래 광고 320x50 -->
-          <ins class="kakao_ad_area" style="display:none;"
-           data-ad-unit="DAN-ps0PRxwqtGCGkBq2"
-           data-ad-width="320"
-           data-ad-height="50"></ins>
-          <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-
-          <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;">
-        
+          <!-- ✅ 위젯 아래 광고 320x50 (INS만) -->
+          <div class="adWrap">
+            <ins class="kakao_ad_area" style="display:none;"
+              data-ad-unit="DAN-ps0PRxwqtGCGkBq2"
+              data-ad-width="320"
+              data-ad-height="50"></ins>
           </div>
+
+          <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;"></div>
 
           <div class="notice" style="margin-top:14px;">
             <b style="color:var(--text);">설치(PWA)</b>를 하면 홈 화면 아이콘으로 바로 실행됩니다.
@@ -610,12 +619,13 @@
 
             <textarea id="neisText" class="neisText" placeholder="여기에 내용을 붙여넣으면 즉시 계산됩니다. (자동 저장)"></textarea>
 
-            <!-- ✅ (삽입) NEIS 영역 광고 160x600 -->
-            <ins class="kakao_ad_area" style="display:none;"
-            data-ad-unit = "DAN-JHm84g3AMFrqUZsb"
-            data-ad-width = "160"
-            data-ad-height = "600"></ins>
-            <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
+            <!-- ✅ NEIS 영역 광고 160x600 (INS만) -->
+            <div class="adWrap">
+              <ins class="kakao_ad_area" style="display:none;"
+                data-ad-unit="DAN-JHm84g3AMFrqUZsb"
+                data-ad-width="160"
+                data-ad-height="600"></ins>
+            </div>
 
             <div class="neisFooter">
               <div class="neisBar" aria-label="바이트 사용량">
@@ -705,6 +715,9 @@ SOFTWARE.
       </div>
     </div>
   </div>
+
+<!-- ✅ 카카오 애드핏 스크립트는 페이지 전체 1회만 로드 -->
+<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
 
 <script>
 const API_KEY = "c5eac2fb880e4aa185e7957a756dd126";
