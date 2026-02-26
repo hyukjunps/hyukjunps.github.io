@@ -1,2 +1,2 @@
-# hyukjunps.github.io
-hyukjunps.github.io
+# O.Poong 서비스
+풍산고 생활, 앱 하나로
