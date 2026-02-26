@@ -7,53 +7,53 @@
 
 <!-- PWA -->
 <link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#7c3aed" />
+<meta name="theme-color" content="#2563eb" />
 <link rel="icon" href="android/android-launchericon-512-512.png">
 <link rel="apple-touch-icon" href="android/android-launchericon-512-512.png">
 
 <style>
   :root{
-    --bg:#f5f7fa;
-    --card:#ffffff;
-    --text:#0f172a;
-    --muted:#64748b;
-    --line:#e5e7eb;
+  --bg:#f5f7fa;
+  --card:#ffffff;
+  --text:#0f172a;
+  --muted:#64748b;
+  --line:#e5e7eb;
 
-    /* ✅ 보라 테마 */
-    --pri:#7c3aed;
-    --pri2:#5b21b6;
-    --priSoft: color-mix(in srgb, var(--pri) 14%, var(--card));
+  /* ✅ 파란 테마 */
+  --pri:#2563eb;        /* 메인 블루 */
+  --pri2:#1d4ed8;       /* 딥 블루 */
+  --priSoft: color-mix(in srgb, var(--pri) 14%, var(--card));
 
-    --ok:#7c3aed;
-    --warn:#b91c1c;
+  --ok:#2563eb;
+  --warn:#b91c1c;
 
-    --shadow:0 18px 50px rgba(2,6,23,.10);
-    --shadow2:0 10px 22px rgba(2,6,23,.08);
+  --shadow:0 18px 50px rgba(2,6,23,.10);
+  --shadow2:0 10px 22px rgba(2,6,23,.08);
 
-    --r28:28px;
-    --r22:22px;
-    --r18:18px;
+  --r28:28px;
+  --r22:22px;
+  --r18:18px;
 
-    --max: 1180px;
-  }
+  --max: 1180px;
+}
 
-  html[data-theme="dark"]{
-    --bg:#0b1220;
-    --card:#0f172a;
-    --text:#e5e7eb;
-    --muted:#9ca3af;
-    --line:#243244;
+ html[data-theme="dark"]{
+  --bg:#0b1220;
+  --card:#0f172a;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --line:#243244;
 
-    --pri:#a78bfa;
-    --pri2:#7c3aed;
-    --priSoft: color-mix(in srgb, var(--pri) 14%, var(--card));
+  --pri:#60a5fa;       /* 밝은 블루 */
+  --pri2:#2563eb;      /* 메인 블루 */
+  --priSoft: color-mix(in srgb, var(--pri) 14%, var(--card));
 
-    --ok:#a78bfa;
-    --warn:#f87171;
+  --ok:#60a5fa;
+  --warn:#f87171;
 
-    --shadow:0 22px 60px rgba(0,0,0,.45);
-    --shadow2:0 12px 26px rgba(0,0,0,.32);
-  }
+  --shadow:0 22px 60px rgba(0,0,0,.45);
+  --shadow2:0 12px 26px rgba(0,0,0,.32);
+}
 
   *{box-sizing:border-box}
   body{
