@@ -468,13 +468,7 @@
 
           <!-- ✅ 메뉴(사이드바) 광고 320x480 (사이드 240px에 맞게 스케일) -->
           <div class="adWrap" style="margin-top:12px;">
-            <div style="width:320px;height:480px;transform:scale(0.75);transform-origin:top center;">
-              <ins class="kakao_ad_area" style="display:none;"
-                data-ad-unit="DAN-puap8zn1cdOUkr5r"
-                data-ad-width="320"
-                data-ad-height="480"></ins>
-              <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-            </div>
+            <div id="ad-side" style="width:320px;height:480px;transform:scale(0.75);transform-origin:top center;"></div>
           </div>
         </div>
       </aside>
@@ -514,14 +508,8 @@
             </div>
           </div>
 
-          <!-- ✅ 홈(위젯 아래) 카카오 광고 320x50 -->
-          <div class="adWrap">
-            <ins class="kakao_ad_area" style="display:none;"
-              data-ad-unit="DAN-ps0PRxwqtGCGkBq2"
-              data-ad-width="320"
-              data-ad-height="50"></ins>
-              <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-          </div>
+          <!-- ✅ 홈 광고 컨테이너 -->
+          <div class="adWrap" id="ad-home"></div>
 
           <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;"></div>
 
@@ -550,14 +538,8 @@
             <button class="smallbtn ghost" type="button" onclick="go('home')">홈</button>
           </div>
 
-          <!-- ✅ 오늘의 급식 메뉴 전용 광고 320x50 -->
-          <div class="adWrap">
-            <ins class="kakao_ad_area" style="display:none;"
-              data-ad-unit="DAN-ldKVhVTYzKi5pUti"
-              data-ad-width="320"
-              data-ad-height="50"></ins>
-            <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-          </div>
+          <!-- ✅ 급식 광고 컨테이너 -->
+          <div class="adWrap" id="ad-meal"></div>
 
           <div id="notice" class="notice">급식 조회 준비 중…</div>
 
@@ -610,16 +592,8 @@
             아래 버튼은 <b style="color:var(--text);">https://ps.onwayedu.co.kr</b>로 열립니다.
           </div>
 
-          <!-- ✅ 온웨이에듀 메뉴 전용 광고 728x90 -->
-          <div class="adWrap" style="margin-top:12px;">
-            <div style="max-width:728px;width:100%;display:flex;justify-content:center;overflow:hidden;">
-              <ins class="kakao_ad_area" style="display:none;"
-                data-ad-unit="DAN-QDvR0fxl5ri9KE4D"
-                data-ad-width="728"
-                data-ad-height="90"></ins>
-              <script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-            </div>
-          </div>
+          <!-- ✅ 온웨이 광고 컨테이너 -->
+          <div class="adWrap" id="ad-onway"></div>
 
           <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
             <button class="btn primary" type="button" onclick="openOnway()">온웨이에듀 열기</button>
@@ -653,13 +627,8 @@
               <button class="neisTab" type="button" data-k="personal" aria-selected="false">개인별세특</button>
             </div>
 
-            <!-- ✅ NEIS 카카오 광고 160x600 (바로 보이게: textarea 위로 올림) -->
-            <ins class="kakao_ad_area" style="display:none;"
-data-ad-unit = "DAN-vszyC76aKoBwX0tg"
-data-ad-width = "320"
-data-ad-height = "50"></ins>
-<script type="text/javascript" src="//t1.daumcdn.net/kas/static/ba.min.js" async></script>
-            </div>
+            <!-- ✅ NEIS 광고 컨테이너 (textarea 위) -->
+            <div class="adWrap neis" id="ad-neis"></div>
 
             <textarea id="neisText" class="neisText" placeholder="여기에 내용을 붙여넣으면 즉시 계산됩니다. (자동 저장)"></textarea>
 
@@ -791,11 +760,51 @@ function openSchoolHome(){
   window.open(SCHOOL_HOME_URL, "_blank", "noopener,noreferrer");
 }
 
+/* ==========================
+   ✅ 카카오 광고: SPA 메뉴 전환 대응 (재삽입 + 스크립트 재로드)
+   ========================== */
+const ADS = {
+  home: { unit: "DAN-ps0PRxwqtGCGkBq2", w: 320, h: 50, container: "ad-home" },
+  meal: { unit: "DAN-ldKVhVTYzKi5pUti", w: 320, h: 50, container: "ad-meal" },
+  neis: { unit: "DAN-vszyC76aKoBwX0tg", w: 320, h: 50, container: "ad-neis" },
+  onway:{ unit: "DAN-QDvR0fxl5ri9KE4D", w: 728, h: 90, container: "ad-onway" },
+  side:{ unit: "DAN-puap8zn1cdOUkr5r", w: 320, h: 480, container: "ad-side" },
+};
+
+function mountKakaoAd(containerId, unit, w, h){
+  const box = document.getElementById(containerId);
+  if(!box) return;
+
+  box.innerHTML = "";
+
+  const ins = document.createElement("ins");
+  ins.className = "kakao_ad_area";
+  ins.style.display = "none";
+  ins.setAttribute("data-ad-unit", unit);
+  ins.setAttribute("data-ad-width", String(w));
+  ins.setAttribute("data-ad-height", String(h));
+  box.appendChild(ins);
+
+  const s = document.createElement("script");
+  s.type = "text/javascript";
+  s.async = true;
+  s.src = "//t1.daumcdn.net/kas/static/ba.min.js?" + Date.now();
+  document.body.appendChild(s);
+}
+
+function loadAdForView(view){
+  if(view === "home") mountKakaoAd(ADS.home.container, ADS.home.unit, ADS.home.w, ADS.home.h);
+  if(view === "meal") mountKakaoAd(ADS.meal.container, ADS.meal.unit, ADS.meal.w, ADS.meal.h);
+  if(view === "neis") mountKakaoAd(ADS.neis.container, ADS.neis.unit, ADS.neis.w, ADS.neis.h);
+  if(view === "onway") mountKakaoAd(ADS.onway.container, ADS.onway.unit, ADS.onway.w, ADS.onway.h);
+}
+
 function setActiveNav(view){
   document.querySelectorAll(".navBtn").forEach(b=>{
     b.dataset.active = (b.dataset.view === view) ? "1" : "0";
   });
 }
+
 function go(view){
   document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
   const el = document.querySelector(`#view-${view}`);
@@ -808,7 +817,11 @@ function go(view){
   if(view === "home") renderHomeWidgets();
   if(view === "timetable") ttRenderTable();
   if(view === "neis") neisInit();
+
+  // ✅ 메뉴 전환 시 해당 메뉴 광고를 다시 로드
+  loadAdForView(view);
 }
+
 function initRoute(){
   const h = (location.hash || "#home").replace("#","");
   const allowed = ["home","meal","schedule","timetable","onway","school","neis"];
@@ -1410,6 +1423,10 @@ function neisCounter(content){
 
 window.addEventListener("load", async ()=>{
   initTheme();
+
+  // ✅ 사이드바 광고는 한 번만
+  mountKakaoAd(ADS.side.container, ADS.side.unit, ADS.side.w, ADS.side.h);
+
   initRoute();
 
   await initMeals();
