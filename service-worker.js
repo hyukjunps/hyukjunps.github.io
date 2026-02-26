@@ -12,7 +12,7 @@ const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./android/android-launchericon-512-512.png"
+  "./android/launchericon-512-512.png"
 ];
 
 self.addEventListener("install", (event) => {
