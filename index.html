@@ -457,7 +457,6 @@
             <span>🧾 온웨이에듀</span><span class="hint">onwayedu</span>
           </button>
 
-          <!-- ✅ 추가: 학교 홈페이지 -->
           <button class="navBtn" data-view="school" type="button" onclick="go('school')">
             <span>🏫 학교 홈페이지</span><span class="hint">풍산고</span>
           </button>
@@ -503,10 +502,7 @@
             </div>
           </div>
 
-          <!-- ✅ 홈 광고 컨테이너 -->
           <div class="adWrap" id="ad-home"></div>
-
-          <div style="margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;"></div>
 
           <div class="notice" style="margin-top:14px;">
             <b style="color:var(--text);">설치(PWA)</b>를 하면 홈 화면 아이콘으로 바로 실행됩니다.
@@ -533,7 +529,6 @@
             <button class="smallbtn ghost" type="button" onclick="go('home')">홈</button>
           </div>
 
-          <!-- ✅ 급식 광고 컨테이너 -->
           <div class="adWrap" id="ad-meal"></div>
 
           <div id="notice" class="notice">급식 조회 준비 중…</div>
@@ -587,7 +582,6 @@
             아래 버튼은 <b style="color:var(--text);">https://ps.onwayedu.co.kr</b>로 열립니다.
           </div>
 
-          <!-- ✅ 온웨이 광고 컨테이너 -->
           <div class="adWrap" id="ad-onway"></div>
 
           <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
@@ -596,7 +590,7 @@
           </div>
         </div>
 
-        <!-- ✅ 추가: SCHOOL HOME -->
+        <!-- SCHOOL HOME -->
         <div class="section view" id="view-school">
           <div class="notice">
             <b style="color:var(--text);">풍산고등학교 홈페이지</b>로 이동합니다.<br/>
@@ -622,7 +616,6 @@
               <button class="neisTab" type="button" data-k="personal" aria-selected="false">개인별세특</button>
             </div>
 
-            <!-- ✅ NEIS 광고 컨테이너 (textarea 위) -->
             <div class="adWrap neis" id="ad-neis"></div>
 
             <textarea id="neisText" class="neisText" placeholder="여기에 내용을 붙여넣으면 즉시 계산됩니다. (자동 저장)"></textarea>
@@ -805,21 +798,22 @@ function go(view){
   if(el) el.classList.add("active");
 
   setActiveNav(view);
+
+  // ✅ 항상 홈부터 시작하도록 URL도 홈으로 고정 (요청사항)
   history.replaceState(null, "", `#${view}`);
+
   window.scrollTo({ top: 0, behavior: "smooth" });
 
   if(view === "home") renderHomeWidgets();
   if(view === "timetable") ttRenderTable();
   if(view === "neis") neisInit();
 
-  // ✅ 메뉴 전환 시 해당 메뉴 광고를 다시 로드
   loadAdForView(view);
 }
 
+/* ✅ 요청: 사이트 열면 무조건 홈 */
 function initRoute(){
-  const h = (location.hash || "#home").replace("#","");
-  const allowed = ["home","meal","schedule","timetable","onway","school","neis"];
-  go(allowed.includes(h) ? h : "home");
+  go("home");
 }
 
 function applyTheme(theme){
@@ -918,11 +912,13 @@ async function neis(endpoint, params) {
 }
 
 /* ===== 기존 기능들(급식/학사/시간표) 그대로 ===== */
-function setNotice(kind, text){
+function setNotice(kind, text, show=true){
   const box = $("#notice");
   box.className = "notice" + (kind ? ` ${kind}` : "");
   box.textContent = text;
+  box.style.display = show ? "block" : "none";
 }
+
 async function fetchMealsDay(sdCode, ymd) {
   const data = await neis("mealServiceDietInfo", {
     ATPT_OFCDC_SC_CODE: ATPT,
@@ -938,14 +934,18 @@ async function fetchMealsDay(sdCode, ymd) {
     return { type: r.MMEAL_SC_NM || "", cal: r.CAL_INFO || "", menu: fullMenu };
   });
 }
+
 async function initMeals(){
   $("#date").value = todayStr();
-  setNotice("ok", `${SCHOOL_NAME} 급식 조회가 준비되었습니다. 날짜를 선택해 확인해 주세요.`);
+  setNotice("ok", `${SCHOOL_NAME} 급식 조회가 준비되었습니다. 날짜를 선택해 확인해 주세요.`, true);
 }
+
 async function onDay(){
   try{
     const selectedDate = $("#date").value;
     const ymd = toYMDNoDash(selectedDate);
+
+    setNotice("", "급식 정보를 불러오는 중입니다…", true);
     $("#meals").innerHTML = `<div class="notice">급식 정보를 불러오는 중입니다…</div>`;
 
     const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
@@ -953,6 +953,7 @@ async function onDay(){
     if(!meals.length){
       $("#meals").innerHTML = `<div class="notice">선택하신 날짜에는 급식 정보가 없습니다. (휴일/방학/미제공일 수 있습니다)</div>`;
       $("#shareText").textContent = "";
+      setNotice("", "선택하신 날짜에는 급식 정보가 없습니다. (휴일/방학/미제공일 수 있습니다)", true);
       return;
     }
 
@@ -977,10 +978,14 @@ async function onDay(){
     });
     $("#shareText").textContent = txt.trim();
 
+    // ✅ 조회 완료 시 "급식 조회 준비 중..." 숨김 (요청사항)
+    setNotice("", "", false);
+
   }catch(err){
-    setNotice("err", "조회 중 오류: " + (err.message||err));
+    setNotice("err", "조회 중 오류: " + (err.message||err), true);
   }
 }
+
 function moveDate(days){
   const currentDate = $("#date").value;
   const dateObj = ymdToDateObj(currentDate);
@@ -1263,7 +1268,7 @@ async function renderHomeWidgets(){
     const rows = await fetchScheduleRange(ymd, ymd);
     homeRenderTodaySchedule(rows);
   }catch{
-    $("#homeSchBody").innerHTML = `<div class="muted">학사일정 불러오는 중…</div>`;
+    $("#homeSchBody").innerHTML = `<div class="muted">학사일정 불러오기 실패</div>`;
   }
 
   homeRenderTodayTimetable();
@@ -1418,9 +1423,7 @@ function neisCounter(content){
 window.addEventListener("load", async ()=>{
   initTheme();
 
-  // ✅ 사이드바 광고는 한 번만
-  mountKakaoAd(ADS.side.container, ADS.side.unit, ADS.side.w, ADS.side.h);
-
+  // ✅ 사이트 열면 무조건 홈 (요청사항)
   initRoute();
 
   await initMeals();
@@ -1428,8 +1431,6 @@ window.addEventListener("load", async ()=>{
 
   renderHomeWidgets();
   homeRenderTodayTimetable();
-
-  if((location.hash||"") === "#neis") neisInit();
 });
 </script>
 
