@@ -1,9 +1,29 @@
-/* O.Poong / 오늘풍산 PWA Service Worker (GitHub Pages)
-   목표:
-   1) 오프라인에서도 앱(=index.html) 실행
-   2) 온라인이면 index.html은 항상 최신 반영
-   3) 시간표 등 로컬스토리지 데이터는 그대로 유지 (SW와 무관)
-*/
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+import { getMessaging, onBackgroundMessage } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-messaging-sw.js";
+
+// 네 Firebase 설정으로 교체
+const firebaseConfig = {
+  apiKey: "…",
+  authDomain: "…",
+  projectId: "…",
+  storageBucket: "…",
+  messagingSenderId: "…",
+  appId: "…",
+};
+
+const app = initializeApp(firebaseConfig);
+const messaging = getMessaging(app);
+
+// 백그라운드 푸시 수신 시 알림 표시
+onBackgroundMessage(messaging, (payload) => {
+  const title = payload?.notification?.title || "O.Poong";
+  const options = {
+    body: payload?.notification?.body || "",
+    icon: "/logo.png",
+  };
+  self.registration.showNotification(title, options);
+});
+
 
 const CACHE_VERSION = "v8"; // 🔥 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
@@ -13,7 +33,6 @@ const APP_SHELL = [
   "./index.html",
   "./manifest.json",
   "./android/launchericon-512-512.png",
-  "./firebase-messaging-sw.js",
   "./push.js"
 ];
 
