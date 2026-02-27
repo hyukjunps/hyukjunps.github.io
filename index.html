@@ -468,7 +468,22 @@
   }
 </style>
 </head>
+<button id="btnPush">알림 켜기(테스트)</button>
 
+<script type="module">
+  import { enablePush } from "./push.js";
+
+  document.getElementById("btnPush").addEventListener("click", async () => {
+    try {
+      const token = await enablePush();
+      alert("토큰 발급 성공!\n" + token);
+      console.log(token);
+    } catch (e) {
+      alert("실패: " + (e.message || e));
+    }
+  });
+</script>
+  
 <body>
   <div class="wrap">
     <div class="topbar">
