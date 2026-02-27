@@ -467,26 +467,6 @@
     line-height:1.75;
   }
 </style>
-<button id="btnPush">알림 켜기</button>
-
-<script type="module">
-  alert("1) module 시작");
-
-  import { enablePush } from "./push.js";
-  alert("2) push.js import 성공");
-
-  document.getElementById("btnPush").addEventListener("click", async () => {
-    alert("3) enablePush 호출");
-    try {
-      const token = await enablePush();
-      alert("✅ 토큰:\n" + token);
-    } catch (e) {
-      alert("❌ 에러:\n" + (e?.message || e));
-      console.error(e);
-    }
-  });
-</script>
-
   
   
 <body>
