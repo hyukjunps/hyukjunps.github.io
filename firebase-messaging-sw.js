@@ -1,28 +1,42 @@
-importScripts("https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js");
-importScripts("https://www.gstatic.com/firebasejs/10.12.5/firebase-messaging-compat.js");
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-messaging.js";
 
-firebase.initializeApp({
+const firebaseConfig = {
   apiKey: "AIzaSyA9BFOVG0xGYzbuhHDEydMgu2q46_9Zm4Q",
   authDomain: "opoong-9e2f1.firebaseapp.com",
   projectId: "opoong-9e2f1",
   messagingSenderId: "284175533008",
   appId: "1:284175533008:web:f484ad8d1ad2413f47efd5"
-});
+};
 
-var messaging = firebase.messaging();
+const VAPID_KEY = "BO4RUsKY5Vo9r4L1XglCPbr-367L-R7RHJIcKRl8KTYAPAkCQsU5zGhrB0WUfEWrjTSduQbCL1aBRdPi80_VAUA";
 
-messaging.onBackgroundMessage(function (payload) {
-  var noti = payload && payload.notification ? payload.notification : {};
-  var title = noti.title ? noti.title : "O.Poong";
-  var body = noti.body ? noti.body : "알림 테스트";
+export async function enablePush() {
+  // ✅ 루트 배포: 경로 고정
+  const swReg = await navigator.serviceWorker.register("/firebase-messaging-sw.js");
 
-  self.registration.showNotification(title, {
-    body: body,
-    icon: "/android/android-launchericon-192-192.png"
+  const perm = await Notification.requestPermission();
+  if (perm !== "granted") throw new Error("알림 권한이 거부됨");
+
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+  const token = await getToken(messaging, {
+    vapidKey: VAPID_KEY,
+    serviceWorkerRegistration: swReg
   });
-});
 
-self.addEventListener("notificationclick", function (event) {
-  event.notification.close();
-  event.waitUntil(clients.openWindow("/"));
-});
+  if (!token) throw new Error("FCM 토큰 발급 실패");
+
+  localStorage.setItem("op_push_token", token);
+  return token;
+}
+
+export function listenForeground() {
+  const app = initializeApp(firebaseConfig);
+  const messaging = getMessaging(app);
+
+  onMessage(messaging, (payload) => {
+    console.log("Foreground message:", payload);
+  });
+}
