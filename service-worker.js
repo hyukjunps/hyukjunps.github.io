@@ -12,7 +12,9 @@ const APP_SHELL = [
   "./",
   "./index.html",
   "./manifest.json",
-  "./android/launchericon-512-512.png"
+  "./android/launchericon-512-512.png",
+  "./firebase-messaging-sw.js",
+  "./push.js"
 ];
 
 self.addEventListener("install", (event) => {
