@@ -12,7 +12,7 @@ firebase.initializeApp({
 var messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function (payload) {
-  var noti = payload && payload.notification ? payload.notification : {};
+  var noti = (payload && payload.notification) ? payload.notification : {};
   var title = noti.title ? noti.title : "O.Poong";
   var body = noti.body ? noti.body : "알림이 도착했어요.";
 
