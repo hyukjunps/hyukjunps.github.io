@@ -391,7 +391,6 @@
   .neisResultLine{ font-size: 13.5px; font-weight: 950; color: var(--muted); }
   .neisResultLine b{color:var(--text);}
 
-  /* ✅ 요청: 바이트 규칙 문구 */
   .neisRule{
     font-size: 12.8px;
     font-weight: 900;
@@ -403,7 +402,6 @@
     background: color-mix(in srgb, var(--pri) 5%, var(--card));
   }
 
-  /* ✅ 카카오 광고 래퍼(보이게/가운데 정렬) */
   .adWrap{
     margin-top: 12px;
     display:flex;
@@ -719,6 +717,9 @@ const SCHOOL_NAME = "풍산고등학교";
 /* ✅ 추가: 학교 홈페이지 URL */
 const SCHOOL_HOME_URL = "https://school.gyo6.net/poongsanhs/main.do?sysId=poongsanhs";
 
+/* ✅ 학사일정 프록시(너 Worker) */
+const SCHEDULE_PROXY_BASE = "https://gkrtkdlfwjd.yyhhjj1068-c2c.workers.dev/?ym=";
+
 const $ = s => document.querySelector(s);
 const escapeHtml = s => String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;' }[m]));
 const ymd2str = ymd => `${ymd.slice(0,4)}년 ${ymd.slice(4,6)}월 ${ymd.slice(6,8)}일`;
@@ -750,7 +751,7 @@ function openSchoolHome(){
 }
 
 /* ==========================
-   ✅ 카카오 광고: SPA 메뉴 전환 대응 (재삽입 + 스크립트 재로드)
+   ✅ 카카오 광고: SPA 메뉴 전환 대응
    ========================== */
 const ADS = {
   home: { unit: "DAN-ps0PRxwqtGCGkBq2", w: 320, h: 50, container: "ad-home" },
@@ -800,7 +801,6 @@ function go(view){
 
   setActiveNav(view);
 
-  // ✅ 항상 홈부터 시작하도록 URL도 홈으로 고정 (요청사항)
   history.replaceState(null, "", `#${view}`);
 
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -912,7 +912,7 @@ async function neis(endpoint, params) {
   return res.json();
 }
 
-/* ===== 기존 기능들(급식/학사/시간표) 그대로 ===== */
+/* ===== 급식 ===== */
 function setNotice(kind, text, show=true){
   const box = $("#notice");
   box.className = "notice" + (kind ? ` ${kind}` : "");
@@ -979,7 +979,6 @@ async function onDay(){
     });
     $("#shareText").textContent = txt.trim();
 
-    // ✅ 조회 완료 시 "급식 조회 준비 중..." 숨김 (요청사항)
     setNotice("", "", false);
 
   }catch(err){
@@ -1026,52 +1025,125 @@ $("#btnCopy").addEventListener("click", async ()=>{
   alert(ok ? "급식 내용이 복사되었습니다." : "복사에 실패했습니다. 다시 시도해 주세요.");
 });
 
+/* ==========================
+   ✅ 학사일정 (Worker 프록시 + 달력 UI)  ← 여기만 교체 완료
+   ========================== */
 function setSchNotice(kind, text){
   const box = $("#schNotice");
   box.className = "notice" + (kind ? ` ${kind}` : "");
   box.textContent = text;
 }
-async function fetchScheduleRange(fromYmd, toYmd){
-  const data = await neis("SchoolSchedule", {
-    ATPT_OFCDC_SC_CODE: ATPT,
-    SD_SCHUL_CODE: SD_SCHUL_CODE,
-    AA_FROM_YMD: fromYmd,
-    AA_TO_YMD: toYmd
-  });
-  const rows = data?.SchoolSchedule?.[1]?.row || [];
-  rows.sort((a,b)=>String(a.AA_YMD||"").localeCompare(String(b.AA_YMD||"")));
-  return rows.map(r=>({
-    ymd: String(r.AA_YMD||""),
-    name: String(r.EVENT_NM||""),
-    content: String(r.EVENT_CNTNT||""),
-    sub: String(r.SBTR_DD_SC_NM||"")
-  }));
+function ymInputToYYYYMM(v){
+  if(!v) return "";
+  const [y,m] = v.split("-");
+  return `${y}${m}`;
 }
-function renderScheduleList(rows){
-  const wrap = $("#schList");
-  if(!rows.length){
-    wrap.innerHTML = `<div class="notice">해당 기간에는 학사일정이 없습니다.</div>`;
+function todayYYYYMM(){
+  const d = new Date();
+  return `${d.getFullYear()}${pad2(d.getMonth()+1)}`;
+}
+async function fetchScheduleMonthProxy(yyyymm){
+  const res = await fetch(SCHEDULE_PROXY_BASE + encodeURIComponent(yyyymm));
+  if(!res.ok) throw new Error("학사일정 프록시 오류 HTTP " + res.status);
+  const data = await res.json();
+  if(!data.ok) throw new Error(data.error || "학사일정 프록시 응답 오류");
+  return data.byDate || {};
+}
+function homeRenderTodayScheduleProxy(byDate){
+  const pill = $("#homeSchDate");
+  const body = $("#homeSchBody");
+  if(!pill || !body) return;
+
+  const todayIso = todayStr();
+  const todayYmd = toYMDNoDash(todayIso);
+
+  pill.textContent = ymd2str(todayYmd);
+
+  const items = byDate[todayIso] || [];
+  if(!items.length){
+    body.innerHTML = `<div class="muted">오늘 학사일정이 없습니다.</div>`;
     return;
   }
-  const grouped = rows.reduce((acc, it)=>{
-    (acc[it.ymd] ||= []).push(it);
-    return acc;
-  }, {});
-  const dates = Object.keys(grouped).sort();
 
-  wrap.innerHTML = dates.map(d=>{
-    const items = grouped[d].map(it=>{
-      const line = it.content ? ` - ${escapeHtml(it.content)}` : "";
-      const sub = it.sub ? ` <span style="color:var(--muted);font-weight:950;">(${escapeHtml(it.sub)})</span>` : "";
-      return `<li style="margin:6px 0;"><b>${escapeHtml(it.name)}</b>${sub}${line}</li>`;
-    }).join("");
-    return `
-      <div class="notice" style="margin-top:12px;">
-        <b style="color:var(--text);">${ymd2str(d)}</b>
-        <ul style="margin:10px 0 0;padding-left:18px;line-height:1.85;">${items}</ul>
-      </div>
-    `;
-  }).join("");
+  body.innerHTML = `
+    <ul style="padding-left:18px;line-height:1.8;margin:0;">
+      ${items.map(it=>`<li><b>${escapeHtml(it.title)}</b></li>`).join("")}
+    </ul>
+  `;
+}
+function renderScheduleCalendar(yyyymm, byDate){
+  const wrap = $("#schList");
+
+  const y = Number(yyyymm.slice(0,4));
+  const m = Number(yyyymm.slice(4,6)); // 1~12
+  const first = new Date(y, m-1, 1);
+  const last = new Date(y, m, 0);
+
+  const startDow = first.getDay(); // 0=일
+  const daysInMonth = last.getDate();
+
+  const cells = [];
+  for(let i=0;i<startDow;i++) cells.push(null);
+  for(let d=1; d<=daysInMonth; d++){
+    const iso = `${y}-${pad2(m)}-${pad2(d)}`;
+    cells.push({ d, iso, items: byDate[iso] || [] });
+  }
+  while(cells.length % 7 !== 0) cells.push(null);
+
+  const dow = ["일","월","화","수","목","금","토"];
+  const label = `${y}년 ${pad2(m)}월`;
+
+  wrap.innerHTML = `
+    <div style="font-weight:1000;font-size:18px;letter-spacing:-.3px;margin-bottom:10px;">
+      ${label} 학사일정
+    </div>
+
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;">
+      ${dow.map((d,i)=>`
+        <div style="
+          font-weight:1000;
+          text-align:center;
+          padding:10px 0;
+          border-radius:16px;
+          border:1px solid color-mix(in srgb, var(--pri) 14%, var(--line));
+          background: color-mix(in srgb, var(--pri) 6%, var(--card));
+          color:${i===0 ? "color-mix(in srgb, var(--warn) 75%, var(--text))" : "var(--text)"};
+        ">${d}</div>
+      `).join("")}
+
+      ${cells.map(cell=>{
+        if(!cell) return `<div style="min-height:120px;border-radius:18px;"></div>`;
+
+        const isToday = (cell.iso === todayStr());
+        const itemsHtml = cell.items.length
+          ? `<ul style="margin:8px 0 0;padding-left:16px;line-height:1.55;">
+              ${cell.items.map(it=>`<li style="margin:4px 0;"><b>${escapeHtml(it.title)}</b></li>`).join("")}
+            </ul>`
+          : `<div class="muted" style="margin-top:8px;font-size:12.5px;">일정 없음</div>`;
+
+        return `
+          <div style="
+            min-height:120px;
+            border-radius:18px;
+            border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
+            background:${isToday
+              ? "color-mix(in srgb, var(--pri) 12%, var(--card))"
+              : "color-mix(in srgb, var(--card) 92%, transparent)"
+            };
+            box-shadow: 0 10px 22px rgba(2,6,23,.06);
+            padding:12px 12px;
+            overflow:hidden;
+          ">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
+              <b style="font-size:14.5px;">${cell.d}</b>
+              ${isToday ? `<span class="pill" style="padding:6px 10px;">오늘</span>` : ``}
+            </div>
+            ${itemsHtml}
+          </div>
+        `;
+      }).join("")}
+    </div>
+  `;
 }
 async function scheduleLoadMonth(){
   try{
@@ -1080,12 +1152,17 @@ async function scheduleLoadMonth(){
       const now = new Date();
       inp.value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}`;
     }
-    const {from,to,label} = monthBounds(inp.value);
+    const yyyymm = ymInputToYYYYMM(inp.value);
+    const label = `${inp.value.split("-")[0]}년 ${inp.value.split("-")[1]}월`;
+
     setSchNotice("", `${label} 학사일정 불러오는 중…`);
-    const rows = await fetchScheduleRange(from,to);
-    setSchNotice("ok", `${label} 학사일정 (${rows.length}건)`);
-    renderScheduleList(rows);
-    homeRenderTodaySchedule(rows);
+    const byDate = await fetchScheduleMonthProxy(yyyymm);
+
+    setSchNotice("ok", `${label} 학사일정 (${Object.keys(byDate).length}일에 일정 존재)`);
+    renderScheduleCalendar(yyyymm, byDate);
+
+    // 홈 위젯도 같은 데이터로 갱신
+    homeRenderTodayScheduleProxy(byDate);
   }catch(err){
     setSchNotice("err", "학사일정 오류: " + (err.message||err));
     $("#schList").innerHTML = "";
@@ -1093,13 +1170,16 @@ async function scheduleLoadMonth(){
 }
 async function scheduleLoadToday(){
   try{
-    const d = todayStr();
-    const ymd = toYMDNoDash(d);
-    setSchNotice("", "오늘 학사일정 불러오는 중…");
-    const rows = await fetchScheduleRange(ymd, ymd);
-    setSchNotice("ok", `오늘 학사일정 (${rows.length}건)`);
-    renderScheduleList(rows);
-    homeRenderTodaySchedule(rows);
+    const yyyymm = todayYYYYMM();
+    const label = `${yyyymm.slice(0,4)}년 ${yyyymm.slice(4,6)}월`;
+
+    setSchNotice("", `${label} 불러오는 중…`);
+    const byDate = await fetchScheduleMonthProxy(yyyymm);
+
+    $("#schMonth").value = `${yyyymm.slice(0,4)}-${yyyymm.slice(4,6)}`;
+    setSchNotice("ok", `오늘 학사일정`);
+    renderScheduleCalendar(yyyymm, byDate);
+    homeRenderTodayScheduleProxy(byDate);
   }catch(err){
     setSchNotice("err", "학사일정 오류: " + (err.message||err));
   }
@@ -1110,6 +1190,7 @@ async function initSchedule(){
   setSchNotice("ok", "학사일정 조회가 준비되었습니다.");
 }
 
+/* ===== 시간표 ===== */
 const TT_KEY = "tt_table_v2";
 const TT_DAYS = ["월","화","수","목","금","토","일"];
 function ttLoad(){
@@ -1234,23 +1315,6 @@ function homeRenderTodayMeal(meals, ymd){
   }).join("");
 }
 
-function homeRenderTodaySchedule(rows){
-  const pill = $("#homeSchDate");
-  const body = $("#homeSchBody");
-  if(!pill || !body) return;
-
-  const ymd = toYMDNoDash(todayStr());
-  pill.textContent = ymd2str(ymd);
-
-  if(!rows || !rows.length){
-    body.innerHTML = `<div class="muted">오늘 학사일정이 없습니다.</div>`;
-    return;
-  }
-
-  const list = rows.map(r=>`<li><b>${escapeHtml(r.name)}</b>${r.content ? ` - ${escapeHtml(r.content)}` : ""}</li>`).join("");
-  body.innerHTML = `<ul style="padding-left:18px;line-height:1.8;margin:0;">${list}</ul>`;
-}
-
 async function renderHomeWidgets(){
   try{
     const ymd = toYMDNoDash(todayStr());
@@ -1265,9 +1329,9 @@ async function renderHomeWidgets(){
   try{
     $("#homeSchDate").textContent = "오늘";
     $("#homeSchBody").innerHTML = `<div class="muted">불러오는 중…</div>`;
-    const ymd = toYMDNoDash(todayStr());
-    const rows = await fetchScheduleRange(ymd, ymd);
-    homeRenderTodaySchedule(rows);
+
+    const byDate = await fetchScheduleMonthProxy(todayYYYYMM());
+    homeRenderTodayScheduleProxy(byDate);
   }catch{
     $("#homeSchBody").innerHTML = `<div class="muted">학사일정 불러오기 실패</div>`;
   }
@@ -1423,8 +1487,6 @@ function neisCounter(content){
 
 window.addEventListener("load", async ()=>{
   initTheme();
-
-  // ✅ 사이트 열면 무조건 홈 (요청사항)
   initRoute();
 
   await initMeals();
