@@ -467,27 +467,14 @@
     line-height:1.75;
   }
 </style>
-  <button id="btnPush" style="padding:12px 16px;border-radius:12px;">
-  알림 켜기
-</button>
+<button id="btnPush">알림 켜기</button>
 
-<script type="module">
-  import { enablePush, listenForeground } from "./push.js";
-
-  listenForeground();
-
-  document.getElementById("btnPush").addEventListener("click", async () => {
-    try {
-      const token = await enablePush();
-      alert("✅ 토큰 발급 성공!\n\n" + token);
-      console.log("FCM token:", token);
-    } catch (e) {
-      alert("❌ 실패: " + (e?.message || e));
-      console.error(e);
-    }
+<script>
+  // ✅ 이 alert가 안 뜨면, 버튼 id가 다르거나 코드 위치가 잘못된 것
+  document.getElementById("btnPush").addEventListener("click", function () {
+    alert("클릭 이벤트 연결됨");
   });
 </script>
-
   
 <body>
   <div class="wrap">
