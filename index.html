@@ -20,9 +20,8 @@
   --line:#e5e7eb;
 
   /* ✅ 파란 테마 */
- /* 라이트 */
---pri:  #0023CC;
---pri2: #1D4ED8;   /* 그라데이션 보조(좀 더 밝게) */
+  --pri:  #0023CC;
+  --pri2: #1D4ED8;
   --priSoft: color-mix(in srgb, var(--pri) 14%, var(--card));
 
   --ok:#2563eb;
@@ -44,9 +43,9 @@
   --text:#e5e7eb;
   --muted:#9ca3af;
   --line:#243244;
-/* 다크 */
-  --pri:  #60A5FA;   /* 다크에서 눈에 띄는 하이라이트 */
-  --pri2: #2563EB;   /* 메인 블루 */    /* 메인 블루 */
+
+  --pri:  #60A5FA;
+  --pri2: #2563EB;
   --priSoft: color-mix(in srgb, var(--pri) 14%, var(--card));
 
   --ok:#60a5fa;
@@ -413,6 +412,60 @@
   .adWrap.neis{
     margin: 8px 0 12px;
   }
+
+  /* ==========================
+     ✅ 추가: 급식 월별(표) UI
+     ========================== */
+  .mealTableWrap{
+    margin-top:14px;
+    border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
+    border-radius: var(--r28);
+    background: color-mix(in srgb, var(--card) 96%, transparent);
+    box-shadow: var(--shadow2);
+    overflow:auto;
+  }
+  .mealTable{
+    width:100%;
+    min-width: 860px;
+    border-collapse:separate;
+    border-spacing: 0;
+  }
+  .mealTable th, .mealTable td{
+    border-bottom:1px solid color-mix(in srgb, var(--pri) 12%, var(--line));
+    padding: 12px 12px;
+    vertical-align: top;
+    text-align:left;
+  }
+  .mealTable thead th{
+    position: sticky;
+    top: 0;
+    z-index: 2;
+    background: color-mix(in srgb, var(--pri) 7%, var(--card));
+    font-weight: 1000;
+  }
+  .mealTable tr:last-child td{ border-bottom:none; }
+  .mealDateCell{
+    white-space:nowrap;
+    font-weight: 1000;
+  }
+  .mealTypeBadge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:12.5px;
+    font-weight:1000;
+    padding:7px 10px;
+    border-radius:999px;
+    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
+    background: color-mix(in srgb, var(--pri) 8%, var(--card));
+    color: var(--muted);
+    margin-bottom:8px;
+  }
+  .mealMenus{
+    margin:0;
+    padding-left:18px;
+    line-height:1.75;
+  }
 </style>
 </head>
 
@@ -524,8 +577,19 @@
             <input type="date" id="date" />
             <button class="smallbtn" type="button" onclick="moveDate(1)">내일 ▶</button>
             <button class="smallbtn" type="button" onclick="onDay()">조회</button>
+
+            <!-- ✅ 월별(표) -->
+            <button class="smallbtn ghost" type="button" onclick="toggleMealMode()" id="btnMealMonth">월별(표)</button>
+
             <button class="smallbtn ok" type="button" id="btnCopy">복사</button>
             <button class="smallbtn ghost" type="button" onclick="go('home')">홈</button>
+          </div>
+
+          <!-- ✅ 월별 모드 컨트롤 -->
+          <div class="controls" id="mealMonthControls" style="display:none;margin-top:12px;">
+            <span style="font-weight:1000;">월 선택</span>
+            <input type="month" id="mealMonth" />
+            <button class="smallbtn" type="button" onclick="mealLoadMonth()">월별 조회</button>
           </div>
 
           <div class="adWrap" id="ad-meal"></div>
@@ -540,6 +604,7 @@
           </div>
 
           <div id="meals" style="margin-top:14px;"></div>
+          <div id="mealMonthTable" style="display:none;"></div>
           <div id="shareText"></div>
         </div>
 
@@ -613,6 +678,10 @@
               <button class="neisTab" type="button" data-k="career" aria-selected="false">진로활동</button>
               <button class="neisTab" type="button" data-k="subject" aria-selected="false">교과세특</button>
               <button class="neisTab" type="button" data-k="personal" aria-selected="false">개인별세특</button>
+
+              <!-- ✅ 추가(표 반영): 봉사 50자, 행특 300자 -->
+              <button class="neisTab" type="button" data-k="volunteer" aria-selected="false">봉사(50자)</button>
+              <button class="neisTab" type="button" data-k="behavior" aria-selected="false">행특(300자)</button>
             </div>
 
             <div class="adWrap neis" id="ad-neis"></div>
@@ -686,7 +755,7 @@ SOFTWARE.
     <div class="modal">
       <div class="modalHead">
         <b>앱 설치 방법 안내</b>
-        <button class="btn ghost" type="button" onclick="closeModal()">닫기</button>
+        <!-- ✅ 요청대로: 닫기 버튼 제거 -->
       </div>
       <div class="modalBody">
         <div>설치하면 홈 화면에서 앱처럼 더 빠르게 실행할 수 있습니다.</div>
@@ -821,7 +890,7 @@ function applyTheme(theme){
   document.documentElement.setAttribute("data-theme", theme);
   localStorage.setItem("theme", theme);
   const meta = document.querySelector('meta[name="theme-color"]');
-  meta.setAttribute("content", theme === "dark" ? "#0b1220" : "#7c3aed");
+  meta.setAttribute("content", theme === "dark" ? "#0b1220" : "#2563eb");
 }
 function initTheme(){
   const saved = localStorage.getItem("theme");
@@ -938,7 +1007,119 @@ async function fetchMealsDay(sdCode, ymd) {
 
 async function initMeals(){
   $("#date").value = todayStr();
+  const now = new Date();
+  $("#mealMonth").value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}`;
   setNotice("ok", `${SCHOOL_NAME} 급식 조회가 준비되었습니다. 날짜를 선택해 확인해 주세요.`, true);
+}
+
+/* ✅ 급식 모드 토글 (일별 ↔ 월별표) */
+let mealMode = "day"; // "day" | "month"
+function toggleMealMode(){
+  mealMode = (mealMode === "day") ? "month" : "day";
+
+  const isMonth = (mealMode === "month");
+  $("#mealMonthControls").style.display = isMonth ? "flex" : "none";
+  $("#meals").style.display = isMonth ? "none" : "block";
+  $("#mealMonthTable").style.display = isMonth ? "block" : "none";
+
+  $("#btnMealMonth").textContent = isMonth ? "일별(카드)" : "월별(표)";
+
+  if(isMonth) mealLoadMonth();
+}
+
+/* ✅ 월 전체 날짜 배열 */
+function getMonthDates(yyyy_mm){
+  const [y,m] = yyyy_mm.split("-").map(Number);
+  const last = new Date(y, m, 0).getDate();
+  const dates = [];
+  for(let d=1; d<=last; d++){
+    dates.push(`${y}${pad2(m)}${pad2(d)}`);
+  }
+  return dates;
+}
+
+/* ✅ 월별 급식 조회(표) */
+async function mealLoadMonth(){
+  try{
+    const ym = $("#mealMonth").value;
+    if(!ym){
+      setNotice("err", "월을 선택해 주세요.", true);
+      return;
+    }
+
+    const { label } = monthBounds(ym);
+    setNotice("", `${label} 급식(표) 불러오는 중…`, true);
+    $("#mealMonthTable").innerHTML = `<div class="notice">불러오는 중…</div>`;
+
+    const ymds = getMonthDates(ym);
+
+    const results = [];
+    for(const ymd of ymds){
+      try{
+        const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
+        if(meals && meals.length){
+          results.push({ ymd, meals });
+        }
+      }catch(_){}
+    }
+
+    if(!results.length){
+      $("#mealMonthTable").innerHTML = `<div class="notice">해당 월에는 급식 정보가 없습니다.</div>`;
+      setNotice("", "", false);
+      return;
+    }
+
+    const tableHtml = `
+      <div style="font-weight:1000;font-size:18px;letter-spacing:-.3px;margin:8px 0 10px;">
+        ${label} 급식 (표)
+      </div>
+
+      <div class="mealTableWrap">
+        <table class="mealTable" aria-label="월별 급식 표">
+          <thead>
+            <tr>
+              <th style="width:140px;">날짜</th>
+              <th>급식 내용</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${results.map(({ymd, meals})=>{
+              const iso = `${ymd.slice(0,4)}-${ymd.slice(4,6)}-${ymd.slice(6,8)}`;
+              const dateText = ymd2str(ymd);
+
+              const mealBlocks = meals.map(m=>{
+                const list = (m.menu||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("");
+                return `
+                  <div style="margin-bottom:14px;">
+                    <div class="mealTypeBadge">
+                      ${escapeHtml(m.type)}${m.cal ? ` · ${escapeHtml(m.cal)}` : ""}
+                    </div>
+                    <ul class="mealMenus">${list || "<li>메뉴 없음</li>"}</ul>
+                  </div>
+                `;
+              }).join("");
+
+              return `
+                <tr>
+                  <td class="mealDateCell">
+                    <div>${escapeHtml(dateText)}</div>
+                    <div class="muted" style="font-size:12.5px;margin-top:6px;">${escapeHtml(iso)}</div>
+                  </td>
+                  <td>${mealBlocks}</td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    $("#mealMonthTable").innerHTML = tableHtml;
+    setNotice("", "", false);
+
+  }catch(err){
+    setNotice("err", "월별 급식 오류: " + (err.message||err), true);
+  }
 }
 
 async function onDay(){
@@ -948,6 +1129,7 @@ async function onDay(){
 
     setNotice("", "급식 정보를 불러오는 중입니다…", true);
     $("#meals").innerHTML = `<div class="notice">급식 정보를 불러오는 중입니다…</div>`;
+    $("#mealMonthTable").innerHTML = "";
 
     const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
 
@@ -991,10 +1173,24 @@ function moveDate(days){
   const dateObj = ymdToDateObj(currentDate);
   dateObj.setDate(dateObj.getDate() + days);
   $("#date").value = dateToYMD(dateObj);
-  onDay();
+
+  if(mealMode === "month") {
+    const d = ymdToDateObj($("#date").value);
+    $("#mealMonth").value = `${d.getFullYear()}-${pad2(d.getMonth()+1)}`;
+    mealLoadMonth();
+  } else {
+    onDay();
+  }
 }
 function setTodayAndLoad(){
   $("#date").value = todayStr();
+
+  mealMode = "day";
+  $("#mealMonthControls").style.display = "none";
+  $("#meals").style.display = "block";
+  $("#mealMonthTable").style.display = "none";
+  $("#btnMealMonth").textContent = "월별(표)";
+
   onDay();
 }
 
@@ -1019,6 +1215,10 @@ async function copyTextReliable(text){
   }
 }
 $("#btnCopy").addEventListener("click", async ()=>{
+  if(mealMode === "month"){
+    alert("월별(표) 모드에서는 일별 복사 기능만 지원합니다. 일별(카드)로 전환 후 복사해 주세요.");
+    return;
+  }
   const txt = $("#shareText").textContent || "";
   if(!txt.trim()){ alert("복사할 급식 내용이 없습니다. 먼저 급식을 조회해 주세요."); return; }
   const ok = await copyTextReliable(txt);
@@ -1026,7 +1226,7 @@ $("#btnCopy").addEventListener("click", async ()=>{
 });
 
 /* ==========================
-   ✅ 학사일정 (Worker 프록시 + 달력 UI)  ← 여기만 교체 완료
+   ✅ 학사일정 (Worker 프록시 + 달력 UI)
    ========================== */
 function setSchNotice(kind, text){
   const box = $("#schNotice");
@@ -1075,11 +1275,11 @@ function renderScheduleCalendar(yyyymm, byDate){
   const wrap = $("#schList");
 
   const y = Number(yyyymm.slice(0,4));
-  const m = Number(yyyymm.slice(4,6)); // 1~12
+  const m = Number(yyyymm.slice(4,6));
   const first = new Date(y, m-1, 1);
   const last = new Date(y, m, 0);
 
-  const startDow = first.getDay(); // 0=일
+  const startDow = first.getDay();
   const daysInMonth = last.getDate();
 
   const cells = [];
@@ -1161,7 +1361,6 @@ async function scheduleLoadMonth(){
     setSchNotice("ok", `${label} 학사일정 (${Object.keys(byDate).length}일에 일정 존재)`);
     renderScheduleCalendar(yyyymm, byDate);
 
-    // 홈 위젯도 같은 데이터로 갱신
     homeRenderTodayScheduleProxy(byDate);
   }catch(err){
     setSchNotice("err", "학사일정 오류: " + (err.message||err));
@@ -1343,8 +1542,21 @@ function openOnway(){
   window.open("https://ps.onwayedu.co.kr/login/login.php", "_blank", "noopener,noreferrer");
 }
 
-/* ✅ NEIS 글자수 */
-const NEIS_LIMITS = { autonomy:1500, club:1500, career:2100, subject:1500, personal:1500 };
+/* ✅ NEIS 글자수 (2026 기준 반영)
+   - 진로: 1500 byte
+   - 봉사(50자): 150 byte
+   - 행특(300자): 900 byte
+*/
+const NEIS_LIMITS = {
+  autonomy:1500,
+  club:1500,
+  career:1500,     // ✅ 변경
+  subject:1500,
+  personal:1500,
+  volunteer:150,   // ✅ 추가
+  behavior:900     // ✅ 추가
+};
+
 let neisActiveKey = "autonomy";
 let neisWired = false;
 
