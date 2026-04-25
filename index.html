@@ -934,7 +934,7 @@ body.setup-pending .firstStartBack{
           <input type="month" id="mealMonth" aria-label="월별 급식 조회 월" />
           <button class="smallbtn primary" type="button" onclick="mealLoadMonth()">월별 조회</button>
         </div>
-        <div id="notice" class="notice">급식 조회가 준비되었습니다.</div>
+        <div id="notice" class="notice">급식 조회가 준비되었어요!</div>
         <div class="notice">
           <b style="color:var(--text)">알레르기 번호 안내</b><br>
           1 난류 · 2 우유 · 3 메밀 · 4 땅콩 · 5 대두 · 6 밀 · 7 고등어 · 8 게 · 9 새우 · 10 돼지고기 · 11 복숭아 · 12 토마토 · 13 아황산염 · 14 호두 · 15 닭고기 · 16 쇠고기 · 17 오징어 · 18 조개류
@@ -1147,7 +1147,7 @@ body.setup-pending .firstStartBack{
 
       <div id="setupStepName" class="setupStep">
         <b style="color:var(--text)">이름을 알려주세요</b>
-        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요??.</div>
+        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요?.</div>
         <input id="setupNameInput" class="setupNameInput" type="text" maxlength="12" placeholder="예: 혁준">
         <div class="muted" style="margin-top:10px;font-size:13px">이름은 이 브라우저에만 저장됩니다.</div>
       </div>
@@ -1183,17 +1183,17 @@ body.setup-pending .firstStartBack{
    ========================= */
 const NOTICE_CONFIG = {
   enabled: false,
-  title: "공지사항이 없습니다",
-  message: "새 소식이 생기면 이 영역에 표시됩니다.",
-  buttonText: "",
-  buttonUrl: "",
+  title: "O.poong 서비스 개선 안내",
+  message: "O.poong이 시스템을 업그레이드 했어요! 현재 사이트가 불안정할 수 있어요! 빨리 해결할게요!.",
+  buttonText: 테스트",
+  buttonUrl: "https://read365.edunet.net/PureScreen/SchoolSearch?schoolName=풍산고등학교&provCode=R10&neisCode=R100000999",
 
   /*
     공지 배너 색상 수정:
     - type: "default" | "blue" | "green" | "amber" | "red"
     - customBg, customBorder, customText를 채우면 직접 색상 지정 가능
   */
-  type: "default",
+  type: "red",
   customBg: "",
   customBorder: "",
   customText: ""
@@ -1471,6 +1471,10 @@ function openSetupModalSafely(){
     renderHomeWidgets();
     return;
   }
+
+  // 시작 화면은 유지하되, 버튼을 누른 뒤에는 설정 모달이 확실히 보이도록 시작 화면 레이어를 내립니다.
+  showMainApp();
+  setupBack.style.zIndex = "10000";
 
   renderSetupAllergyGrid();
 
@@ -1958,131 +1962,6 @@ function initWidgetSelector(){
 }
 
 
-/* ===== O.Poong added: first start gate logic ===== */
-function showMainApp(){
-  document.body.classList.remove("setup-pending");
-}
-function showFirstStartOnly(){
-  document.body.classList.add("setup-pending");
-}
-function startFirstSetup(){
-  renderSetupAllergyGrid();
-
-  const cfg = getHomeWidgetConfig();
-  $$("[data-setup-widget]").forEach(input=>{
-    input.checked = cfg[input.dataset.setupWidget] !== false;
-  });
-
-  const nameInput = $("#setupNameInput");
-  if(nameInput) nameInput.value = localStorage.getItem(USER_NAME_KEY) || "";
-
-  const privacy = $("#privacyAgreeCheck");
-  if(privacy) privacy.checked = false;
-
-  setupStepIndex = 0;
-  renderSetupStep();
-
-  const back = $("#firstSetupBack");
-  if(back) back.style.display = "flex";
-}
-function openFirstSetupIfNeeded(){
-  if(localStorage.getItem(FIRST_SETUP_KEY) === "1"){
-    showMainApp();
-    return;
-  }
-  showFirstStartOnly();
-}
-function renderSetupStep(){
-  const steps = [
-    $("#setupStepPrivacy"),
-    $("#setupStepName"),
-    $("#setupStepAllergy"),
-    $("#setupStepWidget")
-  ];
-
-  steps.forEach((el, idx)=>{
-    if(el) el.classList.toggle("active", setupStepIndex === idx);
-  });
-
-  $("#setupPrevBtn").style.display = setupStepIndex === 0 ? "none" : "inline-flex";
-  $("#setupNextBtn").style.display = setupStepIndex < 3 ? "inline-flex" : "none";
-  $("#setupDoneBtn").style.display = setupStepIndex === 3 ? "inline-flex" : "none";
-}
-function setupNext(){
-  if(setupStepIndex === 0){
-    const agree = $("#privacyAgreeCheck");
-    if(!agree || !agree.checked){
-      alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있어요.");
-      showFirstStartOnly();
-      const back = $("#firstSetupBack");
-      if(back) back.style.display = "none";
-      return;
-    }
-  }
-
-  if(setupStepIndex === 1){
-    saveSetupName();
-  }
-
-  if(setupStepIndex === 2){
-    saveSetupAllergy();
-  }
-
-  setupStepIndex = Math.min(3, setupStepIndex + 1);
-  renderSetupStep();
-}
-function setupPrev(){
-  setupStepIndex = Math.max(0, setupStepIndex - 1);
-  renderSetupStep();
-}
-function saveSetupName(){
-  const input = $("#setupNameInput");
-  const name = String(input?.value || "").trim();
-  localStorage.setItem(USER_NAME_KEY, name || "사용자");
-}
-function saveSetupAllergy(){
-  const grid = $("#setupAllergyGrid");
-  if(!grid) return;
-  const picked = Array.from(grid.querySelectorAll("input:checked")).map(x=>x.value);
-  saveSelectedAllergies(picked);
-  renderAllergySelector();
-}
-function saveSetupWidgets(){
-  const cfg = getHomeWidgetConfig();
-  $$("[data-setup-widget]").forEach(input=>{
-    cfg[input.dataset.setupWidget] = input.checked;
-  });
-  saveHomeWidgetConfig(cfg);
-  applyHomeWidgetConfig();
-}
-function finishFirstSetup(){
-  const agree = $("#privacyAgreeCheck");
-  if(!agree || !agree.checked){
-    alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있어요.");
-    showFirstStartOnly();
-    const back = $("#firstSetupBack");
-    if(back) back.style.display = "none";
-    return;
-  }
-
-  saveSetupName();
-  saveSetupAllergy();
-  saveSetupWidgets();
-
-  localStorage.setItem(FIRST_SETUP_KEY, "1");
-
-  const setupBack = $("#firstSetupBack");
-  if(setupBack) setupBack.style.display = "none";
-
-  showMainApp();
-  renderHomeWidgets();
-}
-function skipFirstSetup(){
-  alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있어요.");
-  const setupBack = $("#firstSetupBack");
-  if(setupBack) setupBack.style.display = "none";
-  showFirstStartOnly();
-}
 function renderPersonalHeroLine(){
   const box = $("#personalHeroLine");
   if(!box) return;
