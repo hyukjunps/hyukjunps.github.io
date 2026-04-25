@@ -1291,7 +1291,10 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
           </button>
           <div class="favoriteEditor" aria-label="좋아하는 음식 설정">
             <input id="favoriteFoodInput" class="favoriteInput favoriteMealInput" type="text" maxlength="80" placeholder="예: 돈가스, 떡볶이, 김치찌개">
-            <button class="smallbtn primary" type="button" onclick="saveFavoriteFoodsFromMeal()">저장</button>
+            <div style="display:flex;gap:8px;flex-wrap:wrap">
+              <button class="smallbtn primary" type="button" onclick="saveFavoriteFoodsFromMeal()">저장</button>
+              <button class="smallbtn ghost" type="button" onclick="clearFavoriteFoodsFromMeal()">삭제</button>
+            </div>
             <div class="favoriteSummaryText" id="favoriteSummary">저장된 좋아하는 음식이 없습니다.</div>
           </div>
         </div>
@@ -1819,6 +1822,15 @@ function renderFavoriteFoodEditor(){
 function saveFavoriteFoodsFromMeal(){
   const input = $("#favoriteFoodInput");
   saveFavoriteFoodsFromText(input ? input.value : "");
+  renderFavoriteFoodEditor();
+  if(typeof mealMode !== "undefined" && mealMode === "month") mealLoadMonth();
+  else if($("#date") && $("#date").value) onDay();
+  renderHomeWidgets();
+}
+function clearFavoriteFoodsFromMeal(){
+  try{ localStorage.removeItem(FAVORITE_FOOD_KEY); }catch(e){}
+  const input = $("#favoriteFoodInput");
+  if(input) input.value = "";
   renderFavoriteFoodEditor();
   if(typeof mealMode !== "undefined" && mealMode === "month") mealLoadMonth();
   else if($("#date") && $("#date").value) onDay();
@@ -2372,7 +2384,7 @@ function openModal(){
     ? "이미 설치되어 있습니다. 홈 화면의 O.Poong 아이콘으로 실행할 수 있습니다."
     : isIos()
       ? "iPhone/iPad는 Safari에서 공유 버튼을 누른 뒤 ‘홈 화면에 추가’를 선택하면 설치할 수 있습니다."
-      : "설치 버튼이 바로 뜨지 않으면 Chrome/Edge 주소창 오른쪽 또는 메뉴에서 ‘앱 설치’나 ‘홈 화면에 추가’를 선택해 주세요. PWA 설치는 HTTPS, manifest.json, service-worker.js가 정상 연결되어야 표시됩니다.";
+      : "설치 버튼이 바로 뜨지 않으면 Chrome/Edge 주소창 오른쪽 또는 메뉴에서 ‘앱 설치’나 ‘홈 화면에 추가’를 선택해 주세요.";
   $("#installGuideText").textContent = guide;
   $("#btnInstallNow").style.display = deferredPrompt ? "inline-flex" : "none";
   $("#modalBack").style.display = "flex";
