@@ -22,6 +22,23 @@
 <link rel="icon" href="./android-launchericon-512-512.png" />
 <link rel="apple-touch-icon" href="./android-launchericon-512-512.png" />
 
+
+<script>
+function opoongLogoFallback(img){
+  try{
+    const list = String(img.getAttribute("data-logo-fallbacks") || "").split("|").filter(Boolean);
+    const idx = Number(img.getAttribute("data-logo-index") || "0");
+    if(idx < list.length){
+      img.setAttribute("data-logo-index", String(idx + 1));
+      img.src = list[idx];
+      return;
+    }
+  }catch(e){}
+  img.style.display = "none";
+  if(img.parentElement) img.parentElement.classList.add("logo-failed");
+}
+</script>
+
 <style>
 :root{
   --bg:#f5f7fb;
@@ -756,6 +773,17 @@ body.setup-pending .firstStartBack{
   pointer-events:auto!important;
 }
 
+
+/* ===== O.Poong start reliability patch ===== */
+.firstStartLogoFallback{
+  position:absolute!important;
+  inset:0!important;
+  z-index:1!important;
+}
+.logo-failed .firstStartLogoFallback{
+  z-index:3!important;
+}
+
 </style>
 </head>
 
@@ -764,7 +792,7 @@ body.setup-pending .firstStartBack{
 <div id="firstStartBack" class="firstStartBack" aria-label="O.Poong 시작 화면">
   <section class="firstStartCard">
     <div class="firstStartTopLogo">
-      <img class="firstStartLogoImg" src="./android-launchericon-512-512.png" alt="O.Poong 로고">
+      <img class="firstStartLogoImg" src="./android-launchericon-512-512.png" data-logo-fallbacks="./logo.png|./O.poong.png|./O.Poong.png|./opoong.png" alt="O.Poong 로고" onerror="opoongLogoFallback(this)">
       <div class="firstStartLogoFallback">O.P</div>
     </div>
 
@@ -772,12 +800,12 @@ body.setup-pending .firstStartBack{
       <div class="firstStartLogo">O.Poong</div>
       <div class="firstStartSlogan">풍산고 생활, 한 화면에서.</div>
       <p class="firstStartDesc">
-      안녕하세요! 당신의 풍산고등학교 생활을 도와줄 O.Poong이라고 해요!
+      안녕하세요! 당신의 풍산고등학교 생활을 도와줄 O.Poong이라고 해요 :)
       시작하기를 눌러 사용자 맞춤을 위한 간단한 질문에 답변해주시면
       바로 사용하실 수 있어요.
     </p>
       <div class="firstStartActions">
-        <button id="firstStartBtn" class="bigBtn" type="button">시작하기</button>
+        <button id="firstStartBtn" class="bigBtn" type="button" onclick="window.OPOONG_START_SAFE && window.OPOONG_START_SAFE(event)">시작하기</button>
       </div>
     </div>
   </section>
@@ -789,7 +817,7 @@ body.setup-pending .firstStartBack{
   <header class="topbar" aria-label="상단 메뉴">
     <div class="brand">
       <div class="logoWrap" aria-hidden="true">
-        <img class="logo" src="./android-launchericon-512-512.png" alt="O.Poong 로고" onerror="this.style.display='none'">
+        <img class="logo" src="./android-launchericon-512-512.png" data-logo-fallbacks="./logo.png|./O.poong.png|./O.Poong.png|./opoong.png" alt="O.Poong 로고" onerror="opoongLogoFallback(this)">
       </div>
       <div class="brandText">
         <b>O.Poong</b>
@@ -934,7 +962,7 @@ body.setup-pending .firstStartBack{
           <input type="month" id="mealMonth" aria-label="월별 급식 조회 월" />
           <button class="smallbtn primary" type="button" onclick="mealLoadMonth()">월별 조회</button>
         </div>
-        <div id="notice" class="notice">급식 조회가 준비되었어요!</div>
+        <div id="notice" class="notice">급식 조회가 준비되었습니다.</div>
         <div class="notice">
           <b style="color:var(--text)">알레르기 번호 안내</b><br>
           1 난류 · 2 우유 · 3 메밀 · 4 땅콩 · 5 대두 · 6 밀 · 7 고등어 · 8 게 · 9 새우 · 10 돼지고기 · 11 복숭아 · 12 토마토 · 13 아황산염 · 14 호두 · 15 닭고기 · 16 쇠고기 · 17 오징어 · 18 조개류
@@ -1147,7 +1175,7 @@ body.setup-pending .firstStartBack{
 
       <div id="setupStepName" class="setupStep">
         <b style="color:var(--text)">이름을 알려주세요</b>
-        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요?.</div>
+        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요??.</div>
         <input id="setupNameInput" class="setupNameInput" type="text" maxlength="12" placeholder="예: 혁준">
         <div class="muted" style="margin-top:10px;font-size:13px">이름은 이 브라우저에만 저장됩니다.</div>
       </div>
@@ -1183,17 +1211,17 @@ body.setup-pending .firstStartBack{
    ========================= */
 const NOTICE_CONFIG = {
   enabled: false,
-  title: "O.poong 서비스 개선 안내",
-  message: "O.poong이 시스템을 업그레이드 했어요! 현재 사이트가 불안정할 수 있어요! 빨리 해결할게요!.",
-  buttonText: 테스트",
-  buttonUrl: "https://read365.edunet.net/PureScreen/SchoolSearch?schoolName=풍산고등학교&provCode=R10&neisCode=R100000999",
+  title: "공지사항이 없습니다",
+  message: "새 소식이 생기면 이 영역에 표시됩니다.",
+  buttonText: "",
+  buttonUrl: "",
 
   /*
     공지 배너 색상 수정:
     - type: "default" | "blue" | "green" | "amber" | "red"
     - customBg, customBorder, customText를 채우면 직접 색상 지정 가능
   */
-  type: "red",
+  type: "default",
   customBg: "",
   customBorder: "",
   customText: ""
@@ -2001,7 +2029,8 @@ document.addEventListener("click", function(e){
   const btn = e.target.closest("#firstStartBtn");
   if(btn){
     e.preventDefault();
-    startFirstSetup();
+    if(window.OPOONG_START_SAFE) window.OPOONG_START_SAFE(e);
+    else startFirstSetup();
   }
 });
 
