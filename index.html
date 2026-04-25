@@ -1307,7 +1307,7 @@ SOFTWARE.
    ========================= */
 const NOTICE_CONFIG = {
   enabled: false,
-  title: "O.poong이 리뉴얼되었어요! 앞으로도 잘 부탁해요!,
+  title: "O.poong이 리뉴얼되었어요! 앞으로도 잘 부탁해요!",
   message: "지금은 테스트를 진행하고 있어요!.",
   buttonText: "도서관 사이트 테스트",
   buttonUrl: "https://read365.edunet.net/PureScreen/SchoolSearch?schoolName=풍산고등학교&provCode=R10&neisCode=R100000999",
@@ -1630,8 +1630,17 @@ function startFirstSetup(){
     renderHomeWidgets();
   }
 }
+function hasSetupDone(){
+  const keys = [FIRST_SETUP_KEY, "opoong_first_setup_done_v5", "opoong_first_setup_done_v4", "opoong_first_setup_done_v3", "opoong_first_setup_done_v2", "opoong_first_setup_done_v1"];
+  return keys.some(k => localStorage.getItem(k) === "1");
+}
+window.OPOONG_START_SAFE = function(e){
+  if(e && e.preventDefault) e.preventDefault();
+  startFirstSetup();
+};
 function openFirstSetupIfNeeded(){
-  if(localStorage.getItem(FIRST_SETUP_KEY) === "1"){
+  if(hasSetupDone()){
+    localStorage.setItem(FIRST_SETUP_KEY, "1");
     showMainApp();
     updateUserBadge();
     return;
