@@ -2427,7 +2427,7 @@ function homeRenderTodaySchedule(byDate){
     : `<div class="muted">오늘은 학사일정이 없어요.</div>`;
 }
 
-const TT_KEY = "opoong_tt_v3";
+const TT_KEY = "opoong_tt_v2";
 const TT_DAYS = ["월","화","수","목","금","토","일"];
 function ttLoad(){ try{return JSON.parse(localStorage.getItem(TT_KEY)) || {periods:8,data:{}}}catch{return {periods:8,data:{}}} }
 function ttSave(obj){ localStorage.setItem(TT_KEY, JSON.stringify(obj)); }
