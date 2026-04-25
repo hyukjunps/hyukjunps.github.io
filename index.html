@@ -494,6 +494,109 @@ body.setup-pending .firstStartBack{
   line-height:1.65;
 }
 
+
+/* ===== O.Poong minimal patch: start screen, user badge, notice guide ===== */
+.userBadge{
+  display:none;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:color-mix(in srgb,var(--card) 88%,transparent);
+  color:var(--text);
+  font-size:13px;
+  font-weight:1000;
+  box-shadow:0 8px 18px rgba(15,23,42,.05);
+}
+.userBadge::before{
+  content:"";
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:var(--ok);
+}
+body.setup-pending .wrap{display:none}
+body.setup-pending{overflow:hidden}
+.firstStartBack{
+  position:fixed!important;
+  inset:0!important;
+  z-index:200!important;
+  display:none;
+  align-items:center!important;
+  justify-content:center!important;
+  min-height:100svh!important;
+  padding:0!important;
+  background:
+    radial-gradient(900px 420px at 10% 0%, color-mix(in srgb, var(--pri3) 34%, transparent), transparent 60%),
+    radial-gradient(800px 420px at 100% 12%, color-mix(in srgb, var(--ok) 18%, transparent), transparent 58%),
+    linear-gradient(180deg,var(--bg2),var(--bg))!important;
+}
+body.setup-pending .firstStartBack{display:flex!important}
+.firstStartCard{
+  width:100%!important;
+  min-height:100svh!important;
+  display:flex!important;
+  flex-direction:column!important;
+  justify-content:center!important;
+  align-items:flex-start!important;
+  padding:clamp(26px,7vw,82px)!important;
+  position:relative!important;
+  overflow:hidden!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.firstStartCard::before{
+  content:"";
+  position:absolute;
+  right:-110px;
+  top:-110px;
+  width:310px;
+  height:310px;
+  border-radius:90px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--pri3) 44%,transparent),transparent);
+  transform:rotate(18deg);
+}
+.firstStartInner{
+  width:min(720px,100%);
+  position:relative;
+  z-index:1;
+  padding:clamp(20px,4vw,42px);
+  border-radius:var(--radius);
+  border:1px solid color-mix(in srgb,var(--line) 84%,transparent);
+  background:color-mix(in srgb,var(--card) 84%,transparent);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px);
+}
+.firstStartLogoImg{
+  width:84px;
+  height:84px;
+  border-radius:27px;
+  object-fit:cover;
+  margin-bottom:18px;
+  border:1px solid color-mix(in srgb,var(--pri) 24%,var(--line));
+  box-shadow:0 14px 28px rgba(15,23,42,.12);
+  background:var(--card);
+}
+.noticeGuideCode{
+  margin-top:10px;
+  padding:12px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:color-mix(in srgb,var(--bg) 65%,var(--card));
+  color:var(--text);
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:12px;
+  line-height:1.65;
+  white-space:pre-wrap;
+  overflow:auto;
+}
+@media (max-width:620px){
+  .userBadge{width:100%;justify-content:center}
+}
+
 </style>
 </head>
 
@@ -501,15 +604,18 @@ body.setup-pending .firstStartBack{
 
 <div id="firstStartBack" class="firstStartBack" aria-label="O.Poong 시작 화면">
   <section class="firstStartCard">
-    <div class="firstStartLogo">O.Poong</div>
-    <div class="firstStartSlogan">풍산고 생활, 한 화면에서.</div>
-    <p class="firstStartDesc">
-      안녕하세요! 당신의 풍산고등학교 생활을 도와줄 O.Poong이라고 해요 :)
+    <div class="firstStartInner">
+      <img class="firstStartLogoImg" src="./android-launchericon-512-512.png" alt="O.Poong 로고" onerror="this.style.display='none'">
+      <div class="firstStartLogo">O.Poong</div>
+      <div class="firstStartSlogan">풍산고 생활, 한 화면에서.</div>
+      <p class="firstStartDesc">
+      안녕하세요! 당신의 풍산고등학교 생활을 도와줄 O.Poong이라고 해요!
       시작하기를 눌러 사용자 맞춤을 위한 간단한 질문에 답변해주시면
       바로 사용하실 수 있어요.
     </p>
-    <div class="firstStartActions">
+      <div class="firstStartActions">
       <button class="bigBtn" type="button" onclick="startFirstSetup()">시작하기</button>
+    </div>
     </div>
   </section>
 </div>
@@ -528,6 +634,7 @@ body.setup-pending .firstStartBack{
       </div>
     </div>
     <div class="actions">
+      <div id="userBadge" class="userBadge">사용자</div>
       <button id="btnInstallTop" class="btn ok" type="button">앱 설치</button>
       <button id="btnLight" class="btn ghost" type="button">라이트</button>
       <button id="btnDark" class="btn ghost" type="button">다크</button>
@@ -547,8 +654,7 @@ body.setup-pending .firstStartBack{
       <span class="kicker">O.Poong Portal</span>
       <h1>풍산고 생활,<br>한 화면에서.</h1>
       <p class="heroText">
-        급식, 학사일정, 시간표, 학교 생활 링크, 글자수 도구를 하나의 통일된 화면에서 확인할 수 있는
-        풍산고 학생용 비공식 생활 도우미입니다.
+        풍산고등학교에서 사용할 수 있는 다양한 기능을 제공합니다!
       </p>
       <div class="heroActions">
         <button class="bigBtn" type="button" onclick="go('meal'); setTodayAndLoad();">오늘 급식 보기</button>
@@ -790,7 +896,7 @@ body.setup-pending .firstStartBack{
         <div class="cardGrid">
           <article class="toolCard">
             <b>서비스 소개</b>
-            <p>O.Poong은 풍산고 학생의 일상 확인을 돕는 비공식 웹앱입니다. 학교 공식 앱이나 공식 행정 서비스가 아닙니다.</p>
+            <p>O.Poong은 풍산고 학생의 일상에 도움이 되는 기능을 모아둔 서비스입니다!</p>
           </article>
           <article class="toolCard">
             <b>개인정보 안내</b>
@@ -968,7 +1074,7 @@ const ALLERGY_ITEMS = [
   { no:"18", name:"조개류" }
 ];
 const ALLERGY_KEY = "opoong_allergy_numbers_v1";
-const FIRST_SETUP_KEY = "opoong_first_setup_done_v3";
+const FIRST_SETUP_KEY = "opoong_first_setup_done_v4";
 const USER_NAME_KEY = "opoong_user_name_v1";
 const PERSONAL_MESSAGES = [
   "{name}님, 오늘의 학사일정을 확인해보세요!",
@@ -1230,6 +1336,159 @@ function skipFirstSetup(){
   localStorage.setItem(FIRST_SETUP_KEY, "1");
   const back = $("#firstSetupBack");
   if(back) back.style.display = "none";
+}
+
+/* ===== O.Poong added: first start gate logic ===== */
+function showMainApp(){
+  document.body.classList.remove("setup-pending");
+}
+function showFirstStartOnly(){
+  document.body.classList.add("setup-pending");
+}
+function updateUserBadge(){
+  const badge = $("#userBadge");
+  if(!badge) return;
+  const name = String(localStorage.getItem(USER_NAME_KEY) || "").trim();
+  if(!name){
+    badge.style.display = "none";
+    badge.textContent = "사용자";
+    return;
+  }
+  badge.textContent = `${name}님`;
+  badge.style.display = "inline-flex";
+}
+function startFirstSetup(){
+  try{
+    renderSetupAllergyGrid();
+
+    const cfg = getHomeWidgetConfig();
+    $$("[data-setup-widget]").forEach(input=>{
+      input.checked = cfg[input.dataset.setupWidget] !== false;
+    });
+
+    const nameInput = $("#setupNameInput");
+    if(nameInput) nameInput.value = localStorage.getItem(USER_NAME_KEY) || "";
+
+    const privacy = $("#privacyAgreeCheck");
+    if(privacy) privacy.checked = false;
+
+    setupStepIndex = 0;
+    renderSetupStep();
+
+    const back = $("#firstSetupBack");
+    if(back) back.style.display = "flex";
+  }catch(err){
+    alert("초기 설정을 여는 중 오류가 발생했습니다: " + err.message);
+    console.error(err);
+  }
+}
+function openFirstSetupIfNeeded(){
+  if(localStorage.getItem(FIRST_SETUP_KEY) === "1"){
+    showMainApp();
+    updateUserBadge();
+    return;
+  }
+  showFirstStartOnly();
+}
+function renderSetupStep(){
+  const steps = [
+    $("#setupStepPrivacy"),
+    $("#setupStepName"),
+    $("#setupStepAllergy"),
+    $("#setupStepWidget")
+  ];
+
+  steps.forEach((el, idx)=>{
+    if(el) el.classList.toggle("active", setupStepIndex === idx);
+  });
+
+  const prev = $("#setupPrevBtn");
+  const next = $("#setupNextBtn");
+  const done = $("#setupDoneBtn");
+
+  if(prev) prev.style.display = setupStepIndex === 0 ? "none" : "inline-flex";
+  if(next) next.style.display = setupStepIndex < 3 ? "inline-flex" : "none";
+  if(done) done.style.display = setupStepIndex === 3 ? "inline-flex" : "none";
+}
+function setupNext(){
+  if(setupStepIndex === 0){
+    const agree = $("#privacyAgreeCheck");
+    if(!agree || !agree.checked){
+      alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있습니다.");
+      return;
+    }
+  }
+
+  if(setupStepIndex === 1){
+    saveSetupName();
+  }
+
+  if(setupStepIndex === 2){
+    saveSetupAllergy();
+  }
+
+  setupStepIndex = Math.min(3, setupStepIndex + 1);
+  renderSetupStep();
+}
+function setupPrev(){
+  setupStepIndex = Math.max(0, setupStepIndex - 1);
+  renderSetupStep();
+}
+function saveSetupName(){
+  const input = $("#setupNameInput");
+  const name = String(input?.value || "").trim();
+  localStorage.setItem(USER_NAME_KEY, name || "사용자");
+  updateUserBadge();
+}
+function saveSetupAllergy(){
+  const grid = $("#setupAllergyGrid");
+  if(!grid) return;
+  const picked = Array.from(grid.querySelectorAll("input:checked")).map(x=>x.value);
+  saveSelectedAllergies(picked);
+  renderAllergySelector();
+}
+function saveSetupWidgets(){
+  const cfg = getHomeWidgetConfig();
+  $$("[data-setup-widget]").forEach(input=>{
+    cfg[input.dataset.setupWidget] = input.checked;
+  });
+  saveHomeWidgetConfig(cfg);
+  applyHomeWidgetConfig();
+}
+function finishFirstSetup(){
+  const agree = $("#privacyAgreeCheck");
+  if(!agree || !agree.checked){
+    alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있습니다.");
+    return;
+  }
+
+  saveSetupName();
+  saveSetupAllergy();
+  saveSetupWidgets();
+
+  localStorage.setItem(FIRST_SETUP_KEY, "1");
+
+  const setupBack = $("#firstSetupBack");
+  if(setupBack) setupBack.style.display = "none";
+
+  showMainApp();
+  updateUserBadge();
+  renderHomeWidgets();
+}
+function skipFirstSetup(){
+  alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있습니다.");
+  const setupBack = $("#firstSetupBack");
+  if(setupBack) setupBack.style.display = "none";
+  showFirstStartOnly();
+}
+function renderPersonalHeroLine(){
+  const box = $("#personalHeroLine");
+  if(!box) return;
+
+  const rawName = String(localStorage.getItem(USER_NAME_KEY) || "사용자").trim() || "사용자";
+  const name = escapeHtml(rawName);
+  const pick = PERSONAL_MESSAGES[Math.floor(Math.random() * PERSONAL_MESSAGES.length)];
+  box.innerHTML = escapeHtml(pick).replace("{name}", name);
 }
 
 async function fetchMealsDay(sdCode, ymd){
@@ -1520,7 +1779,7 @@ function openModal(){
     ? "이미 설치되어 있습니다. 홈 화면의 O.Poong 아이콘으로 실행할 수 있습니다."
     : isIos()
       ? "iPhone/iPad는 Safari 공유 버튼에서 ‘홈 화면에 추가’를 선택하면 설치할 수 있습니다."
-      : "Android Chrome/Edge는 주소창 또는 메뉴의 ‘앱 설치’를 선택하면 설치할 수 있습니다.";
+      : "Android/Chrome/Edge는 주소창 또는 메뉴의 ‘앱 설치’를 선택하면 설치할 수 있습니다.";
   $("#installGuideText").textContent = guide;
   $("#btnInstallNow").style.display = deferredPrompt ? "inline-flex" : "none";
   $("#modalBack").style.display = "flex";
