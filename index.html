@@ -20,7 +20,7 @@
 
 <link rel="manifest" href="./manifest.json" />
 <link rel="icon" href="./android-launchericon-512-512.png" />
-<link rel="apple-touch-icon" href="./android-launchericon-512-512.png" />
+<link rel="apple-touch-icon" href="./O.poong.png" />
 
 
 <script>
@@ -2609,12 +2609,13 @@ function saveHomeWidgetConfig(cfg){
   localStorage.setItem("opoong_home_widgets", JSON.stringify(cfg));
 }
 function applyHomeWidgetConfig(){
-  // 위젯은 홈 화면의 핵심 영역이라 항상 표시합니다.
+  const cfg = getHomeWidgetConfig();
   $$("[data-home-widget]").forEach(el=>{
-    el.classList.remove("homeWidgetHidden");
+    const key = el.dataset.homeWidget;
+    el.classList.toggle("homeWidgetHidden", cfg[key] === false);
   });
   $$("[data-widget-toggle]").forEach(input=>{
-    input.checked = true;
+    input.checked = cfg[input.dataset.widgetToggle] !== false;
   });
 }
 function toggleWidgetSelector(){
