@@ -1219,6 +1219,74 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
   flex-wrap:wrap;
 }
 
+
+/* ===== O.Poong patch: setup consent visibility + start install button ===== */
+.firstStartInstallBtn{
+  background:color-mix(in srgb,var(--card) 88%,transparent)!important;
+  color:var(--text)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:0 10px 22px rgba(15,23,42,.06)!important;
+}
+#firstSetupBack .modal{
+  overflow:hidden!important;
+}
+#firstSetupBack .modalBody{
+  min-height:0!important;
+  overflow:auto!important;
+  -webkit-overflow-scrolling:touch!important;
+}
+#firstSetupBack .modalFoot{
+  position:sticky!important;
+  bottom:0!important;
+  z-index:5!important;
+  background:color-mix(in srgb,var(--card) 96%,transparent)!important;
+  backdrop-filter:blur(14px)!important;
+  box-shadow:0 -12px 28px rgba(15,23,42,.08)!important;
+}
+#firstSetupBack .modalFoot .btn{
+  min-height:52px!important;
+}
+#setupNextBtn,#setupDoneBtn{
+  min-width:120px!important;
+}
+@media (max-width:620px){
+  .firstStartActions{
+    width:100%!important;
+  }
+  .firstStartActions .bigBtn,
+  .firstStartActions .btn{
+    flex:1 1 150px!important;
+    min-height:56px!important;
+  }
+  #firstSetupBack .modalHead{
+    align-items:flex-start!important;
+    gap:10px!important;
+  }
+  #firstSetupBack .modalBody{
+    padding:14px!important;
+    align-items:flex-start!important;
+  }
+  #firstSetupBack .setupStep{
+    padding:16px!important;
+    margin-bottom:8px!important;
+  }
+  #firstSetupBack .modalFoot{
+    display:grid!important;
+    grid-template-columns:1fr 1fr!important;
+    gap:8px!important;
+    padding:12px!important;
+  }
+  #firstSetupBack .modalFoot .btn{
+    width:100%!important;
+  }
+  #setupPrevBtn[style*="none"]{
+    display:none!important;
+  }
+  #setupNextBtn,#setupDoneBtn{
+    grid-column:2!important;
+  }
+}
+
 </style>
 </head>
 
@@ -1241,6 +1309,7 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
     </p>
       <div class="firstStartActions">
         <button id="firstStartBtn" class="bigBtn" type="button" onclick="window.OPOONG_START_SAFE && window.OPOONG_START_SAFE(event)">시작하기</button>
+        <button id="firstInstallBtn" class="btn firstStartInstallBtn" type="button" onclick="window.OPOONG_INSTALL_SAFE && window.OPOONG_INSTALL_SAFE(event)">앱 설치</button>
       </div>
     </div>
   </section>
@@ -2172,6 +2241,9 @@ function renderSetupStep(){
     if(el) el.classList.toggle("active", setupStepIndex === idx);
   });
 
+  const setupBody = document.querySelector("#firstSetupBack .modalBody");
+  if(setupBody) setupBody.scrollTop = 0;
+
   const prev = $("#setupPrevBtn");
   const next = $("#setupNextBtn");
   const done = $("#setupDoneBtn");
@@ -2585,7 +2657,7 @@ window.addEventListener("appinstalled", ()=>{
   const topBtn = $("#btnInstallTop");
   if(topBtn) topBtn.textContent = "설치됨";
 });
-$("#btnInstallTop").addEventListener("click", async ()=>{
+async function requestOpoongInstall(){
   if(isStandalone()){
     openModal();
     return;
@@ -2595,11 +2667,17 @@ $("#btnInstallTop").addEventListener("click", async ()=>{
     deferredPrompt = null;
     promptEvent.prompt();
     await promptEvent.userChoice.catch(()=>{});
-    $("#btnInstallNow").style.display = "none";
+    const installNow = $("#btnInstallNow");
+    if(installNow) installNow.style.display = "none";
     return;
   }
   openModal();
-});
+}
+window.OPOONG_INSTALL_SAFE = function(e){
+  if(e && e.preventDefault) e.preventDefault();
+  requestOpoongInstall();
+};
+$("#btnInstallTop").addEventListener("click", requestOpoongInstall);
 $("#btnInstallNow").addEventListener("click", async ()=>{
   if(!deferredPrompt){
     openModal();
