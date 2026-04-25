@@ -1,959 +1,1537 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="light">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
-<title>O.Poong</title>
+<meta name="google-site-verification" content="pC8rQePMd783xloEAELJWy2BtD36ojhULtYzJRon5mo" />
 
-<!-- PWA -->
-<link rel="manifest" href="./manifest.json">
-<meta name="theme-color" content="#2563eb" />
-<link rel="icon" href="./logo.png">
-<link rel="apple-touch-icon" href="./O.poong.png">
+<title>O.Poong ㅣ 풍산고 생활, 한 화면에서.</title>
+<meta name="application-name" content="O.Poong" />
+<meta name="description" content="안동 풍산고등학교의 홈페이지, 상벌점 시스템, 급식 정보, 학사일정을 바로 확인하세요." />
+<meta name="keywords" content="O.Poong ㅣ 풍산고 생활, 한 화면에서."/>
+<meta name="robots" content="index,follow,max-image-preview:large" />
+<meta name="theme-color" content="#1e40af" />
+
+<meta property="og:site_name" content="O.Poong" />
+<meta property="og:title" content="O.Poong ㅣ 풍산고 생활, 한 화면에서." />
+<meta property="og:description" content="안동 풍산고등학교의 홈페이지, 학사일정, 상벌점 시스템, 급식 정보를 바로 확인하세요." />
+<meta property="og:type" content="website" />
+<meta property="og:image" content="./android-launchericon-512-512.png" />
+
+<link rel="manifest" href="./manifest.json" />
+<link rel="icon" href="./android-launchericon-512-512.png" />
+<link rel="apple-touch-icon" href="./android-launchericon-512-512.png" />
 
 <style>
-  :root{
-  --bg:#f5f7fa;
+:root{
+  --bg:#f5f7fb;
+  --bg2:#edf4ff;
   --card:#ffffff;
+  --card2:#f8fbff;
   --text:#0f172a;
   --muted:#64748b;
-  --line:#e5e7eb;
-
-  /* ✅ 파란 테마 */
-  --pri:  #0023CC;
-  --pri2: #1D4ED8;
-  --priSoft: color-mix(in srgb, var(--pri) 14%, var(--card));
-
-  --ok:#2563eb;
+  --line:#e2e8f0;
+  --line2:#dbeafe;
+  --pri:#1e40af;
+  --pri2:#2563eb;
+  --pri3:#60a5fa;
+  --ok:#059669;
   --warn:#b91c1c;
-
-  --shadow:0 18px 50px rgba(2,6,23,.10);
-  --shadow2:0 10px 22px rgba(2,6,23,.08);
-
-  --r28:28px;
-  --r22:22px;
-  --r18:18px;
-
-  --max: 1180px;
+  --amber:#d97706;
+  --shadow:0 22px 60px rgba(15,23,42,.10);
+  --shadow2:0 12px 28px rgba(15,23,42,.08);
+  --glass:rgba(255,255,255,.78);
+  --radius:28px;
+  --radius2:20px;
+  --max:1180px;
 }
-
- html[data-theme="dark"]{
-  --bg:#0b1220;
+html[data-theme="dark"]{
+  --bg:#07111f;
+  --bg2:#0b1730;
   --card:#0f172a;
+  --card2:#111c31;
   --text:#e5e7eb;
   --muted:#9ca3af;
-  --line:#243244;
-
-  --pri:  #60A5FA;
-  --pri2: #2563EB;
-  --priSoft: color-mix(in srgb, var(--pri) 14%, var(--card));
-
-  --ok:#60a5fa;
+  --line:#26364d;
+  --line2:#1e3a5f;
+  --pri:#60a5fa;
+  --pri2:#2563eb;
+  --pri3:#93c5fd;
+  --ok:#10b981;
   --warn:#f87171;
+  --amber:#fbbf24;
+  --shadow:0 24px 70px rgba(0,0,0,.42);
+  --shadow2:0 14px 34px rgba(0,0,0,.28);
+  --glass:rgba(15,23,42,.76);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  min-height:100vh;
+  color:var(--text);
+  background:
+    radial-gradient(900px 420px at 8% -8%, color-mix(in srgb, var(--pri3) 32%, transparent), transparent 60%),
+    radial-gradient(850px 420px at 100% 0%, color-mix(in srgb, var(--ok) 15%, transparent), transparent 58%),
+    linear-gradient(180deg,var(--bg2),var(--bg));
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",Arial,sans-serif;
+  word-break:keep-all;
+}
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  background-image:
+    linear-gradient(color-mix(in srgb, var(--pri) 7%, transparent) 1px, transparent 1px),
+    linear-gradient(90deg, color-mix(in srgb, var(--pri) 7%, transparent) 1px, transparent 1px);
+  background-size:42px 42px;
+  mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 72%);
+}
+a{color:inherit}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
+  outline:4px solid color-mix(in srgb, var(--pri3) 45%, transparent);
+  outline-offset:3px;
+}
+.skip{
+  position:absolute;left:-999px;top:10px;z-index:9999;
+  padding:10px 14px;border-radius:999px;background:var(--pri);color:#fff;font-weight:900;
+}
+.skip:focus{left:12px}
+.wrap{max-width:var(--max);margin:0 auto;padding:18px 14px 42px;position:relative;z-index:1}
+.topbar{
+  position:sticky;top:12px;z-index:50;
+  display:flex;align-items:center;justify-content:space-between;gap:14px;
+  padding:12px;
+  border:1px solid color-mix(in srgb,var(--line) 84%,transparent);
+  border-radius:30px;
+  background:var(--glass);
+  backdrop-filter:blur(18px);
+  box-shadow:var(--shadow2);
+}
+.brand{display:flex;align-items:center;gap:12px;min-width:0}
+.logoWrap{
+  width:58px;height:58px;border-radius:21px;overflow:hidden;flex:0 0 auto;
+  border:1px solid color-mix(in srgb,var(--pri) 24%,var(--line));
+  background:linear-gradient(135deg,color-mix(in srgb,var(--pri) 12%,var(--card)),var(--card));
+  box-shadow:0 14px 28px rgba(15,23,42,.12);
+}
+.logo{width:100%;height:100%;display:block;object-fit:cover}
+.brandText{display:flex;flex-direction:column;min-width:0}
+.brandText b{font-size:19px;letter-spacing:-.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brandText span{font-size:12.5px;color:var(--muted);font-weight:800;margin-top:3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.btn,.navBtn,.smallbtn,.bigBtn,.tabBtn{
+  position:relative;overflow:hidden;
+  border:0;border-radius:18px;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  font-weight:950;letter-spacing:-.2px;
+  transition:transform .16s ease, box-shadow .18s ease, opacity .18s ease, background .18s ease, border-color .18s ease;
+  user-select:none;white-space:nowrap;
+}
+.btn{padding:12px 14px;font-size:14px;background:var(--card);color:var(--text);border:1px solid var(--line);box-shadow:0 8px 18px rgba(15,23,42,.05)}
+.btn.primary,.btn.ok,.smallbtn.primary,.bigBtn{
+  color:#fff;background:linear-gradient(135deg,var(--pri),var(--pri2));
+  box-shadow:0 14px 28px color-mix(in srgb,var(--pri) 26%,transparent);
+}
+.btn.ok{background:linear-gradient(135deg,var(--ok),color-mix(in srgb,var(--ok) 72%,#000))}
+.btn.ghost,.smallbtn.ghost{background:color-mix(in srgb,var(--card) 88%,transparent);color:var(--text);border:1px solid var(--line);box-shadow:0 8px 18px rgba(15,23,42,.05)}
+.btn:hover,.navBtn:hover,.smallbtn:hover,.bigBtn:hover,.tabBtn:hover{transform:translateY(-2px);opacity:.97}
+.btn:active,.navBtn:active,.smallbtn:active,.bigBtn:active,.tabBtn:active{transform:translateY(1px)}
+.ripple{
+  position:absolute;border-radius:50%;transform:scale(0);animation:ripple .55s linear;
+  background:rgba(255,255,255,.42);pointer-events:none;
+}
+@keyframes ripple{to{transform:scale(4);opacity:0}}
+.hero{
+  margin-top:18px;
+  display:grid;grid-template-columns:1.12fr .88fr;gap:16px;align-items:stretch;
+}
+.heroCard,.sideCard,.panel,.modal,.infoCard{
+  border:1px solid color-mix(in srgb,var(--line) 86%,transparent);
+  border-radius:var(--radius);
+  background:color-mix(in srgb,var(--card) 96%,transparent);
+  box-shadow:var(--shadow);
+}
+.heroCard{padding:26px;overflow:hidden;position:relative}
+.heroCard::after{
+  content:"";
+  position:absolute;right:-80px;top:-80px;width:220px;height:220px;border-radius:70px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--pri3) 45%,transparent),transparent);
+  transform:rotate(20deg);
+}
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;padding:9px 12px;border-radius:999px;
+  background:color-mix(in srgb,var(--pri) 9%,var(--card));
+  border:1px solid color-mix(in srgb,var(--pri) 18%,var(--line));
+  color:var(--pri);font-weight:1000;font-size:13px;
+}
+h1{margin:16px 0 0;font-size:clamp(32px,5vw,58px);line-height:1.04;letter-spacing:-2px}
+.heroText{margin:16px 0 0;color:var(--muted);font-size:16px;line-height:1.85;font-weight:750;max-width:680px}
+.heroActions{display:flex;gap:10px;flex-wrap:wrap;margin-top:20px}
+.bigBtn{padding:15px 18px;min-height:54px;font-size:15.5px}
+.sideCard{padding:16px;display:flex;flex-direction:column;gap:12px}
+.statusRow{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.statusCard{
+  min-height:112px;border:1px solid var(--line);border-radius:22px;padding:14px;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--card) 92%,transparent),color-mix(in srgb,var(--pri) 5%,var(--card)));
+  box-shadow:0 10px 22px rgba(15,23,42,.05);
+}
+.statusCard .label{font-size:12.5px;color:var(--muted);font-weight:900}
+.statusCard .value{margin-top:10px;font-size:17px;line-height:1.55;font-weight:1000}
+.noticeBanner{
+  display:flex;align-items:flex-start;justify-content:space-between;gap:12px;
+  padding:14px;border-radius:22px;border:1px solid color-mix(in srgb,var(--pri) 20%,var(--line));
+  background:linear-gradient(135deg,color-mix(in srgb,var(--pri) 10%,var(--card)),color-mix(in srgb,var(--card) 94%,transparent));
+}
+.noticeBanner strong{display:block;font-size:15px}
+.noticeBanner p{margin:6px 0 0;color:var(--muted);font-weight:800;line-height:1.65;font-size:13.5px}
+.noticeBanner.empty{border-style:dashed;background:color-mix(in srgb,var(--card) 88%,transparent)}
+.topNotice{
+  margin-top:14px;
+  box-shadow:var(--shadow2);
+}
+.homeWidgetHidden{display:none!important}
 
-  --shadow:0 22px 60px rgba(0,0,0,.45);
-  --shadow2:0 12px 26px rgba(0,0,0,.32);
+.layout{
+  margin-top:16px;
+  display:grid;grid-template-columns:250px 1fr;gap:16px;align-items:start;
+}
+.sideNav{
+  position:sticky;top:98px;
+  border:1px solid color-mix(in srgb,var(--line) 86%,transparent);
+  border-radius:var(--radius);
+  background:color-mix(in srgb,var(--card) 95%,transparent);
+  box-shadow:var(--shadow);
+  padding:12px;
+}
+.sideNavTitle{padding:8px 10px 12px;color:var(--muted);font-size:13px;font-weight:1000}
+.navGrid{display:flex;flex-direction:column;gap:8px}
+.navBtn{
+  width:100%;min-height:56px;padding:13px 13px;
+  justify-content:space-between;text-align:left;
+  color:var(--text);background:color-mix(in srgb,var(--card) 90%,transparent);
+  border:1px solid color-mix(in srgb,var(--line) 92%,transparent);
+  box-shadow:0 8px 18px rgba(15,23,42,.045);
+}
+.navBtn .left{display:flex;align-items:center;gap:10px;min-width:0}
+.navBtn .icon{
+  width:34px;height:34px;border-radius:14px;display:inline-flex;align-items:center;justify-content:center;
+  background:color-mix(in srgb,var(--pri) 9%,var(--card));
+}
+.navBtn .title{font-size:14.5px;font-weight:1000}
+.navBtn .hint{font-size:11.5px;color:var(--muted);font-weight:900;margin-top:2px}
+.navBtn[data-active="1"]{
+  border-color:color-mix(in srgb,var(--pri) 42%,var(--line));
+  background:linear-gradient(135deg,color-mix(in srgb,var(--pri) 14%,var(--card)),color-mix(in srgb,var(--card) 96%,transparent));
+  box-shadow:0 12px 25px color-mix(in srgb,var(--pri) 12%,transparent);
+}
+.panel{overflow:hidden;min-height:560px}
+.view{display:none;animation:viewIn .22s ease both}
+.view.active{display:block}
+@keyframes viewIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.section{padding:18px}
+.sectionHeader{
+  display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:14px;
+}
+.sectionHeader h2{margin:0;font-size:24px;letter-spacing:-.8px}
+.sectionHeader p{margin:6px 0 0;color:var(--muted);font-weight:750;line-height:1.65}
+.cardGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.toolCard{
+  border:1px solid var(--line);border-radius:24px;padding:16px;background:color-mix(in srgb,var(--card) 94%,transparent);
+  box-shadow:0 10px 22px rgba(15,23,42,.055);transition:transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+}
+.toolCard:hover{transform:translateY(-3px);box-shadow:var(--shadow2);border-color:color-mix(in srgb,var(--pri) 35%,var(--line))}
+.toolCard b{font-size:16px}
+.toolCard p{margin:8px 0 14px;color:var(--muted);font-weight:750;line-height:1.7;font-size:14px}
+.controls{
+  display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+  padding:13px;border:1px solid var(--line);border-radius:24px;background:color-mix(in srgb,var(--card) 92%,transparent);
+  box-shadow:var(--shadow2);
+}
+input[type="date"],input[type="month"],input[type="number"],input[type="text"],textarea{
+  min-height:48px;padding:12px 13px;border-radius:16px;border:1px solid var(--line);
+  background:color-mix(in srgb,var(--card) 92%,transparent);color:var(--text);
+  font-weight:850;
+}
+input[type="number"]{width:112px}
+.smallbtn{min-height:48px;padding:12px 14px;font-size:14px}
+.notice,.contentBox{
+  margin-top:12px;padding:14px;border-radius:22px;border:1px solid var(--line);
+  background:color-mix(in srgb,var(--card) 92%,transparent);
+  color:var(--muted);font-weight:800;line-height:1.8;
+}
+.notice.ok{border-color:color-mix(in srgb,var(--ok) 35%,var(--line));background:color-mix(in srgb,var(--ok) 10%,var(--card));color:color-mix(in srgb,var(--ok) 72%,var(--text))}
+.notice.err{border-color:color-mix(in srgb,var(--warn) 35%,var(--line));background:color-mix(in srgb,var(--warn) 10%,var(--card));color:color-mix(in srgb,var(--warn) 76%,var(--text))}
+.pill{
+  display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;
+  background:color-mix(in srgb,var(--pri) 8%,var(--card));border:1px solid color-mix(in srgb,var(--pri) 18%,var(--line));
+  color:var(--muted);font-size:12px;font-weight:1000;
+}
+.widgetGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.widget{
+  border:1px solid var(--line);border-radius:24px;padding:14px;background:color-mix(in srgb,var(--card) 94%,transparent);
+  min-height:170px;box-shadow:0 10px 22px rgba(15,23,42,.055);
+}
+.widgetHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px}
+.widgetHead b{font-size:15px}
+.widgetBody{color:var(--text);font-size:14px;line-height:1.75;max-height:250px;overflow:auto}
+.muted{color:var(--muted);font-weight:850}
+.mealTableWrap{margin-top:14px;border:1px solid var(--line);border-radius:24px;background:var(--card);box-shadow:var(--shadow2);overflow:auto}
+.mealTable{width:100%;min-width:820px;border-collapse:separate;border-spacing:0}
+.mealTable th,.mealTable td{border-bottom:1px solid var(--line);padding:12px;vertical-align:top;text-align:left}
+.mealTable thead th{position:sticky;top:0;z-index:2;background:color-mix(in srgb,var(--pri) 7%,var(--card));font-weight:1000}
+.mealTable tr:last-child td{border-bottom:0}
+.mealMenus{margin:0;padding-left:18px;line-height:1.75}
+.ttWrap{overflow:auto;margin-top:14px}
+.ttTable{width:100%;min-width:860px;border-collapse:separate;border-spacing:8px}
+.ttTable th{padding:8px;text-align:left;color:var(--muted);font-size:13px}
+.ttTable input{width:100%;min-width:120px}
+.neisBox textarea{width:100%;min-height:380px;resize:vertical;line-height:1.7}
+.tabBar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.tabBtn{
+  padding:10px 12px;border:1px solid var(--line);background:var(--card);color:var(--muted);
+  font-size:13px;border-radius:999px;
+}
+.tabBtn[aria-selected="true"]{color:var(--text);border-color:color-mix(in srgb,var(--pri) 45%,var(--line));background:color-mix(in srgb,var(--pri) 11%,var(--card))}
+.progress{height:12px;border-radius:999px;background:color-mix(in srgb,var(--pri) 7%,var(--card));border:1px solid var(--line);overflow:hidden;margin-top:12px}
+.progress>div{height:100%;width:0%;background:linear-gradient(135deg,var(--pri),var(--pri2));transition:width .16s ease}
+.progress>div.over{background:linear-gradient(135deg,var(--warn),#7f1d1d)}
+.footer{
+  margin-top:18px;padding:18px;border-radius:28px;border:1px solid var(--line);
+  background:color-mix(in srgb,var(--card) 82%,transparent);color:var(--muted);font-weight:750;line-height:1.8;font-size:13.5px;
+}
+.footerLinks{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+.footerLinks button{font-size:13px}
+.modalBack{position:fixed;inset:0;background:rgba(0,0,0,.46);display:none;align-items:center;justify-content:center;padding:16px;z-index:100}
+.modal{width:min(720px,100%);overflow:hidden;background:var(--card)}
+.modalHead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:16px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--pri) 6%,var(--card))}
+.modalHead b{font-size:17px}
+.modalBody{padding:16px;color:var(--muted);font-weight:800;line-height:1.8}
+.modalFoot{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap;padding:14px 16px;border-top:1px solid var(--line)}
+#shareText,#copyHelper{position:absolute;left:-9999px;top:-9999px;opacity:0;width:1px;height:1px}
+@media (max-width:960px){
+  .hero,.layout{grid-template-columns:1fr}
+  .sideNav{position:relative;top:auto}
+  .navGrid{display:grid;grid-template-columns:repeat(2,1fr)}
+  .widgetGrid,.cardGrid{grid-template-columns:1fr}
+}
+@media (max-width:620px){
+  .wrap{padding:12px 10px 34px}
+  .topbar{align-items:flex-start}
+  .actions{gap:6px}
+  .btn{padding:10px 11px}
+  .heroCard{padding:20px}
+  .statusRow,.navGrid{grid-template-columns:1fr}
+  .controls{align-items:stretch}
+  .controls>*{flex:1 1 auto}
+}
+@media (prefers-reduced-motion:reduce){
+  *{scroll-behavior:auto!important;animation:none!important;transition:none!important}
 }
 
-  *{box-sizing:border-box}
-  body{
-    margin:0;
-    background: radial-gradient(900px 450px at 20% 0%, color-mix(in srgb, var(--pri) 14%, transparent), transparent 55%),
-                radial-gradient(900px 450px at 80% 0%, color-mix(in srgb, var(--pri2) 10%, transparent), transparent 55%),
-                var(--bg);
-    color:var(--text);
-    font-family:system-ui,-apple-system,'Segoe UI',Roboto,'Noto Sans KR',sans-serif;
-  }
+/* ===== O.Poong added: allergy highlight + first setup modal ===== */
+.allergyPanel{
+  margin-top:12px;
+  padding:14px;
+  border-radius:22px;
+  border:1px solid color-mix(in srgb,var(--warn) 18%,var(--line));
+  background:color-mix(in srgb,var(--warn) 5%,var(--card));
+}
+.allergyGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:10px;
+}
+.allergyChip{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:9px 10px;
+  border-radius:999px;
+  border:1px solid color-mix(in srgb,var(--line) 90%,transparent);
+  background:color-mix(in srgb,var(--card) 92%,transparent);
+  color:var(--text);
+  font-size:12.5px;
+  font-weight:950;
+}
+.allergyChip input{min-height:auto}
+.allergyHit{
+  color:color-mix(in srgb,var(--warn) 86%,var(--text));
+  font-weight:1000;
+  background:color-mix(in srgb,var(--warn) 13%,var(--card));
+  border:1px solid color-mix(in srgb,var(--warn) 34%,var(--line));
+  border-radius:14px;
+  padding:7px 9px;
+  margin:4px 0;
+  list-style-position:inside;
+}
+.allergySafe{padding:3px 0}
+.allergyWarnText{
+  margin-top:10px;
+  color:color-mix(in srgb,var(--warn) 78%,var(--text));
+  font-size:12.5px;
+  font-weight:950;
+}
+.setupStep{display:none}
+.setupStep.active{display:block}
+.setupGrid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:8px;
+  margin-top:12px;
+}
+.setupOption{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 11px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:color-mix(in srgb,var(--card) 92%,transparent);
+  color:var(--text);
+  font-size:13px;
+  font-weight:950;
+}
+.setupOption input{min-height:auto}
+@media (max-width:620px){
+  .allergyGrid,.setupGrid{grid-template-columns:1fr 1fr}
+}
 
-  .wrap{ max-width: var(--max); margin: 0 auto; padding: 18px 14px 30px; }
 
-  .topbar{
-    position: sticky; top: 12px; z-index: 20;
-    padding: 14px;
-    border-radius: var(--r28);
-    border: 1px solid color-mix(in srgb, var(--pri) 22%, var(--line));
-    background: color-mix(in srgb, var(--card) 86%, transparent);
-    backdrop-filter: blur(12px);
-    box-shadow: var(--shadow2);
+/* ===== O.Poong added: first start gate ===== */
+body.setup-pending .wrap{
+  display:none;
+}
+.firstStartBack{
+  position:fixed;
+  inset:0;
+  z-index:200;
+  display:none;
+  align-items:stretch;
+  justify-content:center;
+  padding:18px;
+  background:
+    radial-gradient(900px 420px at 8% -8%, color-mix(in srgb, var(--pri3) 32%, transparent), transparent 60%),
+    radial-gradient(850px 420px at 100% 0%, color-mix(in srgb, var(--ok) 15%, transparent), transparent 58%),
+    linear-gradient(180deg,var(--bg2),var(--bg));
+}
+body.setup-pending .firstStartBack{
+  display:flex;
+}
+.firstStartCard{
+  width:min(720px,100%);
+  min-height:calc(100vh - 36px);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:flex-start;
+  padding:clamp(22px,5vw,54px);
+  border-radius:var(--radius);
+  border:1px solid color-mix(in srgb,var(--line) 84%,transparent);
+  background:color-mix(in srgb,var(--card) 88%,transparent);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(16px);
+}
+.firstStartLogo{
+  font-size:clamp(42px,9vw,76px);
+  line-height:.96;
+  letter-spacing:-3px;
+  font-weight:1000;
+  color:var(--text);
+}
+.firstStartSlogan{
+  margin-top:14px;
+  color:var(--muted);
+  font-size:clamp(17px,3vw,24px);
+  font-weight:850;
+  letter-spacing:-.4px;
+}
+.firstStartDesc{
+  margin-top:18px;
+  color:var(--muted);
+  line-height:1.8;
+  font-weight:750;
+  max-width:560px;
+}
+.firstStartActions{
+  margin-top:28px;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
 
-    display:flex; align-items:center; justify-content:space-between; gap:12px;
-  }
-  .brand{display:flex;align-items:center;gap:14px;min-width:0;}
-  .logoWrap{
-    width:64px;height:64px;border-radius:20px;overflow:hidden;
-    box-shadow: 0 10px 24px rgba(2,6,23,.14);
-    border: 1px solid color-mix(in srgb, var(--pri) 24%, var(--line));
-    background: color-mix(in srgb, var(--pri) 8%, var(--card));
-    flex:0 0 auto;
-  }
-  .logo{width:100%;height:100%;display:block;object-fit:cover;}
-  .brandText{display:flex;flex-direction:column;min-width:0;}
-  .brandText b{font-size:20px;letter-spacing:-.4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-  .brandText span{margin-top:4px;font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 
-  .actions{display:flex;align-items:center;justify-content:flex-end;gap:10px;flex-wrap:wrap;}
-  .btn{
-    border:1px solid transparent;border-radius: 18px;
-    padding: 14px 16px;font-size: 15px;font-weight: 950;
-    cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:10px;
-    user-select:none;transition: transform .08s ease, opacity .15s ease;
-    white-space:nowrap;min-height:54px;
-  }
-  .btn:active{ transform: translateY(1px); }
-  .btn:hover{ opacity:.95; }
-  .btn.primary{
-    color:#fff;
-    background: linear-gradient(135deg, var(--pri), var(--pri2));
-    box-shadow: 0 12px 26px color-mix(in srgb, var(--pri) 26%, transparent);
-  }
-  .btn.ok{
-    color:#fff;
-    background: linear-gradient(135deg, var(--pri), var(--pri2));
-    box-shadow: 0 12px 26px color-mix(in srgb, var(--pri) 22%, transparent);
-  }
-  .btn.ghost{
-    background: color-mix(in srgb, var(--card) 92%, transparent);
-    color: var(--text);
-    border-color: color-mix(in srgb, var(--pri) 18%, var(--line));
-    box-shadow: 0 10px 22px rgba(2,6,23,.06);
-  }
+/* ===== O.Poong added: privacy + name setup ===== */
+.privacyBox{
+  margin-top:12px;
+  padding:14px;
+  border-radius:20px;
+  border:1px solid var(--line);
+  background:color-mix(in srgb,var(--card) 92%,transparent);
+  max-height:220px;
+  overflow:auto;
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.75;
+  font-weight:800;
+}
+.setupNameInput{
+  width:100%;
+  margin-top:12px;
+}
+.personalHeroLine{
+  margin-top:14px;
+  padding:13px 14px;
+  border-radius:22px;
+  border:1px solid color-mix(in srgb,var(--pri) 18%,var(--line));
+  background:color-mix(in srgb,var(--pri) 7%,var(--card));
+  color:var(--text);
+  font-weight:1000;
+  line-height:1.65;
+}
 
-  .layout{
-    margin-top:16px;
-    display:grid;
-    grid-template-columns: 240px 1fr;
-    gap: 14px;
-    align-items:start;
-  }
-
-  .side{
-    position: sticky;
-    top: 98px;
-    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
-    border-radius: var(--r28);
-    background: var(--card);
-    box-shadow: var(--shadow);
-    overflow:hidden;
-  }
-  .sideHead{
-    padding: 14px 14px 12px;
-    border-bottom:1px solid color-mix(in srgb, var(--pri) 14%, var(--line));
-    background: color-mix(in srgb, var(--pri) 6%, var(--bg));
-  }
-  .sideHead b{font-size:14.5px;letter-spacing:-.2px;}
-  .sideNav{padding: 12px;display:flex;flex-direction:column;gap:10px;}
-  .navBtn{
-    width:100%;
-    border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
-    background: color-mix(in srgb, var(--card) 92%, transparent);
-    color: var(--text);
-    border-radius: 18px;
-    padding: 14px 14px;
-    min-height: 56px;
-    font-size: 15px;
-    font-weight: 950;
-    cursor:pointer;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    box-shadow: 0 10px 22px rgba(2,6,23,.06);
-    transition: transform .08s ease, opacity .15s ease, border-color .15s ease;
-  }
-  .navBtn:active{ transform: translateY(1px); }
-  .navBtn:hover{ opacity:.96; }
-  .navBtn[data-active="1"]{
-    border-color: color-mix(in srgb, var(--pri) 55%, var(--line));
-    background: color-mix(in srgb, var(--pri) 12%, var(--card));
-  }
-  .navBtn .hint{font-size:12.5px;font-weight:900;color:var(--muted);}
-
-  .panel{
-    background: var(--card);
-    border: 1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
-    border-radius: var(--r28);
-    box-shadow: var(--shadow);
-    overflow:hidden;
-  }
-  .section{padding: 18px 16px;}
-  .section + .section{
-    border-top:1px solid color-mix(in srgb, var(--pri) 14%, var(--line));
-    background: color-mix(in srgb, var(--pri) 4%, var(--bg));
-  }
-
-  .view{display:none;}
-  .view.active{display:block;}
-
-  .controls{
-    display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-start;align-items:center;
-    padding: 14px;
-    border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
-    border-radius: var(--r28);
-    background: var(--card);
-    box-shadow: var(--shadow2);
-  }
-  input[type="date"], input[type="month"], input[type="number"], .smallbtn{
-    font-size: 15px;
-    padding: 12px 14px;
-    border-radius: 16px;
-    border: 1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
-    background: color-mix(in srgb, var(--card) 92%, transparent);
-    color: var(--text);
-    min-height: 50px;
-  }
-  input[type="number"]{width:110px;}
-  .smallbtn{
-    border:none;color:#fff;font-weight: 950;cursor:pointer;
-    background: linear-gradient(135deg, var(--pri), var(--pri2));
-  }
-  .smallbtn.ok{ background: linear-gradient(135deg, var(--pri), var(--pri2)); }
-  .smallbtn.ghost{
-    color: var(--text);
-    border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
-    background: color-mix(in srgb, var(--card) 92%, transparent);
-  }
-  .smallbtn:hover{opacity:.95;}
-
-  .notice{
-    margin-top: 14px;
-    border: 1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
-    border-radius: var(--r28);
-    padding: 14px;
-    background: color-mix(in srgb, var(--pri) 6%, var(--card));
-    color: color-mix(in srgb, var(--text) 80%, var(--muted));
-    line-height: 1.85;
-  }
-  .notice.ok{
-    border-color: color-mix(in srgb, var(--pri) 40%, var(--line));
-    background: color-mix(in srgb, var(--pri) 10%, var(--card));
-    color: color-mix(in srgb, var(--text) 88%, var(--muted));
-  }
-  .notice.err{
-    border-color: color-mix(in srgb, var(--warn) 35%, var(--line));
-    background: color-mix(in srgb, var(--warn) 12%, var(--card));
-    color: color-mix(in srgb, var(--warn) 70%, var(--text));
-  }
-
-  .widgets{display:grid;grid-template-columns: 1fr;gap: 12px;}
-  @media (min-width: 920px){ .widgets{ grid-template-columns: 1fr 1fr 1fr; } }
-  .widget{
-    border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
-    border-radius: var(--r28);
-    background: color-mix(in srgb, var(--pri) 5%, var(--card));
-    box-shadow: 0 12px 26px rgba(2,6,23,.06);
-    padding: 14px;
-    min-height: 150px;
-    display:flex;
-    flex-direction:column;
-  }
-  .widgetHead{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom: 10px;}
-  .widgetHead b{font-size:15px;letter-spacing:-.2px;}
-  .pill{
-    font-size:12.5px;
-    font-weight:950;
-    padding:8px 10px;
-    border-radius: 999px;
-    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
-    background: color-mix(in srgb, var(--pri) 8%, var(--card));
-    color: var(--muted);
-    white-space:nowrap;
-  }
-  .muted{color:var(--muted);font-weight:900;}
-
-  .widgetBody{
-    font-size:14px;
-    line-height:1.75;
-    color:var(--text);
-    overflow:auto;
-    max-height: 240px;
-    padding-right: 6px;
-  }
-
-  #shareText{display:none;}
-  #copyHelper{position:absolute;left:-9999px;top:-9999px;opacity:0;height:1px;width:1px}
-
-  .modalBack{
-    position:fixed;inset:0;background: rgba(0,0,0,.45);
-    display:none;align-items:center;justify-content:center;padding: 16px;z-index: 50;
-  }
-  .modal{
-    width:min(720px, 100%);background: var(--card);
-    border:1px solid color-mix(in srgb, var(--pri) 22%, var(--line));
-    border-radius: var(--r28);
-    box-shadow: var(--shadow);
-    overflow:hidden;
-  }
-  .modalHead{
-    padding: 16px;border-bottom:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
-    display:flex;justify-content:space-between;align-items:center;gap:10px;
-    background: color-mix(in srgb, var(--pri) 6%, var(--card));
-  }
-  .modalHead b{ font-size: 16px; letter-spacing:-.2px; }
-  .modalBody{ padding: 16px; color: var(--muted); line-height: 1.9; font-size: 14.5px; }
-  .steps{ margin: 12px 0 0; padding:0; list-style:none; }
-  .steps li{
-    border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
-    border-radius: 16px;
-    padding: 12px 12px;
-    margin-top: 10px;
-    background: color-mix(in srgb, var(--pri) 6%, var(--card));
-  }
-  .steps li b{ color: var(--text); }
-  .modalFoot{
-    padding: 14px 16px;border-top:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
-    display:flex;justify-content:flex-end;gap:10px;flex-wrap:wrap;
-  }
-
-  @media (max-width: 920px){
-    .layout{grid-template-columns: 1fr;}
-    .side{position:relative;top:auto;}
-    .widgetBody{max-height: 260px;}
-  }
-
-  /* ==========================
-     ✅ NEIS 글자수 UI
-     ========================== */
-  .neisBox{
-    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
-    border-radius: var(--r28);
-    background: color-mix(in srgb, var(--pri) 6%, var(--card));
-    box-shadow: 0 12px 26px rgba(2,6,23,.06);
-    padding: 14px;
-  }
-  .neisTabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:12px;}
-  .neisTab{
-    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
-    background: color-mix(in srgb, var(--pri) 6%, var(--card));
-    color: var(--muted);
-    border-radius: 999px;
-    padding: 10px 12px;
-    font-size: 13px;
-    font-weight: 950;
-    cursor:pointer;
-  }
-  .neisTab[aria-selected="true"]{
-    color: var(--text);
-    border-color: color-mix(in srgb, var(--pri) 55%, var(--line));
-    background: color-mix(in srgb, var(--pri) 14%, var(--card));
-  }
-  .neisText{
-    width:100%;
-    min-height: 520px;
-    resize: vertical;
-    border-radius: var(--r22);
-    border: 1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
-    background: color-mix(in srgb, var(--card) 92%, transparent);
-    color: var(--text);
-    font-size: 15.5px;
-    font-weight: 850;
-    line-height: 1.65;
-    padding: 16px 16px;
-    outline:none;
-  }
-  .neisText:focus{
-    border-color: color-mix(in srgb, var(--pri) 70%, var(--line));
-    box-shadow: 0 0 0 5px color-mix(in srgb, var(--pri) 18%, transparent);
-  }
-  .neisFooter{ margin-top: 12px; display:flex; flex-direction:column; gap: 10px; }
-
-  .neisByteRow{ display:flex; gap:10px; flex-wrap:wrap; align-items:stretch; }
-  .neisByteCard{
-    flex: 1 1 180px;
-    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
-    border-radius: 18px;
-    background: color-mix(in srgb, var(--pri) 6%, var(--card));
-    padding: 12px 12px;
-    box-shadow: var(--shadow2);
-  }
-  .neisByteCard .k{font-size:12.5px;font-weight:950;color:var(--muted);}
-  .neisByteCard .v{ margin-top:6px; font-size:18px; font-weight:1000; letter-spacing:-.3px; color: var(--text); }
-  .neisByteCard .v small{font-size:13px;font-weight:950;color:var(--muted);margin-left:4px;}
-
-  .neisActions{ display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end; }
-  .neisBar{
-    width:100%;
-    height: 12px;
-    border-radius: 999px;
-    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
-    background: color-mix(in srgb, var(--pri) 6%, var(--card));
-    overflow:hidden;
-  }
-  .neisBar > div{
-    height:100%;
-    width:0%;
-    background: linear-gradient(135deg, var(--pri), var(--pri2));
-    transition: width .12s ease;
-  }
-  .neisBar > div.over{
-    background: linear-gradient(135deg, var(--warn), color-mix(in srgb, var(--warn) 65%, #000));
-  }
-  .neisResultLine{ font-size: 13.5px; font-weight: 950; color: var(--muted); }
-  .neisResultLine b{color:var(--text);}
-
-  .neisRule{
-    font-size: 12.8px;
-    font-weight: 900;
-    color: var(--muted);
-    line-height: 1.65;
-    padding: 10px 12px;
-    border: 1px solid color-mix(in srgb, var(--pri) 14%, var(--line));
-    border-radius: 16px;
-    background: color-mix(in srgb, var(--pri) 5%, var(--card));
-  }
-
-  .adWrap{
-    margin-top: 12px;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    width:100%;
-    overflow:hidden;
-  }
-  .adWrap.neis{
-    margin: 8px 0 12px;
-  }
-
-  /* ==========================
-     ✅ 추가: 급식 월별(표) UI
-     ========================== */
-  .mealTableWrap{
-    margin-top:14px;
-    border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
-    border-radius: var(--r28);
-    background: color-mix(in srgb, var(--card) 96%, transparent);
-    box-shadow: var(--shadow2);
-    overflow:auto;
-  }
-  .mealTable{
-    width:100%;
-    min-width: 860px;
-    border-collapse:separate;
-    border-spacing: 0;
-  }
-  .mealTable th, .mealTable td{
-    border-bottom:1px solid color-mix(in srgb, var(--pri) 12%, var(--line));
-    padding: 12px 12px;
-    vertical-align: top;
-    text-align:left;
-  }
-  .mealTable thead th{
-    position: sticky;
-    top: 0;
-    z-index: 2;
-    background: color-mix(in srgb, var(--pri) 7%, var(--card));
-    font-weight: 1000;
-  }
-  .mealTable tr:last-child td{ border-bottom:none; }
-  .mealDateCell{
-    white-space:nowrap;
-    font-weight: 1000;
-  }
-  .mealTypeBadge{
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    font-size:12.5px;
-    font-weight:1000;
-    padding:7px 10px;
-    border-radius:999px;
-    border:1px solid color-mix(in srgb, var(--pri) 18%, var(--line));
-    background: color-mix(in srgb, var(--pri) 8%, var(--card));
-    color: var(--muted);
-    margin-bottom:8px;
-  }
-  .mealMenus{
-    margin:0;
-    padding-left:18px;
-    line-height:1.75;
-  }
 </style>
-  
-  
-<body>
-  <div class="wrap">
-    <div class="topbar">
-      <div class="brand">
-        <div class="logoWrap" aria-hidden="true">
-          <img class="logo" src="android/launchericon-512-512.png" alt="오늘풍산 로고">
-        </div>
-        <div class="brandText">
-          <b>O.Poong</b>
-          <span>풍산고 생활, 한 화면에서.</span>
-        </div>
-      </div>
+</head>
 
-      <div class="actions">
-        <button id="btnInstallTop" class="btn ok" type="button">앱 설치</button>
-        <button id="btnLight" class="btn ghost" type="button">☀ 라이트</button>
-        <button id="btnDark" class="btn ghost" type="button">🌙 다크</button>
-      </div>
+<body class="setup-pending">
+
+<div id="firstStartBack" class="firstStartBack" aria-label="O.Poong 시작 화면">
+  <section class="firstStartCard">
+    <div class="firstStartLogo">O.Poong</div>
+    <div class="firstStartSlogan">풍산고 생활, 한 화면에서.</div>
+    <p class="firstStartDesc">
+      안녕하세요! 당신의 풍산고등학교 생활을 도와줄 O.Poong이라고 해요 :)
+      시작하기를 눌러 사용자 맞춤을 위한 간단한 질문에 답변해주시면
+      바로 사용하실 수 있어요.
+    </p>
+    <div class="firstStartActions">
+      <button class="bigBtn" type="button" onclick="startFirstSetup()">시작하기</button>
     </div>
-
-    <div class="layout">
-      <aside class="side">
-        <div class="sideHead"><b>메뉴</b></div>
-        <div class="sideNav">
-          <button class="navBtn" data-view="home" type="button" onclick="go('home')">
-            <span>🏠 홈</span><span class="hint">위젯</span>
-          </button>
-          <button class="navBtn" data-view="meal" type="button" onclick="go('meal'); setTodayAndLoad();">
-            <span>🍽 오늘의 급식</span><span class="hint">조회/복사</span>
-          </button>
-          <button class="navBtn" data-view="schedule" type="button" onclick="go('schedule'); scheduleLoadMonth();">
-            <span>🗓 학사일정</span><span class="hint">월별</span>
-          </button>
-          <button class="navBtn" data-view="timetable" type="button" onclick="go('timetable'); ttRenderTable();">
-            <span>📘 시간표</span><span class="hint">저장됨</span>
-          </button>
-          <button class="navBtn" data-view="onway" type="button" onclick="go('onway')">
-            <span>🧾 온웨이에듀</span><span class="hint">onwayedu</span>
-          </button>
-
-          <button class="navBtn" data-view="school" type="button" onclick="go('school')">
-            <span>🏫 학교 홈페이지</span><span class="hint">풍산고</span>
-          </button>
-
-          <button class="navBtn" data-view="neis" type="button" onclick="go('neis'); neisInit();">
-            <span>✍️ 글자수(NEIS)</span><span class="hint">byte</span>
-          </button>
-        </div>
-      </aside>
-
-      <main class="panel">
-        <!-- HOME -->
-        <div class="section view" id="view-home">
-          <div class="widgets">
-            <div class="widget">
-              <div class="widgetHead">
-                <b>🍽 오늘의 급식</b>
-                <span class="pill" id="homeMealDate">-</span>
-              </div>
-              <div class="widgetBody" id="homeMealBody">
-                <div class="muted">불러오는 중…</div>
-              </div>
-            </div>
-
-            <div class="widget">
-              <div class="widgetHead">
-                <b>🗓 오늘의 학사일정</b>
-                <span class="pill" id="homeSchDate">-</span>
-              </div>
-              <div class="widgetBody" id="homeSchBody">
-                <div class="muted">불러오는 중…</div>
-              </div>
-            </div>
-
-            <div class="widget">
-              <div class="widgetHead">
-                <b>📘 오늘의 시간표</b>
-                <span class="pill" id="homeTTDay">-</span>
-              </div>
-              <div class="widgetBody" id="homeTTBody">
-                <div class="muted">불러오는 중…</div>
-              </div>
-            </div>
-          </div>
-
-          <div class="adWrap" id="ad-home"></div>
-
-          <div class="notice" style="margin-top:14px;">
-            <b style="color:var(--text);">설치(PWA)</b>를 하면 홈 화면 아이콘으로 바로 실행됩니다.
-            iPhone은 Safari에서 “공유 → 홈 화면에 추가”, Android는 브라우저 메뉴에서 “앱 설치”가 표시될 수 있습니다.
-          </div>
-
-          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
-            <button id="btnGuide" class="btn ok" type="button">설치 방법 자세히 보기</button>
-          </div>
-
-          <div style="margin-top:12px;color:var(--muted);font-size:12.5px;">
-            by @hyukjun._.ps
-          </div>
-        </div>
-
-        <!-- MEAL -->
-        <div class="section view" id="view-meal">
-          <div class="controls">
-            <button class="smallbtn" type="button" onclick="moveDate(-1)">◀ 어제</button>
-            <input type="date" id="date" />
-            <button class="smallbtn" type="button" onclick="moveDate(1)">내일 ▶</button>
-            <button class="smallbtn" type="button" onclick="onDay()">조회</button>
-
-            <!-- ✅ 월별(표) -->
-            <button class="smallbtn ghost" type="button" onclick="toggleMealMode()" id="btnMealMonth">월별(표)</button>
-
-            <button class="smallbtn ok" type="button" id="btnCopy">복사</button>
-            <button class="smallbtn ghost" type="button" onclick="go('home')">홈</button>
-          </div>
-
-          <!-- ✅ 월별 모드 컨트롤 -->
-          <div class="controls" id="mealMonthControls" style="display:none;margin-top:12px;">
-            <span style="font-weight:1000;">월 선택</span>
-            <input type="month" id="mealMonth" />
-            <button class="smallbtn" type="button" onclick="mealLoadMonth()">월별 조회</button>
-          </div>
-
-          <div class="adWrap" id="ad-meal"></div>
-
-          <div id="notice" class="notice">급식 조회 준비 중…</div>
-
-          <div id="allergyBox" class="notice" style="margin-top:12px;">
-            <b style="color:var(--text);">⚠ 알레르기 번호 안내</b><br/>
-            1 난류 · 2 우유 · 3 메밀 · 4 땅콩 · 5 대두 · 6 밀 · 7 고등어 · 8 게 ·
-            9 새우 · 10 돼지고기 · 11 복숭아 · 12 토마토 · 13 아황산염 · 14 호두 ·
-            15 닭고기 · 16 쇠고기 · 17 오징어 · 18 조개류
-          </div>
-
-          <div id="meals" style="margin-top:14px;"></div>
-          <div id="mealMonthTable" style="display:none;"></div>
-          <div id="shareText"></div>
-        </div>
-
-        <!-- SCHEDULE -->
-        <div class="section view" id="view-schedule">
-          <div class="controls">
-            <span style="font-weight:1000;">월 선택</span>
-            <input type="month" id="schMonth" />
-            <button class="smallbtn" type="button" onclick="scheduleLoadMonth()">조회</button>
-            <button class="smallbtn ok" type="button" onclick="scheduleLoadToday()">오늘 보기</button>
-            <button class="smallbtn ghost" type="button" onclick="go('home')">홈</button>
-          </div>
-
-          <div id="schNotice" class="notice">학사일정 조회 준비 중…</div>
-          <div id="schList" style="margin-top:14px;"></div>
-        </div>
-
-        <!-- TIMETABLE -->
-        <div class="section view" id="view-timetable">
-          <div class="controls">
-            <span style="font-weight:1000;">교시 수</span>
-            <input type="number" id="ttPeriods" min="1" max="12" value="8">
-            <button class="smallbtn ok" type="button" onclick="ttRenderTable()">적용</button>
-            <button class="smallbtn ghost" type="button" onclick="ttReset()">초기화</button>
-            <button class="smallbtn ghost" type="button" onclick="go('home')">홈</button>
-          </div>
-
-          <div class="notice">
-            자동 저장됩니다.
-          </div>
-
-          <div id="ttTableWrap" style="overflow:auto;margin-top:14px;"></div>
-        </div>
-
-        <!-- ONWAY -->
-        <div class="section view" id="view-onway">
-          <div class="notice">
-            온웨이에듀는 <b style="color:var(--text);">풍산고등학교</b> 상벌점, 외출 관리 서비스입니다..<br/>
-            아래 버튼은 <b style="color:var(--text);">https://ps.onwayedu.co.kr</b>로 열립니다.
-          </div>
-
-          <div class="adWrap" id="ad-onway"></div>
-
-          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
-            <button class="btn primary" type="button" onclick="openOnway()">온웨이에듀 열기</button>
-            <button class="btn ghost" type="button" onclick="go('home')">홈</button>
-          </div>
-        </div>
-
-        <!-- SCHOOL HOME -->
-        <div class="section view" id="view-school">
-          <div class="notice">
-            <b style="color:var(--text);">풍산고등학교 홈페이지</b>로 이동합니다.<br/>
-            아래 버튼을 누르면 새 탭으로 열립니다.
-          </div>
-          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
-            <button class="btn primary" type="button" onclick="openSchoolHome()">학교 홈페이지 열기</button>
-            <button class="btn ghost" type="button" onclick="go('home')">홈</button>
-          </div>
-          <div class="notice" style="margin-top:12px;">
-            주소: <b style="color:var(--text);">https://school.gyo6.net/poongsanhs/main.do?sysId=poongsanhs</b>
-          </div>
-        </div>
-
-        <!-- NEIS COUNTER -->
-        <div class="section view" id="view-neis">
-          <div class="neisBox">
-            <div class="neisTabs" role="tablist" aria-label="NEIS 항목">
-              <button class="neisTab" type="button" data-k="autonomy" aria-selected="true">자율활동</button>
-              <button class="neisTab" type="button" data-k="club" aria-selected="false">동아리활동</button>
-              <button class="neisTab" type="button" data-k="career" aria-selected="false">진로활동</button>
-              <button class="neisTab" type="button" data-k="subject" aria-selected="false">교과세특</button>
-              <button class="neisTab" type="button" data-k="personal" aria-selected="false">개인별세특</button>
-
-              <!-- ✅ 추가(표 반영): 봉사 50자, 행특 300자 -->
-              <button class="neisTab" type="button" data-k="volunteer" aria-selected="false">봉사(50자)</button>
-              <button class="neisTab" type="button" data-k="behavior" aria-selected="false">행특(300자)</button>
-            </div>
-
-            <div class="adWrap neis" id="ad-neis"></div>
-
-            <textarea id="neisText" class="neisText" placeholder="내용을 작성하세요. (2026년 교육부 발표 자료를 기반한 바이트이며, 변경될 수 있습니다.)"></textarea>
-
-            <div class="neisFooter">
-              <div class="neisBar" aria-label="바이트 사용량">
-                <div id="neisBarFill"></div>
-              </div>
-
-              <div class="neisByteRow">
-                <div class="neisByteCard">
-                  <div class="k">현재 사용</div>
-                  <div class="v"><span id="neisUsed">0</span><small>byte</small></div>
-                </div>
-                <div class="neisByteCard">
-                  <div class="k">남은 용량</div>
-                  <div class="v"><span id="neisLeft">1500</span><small>byte</small></div>
-                </div>
-                <div class="neisByteCard">
-                  <div class="k">총 용량</div>
-                  <div class="v"><span id="neisLimit">1500</span><small>byte</small></div>
-                </div>
-                <div class="neisActions" style="flex: 1 1 220px;">
-                  <button class="smallbtn ghost" type="button" id="neisClearBtn">전체 지우기</button>
-                </div>
-              </div>
-
-              <div class="neisResultLine" id="neisResultLine">
-                공백 제외 <b>0</b>자, 공백 포함 <b>0</b>자, <b>0</b>바이트
-              </div>
-
-              <div class="neisRule">
-                영어, 숫자, 특수문자, 띄어쓰기 1바이트 / 엔터키 2바이트 / 한글 3바이트, Copyright (c) 2018 kidevelop
-              </div>
-
-              <div class="neisRule" style="margin-top:10px;">
-<b style="color:var(--text);">오픈소스 고지</b><br>
-Copyright (c) 2018 kidevelop<br><br>
-MIT License
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+  </section>
 </div>
-            </div>
+
+<a class="skip" href="#main">본문 바로가기</a>
+
+<div class="wrap">
+  <header class="topbar" aria-label="상단 메뉴">
+    <div class="brand">
+      <div class="logoWrap" aria-hidden="true">
+        <img class="logo" src="./android-launchericon-512-512.png" alt="O.Poong 로고" onerror="this.style.display='none'">
+      </div>
+      <div class="brandText">
+        <b>O.Poong</b>
+        <span>풍산고 생활, 한 화면에서.</span>
+      </div>
+    </div>
+    <div class="actions">
+      <button id="btnInstallTop" class="btn ok" type="button">앱 설치</button>
+      <button id="btnLight" class="btn ghost" type="button">라이트</button>
+      <button id="btnDark" class="btn ghost" type="button">다크</button>
+    </div>
+  </header>
+
+  <div id="noticeBanner" class="noticeBanner empty topNotice" aria-label="공지사항">
+    <div>
+      <strong>공지사항이 없습니다</strong>
+      <p>새 소식이 생기면 이 영역에 표시됩니다.</p>
+    </div>
+    <span class="pill">Notice</span>
+  </div>
+
+  <section class="hero" aria-label="O.Poong 소개">
+    <div class="heroCard">
+      <span class="kicker">O.Poong Portal</span>
+      <h1>풍산고 생활,<br>한 화면에서.</h1>
+      <p class="heroText">
+        급식, 학사일정, 시간표, 학교 생활 링크, 글자수 도구를 하나의 통일된 화면에서 확인할 수 있는
+        풍산고 학생용 비공식 생활 도우미입니다.
+      </p>
+      <div class="heroActions">
+        <button class="bigBtn" type="button" onclick="go('meal'); setTodayAndLoad();">오늘 급식 보기</button>
+        <button class="btn ghost" type="button" onclick="go('timetable'); ttRenderTable();">시간표 열기</button>
+        <button class="btn ghost" type="button" onclick="go('about')">서비스 소개</button>
+      </div>
+    </div>
+
+    <aside class="sideCard" aria-label="요약 정보">
+      <div class="statusRow">
+        <div class="statusCard">
+          <div class="label">오늘</div>
+          <div class="value" id="todayLabel">-</div>
+        </div>
+        <div class="statusCard">
+          <div class="label">바로가기</div>
+          <div class="value">급식 · 일정 · 시간표</div>
+        </div>
+      </div>
+    </aside>
+  </section>
+
+  <div class="layout">
+    <aside class="sideNav" aria-label="주요 메뉴">
+      <div class="sideNavTitle">메뉴</div>
+      <nav class="navGrid">
+        <button class="navBtn" data-view="home" type="button" onclick="go('home')"><span class="left"><span class="icon">홈</span><span><span class="title">홈</span><br><span class="hint">대시보드</span></span></span><span>›</span></button>
+        <button class="navBtn" data-view="meal" type="button" onclick="go('meal'); setTodayAndLoad();"><span class="left"><span class="icon">식</span><span><span class="title">급식</span><br><span class="hint">일별/월별</span></span></span><span>›</span></button>
+        <button class="navBtn" data-view="schedule" type="button" onclick="go('schedule'); scheduleLoadMonth();"><span class="left"><span class="icon">일</span><span><span class="title">학사일정</span><br><span class="hint">월별 달력</span></span></span><span>›</span></button>
+        <button class="navBtn" data-view="timetable" type="button" onclick="go('timetable'); ttRenderTable();"><span class="left"><span class="icon">표</span><span><span class="title">시간표</span><br><span class="hint">로컬 저장</span></span></span><span>›</span></button>
+        <button class="navBtn" data-view="onway" type="button" onclick="go('onway')"><span class="left"><span class="icon">온</span><span><span class="title">온웨이에듀</span><br><span class="hint">외부 링크</span></span></span><span>›</span></button>
+        <button class="navBtn" data-view="school" type="button" onclick="go('school')"><span class="left"><span class="icon">학</span><span><span class="title">학교 홈페이지</span><br><span class="hint">공식 사이트</span></span></span><span>›</span></button>
+        <button class="navBtn" data-view="neis" type="button" onclick="go('neis'); neisInit();"><span class="left"><span class="icon">글</span><span><span class="title">글자수</span><br><span class="hint">byte 계산</span></span></span><span>›</span></button>
+        <button class="navBtn" data-view="policy" type="button" onclick="go('policy')"><span class="left"><span class="icon">안</span><span><span class="title">안내·정책</span><br><span class="hint">개인정보</span></span></span><span>›</span></button>
+      </nav>
+    </aside>
+
+    <main id="main" class="panel">
+      <section class="section view active" id="view-home">
+        <div class="sectionHeader">
+          <div>
+            <h2>오늘의 O.Poong</h2>
+            <p>자주 쓰는 기능을 한 화면에 모았습니다.</p>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn ghost" type="button" onclick="toggleWidgetSelector()">위젯 선택</button>
+            <button class="btn ghost" type="button" onclick="renderHomeWidgets()">새로고침</button>
           </div>
         </div>
 
-      </main>
-    </div>
-  </div>
+        <div id="personalHeroLine" class="personalHeroLine">오늘도 O.Poong에서 필요한 정보를 확인해보세요.</div>
 
-  <textarea id="copyHelper" aria-hidden="true"></textarea>
-
-  <div id="modalBack" class="modalBack" role="dialog" aria-modal="true" aria-label="설치 안내">
-    <div class="modal">
-      <div class="modalHead">
-        <b>앱 설치 방법 안내</b>
-        <!-- ✅ 요청대로: 닫기 버튼 제거 -->
-      </div>
-      <div class="modalBody">
-        <div>설치하면 홈 화면에서 앱처럼 더 빠르게 실행할 수 있습니다.</div>
-        <ul class="steps" id="installSteps"></ul>
-
-        <div style="margin-top:12px;">
-          <b style="color:var(--text);">설치 버튼이 보이는 경우</b><br/>
-          주소창 또는 메뉴에 “앱 설치/설치”가 표시될 수 있습니다. 해당 버튼을 선택하면 설치가 진행됩니다.
+        <div id="widgetSelector" class="contentBox" style="display:none;margin-bottom:14px">
+          <b style="color:var(--text)">홈 위젯 선택</b>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+            <label class="pill"><input type="checkbox" data-widget-toggle="meal"> 급식</label>
+            <label class="pill"><input type="checkbox" data-widget-toggle="schedule"> 학사일정</label>
+            <label class="pill"><input type="checkbox" data-widget-toggle="timetable"> 시간표</label>
+            <label class="pill"><input type="checkbox" data-widget-toggle="quickTools"> 빠른 실행</label>
+          </div>
+          <div class="muted" style="margin-top:10px;font-size:13px">선택값은 이 브라우저에만 저장할게요!</div>
+        </div>
+        <div class="widgetGrid">
+          <div class="widget" data-home-widget="meal">
+            <div class="widgetHead"><b>오늘의 급식</b><span class="pill" id="homeMealDate">-</span></div>
+            <div class="widgetBody" id="homeMealBody"><div class="muted">불러오는 중…</div></div>
+          </div>
+          <div class="widget" data-home-widget="schedule">
+            <div class="widgetHead"><b>오늘의 학사일정</b><span class="pill" id="homeSchDate">-</span></div>
+            <div class="widgetBody" id="homeSchBody"><div class="muted">불러오는 중…</div></div>
+          </div>
+          <div class="widget" data-home-widget="timetable">
+            <div class="widgetHead"><b>오늘의 시간표</b><span class="pill" id="homeTTDay">-</span></div>
+            <div class="widgetBody" id="homeTTBody"><div class="muted">시간표를 입력하면 표시됩니다.</div></div>
+          </div>
         </div>
 
-        <div style="margin-top:10px;color:var(--muted);font-size:12.5px;line-height:1.6;">
-          이 프로그램은 Chrome/Safari에 최적화되어 있습니다.
+        <div class="cardGrid" data-home-widget="quickTools" style="margin-top:14px">
+          <article class="toolCard">
+            <b>급식 조회</b>
+            <p>NEIS 급식 데이터를 불러와 조식·중식·석식을 카드 또는 월별 표로 정리해드릴게요!</p>
+            <button class="smallbtn primary" type="button" onclick="go('meal'); setTodayAndLoad();">열기</button>
+          </article>
+          <article class="toolCard">
+            <b>시간표 저장</b>
+            <p>입력한 시간표는 이 기기의 브라우저에만 저장되며, 다른 사용자에게 전송되지 않아요.</p>
+            <button class="smallbtn ghost" type="button" onclick="go('timetable'); ttRenderTable();">열기</button>
+          </article>
+          <article class="toolCard">
+            <b>온웨이에듀 바로가기</b>
+            <p>링크 찾는 데 힘드셨죠? 제가 바로 찾아드렸어요!</p>
+          </article>
         </div>
-      </div>
-      <div class="modalFoot">
-        <button id="btnInstallNow" class="btn ok" type="button" style="display:none;">지금 설치하기</button>
-        <button class="btn ghost" type="button" onclick="closeModal()">확인</button>
-      </div>
+      </section>
+
+      <section class="section view" id="view-meal">
+        <div class="sectionHeader">
+          <div>
+            <h2>급식</h2>
+            <p>날짜별 급식을 확인하고, 월별 표로도 볼 수 있어요.</p>
+          </div>
+        </div>
+        <div class="controls">
+          <button class="smallbtn primary" type="button" onclick="moveDate(-1)">이전</button>
+          <input type="date" id="date" aria-label="급식 조회 날짜" />
+          <button class="smallbtn primary" type="button" onclick="moveDate(1)">다음</button>
+          <button class="smallbtn primary" type="button" onclick="onDay()">조회</button>
+          <button class="smallbtn ghost" type="button" onclick="toggleMealMode()" id="btnMealMonth">월별 표</button>
+          <button class="smallbtn ghost" type="button" id="btnCopy">복사</button>
+        </div>
+        <div class="controls" id="mealMonthControls" style="display:none;margin-top:12px">
+          <span style="font-weight:1000">월 선택</span>
+          <input type="month" id="mealMonth" aria-label="월별 급식 조회 월" />
+          <button class="smallbtn primary" type="button" onclick="mealLoadMonth()">월별 조회</button>
+        </div>
+        <div id="notice" class="notice">급식 조회가 준비되었습니다.</div>
+        <div class="notice">
+          <b style="color:var(--text)">알레르기 번호 안내</b><br>
+          1 난류 · 2 우유 · 3 메밀 · 4 땅콩 · 5 대두 · 6 밀 · 7 고등어 · 8 게 · 9 새우 · 10 돼지고기 · 11 복숭아 · 12 토마토 · 13 아황산염 · 14 호두 · 15 닭고기 · 16 쇠고기 · 17 오징어 · 18 조개류
+        </div>
+        <div class="allergyPanel">
+          <b style="color:var(--text)">알레르기 표시 설정</b>
+          <div class="muted" style="margin-top:6px;font-size:13px">
+            해당되는 알레르기 번호를 선택하면 급식 메뉴에서 빨간색으로 표시할게요.
+          </div>
+          <div id="allergyGrid" class="allergyGrid" aria-label="알레르기 선택"></div>
+          <div class="allergyWarnText" id="allergySummary">선택된 알레르기가 없습니다.</div>
+        </div>
+        <div id="meals" style="margin-top:14px"></div>
+        <div id="mealMonthTable" style="display:none"></div>
+        <div id="shareText"></div>
+      </section>
+
+      <section class="section view" id="view-schedule">
+        <div class="sectionHeader">
+          <div>
+            <h2>학사일정</h2>
+            <p>월별 학사일정을 달력 형태로 확인합니다.</p>
+          </div>
+        </div>
+        <div class="controls">
+          <span style="font-weight:1000">월 선택</span>
+          <input type="month" id="schMonth" aria-label="학사일정 월 선택" />
+          <button class="smallbtn primary" type="button" onclick="scheduleLoadMonth()">조회</button>
+          <button class="smallbtn ghost" type="button" onclick="scheduleLoadToday()">이번 달</button>
+        </div>
+        <div id="schNotice" class="notice">학사일정 조회가 준비되었습니다.</div>
+        <div id="schList" style="margin-top:14px"></div>
+      </section>
+
+      <section class="section view" id="view-timetable">
+        <div class="sectionHeader">
+          <div>
+            <h2>시간표</h2>
+            <p>요일별 시간표를 입력하면 이 기기의 브라우저에 자동 저장됩니다.</p>
+          </div>
+        </div>
+        <div class="controls">
+          <span style="font-weight:1000">교시 수</span>
+          <input type="number" id="ttPeriods" min="1" max="12" value="8" aria-label="교시 수" />
+          <button class="smallbtn primary" type="button" onclick="ttRenderTable()">적용</button>
+          <button class="smallbtn ghost" type="button" onclick="ttReset()">초기화</button>
+        </div>
+        <div class="notice ok">입력 내용은 브라우저에만 저장됩니다.</div>
+        <div id="ttTableWrap" class="ttWrap"></div>
+      </section>
+
+      <section class="section view" id="view-onway">
+        <div class="sectionHeader">
+          <div>
+            <h2>온웨이에듀</h2>
+            <p>풍산고등학교 상벌점·외출 관리 시스템으로 이동합니다.</p>
+          </div>
+        </div>
+        <div class="contentBox">
+          링크 찾기 힘드셨죠? 제가 찾아드렸어요!
+        </div>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="bigBtn" type="button" onclick="openOnway()">온웨이에듀 열기</button>
+        </div>
+      </section>
+
+      <section class="section view" id="view-school">
+        <div class="sectionHeader">
+          <div>
+            <h2>학교 홈페이지</h2>
+            <p>풍산고등학교 공식 홈페이지로 이동합니다.</p>
+          </div>
+        </div>
+        <div class="contentBox">
+          공식 공지, 학사 자료, 학교 소개는 풍산고등학교 공식 홈페이지를 기준으로 확인해 주세요.
+        </div>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="bigBtn" type="button" onclick="openSchoolHome()">학교 홈페이지 열기</button>
+        </div>
+      </section>
+
+      <section class="section view" id="view-neis">
+        <div class="sectionHeader">
+          <div>
+            <h2>NEIS 글자수 도구</h2>
+            <p>생기부 쓰는 데 힘드셨죠? 제가 문장 작성 시 바이트를 빠르게 확인할 수 있게 가져왔어요!</p>
+          </div>
+        </div>
+        <div class="neisBox">
+          <div class="tabBar" role="tablist" aria-label="항목 선택">
+            <button class="tabBtn" type="button" data-k="autonomy" aria-selected="true">자율활동</button>
+            <button class="tabBtn" type="button" data-k="club" aria-selected="false">동아리</button>
+            <button class="tabBtn" type="button" data-k="career" aria-selected="false">진로</button>
+            <button class="tabBtn" type="button" data-k="subject" aria-selected="false">교과세특</button>
+            <button class="tabBtn" type="button" data-k="personal" aria-selected="false">개인별세특</button>
+            <button class="tabBtn" type="button" data-k="volunteer" aria-selected="false">봉사</button>
+            <button class="tabBtn" type="button" data-k="behavior" aria-selected="false">행특</button>
+          </div>
+          <textarea id="neisText" placeholder="내용을 입력하세요."></textarea>
+          <div class="progress"><div id="neisBarFill"></div></div>
+          <div class="widgetGrid" style="margin-top:12px">
+            <div class="statusCard"><div class="label">현재 사용</div><div class="value"><span id="neisUsed">0</span> byte</div></div>
+            <div class="statusCard"><div class="label">남은 용량</div><div class="value"><span id="neisLeft">1500</span> byte</div></div>
+            <div class="statusCard"><div class="label">총 용량</div><div class="value"><span id="neisLimit">1500</span> byte</div></div>
+          </div>
+          <div class="notice" id="neisResultLine">공백 제외 0자, 공백 포함 0자, 0바이트</div>
+          <button class="smallbtn ghost" type="button" id="neisClearBtn">전체 지우기</button>
+          <div class="notice" style="font-size:12.5px">
+            <b style="color:var(--text)">오픈소스 고지</b><br>
+            글자수/바이트 계산 기능은 kidevelop MIT License 코드를 참고했습니다.
+            라이선스 고지는 안내·정책 페이지에서 확인할 수 있습니다.
+          </div>
+        </div>
+      </section>
+
+      <section class="section view" id="view-policy">
+        <div class="sectionHeader">
+          <div>
+            <h2>안내·개인정보·운영 원칙</h2>
+            <p>사이트 신뢰도와 사용자 안내를 위해 필요한 내용을 정리했습니다.</p>
+          </div>
+        </div>
+        <div class="cardGrid">
+          <article class="toolCard">
+            <b>서비스 소개</b>
+            <p>O.Poong은 풍산고 학생의 일상 확인을 돕는 비공식 웹앱입니다. 학교 공식 앱이나 공식 행정 서비스가 아닙니다.</p>
+          </article>
+          <article class="toolCard">
+            <b>개인정보 안내</b>
+            <p>이름, 시간표와 글자수 입력 내용은 사용자의 기기 브라우저 저장소에 저장됩니다. 서버로 별도 전송하지 않습니다.</p>
+          </article>
+        </div>
+        <div class="contentBox">
+          <b style="color:var(--text)">외부 데이터 안내</b><br>
+          급식 정보는 NEIS 공개 API를 통해 불러옵니다. 학사일정은 별도 프록시가 연결된 경우에만 표시됩니다.
+          외부 사이트로 이동하는 버튼은 사용자가 직접 누른 경우에만 새 탭으로 열립니다.
+        </div>
+        <div class="contentBox">
+          <b style="color:var(--text)">글자수 도구 오픈소스 고지</b><br>
+          글자수/바이트 계산 기능은 kidevelop의 MIT License 코드를 참고한 기능입니다.<br><br>
+          Copyright (c) 2018 kidevelop<br>
+          Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+          to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish,
+          distribute, sublicense, and/or sell copies of the Software, subject to inclusion of the copyright notice and permission notice.
+          THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND.
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <b style="color:var(--text)">O.Poong</b> ㅣ 풍산고 생활, 한 화면에서.<br>
+    본 사이트는 풍산고 학생 생활 편의를 위한 비공식 웹앱입니다. 공식 정보는 학교 홈페이지와 NEIS 자료를 함께 확인해 주세요.
+    <div class="footerLinks">
+      <button class="btn ghost" type="button" onclick="go('policy')">개인정보 안내</button>
+      <button class="btn ghost" type="button" onclick="go('about')">서비스 소개</button>
+      <button class="btn ghost" type="button" onclick="openSchoolHome()">학교 홈페이지</button>
+    </div>
+    <div style="margin-top:10px">by @hyukjun._.ps</div>
+  </footer>
+</div>
+
+<textarea id="copyHelper" aria-hidden="true"></textarea>
+
+<div id="modalBack" class="modalBack" role="dialog" aria-modal="true" aria-label="앱 설치 안내">
+  <div class="modal">
+    <div class="modalHead">
+      <b>앱 설치 안내</b>
+      <button class="btn ghost" type="button" onclick="closeModal()">닫기</button>
+    </div>
+    <div class="modalBody" id="installGuideText">
+      설치하면 홈 화면에서 앱처럼 실행할 수 있습니다.
+    </div>
+    <div class="modalFoot">
+      <button id="btnInstallNow" class="btn ok" type="button" style="display:none">지금 설치하기</button>
+      <button class="btn ghost" type="button" onclick="closeModal()">확인</button>
     </div>
   </div>
+</div>
+
+
+<div id="firstSetupBack" class="modalBack" role="dialog" aria-modal="true" aria-label="초기 맞춤 설정">
+  <div class="modal">
+    <div class="modalHead">
+      <b>O.Poong 맞춤 설정</b>
+      <button class="btn ghost" type="button" onclick="skipFirstSetup()">나중에</button>
+    </div>
+    <div class="modalBody">
+      <div id="setupStepPrivacy" class="setupStep active">
+        <b style="color:var(--text)">개인정보 수집·이용에 동의해 주세요</b>
+        <div style="margin-top:8px">
+          O.Poong은 맞춤형 화면을 제공하기 위해 이름, 알레르기 선택값, 홈화면 위젯 선택값을 이 기기의 브라우저 저장소에 저장합니다.
+        </div>
+        <div class="privacyBox">
+          <b style="color:var(--text)">수집 항목</b><br>
+          이름, 알레르기 번호 선택값, 홈화면 위젯 선택값<br><br>
+          <b style="color:var(--text)">이용 목적</b><br>
+          사용자 이름이 포함된 맞춤 안내 문구 표시, 급식 알레르기 강조 표시, 홈화면 위젯 구성 저장<br><br>
+          <b style="color:var(--text)">보관 방식</b><br>
+          입력값은 서버로 전송하지 않고 사용자의 브라우저 localStorage에 저장됩니다. 브라우저 데이터 삭제 시 함께 삭제될 수 있습니다.<br><br>
+          <b style="color:var(--text)">동의 거부</b><br>
+          동의하지 않으면 O.Poong 맞춤 기능을 사용할 수 없어 사이트 이용이 제한됩니다.
+        </div>
+        <label class="setupOption" style="margin-top:12px">
+          <input id="privacyAgreeCheck" type="checkbox">
+          <span>개인정보 수집·이용에 동의합니다.</span>
+        </label>
+      </div>
+
+      <div id="setupStepName" class="setupStep">
+        <b style="color:var(--text)">이름을 알려주세요</b>
+        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요??.</div>
+        <input id="setupNameInput" class="setupNameInput" type="text" maxlength="12" placeholder="예: 혁준">
+        <div class="muted" style="margin-top:10px;font-size:13px">이름은 이 브라우저에만 저장됩니다.</div>
+      </div>
+
+      <div id="setupStepAllergy" class="setupStep">
+        <b style="color:var(--text)">알레르기가 있으세요?</b>
+        <div style="margin-top:8px">선택한 알레르기 번호가 급식 메뉴에 포함되면 빨간색으로 표시됩니다.</div>
+        <div id="setupAllergyGrid" class="setupGrid"></div>
+      </div>
+
+      <div id="setupStepWidget" class="setupStep">
+        <b style="color:var(--text)">원하는 홈화면 위젯이 있으신가요?</b>
+        <div style="margin-top:8px">홈에서 보고 싶은 항목만 선택할 수 있습니다.</div>
+        <div class="setupGrid">
+          <label class="setupOption"><input type="checkbox" data-setup-widget="meal" checked> 급식</label>
+          <label class="setupOption"><input type="checkbox" data-setup-widget="schedule" checked> 학사일정</label>
+          <label class="setupOption"><input type="checkbox" data-setup-widget="timetable" checked> 시간표</label>
+          <label class="setupOption"><input type="checkbox" data-setup-widget="quickTools" checked> 빠른 실행</label>
+        </div>
+      </div>
+    </div>
+    <div class="modalFoot">
+      <button id="setupPrevBtn" class="btn ghost" type="button" onclick="setupPrev()" style="display:none">이전</button>
+      <button id="setupNextBtn" class="btn ok" type="button" onclick="setupNext()">다음</button>
+      <button id="setupDoneBtn" class="btn ok" type="button" onclick="finishFirstSetup()" style="display:none">완료</button>
+    </div>
+  </div>
+</div>
 
 <script>
+/* =========================
+   수정하기 쉬운 설정 영역
+   ========================= */
+const NOTICE_CONFIG = {
+  enabled: false,
+  title: "공지사항이 없습니다",
+  message: "새 소식이 생기면 이 영역에 표시됩니다.",
+  buttonText: "",
+  buttonUrl: "",
+
+  /*
+    공지 배너 색상 수정:
+    - type: "default" | "blue" | "green" | "amber" | "red"
+    - customBg, customBorder, customText를 채우면 직접 색상 지정 가능
+  */
+  type: "default",
+  customBg: "",
+  customBorder: "",
+  customText: ""
+};
+
+/*
+  홈화면 위젯 선택:
+  true = 보이기, false = 숨기기
+*/
+const HOME_WIDGET_CONFIG = {
+  meal: true,
+  schedule: true,
+  timetable: true,
+  quickTools: true
+};
+
 const API_KEY = "c5eac2fb880e4aa185e7957a756dd126";
 const ATPT = "R10";
 const SD_SCHUL_CODE = "8750475";
 const SCHOOL_NAME = "풍산고등학교";
-
-/* ✅ 추가: 학교 홈페이지 URL */
 const SCHOOL_HOME_URL = "https://school.gyo6.net/poongsanhs/main.do?sysId=poongsanhs";
-
-/* ✅ 학사일정 프록시(너 Worker) */
+const ONWAY_URL = "https://ps.onwayedu.co.kr/login/login.php";
 const SCHEDULE_PROXY_BASE = "https://gkrtkdlfwjd.yyhhjj1068-c2c.workers.dev/?ym=";
 
+const ALLERGY_ITEMS = [
+  { no:"1", name:"난류" },
+  { no:"2", name:"우유" },
+  { no:"3", name:"메밀" },
+  { no:"4", name:"땅콩" },
+  { no:"5", name:"대두" },
+  { no:"6", name:"밀" },
+  { no:"7", name:"고등어" },
+  { no:"8", name:"게" },
+  { no:"9", name:"새우" },
+  { no:"10", name:"돼지고기" },
+  { no:"11", name:"복숭아" },
+  { no:"12", name:"토마토" },
+  { no:"13", name:"아황산염" },
+  { no:"14", name:"호두" },
+  { no:"15", name:"닭고기" },
+  { no:"16", name:"쇠고기" },
+  { no:"17", name:"오징어" },
+  { no:"18", name:"조개류" }
+];
+const ALLERGY_KEY = "opoong_allergy_numbers_v1";
+const FIRST_SETUP_KEY = "opoong_first_setup_done_v3";
+const USER_NAME_KEY = "opoong_user_name_v1";
+const PERSONAL_MESSAGES = [
+  "{name}님, 오늘의 학사일정을 확인해보세요!",
+  "{name}님, 오늘 급식 메뉴를 먼저 확인해보세요.",
+  "{name}님, 시간표를 확인하고 하루를 준비해보세요.",
+  "{name}님, O.Poong에서 오늘 필요한 정보를 빠르게 살펴보세요.",
+  "{name}님, 오늘도 풍산고 생활을 한 화면에서 확인해보세요.",
+  "{name}님, 급식과 일정을 한 번에 체크해보세요.",
+  "{name}님, 오늘의 학교생활을 O.Poong과 함께 시작해보세요.",
+  "{name}님, 필요한 메뉴를 홈에서 바로 열어보세요.",
+  "{name}님, 오늘의 일정과 시간표를 놓치지 마세요.",
+  "{name}님, O.Poong이 오늘의 학교생활을 정리해드릴게요."
+];
+
 const $ = s => document.querySelector(s);
-const escapeHtml = s => String(s).replace(/[&<>"']/g, m=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;', "'":'&#39;' }[m]));
+const $$ = s => Array.from(document.querySelectorAll(s));
+const escapeHtml = s => String(s).replace(/[&<>"']/g, m=>({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;" }[m]));
+const pad2 = n => String(n).padStart(2,"0");
+const todayDate = () => new Date();
+const dateToYMD = d => `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())}`;
+const todayStr = () => dateToYMD(todayDate());
+const toYMDNoDash = d => String(d||"").replace(/-/g,"");
 const ymd2str = ymd => `${ymd.slice(0,4)}년 ${ymd.slice(4,6)}월 ${ymd.slice(6,8)}일`;
-
-function dateToYMD(dateObj) {
-  const y=dateObj.getFullYear(),m=("0"+(dateObj.getMonth()+1)).slice(-2),d=("0"+dateObj.getDate()).slice(-2);
-  return `${y}-${m}-${d}`;
+function ymdToDateObj(ymdStr){ const [y,m,d]=ymdStr.split("-"); return new Date(Number(y),Number(m)-1,Number(d)); }
+function monthDates(yyyy_mm){
+  const [y,m]=yyyy_mm.split("-").map(Number);
+  const last=new Date(y,m,0).getDate();
+  return Array.from({length:last},(_,i)=>`${y}${pad2(m)}${pad2(i+1)}`);
 }
-function ymdToDateObj(ymdStr) {
-  const [y, m, d] = ymdStr.split('-');
-  return new Date(y, m - 1, d);
+function todayYYYYMM(){
+  const d = new Date();
+  return `${d.getFullYear()}${pad2(d.getMonth()+1)}`;
 }
-function todayStr() { return dateToYMD(new Date()); }
-function toYMDNoDash(dashed){ return String(dashed||"").replace(/-/g,""); }
-function pad2(n){ return String(n).padStart(2,"0"); }
-function monthBounds(yyyy_mm){
-  const [y,m] = yyyy_mm.split("-").map(Number);
-  const last = new Date(y, m, 0);
-  return {
-    from: `${y}${pad2(m)}01`,
-    to: `${y}${pad2(m)}${pad2(last.getDate())}`,
-    label: `${y}년 ${pad2(m)}월`
-  };
-}
+function ymInputToYYYYMM(v){ return String(v||"").replace("-",""); }
 
-/* ✅ 추가: 학교 홈페이지 열기 */
-function openSchoolHome(){
-  window.open(SCHOOL_HOME_URL, "_blank", "noopener,noreferrer");
-}
-
-/* ==========================
-   ✅ 카카오 광고: SPA 메뉴 전환 대응
-   ========================== */
-const ADS = {
-  home: { unit: "DAN-ps0PRxwqtGCGkBq2", w: 320, h: 50, container: "ad-home" },
-  meal: { unit: "DAN-ldKVhVTYzKi5pUti", w: 320, h: 50, container: "ad-meal" },
-  neis: { unit: "DAN-vszyC76aKoBwX0tg", w: 320, h: 50, container: "ad-neis" },
-  onway:{ unit: "DAN-QDvR0fxl5ri9KE4D", w: 728, h: 90, container: "ad-onway" },
-};
-
-function mountKakaoAd(containerId, unit, w, h){
-  const box = document.getElementById(containerId);
+function renderNoticeBanner(){
+  const box = $("#noticeBanner");
   if(!box) return;
 
-  box.innerHTML = "";
+  const colorMap = {
+    default: {},
+    blue: { bg:"color-mix(in srgb, var(--pri) 11%, var(--card))", border:"color-mix(in srgb, var(--pri) 32%, var(--line))", text:"var(--text)" },
+    green: { bg:"color-mix(in srgb, var(--ok) 11%, var(--card))", border:"color-mix(in srgb, var(--ok) 32%, var(--line))", text:"var(--text)" },
+    amber: { bg:"color-mix(in srgb, var(--amber) 13%, var(--card))", border:"color-mix(in srgb, var(--amber) 36%, var(--line))", text:"var(--text)" },
+    red: { bg:"color-mix(in srgb, var(--warn) 10%, var(--card))", border:"color-mix(in srgb, var(--warn) 34%, var(--line))", text:"var(--text)" }
+  };
 
-  const ins = document.createElement("ins");
-  ins.className = "kakao_ad_area";
-  ins.style.display = "none";
-  ins.setAttribute("data-ad-unit", unit);
-  ins.setAttribute("data-ad-width", String(w));
-  ins.setAttribute("data-ad-height", String(h));
-  box.appendChild(ins);
+  const picked = colorMap[NOTICE_CONFIG.type] || colorMap.default;
+  const bg = NOTICE_CONFIG.customBg || picked.bg || "";
+  const border = NOTICE_CONFIG.customBorder || picked.border || "";
+  const text = NOTICE_CONFIG.customText || picked.text || "";
 
-  const s = document.createElement("script");
-  s.type = "text/javascript";
-  s.async = true;
-  s.src = "//t1.daumcdn.net/kas/static/ba.min.js?" + Date.now();
-  document.body.appendChild(s);
+  box.style.background = bg;
+  box.style.borderColor = border;
+  box.style.color = text;
+
+  if(!NOTICE_CONFIG.enabled){
+    box.className = "noticeBanner empty topNotice";
+    box.innerHTML = `<div><strong>공지사항이 없습니다</strong><p>새 소식이 생기면 이 영역에 표시됩니다.</p></div><span class="pill">Notice</span>`;
+    return;
+  }
+
+  box.className = "noticeBanner topNotice";
+  const btn = NOTICE_CONFIG.buttonText && NOTICE_CONFIG.buttonUrl
+    ? `<button class="btn primary" type="button" onclick="window.open('${escapeHtml(NOTICE_CONFIG.buttonUrl)}','_blank','noopener,noreferrer')">${escapeHtml(NOTICE_CONFIG.buttonText)}</button>`
+    : `<span class="pill">Notice</span>`;
+
+  box.innerHTML = `<div><strong>${escapeHtml(NOTICE_CONFIG.title)}</strong><p>${escapeHtml(NOTICE_CONFIG.message)}</p></div>${btn}`;
 }
 
-function loadAdForView(view){
-  if(view === "home") mountKakaoAd(ADS.home.container, ADS.home.unit, ADS.home.w, ADS.home.h);
-  if(view === "meal") mountKakaoAd(ADS.meal.container, ADS.meal.unit, ADS.meal.w, ADS.meal.h);
-  if(view === "neis") mountKakaoAd(ADS.neis.container, ADS.neis.unit, ADS.neis.w, ADS.neis.h);
-  if(view === "onway") mountKakaoAd(ADS.onway.container, ADS.onway.unit, ADS.onway.w, ADS.onway.h);
+function installRipple(){
+  document.addEventListener("pointerdown", e=>{
+    const btn = e.target.closest("button");
+    if(!btn) return;
+    const rect = btn.getBoundingClientRect();
+    const span = document.createElement("span");
+    const size = Math.max(rect.width, rect.height);
+    span.className = "ripple";
+    span.style.width = span.style.height = `${size}px`;
+    span.style.left = `${e.clientX - rect.left - size/2}px`;
+    span.style.top = `${e.clientY - rect.top - size/2}px`;
+    btn.appendChild(span);
+    setTimeout(()=>span.remove(),560);
+  });
 }
 
 function setActiveNav(view){
-  document.querySelectorAll(".navBtn").forEach(b=>{
-    b.dataset.active = (b.dataset.view === view) ? "1" : "0";
-  });
+  $$(".navBtn").forEach(b => b.dataset.active = b.dataset.view === view ? "1" : "0");
 }
-
 function go(view){
-  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
-  const el = document.querySelector(`#view-${view}`);
+  if(view === "about") view = "policy";
+  $$(".view").forEach(v=>v.classList.remove("active"));
+  const el = $(`#view-${view}`);
   if(el) el.classList.add("active");
-
   setActiveNav(view);
-
-  history.replaceState(null, "", `#${view}`);
-
-  window.scrollTo({ top: 0, behavior: "smooth" });
-
+  history.replaceState(null,"",`#${view}`);
+  window.scrollTo({top:0,behavior:"smooth"});
   if(view === "home") renderHomeWidgets();
+  if(view === "meal") renderAllergySelector();
   if(view === "timetable") ttRenderTable();
   if(view === "neis") neisInit();
-
-  loadAdForView(view);
-}
-
-/* ✅ 요청: 사이트 열면 무조건 홈 */
-function initRoute(){
-  go("home");
 }
 
 function applyTheme(theme){
-  document.documentElement.setAttribute("data-theme", theme);
-  localStorage.setItem("theme", theme);
-  const meta = document.querySelector('meta[name="theme-color"]');
-  meta.setAttribute("content", theme === "dark" ? "#0b1220" : "#2563eb");
+  document.documentElement.setAttribute("data-theme",theme);
+  localStorage.setItem("opoong_theme",theme);
+  document.querySelector('meta[name="theme-color"]').setAttribute("content", theme==="dark" ? "#07111f" : "#1e40af");
 }
-function initTheme(){
-  const saved = localStorage.getItem("theme");
-  if(saved === "dark" || saved === "light") applyTheme(saved);
+$("#btnLight").addEventListener("click",()=>applyTheme("light"));
+$("#btnDark").addEventListener("click",()=>applyTheme("dark"));
+
+async function neis(endpoint, params){
+  const base = `https://open.neis.go.kr/hub/${endpoint}`;
+  const q = new URLSearchParams({KEY:API_KEY,Type:"json",pIndex:"1",pSize:"200",...params});
+  const res = await fetch(`${base}?${q.toString()}`);
+  if(!res.ok) throw new Error(`HTTP ${res.status}`);
+  return res.json();
 }
-$("#btnLight").addEventListener("click", ()=>applyTheme("light"));
-$("#btnDark").addEventListener("click", ()=>applyTheme("dark"));
+
+
+function getSelectedAllergies(){
+  try{
+    const arr = JSON.parse(localStorage.getItem(ALLERGY_KEY) || "[]");
+    return Array.isArray(arr) ? arr.map(String) : [];
+  }catch{
+    return [];
+  }
+}
+function saveSelectedAllergies(list){
+  localStorage.setItem(ALLERGY_KEY, JSON.stringify([...new Set(list.map(String))]));
+}
+function allergyLabel(no){
+  const item = ALLERGY_ITEMS.find(x => x.no === String(no));
+  return item ? `${item.no}. ${item.name}` : String(no);
+}
+function menuAllergyNumbers(menuText){
+  const found = [];
+  const raw = String(menuText || "");
+  for(const item of ALLERGY_ITEMS){
+    const n = item.no;
+    const pattern = new RegExp(`(^|[^0-9])${n}(?=[.\\)\\s,·]|$)`);
+    if(pattern.test(raw)) found.push(n);
+  }
+  return found;
+}
+function getMenuAllergyHits(menuText){
+  const selected = getSelectedAllergies();
+  return menuAllergyNumbers(menuText).filter(n => selected.includes(n));
+}
+function renderMenuItem(menuText){
+  const hits = getMenuAllergyHits(menuText);
+  const safeText = escapeHtml(menuText);
+  if(!hits.length) return `<li class="allergySafe">${safeText}</li>`;
+  return `<li class="allergyHit">${safeText}<div style="font-size:12px;margin-top:4px">주의: ${hits.map(allergyLabel).join(", ")}</div></li>`;
+}
+function renderAllergySelector(){
+  const grid = $("#allergyGrid");
+  if(!grid) return;
+  const selected = getSelectedAllergies();
+
+  grid.innerHTML = ALLERGY_ITEMS.map(item => `
+    <label class="allergyChip">
+      <input type="checkbox" value="${item.no}" ${selected.includes(item.no) ? "checked" : ""}>
+      <span>${item.no}. ${item.name}</span>
+    </label>
+  `).join("");
+
+  grid.querySelectorAll("input").forEach(input=>{
+    input.addEventListener("change", ()=>{
+      const picked = Array.from(grid.querySelectorAll("input:checked")).map(x=>x.value);
+      saveSelectedAllergies(picked);
+      updateAllergySummary();
+
+      if(typeof mealMode !== "undefined" && mealMode === "month") mealLoadMonth();
+      else if($("#date") && $("#date").value) onDay();
+    });
+  });
+
+  updateAllergySummary();
+}
+function updateAllergySummary(){
+  const box = $("#allergySummary");
+  if(!box) return;
+  const selected = getSelectedAllergies();
+  box.textContent = selected.length
+    ? `선택됨: ${selected.map(allergyLabel).join(", ")}`
+    : "선택된 알레르기가 없습니다.";
+}
+function renderSetupAllergyGrid(){
+  const grid = $("#setupAllergyGrid");
+  if(!grid) return;
+  const selected = getSelectedAllergies();
+  grid.innerHTML = ALLERGY_ITEMS.map(item => `
+    <label class="setupOption">
+      <input type="checkbox" value="${item.no}" ${selected.includes(item.no) ? "checked" : ""}>
+      <span>${item.no}. ${item.name}</span>
+    </label>
+  `).join("");
+}
+let setupStepIndex = 0;
+function openFirstSetupIfNeeded(){
+  if(localStorage.getItem(FIRST_SETUP_KEY) === "1") return;
+  renderSetupAllergyGrid();
+
+  const cfg = getHomeWidgetConfig();
+  $$("[data-setup-widget]").forEach(input=>{
+    input.checked = cfg[input.dataset.setupWidget] !== false;
+  });
+
+  setupStepIndex = 0;
+  renderSetupStep();
+  const back = $("#firstSetupBack");
+  if(back) back.style.display = "flex";
+}
+function renderSetupStep(){
+  const allergy = $("#setupStepAllergy");
+  const widget = $("#setupStepWidget");
+  if(!allergy || !widget) return;
+
+  allergy.classList.toggle("active", setupStepIndex === 0);
+  widget.classList.toggle("active", setupStepIndex === 1);
+  $("#setupPrevBtn").style.display = setupStepIndex === 0 ? "none" : "inline-flex";
+  $("#setupNextBtn").style.display = setupStepIndex === 0 ? "inline-flex" : "none";
+  $("#setupDoneBtn").style.display = setupStepIndex === 1 ? "inline-flex" : "none";
+}
+function setupNext(){
+  saveSetupAllergy();
+  setupStepIndex = 1;
+  renderSetupStep();
+}
+function setupPrev(){
+  setupStepIndex = 0;
+  renderSetupStep();
+}
+function saveSetupAllergy(){
+  const grid = $("#setupAllergyGrid");
+  if(!grid) return;
+  const picked = Array.from(grid.querySelectorAll("input:checked")).map(x=>x.value);
+  saveSelectedAllergies(picked);
+  renderAllergySelector();
+}
+function saveSetupWidgets(){
+  const cfg = getHomeWidgetConfig();
+  $$("[data-setup-widget]").forEach(input=>{
+    cfg[input.dataset.setupWidget] = input.checked;
+  });
+  saveHomeWidgetConfig(cfg);
+  applyHomeWidgetConfig();
+}
+function finishFirstSetup(){
+  saveSetupAllergy();
+  saveSetupWidgets();
+  localStorage.setItem(FIRST_SETUP_KEY, "1");
+  const back = $("#firstSetupBack");
+  if(back) back.style.display = "none";
+  renderHomeWidgets();
+}
+function skipFirstSetup(){
+  localStorage.setItem(FIRST_SETUP_KEY, "1");
+  const back = $("#firstSetupBack");
+  if(back) back.style.display = "none";
+}
+
+async function fetchMealsDay(sdCode, ymd){
+  const data = await neis("mealServiceDietInfo",{ATPT_OFCDC_SC_CODE:ATPT,SD_SCHUL_CODE:sdCode,MLSV_YMD:ymd});
+  const rows = data?.mealServiceDietInfo?.[1]?.row || [];
+  rows.sort((a,b)=>String(a.MMEAL_SC_CODE||"").localeCompare(String(b.MMEAL_SC_CODE||"")));
+  return rows.map(r=>({
+    type:r.MMEAL_SC_NM || "",
+    cal:r.CAL_INFO || "",
+    menu:String(r.DDISH_NM||"").replace(/<br\s*\/?>/gi,"\n").split("\n").map(s=>s.trim()).filter(Boolean)
+  }));
+}
+function setNotice(kind,text,show=true){
+  const box = $("#notice");
+  if(!box) return;
+  box.className = "notice" + (kind ? ` ${kind}` : "");
+  box.textContent = text;
+  box.style.display = show ? "block" : "none";
+}
+async function initMeals(){
+  $("#date").value = todayStr();
+  const now = new Date();
+  $("#mealMonth").value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}`;
+  renderAllergySelector();
+}
+let mealMode = "day";
+function toggleMealMode(){
+  mealMode = mealMode === "day" ? "month" : "day";
+  const isMonth = mealMode === "month";
+  $("#mealMonthControls").style.display = isMonth ? "flex" : "none";
+  $("#meals").style.display = isMonth ? "none" : "block";
+  $("#mealMonthTable").style.display = isMonth ? "block" : "none";
+  $("#btnMealMonth").textContent = isMonth ? "일별 카드" : "월별 표";
+  if(isMonth) mealLoadMonth();
+}
+async function onDay(){
+  try{
+    const ymd = toYMDNoDash($("#date").value);
+    setNotice("", "급식 정보를 불러오는 중입니다…", true);
+    $("#meals").innerHTML = `<div class="notice">불러오는 중…</div>`;
+    const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
+    if(!meals.length){
+      $("#meals").innerHTML = `<div class="notice">선택한 날짜에는 급식 정보가 없습니다.</div>`;
+      $("#shareText").textContent = "";
+      setNotice("", "급식 정보가 없습니다.", true);
+      return;
+    }
+    $("#meals").innerHTML = `<h3 style="margin:0 0 10px">${ymd2str(ymd)} 급식</h3>` + meals.map(m=>`
+      <div class="notice">
+        <b style="color:var(--text)">${escapeHtml(m.type)}</b>
+        ${m.cal ? `<span class="pill">${escapeHtml(m.cal)}</span>` : ""}
+        <ul style="margin:10px 0 0;padding-left:18px;line-height:1.8">${m.menu.map(renderMenuItem).join("")}</ul>
+      </div>`).join("");
+    $("#shareText").textContent = `[${SCHOOL_NAME}] ${ymd2str(ymd)} 급식\n` + meals.map(m=>`\n[${m.type}] ${m.cal}\n- ${m.menu.join("\n- ")}`).join("\n").trim();
+    setNotice("", "", false);
+  }catch(err){ setNotice("err", "조회 중 오류: " + (err.message || err), true); }
+}
+function moveDate(days){
+  const d = ymdToDateObj($("#date").value);
+  d.setDate(d.getDate()+days);
+  $("#date").value = dateToYMD(d);
+  onDay();
+}
+function setTodayAndLoad(){
+  $("#date").value = todayStr();
+  mealMode = "day";
+  $("#mealMonthControls").style.display = "none";
+  $("#meals").style.display = "block";
+  $("#mealMonthTable").style.display = "none";
+  $("#btnMealMonth").textContent = "월별 표";
+  onDay();
+}
+async function mealLoadMonth(){
+  try{
+    const ym = $("#mealMonth").value;
+    if(!ym) return setNotice("err","월을 선택해 주세요.",true);
+    const [y,m] = ym.split("-");
+    setNotice("", `${y}년 ${m}월 급식을 불러오는 중…`, true);
+    $("#mealMonthTable").innerHTML = `<div class="notice">불러오는 중…</div>`;
+    const results = [];
+    for(const ymd of monthDates(ym)){
+      try{
+        const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
+        if(meals.length) results.push({ymd, meals});
+      }catch(_){}
+    }
+    if(!results.length){
+      $("#mealMonthTable").innerHTML = `<div class="notice">해당 월에는 급식 정보가 없습니다.</div>`;
+      return;
+    }
+    $("#mealMonthTable").innerHTML = `
+      <div class="mealTableWrap"><table class="mealTable">
+      <thead><tr><th>날짜</th><th>급식 내용</th></tr></thead><tbody>
+      ${results.map(({ymd,meals})=>`
+        <tr><td><b>${ymd2str(ymd)}</b></td><td>
+        ${meals.map(m=>`
+          <div style="margin-bottom:12px"><span class="pill">${escapeHtml(m.type)}${m.cal ? " · "+escapeHtml(m.cal) : ""}</span>
+          <ul class="mealMenus">${m.menu.map(renderMenuItem).join("")}</ul></div>`).join("")}
+        </td></tr>`).join("")}
+      </tbody></table></div>`;
+    setNotice("", "", false);
+  }catch(err){ setNotice("err", "월별 급식 오류: " + (err.message || err), true); }
+}
+async function copyTextReliable(text){
+  try{ if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(text); return true; } }catch(_){}
+  const ta = $("#copyHelper"); ta.value = text; ta.focus(); ta.select();
+  const ok = document.execCommand("copy"); ta.blur(); return ok;
+}
+$("#btnCopy").addEventListener("click", async ()=>{
+  const txt = $("#shareText").textContent || "";
+  if(!txt.trim()) return alert("복사할 급식 내용이 없습니다.");
+  alert(await copyTextReliable(txt) ? "급식 내용이 복사되었습니다." : "복사에 실패했습니다.");
+});
+
+function setSchNotice(kind,text){
+  const box = $("#schNotice");
+  box.className = "notice" + (kind ? ` ${kind}` : "");
+  box.textContent = text;
+}
+async function fetchScheduleMonthProxy(yyyymm){
+  const res = await fetch(SCHEDULE_PROXY_BASE + encodeURIComponent(yyyymm));
+  if(!res.ok) throw new Error("학사일정 프록시 오류 HTTP " + res.status);
+  const data = await res.json();
+  if(!data.ok) throw new Error(data.error || "학사일정 응답 오류");
+  return data.byDate || {};
+}
+function renderScheduleCalendar(yyyymm, byDate){
+  const y = Number(yyyymm.slice(0,4)), m = Number(yyyymm.slice(4,6));
+  const first = new Date(y,m-1,1), last = new Date(y,m,0);
+  const cells = [];
+  for(let i=0;i<first.getDay();i++) cells.push(null);
+  for(let d=1; d<=last.getDate(); d++){
+    const iso = `${y}-${pad2(m)}-${pad2(d)}`;
+    cells.push({d, iso, items:byDate[iso] || []});
+  }
+  while(cells.length % 7 !== 0) cells.push(null);
+  const dow = ["일","월","화","수","목","금","토"];
+  $("#schList").innerHTML = `
+    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px">
+      ${dow.map(d=>`<div class="pill" style="justify-content:center">${d}</div>`).join("")}
+      ${cells.map(cell=> cell ? `
+        <div class="contentBox" style="min-height:112px;margin-top:0;padding:11px">
+          <b style="color:var(--text)">${cell.d}</b>
+          ${cell.items.length ? `<ul style="padding-left:16px;margin:8px 0 0;line-height:1.55">${cell.items.map(it=>`<li>${escapeHtml(it.title || it)}</li>`).join("")}</ul>` : `<div class="muted" style="font-size:12px;margin-top:8px">일정 없음</div>`}
+        </div>` : `<div></div>`).join("")}
+    </div>`;
+}
+async function scheduleLoadMonth(){
+  try{
+    if(!$("#schMonth").value){
+      const d = new Date();
+      $("#schMonth").value = `${d.getFullYear()}-${pad2(d.getMonth()+1)}`;
+    }
+    const yyyymm = ymInputToYYYYMM($("#schMonth").value);
+    setSchNotice("", "학사일정을 불러오는 중…");
+    const byDate = await fetchScheduleMonthProxy(yyyymm);
+    renderScheduleCalendar(yyyymm, byDate);
+    setSchNotice("ok", "학사일정 조회 완료");
+    homeRenderTodaySchedule(byDate);
+  }catch(err){
+    setSchNotice("err", "학사일정 오류: " + (err.message || err));
+    $("#schList").innerHTML = "";
+  }
+}
+function scheduleLoadToday(){
+  const ym = todayYYYYMM();
+  $("#schMonth").value = `${ym.slice(0,4)}-${ym.slice(4,6)}`;
+  scheduleLoadMonth();
+}
+function homeRenderTodaySchedule(byDate){
+  const iso = todayStr();
+  const items = byDate[iso] || [];
+  $("#homeSchDate").textContent = iso;
+  $("#homeSchBody").innerHTML = items.length
+    ? `<ul style="padding-left:18px;margin:0;line-height:1.8">${items.map(it=>`<li>${escapeHtml(it.title || it)}</li>`).join("")}</ul>`
+    : `<div class="muted">오늘 학사일정이 없습니다.</div>`;
+}
+
+const TT_KEY = "opoong_tt_v3";
+const TT_DAYS = ["월","화","수","목","금","토","일"];
+function ttLoad(){ try{return JSON.parse(localStorage.getItem(TT_KEY)) || {periods:8,data:{}}}catch{return {periods:8,data:{}}} }
+function ttSave(obj){ localStorage.setItem(TT_KEY, JSON.stringify(obj)); }
+function ttReset(){
+  if(!confirm("저장된 시간표를 초기화할까요?")) return;
+  ttSave({periods:Number($("#ttPeriods").value||8),data:{}});
+  ttRenderTable();
+}
+function ttRenderTable(){
+  const store = ttLoad();
+  store.periods = Number($("#ttPeriods").value || store.periods || 8);
+  $("#ttPeriods").value = store.periods;
+  ttSave(store);
+  let html = `<table class="ttTable"><tr><th>교시</th>${TT_DAYS.map(d=>`<th>${d}</th>`).join("")}</tr>`;
+  for(let p=1; p<=store.periods; p++){
+    html += `<tr><th>${p}교시</th>`;
+    TT_DAYS.forEach((d,di)=>{
+      const key = `${p}_${di}`;
+      html += `<td><input data-key="${key}" value="${escapeHtml(store.data[key]||"")}" placeholder="과목/활동"></td>`;
+    });
+    html += `</tr>`;
+  }
+  html += `</table>`;
+  $("#ttTableWrap").innerHTML = html;
+  $$("#ttTableWrap input").forEach(inp=>inp.addEventListener("input",()=>{
+    const s = ttLoad();
+    s.periods = Number($("#ttPeriods").value || 8);
+    s.data[inp.dataset.key] = inp.value;
+    ttSave(s);
+    homeRenderTodayTimetable();
+  }));
+  homeRenderTodayTimetable();
+}
+function homeRenderTodayTimetable(){
+  const store = ttLoad();
+  const map = [6,0,1,2,3,4,5];
+  const dayIdx = map[new Date().getDay()];
+  $("#homeTTDay").textContent = TT_DAYS[dayIdx];
+  const items = [];
+  for(let p=1; p<=store.periods; p++){
+    const v = store.data[`${p}_${dayIdx}`];
+    if(v && v.trim()) items.push(`${p}교시: ${v}`);
+  }
+  $("#homeTTBody").innerHTML = items.length
+    ? `<ul style="padding-left:18px;margin:0;line-height:1.8">${items.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}</ul>`
+    : `<div class="muted">오늘 시간표가 없습니다.</div>`;
+}
+
+function openOnway(){ window.open(ONWAY_URL,"_blank","noopener,noreferrer"); }
+function openSchoolHome(){ window.open(SCHOOL_HOME_URL,"_blank","noopener,noreferrer"); }
+
+const NEIS_LIMITS = {autonomy:1500,club:1500,career:1500,subject:1500,personal:1500,volunteer:150,behavior:900};
+let neisActiveKey = "autonomy";
+let neisWired = false;
+function byteCount(str){
+  let count = 0;
+  for(const ch of str){
+    if(ch === "\n") count += 2;
+    else count += encodeURIComponent(ch).replace(/%[A-F\d]{2}/g,"U").length;
+  }
+  return count;
+}
+function neisSetTab(key){
+  neisActiveKey = key;
+  localStorage.setItem("opoong_neis_tab",key);
+  $$(".tabBtn").forEach(b=>b.setAttribute("aria-selected",b.dataset.k===key?"true":"false"));
+  neisCounter($("#neisText").value || "");
+}
+function neisInit(){
+  const savedTab = localStorage.getItem("opoong_neis_tab");
+  if(savedTab && NEIS_LIMITS[savedTab]) neisActiveKey = savedTab;
+  $$(".tabBtn").forEach(b=>b.setAttribute("aria-selected",b.dataset.k===neisActiveKey?"true":"false"));
+  const ta = $("#neisText");
+  ta.value = localStorage.getItem("opoong_neis_text") || ta.value || "";
+  if(!neisWired){
+    $$(".tabBtn").forEach(b=>b.addEventListener("click",()=>neisSetTab(b.dataset.k)));
+    ta.addEventListener("input",e=>{
+      localStorage.setItem("opoong_neis_text",e.target.value);
+      neisCounter(e.target.value);
+    });
+    $("#neisClearBtn").addEventListener("click",()=>{
+      ta.value = "";
+      localStorage.removeItem("opoong_neis_text");
+      neisCounter("");
+    });
+    neisWired = true;
+  }
+  neisCounter(ta.value);
+}
+function neisCounter(text){
+  const limit = NEIS_LIMITS[neisActiveKey] || 1500;
+  const used = byteCount(text);
+  const left = Math.max(0, limit - used);
+  const pct = Math.min(100, Math.round(used / limit * 100));
+  $("#neisUsed").textContent = used;
+  $("#neisLeft").textContent = left;
+  $("#neisLimit").textContent = limit;
+  const fill = $("#neisBarFill");
+  fill.style.width = pct + "%";
+  fill.classList.toggle("over", used > limit);
+  $("#neisResultLine").textContent = `공백 제외 ${text.replace(/\s/g,"").length}자, 공백 포함 ${text.length}자, ${used}바이트`;
+}
 
 let deferredPrompt = null;
 function isIos(){ return /iphone|ipad|ipod/i.test(navigator.userAgent); }
-function isStandalone(){
-  return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true;
-}
+function isStandalone(){ return window.matchMedia("(display-mode: standalone)").matches || window.navigator.standalone === true; }
 function openModal(){
-  $("#modalBack").style.display = "flex";
-  renderInstallSteps();
-}
-function closeModal(){
-  $("#modalBack").style.display = "none";
-}
-function renderInstallSteps(){
-  const ul = $("#installSteps");
-  ul.innerHTML = "";
-  const steps = [];
-
-  if (isStandalone()){
-    steps.push({ t: "이미 설치되어 있습니다.", d: "홈 화면의 ‘O.Poong’ 아이콘으로 바로 실행할 수 있습니다." });
-  } else if (isIos()){
-    steps.push({ t: "iPhone / iPad (Safari)", d: "Safari에서 본 페이지를 연 뒤, 하단 공유 버튼(⬆️)을 선택하세요." });
-    steps.push({ t: "홈 화면에 추가", d: "메뉴에서 “홈 화면에 추가”를 선택하면 설치가 완료됩니다." });
-  } else {
-    steps.push({ t: "Android (Chrome/Edge)", d: "주소창 또는 메뉴(⋮)에 “앱 설치/설치”가 표시될 수 있습니다." });
-    steps.push({ t: "설치 진행", d: "“설치”를 선택하면 홈 화면에 아이콘이 추가됩니다." });
-  }
-
-  steps.forEach(s=>{
-    const li = document.createElement("li");
-    li.innerHTML = `<b>${escapeHtml(s.t)}</b><div style="margin-top:6px;">${escapeHtml(s.d)}</div>`;
-    ul.appendChild(li);
-  });
-
+  const guide = isStandalone()
+    ? "이미 설치되어 있습니다. 홈 화면의 O.Poong 아이콘으로 실행할 수 있습니다."
+    : isIos()
+      ? "iPhone/iPad는 Safari 공유 버튼에서 ‘홈 화면에 추가’를 선택하면 설치할 수 있습니다."
+      : "Android Chrome/Edge는 주소창 또는 메뉴의 ‘앱 설치’를 선택하면 설치할 수 있습니다.";
+  $("#installGuideText").textContent = guide;
   $("#btnInstallNow").style.display = deferredPrompt ? "inline-flex" : "none";
+  $("#modalBack").style.display = "flex";
 }
-$("#btnGuide").addEventListener("click", openModal);
-$("#modalBack").addEventListener("click", (e)=>{
-  if(e.target === $("#modalBack")) closeModal();
-});
-window.addEventListener("beforeinstallprompt", (e)=>{
-  e.preventDefault();
-  deferredPrompt = e;
-  renderInstallSteps();
-});
+function closeModal(){ $("#modalBack").style.display = "none"; }
+window.addEventListener("beforeinstallprompt", e=>{ e.preventDefault(); deferredPrompt = e; });
 $("#btnInstallTop").addEventListener("click", async ()=>{
-  if (isStandalone()){
-    openModal();
-    return;
-  }
-  if (deferredPrompt){
+  if(deferredPrompt){
     deferredPrompt.prompt();
     await deferredPrompt.userChoice.catch(()=>{});
     deferredPrompt = null;
-    openModal();
-    return;
   }
   openModal();
 });
@@ -963,751 +1541,223 @@ $("#btnInstallNow").addEventListener("click", async ()=>{
   await deferredPrompt.userChoice.catch(()=>{});
   deferredPrompt = null;
   $("#btnInstallNow").style.display = "none";
-  renderInstallSteps();
 });
 
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./service-worker.js");
-  });
-}
 
-async function neis(endpoint, params) {
-  const base = `https://open.neis.go.kr/hub/${endpoint}`;
-  const q = new URLSearchParams({ KEY: API_KEY, Type: "json", pIndex: "1", pSize: "200", ...params });
-  const url = `${base}?${q.toString()}`;
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
-}
-
-/* ===== 급식 ===== */
-function setNotice(kind, text, show=true){
-  const box = $("#notice");
-  box.className = "notice" + (kind ? ` ${kind}` : "");
-  box.textContent = text;
-  box.style.display = show ? "block" : "none";
-}
-
-async function fetchMealsDay(sdCode, ymd) {
-  const data = await neis("mealServiceDietInfo", {
-    ATPT_OFCDC_SC_CODE: ATPT,
-    SD_SCHUL_CODE: sdCode,
-    MLSV_YMD: ymd
-  });
-  const rows = data?.mealServiceDietInfo?.[1]?.row || [];
-  rows.sort((a,b)=>String(a.MMEAL_SC_CODE||"").localeCompare(String(b.MMEAL_SC_CODE||"")));
-  return rows.map(r => {
-    const fullMenu = String(r.DDISH_NM||"")
-      .replace(/<br\s*\/?>/gi,"\n")
-      .split("\n").map(s=>s.trim()).filter(Boolean);
-    return { type: r.MMEAL_SC_NM || "", cal: r.CAL_INFO || "", menu: fullMenu };
-  });
-}
-
-async function initMeals(){
-  $("#date").value = todayStr();
-  const now = new Date();
-  $("#mealMonth").value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}`;
-  setNotice("ok", `${SCHOOL_NAME} 급식 조회가 준비되었습니다. 날짜를 선택해 확인해 주세요.`, true);
-}
-
-/* ✅ 급식 모드 토글 (일별 ↔ 월별표) */
-let mealMode = "day"; // "day" | "month"
-function toggleMealMode(){
-  mealMode = (mealMode === "day") ? "month" : "day";
-
-  const isMonth = (mealMode === "month");
-  $("#mealMonthControls").style.display = isMonth ? "flex" : "none";
-  $("#meals").style.display = isMonth ? "none" : "block";
-  $("#mealMonthTable").style.display = isMonth ? "block" : "none";
-
-  $("#btnMealMonth").textContent = isMonth ? "일별(카드)" : "월별(표)";
-
-  if(isMonth) mealLoadMonth();
-}
-
-/* ✅ 월 전체 날짜 배열 */
-function getMonthDates(yyyy_mm){
-  const [y,m] = yyyy_mm.split("-").map(Number);
-  const last = new Date(y, m, 0).getDate();
-  const dates = [];
-  for(let d=1; d<=last; d++){
-    dates.push(`${y}${pad2(m)}${pad2(d)}`);
-  }
-  return dates;
-}
-
-/* ✅ 월별 급식 조회(표) */
-async function mealLoadMonth(){
+function getHomeWidgetConfig(){
   try{
-    const ym = $("#mealMonth").value;
-    if(!ym){
-      setNotice("err", "월을 선택해 주세요.", true);
-      return;
-    }
-
-    const { label } = monthBounds(ym);
-    setNotice("", `${label} 급식(표) 불러오는 중…`, true);
-    $("#mealMonthTable").innerHTML = `<div class="notice">불러오는 중…</div>`;
-
-    const ymds = getMonthDates(ym);
-
-    const results = [];
-    for(const ymd of ymds){
-      try{
-        const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
-        if(meals && meals.length){
-          results.push({ ymd, meals });
-        }
-      }catch(_){}
-    }
-
-    if(!results.length){
-      $("#mealMonthTable").innerHTML = `<div class="notice">해당 월에는 급식 정보가 없습니다.</div>`;
-      setNotice("", "", false);
-      return;
-    }
-
-    const tableHtml = `
-      <div style="font-weight:1000;font-size:18px;letter-spacing:-.3px;margin:8px 0 10px;">
-        ${label} 급식 (표)
-      </div>
-
-      <div class="mealTableWrap">
-        <table class="mealTable" aria-label="월별 급식 표">
-          <thead>
-            <tr>
-              <th style="width:140px;">날짜</th>
-              <th>급식 내용</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${results.map(({ymd, meals})=>{
-              const iso = `${ymd.slice(0,4)}-${ymd.slice(4,6)}-${ymd.slice(6,8)}`;
-              const dateText = ymd2str(ymd);
-
-              const mealBlocks = meals.map(m=>{
-                const list = (m.menu||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("");
-                return `
-                  <div style="margin-bottom:14px;">
-                    <div class="mealTypeBadge">
-                      ${escapeHtml(m.type)}${m.cal ? ` · ${escapeHtml(m.cal)}` : ""}
-                    </div>
-                    <ul class="mealMenus">${list || "<li>메뉴 없음</li>"}</ul>
-                  </div>
-                `;
-              }).join("");
-
-              return `
-                <tr>
-                  <td class="mealDateCell">
-                    <div>${escapeHtml(dateText)}</div>
-                    <div class="muted" style="font-size:12.5px;margin-top:6px;">${escapeHtml(iso)}</div>
-                  </td>
-                  <td>${mealBlocks}</td>
-                </tr>
-              `;
-            }).join("")}
-          </tbody>
-        </table>
-      </div>
-    `;
-
-    $("#mealMonthTable").innerHTML = tableHtml;
-    setNotice("", "", false);
-
-  }catch(err){
-    setNotice("err", "월별 급식 오류: " + (err.message||err), true);
-  }
-}
-
-async function onDay(){
-  try{
-    const selectedDate = $("#date").value;
-    const ymd = toYMDNoDash(selectedDate);
-
-    setNotice("", "급식 정보를 불러오는 중입니다…", true);
-    $("#meals").innerHTML = `<div class="notice">급식 정보를 불러오는 중입니다…</div>`;
-    $("#mealMonthTable").innerHTML = "";
-
-    const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
-
-    if(!meals.length){
-      $("#meals").innerHTML = `<div class="notice">선택하신 날짜에는 급식 정보가 없습니다. (휴일/방학/미제공일 수 있습니다)</div>`;
-      $("#shareText").textContent = "";
-      setNotice("", "선택하신 날짜에는 급식 정보가 없습니다. (휴일/방학/미제공일 수 있습니다)", true);
-      return;
-    }
-
-    const html = meals.map(m=>{
-      const items = (m.menu||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("");
-      return `
-        <div class="notice" style="margin-top:12px;">
-          <b style="color:var(--text);">${escapeHtml(m.type)}</b>
-          ${m.cal ? `<span style="margin-left:8px;color:var(--muted);font-weight:900;">${escapeHtml(m.cal)}</span>` : ""}
-          <ul style="margin:10px 0 0;padding:0;list-style:none;line-height:1.85;">
-            ${items}
-          </ul>
-        </div>
-      `;
-    }).join("");
-
-    $("#meals").innerHTML = `<div style="font-weight:1000;font-size:18px;letter-spacing:-.3px;">${ymd2str(ymd)} 급식</div>` + html;
-
-    let txt = `[${SCHOOL_NAME}] ${ymd2str(ymd)} 급식\n`;
-    meals.forEach(m=>{
-      txt += `\n[${m.type}] ${m.cal||""}\n- ${(m.menu||[]).join("\n- ")}\n`;
-    });
-    $("#shareText").textContent = txt.trim();
-
-    setNotice("", "", false);
-
-  }catch(err){
-    setNotice("err", "조회 중 오류: " + (err.message||err), true);
-  }
-}
-
-function moveDate(days){
-  const currentDate = $("#date").value;
-  const dateObj = ymdToDateObj(currentDate);
-  dateObj.setDate(dateObj.getDate() + days);
-  $("#date").value = dateToYMD(dateObj);
-
-  if(mealMode === "month") {
-    const d = ymdToDateObj($("#date").value);
-    $("#mealMonth").value = `${d.getFullYear()}-${pad2(d.getMonth()+1)}`;
-    mealLoadMonth();
-  } else {
-    onDay();
-  }
-}
-function setTodayAndLoad(){
-  $("#date").value = todayStr();
-
-  mealMode = "day";
-  $("#mealMonthControls").style.display = "none";
-  $("#meals").style.display = "block";
-  $("#mealMonthTable").style.display = "none";
-  $("#btnMealMonth").textContent = "월별(표)";
-
-  onDay();
-}
-
-async function copyTextReliable(text){
-  try {
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(text);
-      return true;
-    }
-  } catch (_) {}
-  try {
-    const ta = $("#copyHelper");
-    ta.value = text;
-    ta.focus();
-    ta.select();
-    ta.setSelectionRange(0, ta.value.length);
-    const ok = document.execCommand("copy");
-    ta.blur();
-    return ok;
-  } catch (_) {
-    return false;
-  }
-}
-$("#btnCopy").addEventListener("click", async ()=>{
-  if(mealMode === "month"){
-    alert("월별(표) 모드에서는 일별 복사 기능만 지원합니다. 일별(카드)로 전환 후 복사해 주세요.");
-    return;
-  }
-  const txt = $("#shareText").textContent || "";
-  if(!txt.trim()){ alert("복사할 급식 내용이 없습니다. 먼저 급식을 조회해 주세요."); return; }
-  const ok = await copyTextReliable(txt);
-  alert(ok ? "급식 내용이 복사되었습니다." : "복사에 실패했습니다. 다시 시도해 주세요.");
-});
-
-/* ==========================
-   ✅ 학사일정 (Worker 프록시 + 달력 UI)
-   ========================== */
-function setSchNotice(kind, text){
-  const box = $("#schNotice");
-  box.className = "notice" + (kind ? ` ${kind}` : "");
-  box.textContent = text;
-}
-function ymInputToYYYYMM(v){
-  if(!v) return "";
-  const [y,m] = v.split("-");
-  return `${y}${m}`;
-}
-function todayYYYYMM(){
-  const d = new Date();
-  return `${d.getFullYear()}${pad2(d.getMonth()+1)}`;
-}
-async function fetchScheduleMonthProxy(yyyymm){
-  const res = await fetch(SCHEDULE_PROXY_BASE + encodeURIComponent(yyyymm));
-  if(!res.ok) throw new Error("학사일정 프록시 오류 HTTP " + res.status);
-  const data = await res.json();
-  if(!data.ok) throw new Error(data.error || "학사일정 프록시 응답 오류");
-  return data.byDate || {};
-}
-function homeRenderTodayScheduleProxy(byDate){
-  const pill = $("#homeSchDate");
-  const body = $("#homeSchBody");
-  if(!pill || !body) return;
-
-  const todayIso = todayStr();
-  const todayYmd = toYMDNoDash(todayIso);
-
-  pill.textContent = ymd2str(todayYmd);
-
-  const items = byDate[todayIso] || [];
-  if(!items.length){
-    body.innerHTML = `<div class="muted">오늘 학사일정이 없습니다.</div>`;
-    return;
-  }
-
-  body.innerHTML = `
-    <ul style="padding-left:18px;line-height:1.8;margin:0;">
-      ${items.map(it=>`<li><b>${escapeHtml(it.title)}</b></li>`).join("")}
-    </ul>
-  `;
-}
-function renderScheduleCalendar(yyyymm, byDate){
-  const wrap = $("#schList");
-
-  const y = Number(yyyymm.slice(0,4));
-  const m = Number(yyyymm.slice(4,6));
-  const first = new Date(y, m-1, 1);
-  const last = new Date(y, m, 0);
-
-  const startDow = first.getDay();
-  const daysInMonth = last.getDate();
-
-  const cells = [];
-  for(let i=0;i<startDow;i++) cells.push(null);
-  for(let d=1; d<=daysInMonth; d++){
-    const iso = `${y}-${pad2(m)}-${pad2(d)}`;
-    cells.push({ d, iso, items: byDate[iso] || [] });
-  }
-  while(cells.length % 7 !== 0) cells.push(null);
-
-  const dow = ["일","월","화","수","목","금","토"];
-  const label = `${y}년 ${pad2(m)}월`;
-
-  wrap.innerHTML = `
-    <div style="font-weight:1000;font-size:18px;letter-spacing:-.3px;margin-bottom:10px;">
-      ${label} 학사일정
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:10px;">
-      ${dow.map((d,i)=>`
-        <div style="
-          font-weight:1000;
-          text-align:center;
-          padding:10px 0;
-          border-radius:16px;
-          border:1px solid color-mix(in srgb, var(--pri) 14%, var(--line));
-          background: color-mix(in srgb, var(--pri) 6%, var(--card));
-          color:${i===0 ? "color-mix(in srgb, var(--warn) 75%, var(--text))" : "var(--text)"};
-        ">${d}</div>
-      `).join("")}
-
-      ${cells.map(cell=>{
-        if(!cell) return `<div style="min-height:120px;border-radius:18px;"></div>`;
-
-        const isToday = (cell.iso === todayStr());
-        const itemsHtml = cell.items.length
-          ? `<ul style="margin:8px 0 0;padding-left:16px;line-height:1.55;">
-              ${cell.items.map(it=>`<li style="margin:4px 0;"><b>${escapeHtml(it.title)}</b></li>`).join("")}
-            </ul>`
-          : `<div class="muted" style="margin-top:8px;font-size:12.5px;">일정 없음</div>`;
-
-        return `
-          <div style="
-            min-height:120px;
-            border-radius:18px;
-            border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));
-            background:${isToday
-              ? "color-mix(in srgb, var(--pri) 12%, var(--card))"
-              : "color-mix(in srgb, var(--card) 92%, transparent)"
-            };
-            box-shadow: 0 10px 22px rgba(2,6,23,.06);
-            padding:12px 12px;
-            overflow:hidden;
-          ">
-            <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;">
-              <b style="font-size:14.5px;">${cell.d}</b>
-              ${isToday ? `<span class="pill" style="padding:6px 10px;">오늘</span>` : ``}
-            </div>
-            ${itemsHtml}
-          </div>
-        `;
-      }).join("")}
-    </div>
-  `;
-}
-async function scheduleLoadMonth(){
-  try{
-    const inp = $("#schMonth");
-    if(!inp.value){
-      const now = new Date();
-      inp.value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}`;
-    }
-    const yyyymm = ymInputToYYYYMM(inp.value);
-    const label = `${inp.value.split("-")[0]}년 ${inp.value.split("-")[1]}월`;
-
-    setSchNotice("", `${label} 학사일정 불러오는 중…`);
-    const byDate = await fetchScheduleMonthProxy(yyyymm);
-
-    setSchNotice("ok", `${label} 학사일정 (${Object.keys(byDate).length}일에 일정 존재)`);
-    renderScheduleCalendar(yyyymm, byDate);
-
-    homeRenderTodayScheduleProxy(byDate);
-  }catch(err){
-    setSchNotice("err", "학사일정 오류: " + (err.message||err));
-    $("#schList").innerHTML = "";
-  }
-}
-async function scheduleLoadToday(){
-  try{
-    const yyyymm = todayYYYYMM();
-    const label = `${yyyymm.slice(0,4)}년 ${yyyymm.slice(4,6)}월`;
-
-    setSchNotice("", `${label} 불러오는 중…`);
-    const byDate = await fetchScheduleMonthProxy(yyyymm);
-
-    $("#schMonth").value = `${yyyymm.slice(0,4)}-${yyyymm.slice(4,6)}`;
-    setSchNotice("ok", `오늘 학사일정`);
-    renderScheduleCalendar(yyyymm, byDate);
-    homeRenderTodayScheduleProxy(byDate);
-  }catch(err){
-    setSchNotice("err", "학사일정 오류: " + (err.message||err));
-  }
-}
-async function initSchedule(){
-  const now = new Date();
-  $("#schMonth").value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}`;
-  setSchNotice("ok", "학사일정 조회가 준비되었습니다.");
-}
-
-/* ===== 시간표 ===== */
-const TT_KEY = "tt_table_v2";
-const TT_DAYS = ["월","화","수","목","금","토","일"];
-function ttLoad(){
-  try{
-    return JSON.parse(localStorage.getItem(TT_KEY)) || { periods: 8, data: {} };
+    const saved = JSON.parse(localStorage.getItem("opoong_home_widgets") || "{}");
+    return {...HOME_WIDGET_CONFIG, ...saved};
   }catch{
-    return { periods: 8, data: {} };
+    return {...HOME_WIDGET_CONFIG};
   }
 }
-function ttSave(obj){ localStorage.setItem(TT_KEY, JSON.stringify(obj)); }
-function ttReset(){
-  const p = Number($("#ttPeriods").value || 8);
-  ttSave({ periods: p, data: {} });
-  ttRenderTable();
+function saveHomeWidgetConfig(cfg){
+  localStorage.setItem("opoong_home_widgets", JSON.stringify(cfg));
 }
-function ttRenderTable(){
-  const wrap = $("#ttTableWrap");
-  const periodsInput = $("#ttPeriods");
-
-  let store = ttLoad();
-  if (!periodsInput.dataset.synced) {
-    periodsInput.value = String(store.periods || 8);
-    periodsInput.dataset.synced = "1";
-  }
-
-  store.periods = Number(periodsInput.value || store.periods || 8);
-  ttSave(store);
-
-  let html = `
-    <table style="border-collapse:separate;border-spacing:10px;width:100%;">
-      <tr>
-        <th style="text-align:left;padding:6px 8px;">교시</th>
-        ${TT_DAYS.map(d=>`<th style="text-align:left;padding:6px 8px;">${d}</th>`).join("")}
-      </tr>
-  `;
-
-  for(let p=1;p<=store.periods;p++){
-    html += `<tr><th style="text-align:left;padding:6px 8px;white-space:nowrap;">${p}교시</th>`;
-    TT_DAYS.forEach((d,di)=>{
-      const key = `${p}_${di}`;
-      const val = store.data[key] || "";
-      html += `
-        <td style="min-width:150px;">
-          <input
-            data-key="${key}"
-            value="${escapeHtml(val)}"
-            placeholder="과목/교실"
-            style="width:100%;padding:12px 12px;border-radius:14px;border:1px solid color-mix(in srgb, var(--pri) 16%, var(--line));background:color-mix(in srgb, var(--card) 92%, transparent);color:var(--text);font-size:14.5px;font-weight:900;"
-          />
-        </td>`;
-    });
-    html += `</tr>`;
-  }
-  html += `</table>`;
-  wrap.innerHTML = html;
-
-  wrap.querySelectorAll("input").forEach(inp=>{
-    inp.addEventListener("input", ()=>{
-      const s = ttLoad();
-      s.data[inp.dataset.key] = inp.value;
-      ttSave(s);
-      homeRenderTodayTimetable();
+function applyHomeWidgetConfig(){
+  const cfg = getHomeWidgetConfig();
+  $$("[data-home-widget]").forEach(el=>{
+    const key = el.dataset.homeWidget;
+    el.classList.toggle("homeWidgetHidden", cfg[key] === false);
+  });
+  $$("[data-widget-toggle]").forEach(input=>{
+    input.checked = cfg[input.dataset.widgetToggle] !== false;
+  });
+}
+function toggleWidgetSelector(){
+  const box = $("#widgetSelector");
+  if(!box) return;
+  box.style.display = box.style.display === "none" ? "block" : "none";
+  applyHomeWidgetConfig();
+}
+function initWidgetSelector(){
+  $$("[data-widget-toggle]").forEach(input=>{
+    input.addEventListener("change", ()=>{
+      const cfg = getHomeWidgetConfig();
+      cfg[input.dataset.widgetToggle] = input.checked;
+      saveHomeWidgetConfig(cfg);
+      applyHomeWidgetConfig();
     });
   });
-
-  homeRenderTodayTimetable();
+  applyHomeWidgetConfig();
 }
 
-function homeRenderTodayTimetable(){
-  const body = $("#homeTTBody");
-  const pill = $("#homeTTDay");
-  if(!body || !pill) return;
 
-  const store = ttLoad();
-  const today = new Date().getDay();
-  const map = [6,0,1,2,3,4,5];
-  const dayIdx = map[today];
-  const dayName = TT_DAYS[dayIdx];
+/* ===== O.Poong added: first start gate logic ===== */
+function showMainApp(){
+  document.body.classList.remove("setup-pending");
+}
+function showFirstStartOnly(){
+  document.body.classList.add("setup-pending");
+}
+function startFirstSetup(){
+  renderSetupAllergyGrid();
 
-  pill.textContent = dayName;
+  const cfg = getHomeWidgetConfig();
+  $$("[data-setup-widget]").forEach(input=>{
+    input.checked = cfg[input.dataset.setupWidget] !== false;
+  });
 
-  let items = [];
-  for(let p=1;p<=store.periods;p++){
-    const v = store.data[`${p}_${dayIdx}`];
-    if(v && String(v).trim()) items.push(`${p}교시: ${v}`);
+  const nameInput = $("#setupNameInput");
+  if(nameInput) nameInput.value = localStorage.getItem(USER_NAME_KEY) || "";
+
+  const privacy = $("#privacyAgreeCheck");
+  if(privacy) privacy.checked = false;
+
+  setupStepIndex = 0;
+  renderSetupStep();
+
+  const back = $("#firstSetupBack");
+  if(back) back.style.display = "flex";
+}
+function openFirstSetupIfNeeded(){
+  if(localStorage.getItem(FIRST_SETUP_KEY) === "1"){
+    showMainApp();
+    return;
+  }
+  showFirstStartOnly();
+}
+function renderSetupStep(){
+  const steps = [
+    $("#setupStepPrivacy"),
+    $("#setupStepName"),
+    $("#setupStepAllergy"),
+    $("#setupStepWidget")
+  ];
+
+  steps.forEach((el, idx)=>{
+    if(el) el.classList.toggle("active", setupStepIndex === idx);
+  });
+
+  $("#setupPrevBtn").style.display = setupStepIndex === 0 ? "none" : "inline-flex";
+  $("#setupNextBtn").style.display = setupStepIndex < 3 ? "inline-flex" : "none";
+  $("#setupDoneBtn").style.display = setupStepIndex === 3 ? "inline-flex" : "none";
+}
+function setupNext(){
+  if(setupStepIndex === 0){
+    const agree = $("#privacyAgreeCheck");
+    if(!agree || !agree.checked){
+      alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있습니다.");
+      showFirstStartOnly();
+      const back = $("#firstSetupBack");
+      if(back) back.style.display = "none";
+      return;
+    }
   }
 
-  if(items.length === 0){
-    body.innerHTML = `<div class="muted">오늘 시간표가 없습니다.</div>`;
+  if(setupStepIndex === 1){
+    saveSetupName();
+  }
+
+  if(setupStepIndex === 2){
+    saveSetupAllergy();
+  }
+
+  setupStepIndex = Math.min(3, setupStepIndex + 1);
+  renderSetupStep();
+}
+function setupPrev(){
+  setupStepIndex = Math.max(0, setupStepIndex - 1);
+  renderSetupStep();
+}
+function saveSetupName(){
+  const input = $("#setupNameInput");
+  const name = String(input?.value || "").trim();
+  localStorage.setItem(USER_NAME_KEY, name || "사용자");
+}
+function saveSetupAllergy(){
+  const grid = $("#setupAllergyGrid");
+  if(!grid) return;
+  const picked = Array.from(grid.querySelectorAll("input:checked")).map(x=>x.value);
+  saveSelectedAllergies(picked);
+  renderAllergySelector();
+}
+function saveSetupWidgets(){
+  const cfg = getHomeWidgetConfig();
+  $$("[data-setup-widget]").forEach(input=>{
+    cfg[input.dataset.setupWidget] = input.checked;
+  });
+  saveHomeWidgetConfig(cfg);
+  applyHomeWidgetConfig();
+}
+function finishFirstSetup(){
+  const agree = $("#privacyAgreeCheck");
+  if(!agree || !agree.checked){
+    alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있습니다.");
+    showFirstStartOnly();
+    const back = $("#firstSetupBack");
+    if(back) back.style.display = "none";
     return;
   }
 
-  body.innerHTML = `
-    <ul style="padding-left:18px;line-height:1.8;margin:0;">
-      ${items.map(x=>`<li>${escapeHtml(x)}</li>`).join("")}
-    </ul>
-  `;
+  saveSetupName();
+  saveSetupAllergy();
+  saveSetupWidgets();
+
+  localStorage.setItem(FIRST_SETUP_KEY, "1");
+
+  const setupBack = $("#firstSetupBack");
+  if(setupBack) setupBack.style.display = "none";
+
+  showMainApp();
+  renderHomeWidgets();
 }
+function skipFirstSetup(){
+  alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있습니다.");
+  const setupBack = $("#firstSetupBack");
+  if(setupBack) setupBack.style.display = "none";
+  showFirstStartOnly();
+}
+function renderPersonalHeroLine(){
+  const box = $("#personalHeroLine");
+  if(!box) return;
 
-function homeRenderTodayMeal(meals, ymd){
-  const pill = $("#homeMealDate");
-  const body = $("#homeMealBody");
-  if(!pill || !body) return;
-
-  pill.textContent = ymd2str(ymd);
-
-  if(!meals || !meals.length){
-    body.innerHTML = `<div class="muted">오늘 급식 정보가 없습니다.</div>`;
-    return;
-  }
-
-  body.innerHTML = meals.map(m=>{
-    const list = (m.menu||[]).map(x=>`<li>${escapeHtml(x)}</li>`).join("");
-    return `
-      <div style="margin-bottom:10px;">
-        <b>${escapeHtml(m.type)}</b>
-        <ul style="margin:8px 0 0;padding-left:18px;line-height:1.75;">
-          ${list || "<li>메뉴 없음</li>"}
-        </ul>
-      </div>
-    `;
-  }).join("");
+  const rawName = String(localStorage.getItem(USER_NAME_KEY) || "사용자").trim() || "사용자";
+  const name = escapeHtml(rawName);
+  const pick = PERSONAL_MESSAGES[Math.floor(Math.random() * PERSONAL_MESSAGES.length)];
+  box.innerHTML = escapeHtml(pick).replace("{name}", name);
 }
 
 async function renderHomeWidgets(){
+  applyHomeWidgetConfig();
+  renderPersonalHeroLine();
+  $("#todayLabel").textContent = ymd2str(toYMDNoDash(todayStr()));
   try{
     const ymd = toYMDNoDash(todayStr());
-    $("#homeMealDate").textContent = "오늘";
+    $("#homeMealDate").textContent = ymd2str(ymd);
     $("#homeMealBody").innerHTML = `<div class="muted">불러오는 중…</div>`;
     const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
-    homeRenderTodayMeal(meals, ymd);
-  }catch{
-    $("#homeMealBody").innerHTML = `<div class="muted">급식 불러오기 실패</div>`;
-  }
+    $("#homeMealBody").innerHTML = meals.length
+      ? meals.map(m=>`<div style="margin-bottom:10px"><b>${escapeHtml(m.type)}</b><ul style="padding-left:18px;margin:6px 0 0">${m.menu.slice(0,4).map(renderMenuItem).join("")}</ul></div>`).join("")
+      : `<div class="muted">오늘 급식 정보가 없습니다.</div>`;
+  }catch{ $("#homeMealBody").innerHTML = `<div class="muted">급식 정보를 불러오지 못했습니다.</div>`; }
 
   try{
-    $("#homeSchDate").textContent = "오늘";
+    $("#homeSchDate").textContent = todayStr();
     $("#homeSchBody").innerHTML = `<div class="muted">불러오는 중…</div>`;
-
     const byDate = await fetchScheduleMonthProxy(todayYYYYMM());
-    homeRenderTodayScheduleProxy(byDate);
-  }catch{
-    $("#homeSchBody").innerHTML = `<div class="muted">학사일정 불러오기 실패</div>`;
-  }
+    homeRenderTodaySchedule(byDate);
+  }catch{ $("#homeSchBody").innerHTML = `<div class="muted">학사일정을 불러오지 못했습니다.</div>`; }
 
   homeRenderTodayTimetable();
 }
 
-function openOnway(){
-  window.open("https://ps.onwayedu.co.kr/login/login.php", "_blank", "noopener,noreferrer");
-}
-
-/* ✅ NEIS 글자수 (2026 기준 반영)
-   - 진로: 1500 byte
-   - 봉사(50자): 150 byte
-   - 행특(300자): 900 byte
-*/
-const NEIS_LIMITS = {
-  autonomy:1500,
-  club:1500,
-  career:1500,     // ✅ 변경
-  subject:1500,
-  personal:1500,
-  volunteer:150,   // ✅ 추가
-  behavior:900     // ✅ 추가
-};
-
-let neisActiveKey = "autonomy";
-let neisWired = false;
-
-function neisSetTab(key){
-  neisActiveKey = key;
-  localStorage.setItem("ps_neis_active", key);
-  document.querySelectorAll(".neisTab").forEach(b=>{
-    b.setAttribute("aria-selected", b.dataset.k === key ? "true" : "false");
-  });
-  neisCounter($("#neisText").value || "");
-}
-
-function neisInit(){
-  if(!$("#neisText")) return;
-
-  const savedTab = localStorage.getItem("ps_neis_active");
-  if(savedTab && NEIS_LIMITS[savedTab]) neisActiveKey = savedTab;
-
-  document.querySelectorAll(".neisTab").forEach(b=>{
-    b.setAttribute("aria-selected", b.dataset.k === neisActiveKey ? "true" : "false");
-  });
-
-  const ta = $("#neisText");
-  const savedText = localStorage.getItem("ps_neis_save") || "";
-  if(ta.value !== savedText) ta.value = savedText;
-
-  if(!neisWired){
-    document.querySelectorAll(".neisTab").forEach(b=>{
-      b.addEventListener("click", ()=> neisSetTab(b.dataset.k));
-    });
-
-    ta.addEventListener("input", (e)=> neisCounter(e.target.value));
-
-    $("#neisClearBtn").addEventListener("click", ()=>{
-      ta.value = "";
-      localStorage.setItem("ps_neis_save", "");
-      neisCounter("");
-    });
-
-    neisWired = true;
+window.addEventListener("load",()=>{
+  installRipple();
+  renderNoticeBanner();
+  initWidgetSelector();
+  const savedTheme = localStorage.getItem("opoong_theme");
+  if(savedTheme === "dark" || savedTheme === "light") applyTheme(savedTheme);
+  initMeals();
+  const now = new Date();
+  $("#schMonth").value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}`;
+  go("home");
+  openFirstSetupIfNeeded();
+  if("serviceWorker" in navigator){
+    navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
   }
-
-  neisCounter(ta.value || "");
-}
-
-function neisCounter(content){
-  if (content == "\n" && content.startsWith('\n')) content = content.slice(1);
-  if (content != "\n" && content.endsWith('\n')) content = content.slice(0, -1);
-
-  localStorage.setItem("ps_neis_save", content);
-
-  var math_symbols = /[\+\-\*\/=<>∞∑∏∫√∂∆πθΩαβγδεζηλμνξοπρστυφχψω·]/g;
-  var other_symbols = /[‘’“”]/g;
-
-  var english = content
-    .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "")
-    .replace(/[0-9]/g, "")
-    .replace(math_symbols, "")
-    .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, "")
-    .replace(/\s/g, "")
-    .replace(other_symbols, "");
-
-  var korean = content
-    .replace(/[a-zA-Z]/g, "")
-    .replace(/[0-9]/g, "")
-    .replace(math_symbols, "")
-    .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, "")
-    .replace(/\s/g, "")
-    .replace(other_symbols, "");
-
-  var number = content
-    .replace(/[a-zA-Z]/g, "")
-    .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "")
-    .replace(math_symbols, "")
-    .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, "")
-    .replace(/\s/g, "")
-    .replace(other_symbols, "");
-
-  var onebyte_special = content
-    .replace(/[a-zA-Z]/g, "")
-    .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "")
-    .replace(/[0-9]/g, "")
-    .replace(/[\n\t\r\s]/g, "");
-
-  var threebyte_special = content
-    .replace(/[a-zA-Z]/g, "")
-    .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "")
-    .replace(/[0-9]/g, "")
-    .replace(math_symbols, "")
-    .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, "")
-    .replace(/[\n\t\r\s]/g, "")
-    .replace(other_symbols, "");
-
-  var space = content
-    .replace(/[a-zA-Z]/g, "")
-    .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "")
-    .replace(/[0-9]/g, "")
-    .replace(math_symbols, "")
-    .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, "")
-    .replace(other_symbols, "")
-    .replace(/[^\s]/g, "")
-    .replace(/[\n\r]/g, "");
-
-  var line = content
-    .replace(/[a-zA-Z]/g, "")
-    .replace(/[ㄱ-ㅎ|ㅏ-ㅣ|가-힣]/g, "")
-    .replace(/[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"]/g, "")
-    .replace(/[0-9]/g, "")
-    .replace(math_symbols, "")
-    .replace(/[^\n]/g, "")
-    .replace(other_symbols, "");
-
-  var bytes =
-    english.length +
-    (korean.length * 3) +
-    number.length +
-    onebyte_special.length +
-    (threebyte_special.length * 3) +
-    space.length +
-    (line.length * 2);
-
-  const noSpace = content.replace(/(\r\n\t|\n|\r\t)/gm,"").replace(/ /gi, "").length;
-  const withSpace = content.length;
-
-  const limit = NEIS_LIMITS[neisActiveKey] || 1500;
-  const left = Math.max(0, limit - bytes);
-
-  $("#neisUsed").textContent = String(bytes);
-  $("#neisLeft").textContent = String(left);
-  $("#neisLimit").textContent = String(limit);
-
-  $("#neisResultLine").innerHTML =
-    `공백 제외 <b>${noSpace}</b>자, 공백 포함 <b>${withSpace}</b>자, <b>${bytes}</b>바이트`;
-
-  const pct = Math.max(0, Math.min(100, Math.round((bytes / limit) * 100)));
-  const fill = $("#neisBarFill");
-  fill.style.width = pct + "%";
-  fill.classList.toggle("over", bytes > limit);
-}
-
-window.addEventListener("load", async ()=>{
-  initTheme();
-  initRoute();
-
-  await initMeals();
-  await initSchedule();
-
-  renderHomeWidgets();
-  homeRenderTodayTimetable();
 });
 </script>
-
 </body>
 </html>
