@@ -896,7 +896,7 @@ body.setup-pending .firstStartBack{
 
 /* ===== O.Poong home-only hero layout patch ===== */
 body.home-view .layout{
-  display:none!important;
+  display:grid!important;
 }
 body.home-view .hero{
   grid-template-columns:minmax(0,.95fr) minmax(360px,1.05fr);
@@ -1345,7 +1345,7 @@ SOFTWARE.
    수정하기 쉬운 설정 영역
    ========================= */
 const NOTICE_CONFIG = {
-  enabled: false,
+  enabled: true,
   title: "O.poong이 리뉴얼되었어요! 앞으로도 잘 부탁해요!",
   message: "지금은 테스트를 진행하고 있어요!.",
   buttonText: "도서관 사이트 테스트",
