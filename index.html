@@ -1323,7 +1323,7 @@ SOFTWARE.
 
       <div id="setupStepName" class="setupStep">
         <b style="color:var(--text)">이름을 알려주세요</b>
-        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요??.</div>
+        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요?</div>
         <input id="setupNameInput" class="setupNameInput" type="text" maxlength="12" placeholder="예: 혁준">
         <div class="muted" style="margin-top:10px;font-size:13px">이름은 이 브라우저에만 저장됩니다.</div>
       </div>
@@ -2097,7 +2097,7 @@ function openModal(){
     ? "이미 설치되어 있습니다. 홈 화면의 O.Poong 아이콘으로 실행할 수 있습니다."
     : isIos()
       ? "iPhone/iPad는 Safari에서 공유 버튼을 누른 뒤 ‘홈 화면에 추가’를 선택하면 설치할 수 있습니다."
-      : "설치 버튼이 바로 뜨지 않으면 Chrome/Edge 주소창 오른쪽 또는 메뉴에서 ‘앱 설치’나 ‘홈 화면에 추가’를 선택해 주세요. PWA 설치는 HTTPS, manifest.json, service-worker.js가 정상 연결되어야 표시됩니다.";
+      : "설치 버튼이 바로 뜨지 않으면 Chrome/Edge 주소창 오른쪽 또는 메뉴에서 ‘앱 설치’나 ‘홈 화면에 추가’를 선택해 주세요.";
   $("#installGuideText").textContent = guide;
   $("#btnInstallNow").style.display = deferredPrompt ? "inline-flex" : "none";
   $("#modalBack").style.display = "flex";
