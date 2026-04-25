@@ -1052,7 +1052,7 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
   display:none!important;
 }
 .homeDashboardWidgets{
-  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  grid-template-columns:minmax(0,2fr) minmax(140px,.5fr) minmax(140px,.5fr)!important;
   gap:12px!important;
   max-height:none!important;
   overflow:visible!important;
@@ -1138,6 +1138,84 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
   .homeDashboardWidgets .widget[data-home-widget="meal"]{min-height:240px!important;}
   #firstSetupBack .modalBody{align-items:flex-start!important;}
   .setupProgress{width:42vw;}
+}
+
+
+/* ===== O.Poong patch: favorite food blue keyword editor ===== */
+.favoritePanel{
+  border-color:color-mix(in srgb,var(--pri) 30%,var(--line))!important;
+  background:color-mix(in srgb,var(--pri) 7%,var(--card))!important;
+}
+.favoritePanel .allergyToggle{
+  border-color:color-mix(in srgb,var(--pri) 34%,var(--line))!important;
+  background:color-mix(in srgb,var(--pri) 10%,var(--card))!important;
+  color:var(--pri)!important;
+}
+.favoriteKeywordBox{
+  display:flex;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  min-height:52px;
+  padding:8px;
+  border:1px solid color-mix(in srgb,var(--pri) 34%,var(--line));
+  border-radius:18px;
+  background:color-mix(in srgb,var(--card) 96%,transparent);
+  box-shadow:0 8px 18px color-mix(in srgb,var(--pri) 7%,transparent);
+}
+.favoriteKeywordBox:focus-within{
+  border-color:color-mix(in srgb,var(--pri) 62%,var(--line));
+  box-shadow:0 12px 24px color-mix(in srgb,var(--pri) 12%,transparent);
+}
+.favoriteFoodChips{
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+}
+.favoriteFoodChip{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  padding:8px 10px;
+  border-radius:999px;
+  color:#fff;
+  background:linear-gradient(135deg,var(--pri),var(--pri2));
+  font-size:12.5px;
+  font-weight:1000;
+  box-shadow:0 8px 18px color-mix(in srgb,var(--pri) 18%,transparent);
+}
+.favoriteFoodChip button{
+  border:0;
+  width:20px;
+  height:20px;
+  border-radius:999px;
+  color:#fff;
+  background:rgba(255,255,255,.22);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  font-weight:1000;
+}
+.favoriteKeywordBox .favoriteMealInput{
+  flex:1 1 180px;
+  min-width:150px;
+  border:0!important;
+  box-shadow:none!important;
+  background:transparent!important;
+  min-height:36px!important;
+  padding:6px 4px!important;
+}
+.favoriteKeywordHint{
+  color:var(--pri);
+  font-size:12.5px;
+  font-weight:950;
+  line-height:1.55;
+}
+.favoriteActionRow{
+  display:flex;
+  gap:8px;
+  flex-wrap:wrap;
 }
 
 </style>
@@ -1290,8 +1368,12 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
             <span class="favoriteToggleText"></span>
           </button>
           <div class="favoriteEditor" aria-label="좋아하는 음식 설정">
-            <input id="favoriteFoodInput" class="favoriteInput favoriteMealInput" type="text" maxlength="80" placeholder="예: 돈가스, 떡볶이, 김치찌개">
-            <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <div class="favoriteKeywordBox" onclick="document.querySelector('#favoriteFoodInput')?.focus()">
+              <div id="favoriteFoodChips" class="favoriteFoodChips" aria-label="저장된 좋아하는 음식"></div>
+              <input id="favoriteFoodInput" class="favoriteInput favoriteMealInput" type="text" maxlength="80" placeholder="좋아하는 음식을 쓰고 쉼표(,)를 눌러주세요" onkeydown="handleFavoriteFoodKeydown(event)" oninput="handleFavoriteFoodInput(event)">
+            </div>
+            <div class="favoriteKeywordHint">예: 돈가스 입력 후 , → 키워드로 저장되고 계속 입력할 수 있어요.</div>
+            <div class="favoriteActionRow">
               <button class="smallbtn primary" type="button" onclick="saveFavoriteFoodsFromMeal()">저장</button>
               <button class="smallbtn ghost" type="button" onclick="clearFavoriteFoodsFromMeal()">삭제</button>
             </div>
@@ -1547,7 +1629,6 @@ SOFTWARE.
           <label class="setupOption"><input type="checkbox" data-setup-widget="meal" checked> 급식</label>
           <label class="setupOption"><input type="checkbox" data-setup-widget="schedule" checked> 학사일정</label>
           <label class="setupOption"><input type="checkbox" data-setup-widget="timetable" checked> 시간표</label>
-          <label class="setupOption"><input type="checkbox" data-setup-widget="quickTools" checked> 빠른 실행</label>
         </div>
       </div>
     </div>
@@ -1808,33 +1889,79 @@ function toggleFavoritePanel(){
   if(panel) panel.classList.toggle("open");
   renderFavoriteFoodEditor();
 }
+function renderFavoriteFoodChips(){
+  const box = $("#favoriteFoodChips");
+  if(!box) return;
+  const favs = getFavoriteFoods();
+  box.innerHTML = favs.map(food => `
+    <span class="favoriteFoodChip">
+      ${escapeHtml(food)}
+      <button type="button" aria-label="${escapeHtml(food)} 삭제" onclick="removeFavoriteFoodKeyword('${escapeHtml(food).replace(/'/g, "&#39;")}')">×</button>
+    </span>
+  `).join("");
+}
 function renderFavoriteFoodEditor(){
   const input = $("#favoriteFoodInput");
   const summary = $("#favoriteSummary");
   const favs = getFavoriteFoods();
-  if(input) input.value = favs.join(", ");
+  if(input) input.value = "";
+  renderFavoriteFoodChips();
   if(summary){
     summary.textContent = favs.length
       ? `저장됨: ${favs.join(", ")}`
       : "저장된 좋아하는 음식이 없습니다.";
   }
 }
-function saveFavoriteFoodsFromMeal(){
-  const input = $("#favoriteFoodInput");
-  saveFavoriteFoodsFromText(input ? input.value : "");
-  renderFavoriteFoodEditor();
+function refreshFavoriteFoodViews(){
   if(typeof mealMode !== "undefined" && mealMode === "month") mealLoadMonth();
   else if($("#date") && $("#date").value) onDay();
   renderHomeWidgets();
 }
-function clearFavoriteFoodsFromMeal(){
-  try{ localStorage.removeItem(FAVORITE_FOOD_KEY); }catch(e){}
-  const input = $("#favoriteFoodInput");
-  if(input) input.value = "";
+function addFavoriteFoodKeyword(food){
+  const word = String(food || "").trim();
+  if(!word) return;
+  const favs = getFavoriteFoods();
+  localStorage.setItem(FAVORITE_FOOD_KEY, JSON.stringify([...new Set([...favs, word])]));
   renderFavoriteFoodEditor();
-  if(typeof mealMode !== "undefined" && mealMode === "month") mealLoadMonth();
-  else if($("#date") && $("#date").value) onDay();
-  renderHomeWidgets();
+  refreshFavoriteFoodViews();
+}
+function addFavoriteFoodKeywordFromInput(){
+  const input = $("#favoriteFoodInput");
+  if(!input) return;
+  const words = String(input.value || "").split(/[,，\n]/).map(x=>x.trim()).filter(Boolean);
+  if(!words.length) return;
+  const favs = getFavoriteFoods();
+  localStorage.setItem(FAVORITE_FOOD_KEY, JSON.stringify([...new Set([...favs, ...words])]));
+  input.value = "";
+  renderFavoriteFoodEditor();
+  refreshFavoriteFoodViews();
+}
+function handleFavoriteFoodKeydown(event){
+  if(event.key === "," || event.key === "Enter"){
+    event.preventDefault();
+    addFavoriteFoodKeywordFromInput();
+  }
+}
+function handleFavoriteFoodInput(event){
+  const input = event && event.target ? event.target : $("#favoriteFoodInput");
+  if(input && /[,，\n]/.test(input.value)) addFavoriteFoodKeywordFromInput();
+}
+function removeFavoriteFoodKeyword(food){
+  const target = String(food || "").trim();
+  const favs = getFavoriteFoods().filter(item => item !== target);
+  localStorage.setItem(FAVORITE_FOOD_KEY, JSON.stringify(favs));
+  renderFavoriteFoodEditor();
+  refreshFavoriteFoodViews();
+}
+function clearFavoriteFoodsFromMeal(){
+  localStorage.removeItem(FAVORITE_FOOD_KEY);
+  renderFavoriteFoodEditor();
+  refreshFavoriteFoodViews();
+}
+function saveFavoriteFoodsFromMeal(){
+  addFavoriteFoodKeywordFromInput();
+  renderFavoriteFoodEditor();
+  refreshFavoriteFoodViews();
 }
 function renderMenuItem(menuText){
   const hits = getMenuAllergyHits(menuText);
@@ -2384,7 +2511,7 @@ function openModal(){
     ? "이미 설치되어 있습니다. 홈 화면의 O.Poong 아이콘으로 실행할 수 있습니다."
     : isIos()
       ? "iPhone/iPad는 Safari에서 공유 버튼을 누른 뒤 ‘홈 화면에 추가’를 선택하면 설치할 수 있습니다."
-      : "설치 버튼이 바로 뜨지 않으면 Chrome/Edge 주소창 오른쪽 또는 메뉴에서 ‘앱 설치’나 ‘홈 화면에 추가’를 선택해 주세요.";
+      : "설치 버튼이 바로 뜨지 않으면 Chrome/Edge 주소창 오른쪽 또는 메뉴에서 ‘앱 설치’나 ‘홈 화면에 추가’를 선택해 주세요. PWA 설치는 HTTPS, manifest.json, service-worker.js가 정상 연결되어야 표시됩니다.";
   $("#installGuideText").textContent = guide;
   $("#btnInstallNow").style.display = deferredPrompt ? "inline-flex" : "none";
   $("#modalBack").style.display = "flex";
