@@ -784,6 +784,115 @@ body.setup-pending .firstStartBack{
   z-index:3!important;
 }
 
+
+/* ===== O.Poong final polish: always-on widgets + timetable redesign ===== */
+.hero{
+  align-items:start;
+}
+.sideCard.homeAlwaysWidgets{
+  gap:12px;
+}
+.sideCard.homeAlwaysWidgets .widgetGrid{
+  grid-template-columns:1fr;
+  gap:12px;
+}
+.sideCard.homeAlwaysWidgets .widget{
+  min-height:auto;
+}
+.sideCard.homeAlwaysWidgets .widgetBody{
+  max-height:none;
+  overflow:visible;
+}
+#homeMealBody ul{
+  max-height:none!important;
+}
+#homeMealBody li{
+  margin:4px 0;
+}
+.ttWrap{
+  padding-bottom:4px;
+}
+.ttTable{
+  border-spacing:0;
+  min-width:940px;
+  border:1px solid var(--line);
+  border-radius:26px;
+  overflow:hidden;
+  background:color-mix(in srgb,var(--card) 96%,transparent);
+  box-shadow:var(--shadow2);
+}
+.ttTable th,
+.ttTable td{
+  padding:10px;
+  border-bottom:1px solid var(--line);
+  border-right:1px solid var(--line);
+  background:color-mix(in srgb,var(--card) 94%,transparent);
+}
+.ttTable tr:last-child th,
+.ttTable tr:last-child td{
+  border-bottom:0;
+}
+.ttTable th:last-child,
+.ttTable td:last-child{
+  border-right:0;
+}
+.ttTable thead th{
+  position:sticky;
+  top:0;
+  z-index:3;
+  text-align:center;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--pri) 13%,var(--card)),color-mix(in srgb,var(--card) 98%,transparent));
+  color:var(--text);
+  font-size:13px;
+  font-weight:1000;
+}
+.ttTable .periodHead{
+  position:sticky;
+  left:0;
+  z-index:2;
+  min-width:92px;
+  text-align:center;
+  color:var(--pri);
+  font-weight:1000;
+  background:color-mix(in srgb,var(--pri) 8%,var(--card));
+}
+.ttTable thead .periodHead{
+  z-index:4;
+}
+.ttCellInput{
+  width:100%;
+  min-width:118px;
+  border:1px solid color-mix(in srgb,var(--line) 85%,transparent)!important;
+  background:linear-gradient(180deg,color-mix(in srgb,var(--card) 98%,transparent),color-mix(in srgb,var(--pri) 4%,var(--card)))!important;
+  border-radius:16px!important;
+  min-height:48px!important;
+  text-align:center;
+  box-shadow:0 8px 18px rgba(15,23,42,.04);
+  transition:transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+}
+.ttCellInput:hover,
+.ttCellInput:focus{
+  transform:translateY(-1px);
+  border-color:color-mix(in srgb,var(--pri) 38%,var(--line))!important;
+  box-shadow:0 12px 24px color-mix(in srgb,var(--pri) 10%,transparent);
+}
+.ttHintBar{
+  margin-top:12px;
+  padding:12px 14px;
+  border-radius:20px;
+  border:1px solid color-mix(in srgb,var(--pri) 18%,var(--line));
+  background:color-mix(in srgb,var(--pri) 7%,var(--card));
+  color:var(--muted);
+  font-size:13px;
+  font-weight:850;
+  line-height:1.65;
+}
+@media (max-width:960px){
+  .sideCard.homeAlwaysWidgets .widgetGrid{
+    grid-template-columns:1fr;
+  }
+}
+
 </style>
 </head>
 
@@ -855,15 +964,19 @@ body.setup-pending .firstStartBack{
       </div>
     </div>
 
-    <aside class="sideCard" aria-label="요약 정보">
-      <div class="statusRow">
-        <div class="statusCard">
-          <div class="label">오늘</div>
-          <div class="value" id="todayLabel">-</div>
+    <aside class="sideCard homeAlwaysWidgets" aria-label="오늘의 위젯">
+      <div class="widgetGrid">
+        <div class="widget" data-home-widget="meal">
+          <div class="widgetHead"><b>오늘의 급식</b><span class="pill" id="homeMealDate">-</span></div>
+          <div class="widgetBody" id="homeMealBody"><div class="muted">불러오는 중…</div></div>
         </div>
-        <div class="statusCard">
-          <div class="label">바로가기</div>
-          <div class="value">급식 · 일정 · 시간표</div>
+        <div class="widget" data-home-widget="schedule">
+          <div class="widgetHead"><b>오늘의 학사일정</b><span class="pill" id="homeSchDate">-</span></div>
+          <div class="widgetBody" id="homeSchBody"><div class="muted">불러오는 중…</div></div>
+        </div>
+        <div class="widget" data-home-widget="timetable">
+          <div class="widgetHead"><b>오늘의 시간표</b><span class="pill" id="homeTTDay">-</span></div>
+          <div class="widgetBody" id="homeTTBody"><div class="muted">시간표를 입력하면 표시됩니다.</div></div>
         </div>
       </div>
     </aside>
@@ -888,41 +1001,16 @@ body.setup-pending .firstStartBack{
       <section class="section view active" id="view-home">
         <div class="sectionHeader">
           <div>
-            <h2>오늘의 O.Poong</h2>
-            <p>자주 쓰는 기능을 한 화면에 모았습니다.</p>
+            <h2>빠른 실행</h2>
+            <p>위쪽 위젯에서 오늘 급식·일정·시간표를 바로 확인할 수 있어요.</p>
           </div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn ghost" type="button" onclick="toggleWidgetSelector()">위젯 선택</button>
             <button class="btn ghost" type="button" onclick="renderHomeWidgets()">새로고침</button>
           </div>
         </div>
 
         <div id="personalHeroLine" class="personalHeroLine">오늘도 O.Poong에서 필요한 정보를 확인해보세요.</div>
 
-        <div id="widgetSelector" class="contentBox" style="display:none;margin-bottom:14px">
-          <b style="color:var(--text)">홈 위젯 선택</b>
-          <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
-            <label class="pill"><input type="checkbox" data-widget-toggle="meal"> 급식</label>
-            <label class="pill"><input type="checkbox" data-widget-toggle="schedule"> 학사일정</label>
-            <label class="pill"><input type="checkbox" data-widget-toggle="timetable"> 시간표</label>
-            <label class="pill"><input type="checkbox" data-widget-toggle="quickTools"> 빠른 실행</label>
-          </div>
-          <div class="muted" style="margin-top:10px;font-size:13px">선택값은 이 브라우저에만 저장할게요!</div>
-        </div>
-        <div class="widgetGrid">
-          <div class="widget" data-home-widget="meal">
-            <div class="widgetHead"><b>오늘의 급식</b><span class="pill" id="homeMealDate">-</span></div>
-            <div class="widgetBody" id="homeMealBody"><div class="muted">불러오는 중…</div></div>
-          </div>
-          <div class="widget" data-home-widget="schedule">
-            <div class="widgetHead"><b>오늘의 학사일정</b><span class="pill" id="homeSchDate">-</span></div>
-            <div class="widgetBody" id="homeSchBody"><div class="muted">불러오는 중…</div></div>
-          </div>
-          <div class="widget" data-home-widget="timetable">
-            <div class="widgetHead"><b>오늘의 시간표</b><span class="pill" id="homeTTDay">-</span></div>
-            <div class="widgetBody" id="homeTTBody"><div class="muted">시간표를 입력하면 표시됩니다.</div></div>
-          </div>
-        </div>
 
         <div class="cardGrid" data-home-widget="quickTools" style="margin-top:14px">
           <article class="toolCard">
@@ -1071,9 +1159,16 @@ body.setup-pending .firstStartBack{
           <div class="notice" id="neisResultLine">공백 제외 0자, 공백 포함 0자, 0바이트</div>
           <button class="smallbtn ghost" type="button" id="neisClearBtn">전체 지우기</button>
           <div class="notice" style="font-size:12.5px">
-            <b style="color:var(--text)">오픈소스 고지</b><br>
-            글자수/바이트 계산 기능은 kidevelop MIT License 코드를 참고했습니다.
-            라이선스 고지는 안내·정책 페이지에서 확인할 수 있습니다.
+            <b style="color:var(--text)">외부 데이터 안내</b><br>
+            급식 정보는 NEIS 공개 API를 통해 불러옵니다. 학사일정은 별도 프록시가 연결된 경우에만 표시됩니다.
+            외부 사이트로 이동하는 버튼은 사용자가 직접 누른 경우에만 새 탭으로 열립니다.<br><br>
+            <b style="color:var(--text)">글자수 도구 오픈소스 고지</b><br>
+            글자수/바이트 계산 기능은 kidevelop의 MIT License 코드를 참고한 기능입니다.<br><br>
+            Copyright (c) 2018 kidevelop<br>
+            Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
+            to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish,
+            distribute, sublicense, and/or sell copies of the Software, subject to inclusion of the copyright notice and permission notice.
+            THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND.
           </div>
         </div>
       </section>
@@ -1094,21 +1189,6 @@ body.setup-pending .firstStartBack{
             <b>개인정보 안내</b>
             <p>이름, 시간표와 글자수 입력 내용은 사용자의 기기 브라우저 저장소에 저장됩니다. 서버로 별도 전송하지 않습니다.</p>
           </article>
-        </div>
-        </div>
-        <div class="contentBox">
-          <b style="color:var(--text)">외부 데이터 안내</b><br>
-          급식 정보는 NEIS 공개 API를 통해 불러옵니다. 학사일정은 별도 프록시가 연결된 경우에만 표시됩니다.
-          외부 사이트로 이동하는 버튼은 사용자가 직접 누른 경우에만 새 탭으로 열립니다.
-        </div>
-        <div class="contentBox">
-          <b style="color:var(--text)">글자수 도구 오픈소스 고지</b><br>
-          글자수/바이트 계산 기능은 kidevelop의 MIT License 코드를 참고한 기능입니다.<br><br>
-          Copyright (c) 2018 kidevelop<br>
-          Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files
-          to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish,
-          distribute, sublicense, and/or sell copies of the Software, subject to inclusion of the copyright notice and permission notice.
-          THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND.
         </div>
       </section>
     </main>
@@ -1828,16 +1908,27 @@ function ttRenderTable(){
   store.periods = Number($("#ttPeriods").value || store.periods || 8);
   $("#ttPeriods").value = store.periods;
   ttSave(store);
-  let html = `<table class="ttTable"><tr><th>교시</th>${TT_DAYS.map(d=>`<th>${d}</th>`).join("")}</tr>`;
+
+  let html = `
+    <div class="ttHintBar">셀을 누르면 바로 입력할 수 있어요. 입력한 시간표는 이 기기의 브라우저에만 저장됩니다.</div>
+    <table class="ttTable">
+      <thead>
+        <tr>
+          <th class="periodHead">교시</th>
+          ${TT_DAYS.map(d=>`<th>${d}요일</th>`).join("")}
+        </tr>
+      </thead>
+      <tbody>
+  `;
   for(let p=1; p<=store.periods; p++){
-    html += `<tr><th>${p}교시</th>`;
+    html += `<tr><th class="periodHead">${p}교시</th>`;
     TT_DAYS.forEach((d,di)=>{
       const key = `${p}_${di}`;
-      html += `<td><input data-key="${key}" value="${escapeHtml(store.data[key]||"")}" placeholder="과목/활동"></td>`;
+      html += `<td><input class="ttCellInput" data-key="${key}" value="${escapeHtml(store.data[key]||"")}" placeholder="${d} ${p}교시"></td>`;
     });
     html += `</tr>`;
   }
-  html += `</table>`;
+  html += `</tbody></table>`;
   $("#ttTableWrap").innerHTML = html;
   $$("#ttTableWrap input").forEach(inp=>inp.addEventListener("input",()=>{
     const s = ttLoad();
@@ -1925,28 +2016,50 @@ function openModal(){
   const guide = isStandalone()
     ? "이미 설치되어 있습니다. 홈 화면의 O.Poong 아이콘으로 실행할 수 있습니다."
     : isIos()
-      ? "iPhone/iPad는 Safari 공유 버튼에서 ‘홈 화면에 추가’를 선택하면 설치할 수 있습니다."
-      : "Android Chrome/Edge는 주소창 또는 메뉴의 ‘앱 설치’를 선택하면 설치할 수 있습니다.";
+      ? "iPhone/iPad는 Safari에서 공유 버튼을 누른 뒤 ‘홈 화면에 추가’를 선택하면 설치할 수 있습니다."
+      : "설치 버튼이 바로 뜨지 않으면 Chrome/Edge 주소창 오른쪽 또는 메뉴에서 ‘앱 설치’나 ‘홈 화면에 추가’를 선택해 주세요. PWA 설치는 HTTPS, manifest.json, service-worker.js가 정상 연결되어야 표시됩니다.";
   $("#installGuideText").textContent = guide;
   $("#btnInstallNow").style.display = deferredPrompt ? "inline-flex" : "none";
   $("#modalBack").style.display = "flex";
 }
 function closeModal(){ $("#modalBack").style.display = "none"; }
-window.addEventListener("beforeinstallprompt", e=>{ e.preventDefault(); deferredPrompt = e; });
+window.addEventListener("beforeinstallprompt", e=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  const topBtn = $("#btnInstallTop");
+  if(topBtn) topBtn.textContent = "앱 설치";
+});
+window.addEventListener("appinstalled", ()=>{
+  deferredPrompt = null;
+  const topBtn = $("#btnInstallTop");
+  if(topBtn) topBtn.textContent = "설치됨";
+});
 $("#btnInstallTop").addEventListener("click", async ()=>{
+  if(isStandalone()){
+    openModal();
+    return;
+  }
   if(deferredPrompt){
-    deferredPrompt.prompt();
-    await deferredPrompt.userChoice.catch(()=>{});
+    const promptEvent = deferredPrompt;
     deferredPrompt = null;
+    promptEvent.prompt();
+    await promptEvent.userChoice.catch(()=>{});
+    $("#btnInstallNow").style.display = "none";
+    return;
   }
   openModal();
 });
 $("#btnInstallNow").addEventListener("click", async ()=>{
-  if(!deferredPrompt) return;
-  deferredPrompt.prompt();
-  await deferredPrompt.userChoice.catch(()=>{});
+  if(!deferredPrompt){
+    openModal();
+    return;
+  }
+  const promptEvent = deferredPrompt;
   deferredPrompt = null;
+  promptEvent.prompt();
+  await promptEvent.userChoice.catch(()=>{});
   $("#btnInstallNow").style.display = "none";
+  closeModal();
 });
 
 
@@ -1962,13 +2075,12 @@ function saveHomeWidgetConfig(cfg){
   localStorage.setItem("opoong_home_widgets", JSON.stringify(cfg));
 }
 function applyHomeWidgetConfig(){
-  const cfg = getHomeWidgetConfig();
+  // 위젯은 홈 화면의 핵심 영역이라 항상 표시합니다.
   $$("[data-home-widget]").forEach(el=>{
-    const key = el.dataset.homeWidget;
-    el.classList.toggle("homeWidgetHidden", cfg[key] === false);
+    el.classList.remove("homeWidgetHidden");
   });
   $$("[data-widget-toggle]").forEach(input=>{
-    input.checked = cfg[input.dataset.widgetToggle] !== false;
+    input.checked = true;
   });
 }
 function toggleWidgetSelector(){
@@ -2003,14 +2115,13 @@ function renderPersonalHeroLine(){
 async function renderHomeWidgets(){
   applyHomeWidgetConfig();
   renderPersonalHeroLine();
-  $("#todayLabel").textContent = ymd2str(toYMDNoDash(todayStr()));
   try{
     const ymd = toYMDNoDash(todayStr());
     $("#homeMealDate").textContent = ymd2str(ymd);
     $("#homeMealBody").innerHTML = `<div class="muted">불러오는 중…</div>`;
     const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
     $("#homeMealBody").innerHTML = meals.length
-      ? meals.map(m=>`<div style="margin-bottom:10px"><b>${escapeHtml(m.type)}</b><ul style="padding-left:18px;margin:6px 0 0">${m.menu.slice(0,4).map(renderMenuItem).join("")}</ul></div>`).join("")
+      ? meals.map(m=>`<div style="margin-bottom:10px"><b>${escapeHtml(m.type)}</b><ul style="padding-left:18px;margin:6px 0 0">${m.menu.map(renderMenuItem).join("")}</ul></div>`).join("")
       : `<div class="muted">오늘 급식 정보가 없습니다.</div>`;
   }catch{ $("#homeMealBody").innerHTML = `<div class="muted">급식 정보를 불러오지 못했습니다.</div>`; }
 
