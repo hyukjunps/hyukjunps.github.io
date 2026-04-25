@@ -106,6 +106,7 @@ body::before{
   mask-image:linear-gradient(to bottom, rgba(0,0,0,.55), transparent 72%);
 }
 a{color:inherit}
+.navBtn{text-decoration:none}
 button,input,textarea{font:inherit}
 button{cursor:pointer}
 button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible{
@@ -1278,15 +1279,15 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
     <aside class="sideNav" aria-label="주요 메뉴">
       <div class="sideNavTitle">메뉴</div>
       <nav class="navGrid">
-        <button class="navBtn" data-view="home" type="button" onclick="go('home')"><span class="left"><span class="icon">홈</span><span><span class="title">홈</span><br><span class="hint">대시보드</span></span></span><span>›</span></button>
-        <button class="navBtn" data-view="meal" type="button" onclick="go('meal'); setTodayAndLoad();"><span class="left"><span class="icon">식</span><span><span class="title">급식</span><br><span class="hint">일별/월별</span></span></span><span>›</span></button>
-        <button class="navBtn" data-view="schedule" type="button" onclick="go('schedule'); scheduleLoadMonth();"><span class="left"><span class="icon">일</span><span><span class="title">학사일정</span><br><span class="hint">월별 달력</span></span></span><span>›</span></button>
-        <button class="navBtn" data-view="timetable" type="button" onclick="go('timetable'); ttRenderTable();"><span class="left"><span class="icon">표</span><span><span class="title">시간표</span><br><span class="hint">로컬 저장</span></span></span><span>›</span></button>
-        <button class="navBtn" data-view="onway" type="button" onclick="go('onway')"><span class="left"><span class="icon">온</span><span><span class="title">온웨이에듀</span><br><span class="hint">외부 링크</span></span></span><span>›</span></button>
-        <button class="navBtn" data-view="school" type="button" onclick="go('school')"><span class="left"><span class="icon">학</span><span><span class="title">학교 홈페이지</span><br><span class="hint">공식 사이트</span></span></span><span>›</span></button>
-        <button class="navBtn" data-view="library" type="button" onclick="go('library')"><span class="left"><span class="icon">책</span><span><span class="title">도서관 조회</span><br><span class="hint">풍산고 도서관</span></span></span><span>›</span></button>
-        <button class="navBtn" data-view="neis" type="button" onclick="go('neis'); neisInit();"><span class="left"><span class="icon">글</span><span><span class="title">글자수</span><br><span class="hint">byte 계산</span></span></span><span>›</span></button>
-        <button class="navBtn" data-view="policy" type="button" onclick="go('policy')"><span class="left"><span class="icon">안</span><span><span class="title">안내·정책</span><br><span class="hint">개인정보</span></span></span><span>›</span></button>
+        <a class="navBtn" data-view="home" href="/" onclick="event.preventDefault(); go('home')"><span class="left"><span class="icon">홈</span><span><span class="title">홈</span><br><span class="hint">대시보드</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="meal" href="/?page=meal" onclick="event.preventDefault(); go('meal'); setTodayAndLoad();"><span class="left"><span class="icon">식</span><span><span class="title">급식</span><br><span class="hint">일별/월별</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="schedule" href="/?page=schedule" onclick="event.preventDefault(); go('schedule'); scheduleLoadMonth();"><span class="left"><span class="icon">일</span><span><span class="title">학사일정</span><br><span class="hint">월별 달력</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="timetable" href="/?page=timetable" onclick="event.preventDefault(); go('timetable'); ttRenderTable();"><span class="left"><span class="icon">표</span><span><span class="title">시간표</span><br><span class="hint">로컬 저장</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="onway" href="/?page=onway" onclick="event.preventDefault(); go('onway')"><span class="left"><span class="icon">온</span><span><span class="title">온웨이에듀</span><br><span class="hint">외부 링크</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="school" href="/?page=school" onclick="event.preventDefault(); go('school')"><span class="left"><span class="icon">학</span><span><span class="title">학교 홈페이지</span><br><span class="hint">공식 사이트</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="library" href="/?page=library" onclick="event.preventDefault(); go('library')"><span class="left"><span class="icon">책</span><span><span class="title">도서관 조회</span><br><span class="hint">풍산고 도서관</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="neis" href="/?page=neis" onclick="event.preventDefault(); go('neis'); neisInit();"><span class="left"><span class="icon">글</span><span><span class="title">글자수</span><br><span class="hint">byte 계산</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="policy" href="/?page=policy" onclick="event.preventDefault(); go('policy')"><span class="left"><span class="icon">안</span><span><span class="title">안내·정책</span><br><span class="hint">개인정보</span></span></span><span>›</span></a>
       </nav>
     </aside>
 
@@ -1807,6 +1808,22 @@ function installRipple(){
 function setActiveNav(view){
   $$(".navBtn").forEach(b => b.dataset.active = b.dataset.view === view ? "1" : "0");
 }
+function pageUrl(view){
+  return view === "home" ? "/" : `/?page=${encodeURIComponent(view)}`;
+}
+function initRoute(){
+  const params = new URLSearchParams(window.location.search);
+  const page = params.get("page") || "home";
+  const allowed = ["home","meal","schedule","timetable","onway","school","library","neis","policy","about"];
+  const view = allowed.includes(page) ? page : "home";
+
+  go(view);
+
+  if(view === "meal") setTodayAndLoad();
+  if(view === "schedule") scheduleLoadMonth();
+  if(view === "timetable") ttRenderTable();
+  if(view === "neis") neisInit();
+}
 function go(view){
   if(view === "about") view = "policy";
   document.body.classList.toggle("home-view", view === "home");
@@ -1814,7 +1831,7 @@ function go(view){
   const el = $(`#view-${view}`);
   if(el) el.classList.add("active");
   setActiveNav(view);
-  history.replaceState(null,"",`#${view}`);
+  history.replaceState(null,"",pageUrl(view));
   window.scrollTo({top:0,behavior:"smooth"});
   if(view === "home") renderHomeWidgets();
   if(view === "meal") { renderAllergySelector(); renderFavoriteFoodEditor(); }
@@ -2689,7 +2706,7 @@ window.addEventListener("load",()=>{
   initMeals();
   const now = new Date();
   $("#schMonth").value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}`;
-  go("home");
+  initRoute();
   openFirstSetupIfNeeded();
   if("serviceWorker" in navigator){
     navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
