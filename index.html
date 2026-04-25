@@ -706,6 +706,56 @@ body.setup-pending .firstStartBack{display:block!important}
   background:var(--ok);
 }
 
+
+/* ===== O.Poong final fix: clickable start + reliable logo ===== */
+.firstStartBack *{pointer-events:auto}
+.firstStartTopLogo{
+  position:absolute!important;
+  top:clamp(20px,4vw,42px)!important;
+  left:clamp(20px,6vw,72px)!important;
+  z-index:3!important;
+  width:84px!important;
+  height:84px!important;
+}
+.firstStartLogoImg{
+  width:84px!important;
+  height:84px!important;
+  border-radius:27px!important;
+  object-fit:cover!important;
+  display:block!important;
+  position:absolute!important;
+  inset:0!important;
+  z-index:2!important;
+  border:1px solid color-mix(in srgb,var(--pri) 24%,var(--line))!important;
+  box-shadow:0 14px 28px rgba(15,23,42,.12)!important;
+  background:var(--card)!important;
+}
+.firstStartLogoFallback{
+  width:84px!important;
+  height:84px!important;
+  border-radius:27px!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  font-weight:1000!important;
+  font-size:26px!important;
+  color:#fff!important;
+  background:linear-gradient(135deg,var(--pri),var(--pri2))!important;
+  box-shadow:0 14px 28px rgba(15,23,42,.12)!important;
+}
+.firstStartLogoImg[src=""],
+.firstStartLogoImg:not([src]){
+  display:none!important;
+}
+#firstStartBtn{
+  position:relative!important;
+  z-index:20!important;
+  pointer-events:auto!important;
+}
+body.setup-pending .firstStartBack{
+  pointer-events:auto!important;
+}
+
 </style>
 </head>
 
@@ -714,7 +764,8 @@ body.setup-pending .firstStartBack{display:block!important}
 <div id="firstStartBack" class="firstStartBack" aria-label="O.Poong 시작 화면">
   <section class="firstStartCard">
     <div class="firstStartTopLogo">
-      <img class="firstStartLogoImg" src="./android-launchericon-512-512.png" alt="O.Poong 로고" onerror="this.style.display='none'">
+      <img class="firstStartLogoImg" src="./android-launchericon-512-512.png" alt="O.Poong 로고">
+      <div class="firstStartLogoFallback">O.P</div>
     </div>
 
     <div class="firstStartInner">
@@ -1016,8 +1067,7 @@ body.setup-pending .firstStartBack{display:block!important}
             <p>이름, 시간표와 글자수 입력 내용은 사용자의 기기 브라우저 저장소에 저장됩니다. 서버로 별도 전송하지 않습니다.</p>
           </article>
         </div>
-
-      
+        </div>
         <div class="contentBox">
           <b style="color:var(--text)">외부 데이터 안내</b><br>
           급식 정보는 NEIS 공개 API를 통해 불러옵니다. 학사일정은 별도 프록시가 연결된 경우에만 표시됩니다.
@@ -1097,7 +1147,7 @@ body.setup-pending .firstStartBack{display:block!important}
 
       <div id="setupStepName" class="setupStep">
         <b style="color:var(--text)">이름을 알려주세요</b>
-        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요?</div>
+        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요??.</div>
         <input id="setupNameInput" class="setupNameInput" type="text" maxlength="12" placeholder="예: 혁준">
         <div class="muted" style="margin-top:10px;font-size:13px">이름은 이 브라우저에만 저장됩니다.</div>
       </div>
@@ -1110,7 +1160,7 @@ body.setup-pending .firstStartBack{display:block!important}
 
       <div id="setupStepWidget" class="setupStep">
         <b style="color:var(--text)">원하는 홈화면 위젯이 있으신가요?</b>
-        <div style="margin-top:8px">홈에서 보고 싶은 항목만 선택할 수 있습니다.</div>
+        <div style="margin-top:8px">홈에서 보고 싶은 항목만 선택할 수 있어요!</div>
         <div class="setupGrid">
           <label class="setupOption"><input type="checkbox" data-setup-widget="meal" checked> 급식</label>
           <label class="setupOption"><input type="checkbox" data-setup-widget="schedule" checked> 학사일정</label>
@@ -1133,17 +1183,17 @@ body.setup-pending .firstStartBack{display:block!important}
    ========================= */
 const NOTICE_CONFIG = {
   enabled: false,
-  title: "O.Poong 서비스 개선 업데이트 중",
-  message: "테스트 메시지를 표출했습니다..",
-  buttonText: "바로가기",
-  buttonUrl: "https://hyukjunps.github.io/#home",
+  title: "공지사항이 없습니다",
+  message: "새 소식이 생기면 이 영역에 표시됩니다.",
+  buttonText: "",
+  buttonUrl: "",
 
   /*
-    공지 배너 색상 수정
+    공지 배너 색상 수정:
     - type: "default" | "blue" | "green" | "amber" | "red"
     - customBg, customBorder, customText를 채우면 직접 색상 지정 가능
   */
-  type: "red",
+  type: "default",
   customBg: "",
   customBorder: "",
   customText: ""
@@ -1189,7 +1239,7 @@ const ALLERGY_ITEMS = [
   { no:"18", name:"조개류" }
 ];
 const ALLERGY_KEY = "opoong_allergy_numbers_v1";
-const FIRST_SETUP_KEY = "opoong_first_setup_done_v5";
+const FIRST_SETUP_KEY = "opoong_first_setup_done_v6";
 const USER_NAME_KEY = "opoong_user_name_v1";
 const PERSONAL_MESSAGES = [
   "{name}님, 오늘의 학사일정을 확인해보세요!",
@@ -1410,33 +1460,46 @@ function updateUserBadge(){
   badge.textContent = `${name}님`;
   badge.style.display = "inline-flex";
 }
+function openSetupModalSafely(){
+  const setupBack = $("#firstSetupBack");
+
+  if(!setupBack){
+    alert("초기 설정 창을 찾을 수 없어서 기본 화면으로 이동해요.");
+    localStorage.setItem(FIRST_SETUP_KEY, "1");
+    showMainApp();
+    updateUserBadge();
+    renderHomeWidgets();
+    return;
+  }
+
+  renderSetupAllergyGrid();
+
+  const cfg = getHomeWidgetConfig();
+  $$("[data-setup-widget]").forEach(input=>{
+    input.checked = cfg[input.dataset.setupWidget] !== false;
+  });
+
+  const nameInput = $("#setupNameInput");
+  if(nameInput) nameInput.value = localStorage.getItem(USER_NAME_KEY) || "";
+
+  const privacy = $("#privacyAgreeCheck");
+  if(privacy) privacy.checked = false;
+
+  setupStepIndex = 0;
+  renderSetupStep();
+
+  setupBack.style.display = "flex";
+}
 function startFirstSetup(){
   try{
-    const setupBack = $("#firstSetupBack");
-    if(!setupBack){
-      alert("초기 설정 창을 찾을 수 없습니다.");
-      return;
-    }
-
-    renderSetupAllergyGrid();
-
-    const cfg = getHomeWidgetConfig();
-    $$("[data-setup-widget]").forEach(input=>{
-      input.checked = cfg[input.dataset.setupWidget] !== false;
-    });
-
-    const nameInput = $("#setupNameInput");
-    if(nameInput) nameInput.value = localStorage.getItem(USER_NAME_KEY) || "";
-
-    const privacy = $("#privacyAgreeCheck");
-    if(privacy) privacy.checked = false;
-
-    setupStepIndex = 0;
-    renderSetupStep();
-    setupBack.style.display = "flex";
+    openSetupModalSafely();
   }catch(err){
-    alert("초기 설정을 여는 중 오류가 발생했습니다: " + err.message);
     console.error(err);
+    alert("초기 설정을 여는 중 오류가 발생했어요. 기본 화면으로 이동해요.");
+    localStorage.setItem(FIRST_SETUP_KEY, "1");
+    showMainApp();
+    updateUserBadge();
+    renderHomeWidgets();
   }
 }
 function openFirstSetupIfNeeded(){
@@ -1471,7 +1534,7 @@ function setupNext(){
   if(setupStepIndex === 0){
     const agree = $("#privacyAgreeCheck");
     if(!agree || !agree.checked){
-      alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있습니다.");
+      alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있어요.");
       return;
     }
   }
@@ -1510,7 +1573,7 @@ function saveSetupWidgets(){
 function finishFirstSetup(){
   const agree = $("#privacyAgreeCheck");
   if(!agree || !agree.checked){
-    alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있습니다.");
+    alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있어요.");
     return;
   }
 
@@ -1528,7 +1591,7 @@ function finishFirstSetup(){
   renderHomeWidgets();
 }
 function skipFirstSetup(){
-  alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있습니다.");
+  alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있어요.");
   const setupBack = $("#firstSetupBack");
   if(setupBack) setupBack.style.display = "none";
   showFirstStartOnly();
@@ -1949,7 +2012,7 @@ function setupNext(){
   if(setupStepIndex === 0){
     const agree = $("#privacyAgreeCheck");
     if(!agree || !agree.checked){
-      alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있습니다.");
+      alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있어요.");
       showFirstStartOnly();
       const back = $("#firstSetupBack");
       if(back) back.style.display = "none";
@@ -1995,7 +2058,7 @@ function saveSetupWidgets(){
 function finishFirstSetup(){
   const agree = $("#privacyAgreeCheck");
   if(!agree || !agree.checked){
-    alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있습니다.");
+    alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있어요.");
     showFirstStartOnly();
     const back = $("#firstSetupBack");
     if(back) back.style.display = "none";
@@ -2015,7 +2078,7 @@ function finishFirstSetup(){
   renderHomeWidgets();
 }
 function skipFirstSetup(){
-  alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있습니다.");
+  alert("개인정보 수집·이용에 동의해야 O.Poong을 이용할 수 있어요.");
   const setupBack = $("#firstSetupBack");
   if(setupBack) setupBack.style.display = "none";
   showFirstStartOnly();
@@ -2049,7 +2112,7 @@ async function renderHomeWidgets(){
     $("#homeSchBody").innerHTML = `<div class="muted">불러오는 중…</div>`;
     const byDate = await fetchScheduleMonthProxy(todayYYYYMM());
     homeRenderTodaySchedule(byDate);
-  }catch{ $("#homeSchBody").innerHTML = `<div class="muted">학사일정을 불러오지 못했어요.</div>`; }
+  }catch{ $("#homeSchBody").innerHTML = `<div class="muted">학사일정을 불러오지 못했습니다.</div>`; }
 
   homeRenderTodayTimetable();
 }
