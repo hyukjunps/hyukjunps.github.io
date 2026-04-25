@@ -597,6 +597,115 @@ body.setup-pending .firstStartBack{display:flex!important}
   .userBadge{width:100%;justify-content:center}
 }
 
+
+/* ===== O.Poong emergency fix: first screen button + top logo ===== */
+body.setup-pending .wrap{display:none!important}
+body.setup-pending{overflow:hidden!important}
+.firstStartBack{
+  position:fixed!important;
+  inset:0!important;
+  z-index:9999!important;
+  display:none;
+  width:100vw!important;
+  height:100vh!important;
+  height:100svh!important;
+  padding:0!important;
+  background:
+    radial-gradient(900px 420px at 10% 0%, color-mix(in srgb, var(--pri3) 34%, transparent), transparent 60%),
+    radial-gradient(800px 420px at 100% 12%, color-mix(in srgb, var(--ok) 18%, transparent), transparent 58%),
+    linear-gradient(180deg,var(--bg2),var(--bg))!important;
+}
+body.setup-pending .firstStartBack{display:block!important}
+.firstStartCard{
+  width:100vw!important;
+  height:100vh!important;
+  height:100svh!important;
+  min-height:100svh!important;
+  padding:0!important;
+  border:0!important;
+  border-radius:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+  display:flex!important;
+  flex-direction:column!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  position:relative!important;
+  overflow:hidden!important;
+}
+.firstStartCard::before{
+  content:"";
+  position:absolute;
+  right:-110px;
+  top:-110px;
+  width:310px;
+  height:310px;
+  border-radius:90px;
+  background:linear-gradient(135deg,color-mix(in srgb,var(--pri3) 44%,transparent),transparent);
+  transform:rotate(18deg);
+}
+.firstStartTopLogo{
+  position:absolute!important;
+  top:clamp(20px,4vw,42px)!important;
+  left:clamp(20px,6vw,72px)!important;
+  z-index:2!important;
+}
+.firstStartLogoImg{
+  width:78px!important;
+  height:78px!important;
+  border-radius:25px!important;
+  object-fit:cover!important;
+  display:block!important;
+  border:1px solid color-mix(in srgb,var(--pri) 24%,var(--line))!important;
+  box-shadow:0 14px 28px rgba(15,23,42,.12)!important;
+  background:var(--card)!important;
+}
+.firstStartInner{
+  width:min(720px,calc(100% - 40px))!important;
+  margin-left:clamp(20px,6vw,72px)!important;
+  margin-right:20px!important;
+  position:relative!important;
+  z-index:1!important;
+  padding:clamp(22px,4vw,44px)!important;
+  border-radius:var(--radius)!important;
+  border:1px solid color-mix(in srgb,var(--line) 84%,transparent)!important;
+  background:color-mix(in srgb,var(--card) 84%,transparent)!important;
+  box-shadow:var(--shadow)!important;
+  backdrop-filter:blur(18px)!important;
+}
+.firstStartLogo{
+  font-size:clamp(46px,9vw,82px)!important;
+  line-height:.96!important;
+  letter-spacing:-3px!important;
+  font-weight:1000!important;
+}
+.firstStartSlogan{
+  margin-top:14px!important;
+  color:var(--muted)!important;
+  font-size:clamp(18px,3vw,25px)!important;
+  font-weight:850!important;
+}
+.userBadge{
+  display:none;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:999px;
+  border:1px solid var(--line);
+  background:color-mix(in srgb,var(--card) 88%,transparent);
+  color:var(--text);
+  font-size:13px;
+  font-weight:1000;
+  box-shadow:0 8px 18px rgba(15,23,42,.05);
+}
+.userBadge::before{
+  content:"";
+  width:8px;
+  height:8px;
+  border-radius:999px;
+  background:var(--ok);
+}
+
 </style>
 </head>
 
@@ -604,18 +713,21 @@ body.setup-pending .firstStartBack{display:flex!important}
 
 <div id="firstStartBack" class="firstStartBack" aria-label="O.Poong 시작 화면">
   <section class="firstStartCard">
-    <div class="firstStartInner">
+    <div class="firstStartTopLogo">
       <img class="firstStartLogoImg" src="./android-launchericon-512-512.png" alt="O.Poong 로고" onerror="this.style.display='none'">
+    </div>
+
+    <div class="firstStartInner">
       <div class="firstStartLogo">O.Poong</div>
       <div class="firstStartSlogan">풍산고 생활, 한 화면에서.</div>
       <p class="firstStartDesc">
-      안녕하세요! 당신의 풍산고등학교 생활을 도와줄 O.Poong이라고 해요!
+      안녕하세요! 당신의 풍산고등학교 생활을 도와줄 O.Poong이라고 해요 :)
       시작하기를 눌러 사용자 맞춤을 위한 간단한 질문에 답변해주시면
       바로 사용하실 수 있어요.
     </p>
       <div class="firstStartActions">
-      <button class="bigBtn" type="button" onclick="startFirstSetup()">시작하기</button>
-    </div>
+        <button id="firstStartBtn" class="bigBtn" type="button">시작하기</button>
+      </div>
     </div>
   </section>
 </div>
@@ -654,7 +766,8 @@ body.setup-pending .firstStartBack{display:flex!important}
       <span class="kicker">O.Poong Portal</span>
       <h1>풍산고 생활,<br>한 화면에서.</h1>
       <p class="heroText">
-        풍산고등학교에서 사용할 수 있는 다양한 기능을 제공합니다!
+        급식, 학사일정, 시간표, 학교 생활 링크, 글자수 도구를 하나의 통일된 화면에서 확인할 수 있는
+        풍산고 학생용 비공식 생활 도우미입니다.
       </p>
       <div class="heroActions">
         <button class="bigBtn" type="button" onclick="go('meal'); setTodayAndLoad();">오늘 급식 보기</button>
@@ -896,13 +1009,15 @@ body.setup-pending .firstStartBack{display:flex!important}
         <div class="cardGrid">
           <article class="toolCard">
             <b>서비스 소개</b>
-            <p>O.Poong은 풍산고 학생의 일상에 도움이 되는 기능을 모아둔 서비스입니다!</p>
+            <p>O.Poong은 풍산고 학생의 일상 확인을 돕는 비공식 웹앱입니다. 학교 공식 앱이나 공식 행정 서비스가 아닙니다.</p>
           </article>
           <article class="toolCard">
             <b>개인정보 안내</b>
             <p>이름, 시간표와 글자수 입력 내용은 사용자의 기기 브라우저 저장소에 저장됩니다. 서버로 별도 전송하지 않습니다.</p>
           </article>
         </div>
+
+      
         <div class="contentBox">
           <b style="color:var(--text)">외부 데이터 안내</b><br>
           급식 정보는 NEIS 공개 API를 통해 불러옵니다. 학사일정은 별도 프록시가 연결된 경우에만 표시됩니다.
@@ -982,7 +1097,7 @@ body.setup-pending .firstStartBack{display:flex!important}
 
       <div id="setupStepName" class="setupStep">
         <b style="color:var(--text)">이름을 알려주세요</b>
-        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요??.</div>
+        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요?</div>
         <input id="setupNameInput" class="setupNameInput" type="text" maxlength="12" placeholder="예: 혁준">
         <div class="muted" style="margin-top:10px;font-size:13px">이름은 이 브라우저에만 저장됩니다.</div>
       </div>
@@ -1018,17 +1133,17 @@ body.setup-pending .firstStartBack{display:flex!important}
    ========================= */
 const NOTICE_CONFIG = {
   enabled: false,
-  title: "공지사항이 없습니다",
-  message: "새 소식이 생기면 이 영역에 표시됩니다.",
-  buttonText: "",
-  buttonUrl: "",
+  title: "O.Poong 서비스 개선 업데이트 중",
+  message: "테스트 메시지를 표출했습니다..",
+  buttonText: "바로가기",
+  buttonUrl: "https://hyukjunps.github.io/#home",
 
   /*
-    공지 배너 색상 수정:
+    공지 배너 색상 수정
     - type: "default" | "blue" | "green" | "amber" | "red"
     - customBg, customBorder, customText를 채우면 직접 색상 지정 가능
   */
-  type: "default",
+  type: "red",
   customBg: "",
   customBorder: "",
   customText: ""
@@ -1074,7 +1189,7 @@ const ALLERGY_ITEMS = [
   { no:"18", name:"조개류" }
 ];
 const ALLERGY_KEY = "opoong_allergy_numbers_v1";
-const FIRST_SETUP_KEY = "opoong_first_setup_done_v4";
+const FIRST_SETUP_KEY = "opoong_first_setup_done_v5";
 const USER_NAME_KEY = "opoong_user_name_v1";
 const PERSONAL_MESSAGES = [
   "{name}님, 오늘의 학사일정을 확인해보세요!",
@@ -1274,71 +1389,9 @@ function renderSetupAllergyGrid(){
     </label>
   `).join("");
 }
+/* ===== O.Poong fixed: first start gate logic ===== */
 let setupStepIndex = 0;
-function openFirstSetupIfNeeded(){
-  if(localStorage.getItem(FIRST_SETUP_KEY) === "1") return;
-  renderSetupAllergyGrid();
 
-  const cfg = getHomeWidgetConfig();
-  $$("[data-setup-widget]").forEach(input=>{
-    input.checked = cfg[input.dataset.setupWidget] !== false;
-  });
-
-  setupStepIndex = 0;
-  renderSetupStep();
-  const back = $("#firstSetupBack");
-  if(back) back.style.display = "flex";
-}
-function renderSetupStep(){
-  const allergy = $("#setupStepAllergy");
-  const widget = $("#setupStepWidget");
-  if(!allergy || !widget) return;
-
-  allergy.classList.toggle("active", setupStepIndex === 0);
-  widget.classList.toggle("active", setupStepIndex === 1);
-  $("#setupPrevBtn").style.display = setupStepIndex === 0 ? "none" : "inline-flex";
-  $("#setupNextBtn").style.display = setupStepIndex === 0 ? "inline-flex" : "none";
-  $("#setupDoneBtn").style.display = setupStepIndex === 1 ? "inline-flex" : "none";
-}
-function setupNext(){
-  saveSetupAllergy();
-  setupStepIndex = 1;
-  renderSetupStep();
-}
-function setupPrev(){
-  setupStepIndex = 0;
-  renderSetupStep();
-}
-function saveSetupAllergy(){
-  const grid = $("#setupAllergyGrid");
-  if(!grid) return;
-  const picked = Array.from(grid.querySelectorAll("input:checked")).map(x=>x.value);
-  saveSelectedAllergies(picked);
-  renderAllergySelector();
-}
-function saveSetupWidgets(){
-  const cfg = getHomeWidgetConfig();
-  $$("[data-setup-widget]").forEach(input=>{
-    cfg[input.dataset.setupWidget] = input.checked;
-  });
-  saveHomeWidgetConfig(cfg);
-  applyHomeWidgetConfig();
-}
-function finishFirstSetup(){
-  saveSetupAllergy();
-  saveSetupWidgets();
-  localStorage.setItem(FIRST_SETUP_KEY, "1");
-  const back = $("#firstSetupBack");
-  if(back) back.style.display = "none";
-  renderHomeWidgets();
-}
-function skipFirstSetup(){
-  localStorage.setItem(FIRST_SETUP_KEY, "1");
-  const back = $("#firstSetupBack");
-  if(back) back.style.display = "none";
-}
-
-/* ===== O.Poong added: first start gate logic ===== */
 function showMainApp(){
   document.body.classList.remove("setup-pending");
 }
@@ -1359,6 +1412,12 @@ function updateUserBadge(){
 }
 function startFirstSetup(){
   try{
+    const setupBack = $("#firstSetupBack");
+    if(!setupBack){
+      alert("초기 설정 창을 찾을 수 없습니다.");
+      return;
+    }
+
     renderSetupAllergyGrid();
 
     const cfg = getHomeWidgetConfig();
@@ -1374,9 +1433,7 @@ function startFirstSetup(){
 
     setupStepIndex = 0;
     renderSetupStep();
-
-    const back = $("#firstSetupBack");
-    if(back) back.style.display = "flex";
+    setupBack.style.display = "flex";
   }catch(err){
     alert("초기 설정을 여는 중 오류가 발생했습니다: " + err.message);
     console.error(err);
@@ -1419,13 +1476,8 @@ function setupNext(){
     }
   }
 
-  if(setupStepIndex === 1){
-    saveSetupName();
-  }
-
-  if(setupStepIndex === 2){
-    saveSetupAllergy();
-  }
+  if(setupStepIndex === 1) saveSetupName();
+  if(setupStepIndex === 2) saveSetupAllergy();
 
   setupStepIndex = Math.min(3, setupStepIndex + 1);
   renderSetupStep();
@@ -1779,7 +1831,7 @@ function openModal(){
     ? "이미 설치되어 있습니다. 홈 화면의 O.Poong 아이콘으로 실행할 수 있습니다."
     : isIos()
       ? "iPhone/iPad는 Safari 공유 버튼에서 ‘홈 화면에 추가’를 선택하면 설치할 수 있습니다."
-      : "Android/Chrome/Edge는 주소창 또는 메뉴의 ‘앱 설치’를 선택하면 설치할 수 있습니다.";
+      : "Android Chrome/Edge는 주소창 또는 메뉴의 ‘앱 설치’를 선택하면 설치할 수 있습니다.";
   $("#installGuideText").textContent = guide;
   $("#btnInstallNow").style.display = deferredPrompt ? "inline-flex" : "none";
   $("#modalBack").style.display = "flex";
@@ -1997,10 +2049,19 @@ async function renderHomeWidgets(){
     $("#homeSchBody").innerHTML = `<div class="muted">불러오는 중…</div>`;
     const byDate = await fetchScheduleMonthProxy(todayYYYYMM());
     homeRenderTodaySchedule(byDate);
-  }catch{ $("#homeSchBody").innerHTML = `<div class="muted">학사일정을 불러오지 못했습니다.</div>`; }
+  }catch{ $("#homeSchBody").innerHTML = `<div class="muted">학사일정을 불러오지 못했어요.</div>`; }
 
   homeRenderTodayTimetable();
 }
+
+
+document.addEventListener("click", function(e){
+  const btn = e.target.closest("#firstStartBtn");
+  if(btn){
+    e.preventDefault();
+    startFirstSetup();
+  }
+});
 
 window.addEventListener("load",()=>{
   installRipple();
