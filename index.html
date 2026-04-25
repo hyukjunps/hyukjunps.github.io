@@ -12,7 +12,7 @@
 <meta name="robots" content="index,follow,max-image-preview:large" />
 <meta name="theme-color" content="#1e40af" />
 
-<meta property="og:site_name" content="O.Poong" />
+<meta property="og:site_name" content="O.Poong ㅣ 풍산고 생활, 한 화면에서" />
 <meta property="og:title" content="O.Poong ㅣ 풍산고 생활, 한 화면에서." />
 <meta property="og:description" content="안동 풍산고등학교의 홈페이지, 학사일정, 상벌점 시스템, 급식 정보를 바로 확인하세요." />
 <meta property="og:type" content="website" />
@@ -965,6 +965,181 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
 @media (max-width:960px){.homeDashboard{grid-template-columns:1fr}.homeDashboardWidgets{max-height:none}}
 @media (max-width:620px){.homeDashboardWidgets{grid-template-columns:1fr}.homeDashboardWidgets .widget[data-home-widget="meal"]{grid-column:auto;grid-row:auto;min-height:260px}.homeDashboardHero{min-height:auto}}
 
+
+
+/* ===== O.Poong requested patch: compact home, equal widgets, collapsible allergy, full setup ===== */
+.favoriteHit{
+  color:color-mix(in srgb,var(--pri) 88%,var(--text));
+  font-weight:1000;
+  background:color-mix(in srgb,var(--pri) 12%,var(--card));
+  border:1px solid color-mix(in srgb,var(--pri) 34%,var(--line));
+  border-radius:14px;
+  padding:7px 9px;
+  margin:4px 0;
+  list-style-position:inside;
+}
+.allergyToggle{
+  width:100%;
+  margin-top:10px;
+  justify-content:space-between;
+  border-radius:18px;
+}
+.allergyPanel:not(.open) .allergyGrid,
+.allergyPanel:not(.open) .allergyWarnText{
+  display:none!important;
+}
+.allergyPanel .allergyToggleText::after{
+  content:"펼치기";
+}
+.allergyPanel.open .allergyToggleText::after{
+  content:"접기";
+}
+
+.favoritePanel:not(.open) .favoriteEditor{
+  display:none!important;
+}
+.favoritePanel .favoriteToggleText::after{
+  content:"펼치기";
+}
+.favoritePanel.open .favoriteToggleText::after{
+  content:"접기";
+}
+.favoriteEditor{
+  margin-top:12px;
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.favoriteMealInput{
+  width:100%;
+}
+.favoriteSummaryText{
+  color:var(--muted);
+  font-size:12.5px;
+  font-weight:900;
+  line-height:1.6;
+}
+.homeDashboard{
+  grid-template-columns:minmax(190px,.34fr) minmax(0,1.66fr)!important;
+  align-items:stretch!important;
+}
+.homeDashboardHero{
+  min-height:260px!important;
+  padding:20px!important;
+  justify-content:flex-start!important;
+}
+.homeDashboardHero::after{
+  width:130px!important;
+  height:130px!important;
+  right:-55px!important;
+  top:-55px!important;
+}
+.homeDashboardTitle{
+  font-size:clamp(17px,1.55vw,24px)!important;
+  line-height:1.55!important;
+  letter-spacing:-.5px!important;
+  font-weight:950!important;
+  margin-top:14px!important;
+  max-width:260px!important;
+}
+.homeDashboardMessage{
+  font-size:14px!important;
+  line-height:1.6!important;
+  font-weight:850!important;
+  margin-top:10px!important;
+}
+.homeDashboardHero .heroActions{
+  display:none!important;
+}
+.homeDashboardWidgets{
+  grid-template-columns:repeat(3,minmax(0,1fr))!important;
+  gap:12px!important;
+  max-height:none!important;
+  overflow:visible!important;
+  align-items:stretch!important;
+}
+.homeDashboardWidgets .widget,
+.homeDashboardWidgets .widget[data-home-widget="meal"]{
+  grid-column:auto!important;
+  grid-row:auto!important;
+  min-height:360px!important;
+  height:100%!important;
+}
+.homeDashboardWidgets .widgetBody,
+.homeDashboardWidgets .widget[data-home-widget="meal"] .widgetBody{
+  max-height:285px!important;
+  overflow:auto!important;
+}
+#firstSetupBack{
+  padding:0!important;
+  background:rgba(7,17,31,.62)!important;
+  backdrop-filter:blur(10px);
+}
+#firstSetupBack .modal{
+  width:100vw!important;
+  max-width:none!important;
+  height:100vh!important;
+  height:100svh!important;
+  border-radius:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+}
+#firstSetupBack .modalHead{
+  padding:18px clamp(18px,5vw,64px)!important;
+}
+#firstSetupBack .modalBody{
+  flex:1!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  padding:clamp(18px,5vw,64px)!important;
+}
+#firstSetupBack .modalFoot{
+  padding:18px clamp(18px,5vw,64px)!important;
+}
+#firstSetupBack .setupStep{
+  width:min(760px,100%);
+  padding:clamp(18px,4vw,42px);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  background:color-mix(in srgb,var(--card) 96%,transparent);
+  box-shadow:var(--shadow2);
+  animation:setupSlide .24s ease both;
+}
+.setupProgress{
+  width:min(520px,42vw);
+  height:10px;
+  border-radius:999px;
+  overflow:hidden;
+  border:1px solid var(--line);
+  background:color-mix(in srgb,var(--pri) 7%,var(--card));
+}
+.setupProgressBar{
+  height:100%;
+  width:20%;
+  border-radius:999px;
+  background:linear-gradient(135deg,var(--pri),var(--pri2));
+  transition:width .24s ease;
+}
+@keyframes setupSlide{
+  from{opacity:0;transform:translateY(12px) scale(.985)}
+  to{opacity:1;transform:translateY(0) scale(1)}
+}
+.favoriteInput{
+  width:100%;
+  margin-top:14px;
+}
+@media (max-width:960px){
+  .homeDashboard{grid-template-columns:1fr!important;}
+  .homeDashboardHero{min-height:auto!important;}
+  .homeDashboardTitle{max-width:none!important;}
+  .homeDashboardWidgets{grid-template-columns:1fr!important;}
+  .homeDashboardWidgets .widget,
+  .homeDashboardWidgets .widget[data-home-widget="meal"]{min-height:240px!important;}
+  #firstSetupBack .modalBody{align-items:flex-start!important;}
+  .setupProgress{width:42vw;}
+}
+
 </style>
 </head>
 
@@ -1043,6 +1218,7 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
           <div class="homeDashboardHero">
             <span class="kicker">O.Poong Portal</span>
             <h2 id="personalHeroLine" class="homeDashboardTitle">오늘도 O.Poong에서 필요한 정보를 확인해보세요.</h2>
+            <p class="homeDashboardMessage">급식·학사일정·시간표를 오른쪽에서 바로 확인해보세요.</p>
             <div class="heroActions">
               <button class="bigBtn" type="button" onclick="go('meal'); setTodayAndLoad();">오늘 급식 보기</button>
               <button class="btn ghost" type="button" onclick="go('timetable'); ttRenderTable();">시간표 열기</button>
@@ -1092,13 +1268,32 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
           <b style="color:var(--text)">알레르기 번호 안내</b><br>
           1 난류 · 2 우유 · 3 메밀 · 4 땅콩 · 5 대두 · 6 밀 · 7 고등어 · 8 게 · 9 새우 · 10 돼지고기 · 11 복숭아 · 12 토마토 · 13 아황산염 · 14 호두 · 15 닭고기 · 16 쇠고기 · 17 오징어 · 18 조개류
         </div>
-        <div class="allergyPanel">
+        <div class="allergyPanel" id="allergyPanel">
           <b style="color:var(--text)">알레르기 표시 설정</b>
           <div class="muted" style="margin-top:6px;font-size:13px">
             해당되는 알레르기 번호를 선택하면 급식 메뉴에서 빨간색으로 표시할게요.
           </div>
+          <button class="btn ghost allergyToggle" type="button" onclick="toggleAllergyPanel()">
+            <span>알레르기 번호 선택</span>
+            <span class="allergyToggleText"></span>
+          </button>
           <div id="allergyGrid" class="allergyGrid" aria-label="알레르기 선택"></div>
           <div class="allergyWarnText" id="allergySummary">선택된 알레르기가 없습니다.</div>
+        </div>
+        <div class="allergyPanel favoritePanel" id="favoritePanel">
+          <b style="color:var(--text)">좋아하는 음식 표시 설정</b>
+          <div class="muted" style="margin-top:6px;font-size:13px">
+            좋아하는 음식을 입력하면 급식 메뉴에서 파란색으로 표시할게요.
+          </div>
+          <button class="btn ghost allergyToggle" type="button" onclick="toggleFavoritePanel()">
+            <span>좋아하는 음식 수정</span>
+            <span class="favoriteToggleText"></span>
+          </button>
+          <div class="favoriteEditor" aria-label="좋아하는 음식 설정">
+            <input id="favoriteFoodInput" class="favoriteInput favoriteMealInput" type="text" maxlength="80" placeholder="예: 돈가스, 떡볶이, 김치찌개">
+            <button class="smallbtn primary" type="button" onclick="saveFavoriteFoodsFromMeal()">저장</button>
+            <div class="favoriteSummaryText" id="favoriteSummary">저장된 좋아하는 음식이 없습니다.</div>
+          </div>
         </div>
         <div id="meals" style="margin-top:14px"></div>
         <div id="mealMonthTable" style="display:none"></div>
@@ -1283,7 +1478,7 @@ SOFTWARE.
       <button class="btn ghost" type="button" onclick="closeModal()">닫기</button>
     </div>
     <div class="modalBody" id="installGuideText">
-      설치하면 홈 화면에서 앱처럼 실행할 수 있습니다.
+      설치하면 홈 화면에서 앱처럼 실행할 수 있어요.
     </div>
     <div class="modalFoot">
       <button id="btnInstallNow" class="btn ok" type="button" style="display:none">지금 설치하기</button>
@@ -1297,13 +1492,14 @@ SOFTWARE.
   <div class="modal">
     <div class="modalHead">
       <b>O.Poong 맞춤 설정</b>
+      <div class="setupProgress" aria-label="설정 진행률"><div id="setupProgressBar" class="setupProgressBar"></div></div>
       <button class="btn ghost" type="button" onclick="skipFirstSetup()">나중에</button>
     </div>
     <div class="modalBody">
       <div id="setupStepPrivacy" class="setupStep active">
         <b style="color:var(--text)">개인정보 수집·이용에 동의해 주세요</b>
         <div style="margin-top:8px">
-          O.Poong은 맞춤형 화면을 제공하기 위해 이름, 알레르기 선택값, 홈화면 위젯 선택값을 이 기기의 브라우저 저장소에 저장합니다.
+          O.Poong은 맞춤형 화면을 제공하기 위해 이름, 알레르기 선택값, 홈화면 위젯 선택값을 이 기기의 브라우저 저장소에 저장해요.
         </div>
         <div class="privacyBox">
           <b style="color:var(--text)">수집 항목</b><br>
@@ -1323,7 +1519,7 @@ SOFTWARE.
 
       <div id="setupStepName" class="setupStep">
         <b style="color:var(--text)">이름을 알려주세요</b>
-        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요?</div>
+        <div style="margin-top:8px">제가 이름을 어떻게 불러드리면 될까요??.</div>
         <input id="setupNameInput" class="setupNameInput" type="text" maxlength="12" placeholder="예: 혁준">
         <div class="muted" style="margin-top:10px;font-size:13px">이름은 이 브라우저에만 저장됩니다.</div>
       </div>
@@ -1332,6 +1528,13 @@ SOFTWARE.
         <b style="color:var(--text)">알레르기가 있으세요?</b>
         <div style="margin-top:8px">선택한 알레르기 번호가 급식 메뉴에 포함되면 빨간색으로 표시됩니다.</div>
         <div id="setupAllergyGrid" class="setupGrid"></div>
+      </div>
+
+      <div id="setupStepFavorite" class="setupStep">
+        <b style="color:var(--text)">좋아하는 음식이 있으신가요?</b>
+        <div style="margin-top:8px">제가 파란색으로 추가해드릴게요!</div>
+        <input id="setupFavoriteInput" class="favoriteInput" type="text" maxlength="80" placeholder="예: 돈가스, 떡볶이, 김치찌개">
+        <div class="muted" style="margin-top:10px;font-size:13px">쉼표로 여러 개를 적을 수 있어요. 입력하지 않아도 넘어갈 수 있습니다.</div>
       </div>
 
       <div id="setupStepWidget" class="setupStep">
@@ -1360,16 +1563,16 @@ SOFTWARE.
 const NOTICE_CONFIG = {
   enabled: true,
   title: "O.poong이 리뉴얼되었어요! 앞으로도 잘 부탁해요!",
-  message: "지금은 테스트를 진행하고 있어요!.",
-  buttonText: "도서관 사이트 테스트",
-  buttonUrl: "https://read365.edunet.net/PureScreen/SchoolSearch?schoolName=풍산고등학교&provCode=R10&neisCode=R100000999",
+  message: "궁금한 점이 있으시다면 인스타그램 @hyukjun._.ps로 연락주세요.",
+  buttonText: "",
+  buttonUrl: "",
 
   /*
     공지 배너 색상 수정:
     - type: "default" | "blue" | "green" | "amber" | "red"
     - customBg, customBorder, customText를 채우면 직접 색상 지정 가능
   */
-  type: "red",
+  type: "green",
   customBg: "",
   customBorder: "",
   customText: ""
@@ -1418,6 +1621,7 @@ const ALLERGY_ITEMS = [
 const ALLERGY_KEY = "opoong_allergy_numbers_v1";
 const FIRST_SETUP_KEY = "opoong_first_setup_done_v6";
 const USER_NAME_KEY = "opoong_user_name_v1";
+const FAVORITE_FOOD_KEY = "opoong_favorite_foods_v1";
 const PERSONAL_MESSAGES = [
   "{name}님, 오늘의 학사일정을 확인해보세요!",
   "{name}님, 오늘 급식 메뉴를 먼저 확인해보세요.",
@@ -1428,7 +1632,16 @@ const PERSONAL_MESSAGES = [
   "{name}님, 오늘의 학교생활을 O.Poong과 함께 시작해보세요.",
   "{name}님, 필요한 메뉴를 홈에서 바로 열어보세요.",
   "{name}님, 오늘의 일정과 시간표를 놓치지 마세요.",
-  "{name}님, O.Poong이 오늘의 학교생활을 정리해드릴게요."
+  "{name}님, O.Poong이 오늘의 학교생활을 정리해드릴게요.",
+  "{name}님, 오늘 급식과 일정부터 가볍게 확인해보세요.",
+  "{name}님, 필요한 학교 정보를 빠르게 모아봤어요.",
+  "{name}님, 오늘 하루 준비를 O.Poong에서 시작해보세요.",
+  "{name}님, 급식·일정·시간표를 한눈에 확인해보세요.",
+  "{name}님, 오늘 놓치면 아쉬운 정보를 먼저 확인해보세요.",
+  "{name}님, 학교생활에 필요한 것만 간단히 정리했어요.",
+  "{name}님, 오늘도 필요한 메뉴를 바로 열어보세요.",
+  "{name}님, 즐겨 찾는 정보를 홈에서 바로 확인해보세요.",
+  "{name}님, 급식과 시간표를 먼저 체크해보세요."
 ];
 
 const $ = s => document.querySelector(s);
@@ -1516,7 +1729,7 @@ function go(view){
   history.replaceState(null,"",`#${view}`);
   window.scrollTo({top:0,behavior:"smooth"});
   if(view === "home") renderHomeWidgets();
-  if(view === "meal") renderAllergySelector();
+  if(view === "meal") { renderAllergySelector(); renderFavoriteFoodEditor(); }
   if(view === "timetable") ttRenderTable();
   if(view === "neis") neisInit();
 }
@@ -1567,11 +1780,57 @@ function getMenuAllergyHits(menuText){
   const selected = getSelectedAllergies();
   return menuAllergyNumbers(menuText).filter(n => selected.includes(n));
 }
+function getFavoriteFoods(){
+  try{
+    const arr = JSON.parse(localStorage.getItem(FAVORITE_FOOD_KEY) || "[]");
+    return Array.isArray(arr) ? arr.map(x=>String(x).trim()).filter(Boolean) : [];
+  }catch{
+    return [];
+  }
+}
+function saveFavoriteFoodsFromText(text){
+  const arr = String(text || "").split(/[,，\n]/).map(x=>x.trim()).filter(Boolean);
+  localStorage.setItem(FAVORITE_FOOD_KEY, JSON.stringify([...new Set(arr)]));
+}
+function getMenuFavoriteHits(menuText){
+  const raw = String(menuText || "");
+  return getFavoriteFoods().filter(food => food.length >= 1 && raw.includes(food));
+}
+function toggleAllergyPanel(){
+  const panel = $("#allergyPanel");
+  if(panel) panel.classList.toggle("open");
+}
+function toggleFavoritePanel(){
+  const panel = $("#favoritePanel");
+  if(panel) panel.classList.toggle("open");
+  renderFavoriteFoodEditor();
+}
+function renderFavoriteFoodEditor(){
+  const input = $("#favoriteFoodInput");
+  const summary = $("#favoriteSummary");
+  const favs = getFavoriteFoods();
+  if(input) input.value = favs.join(", ");
+  if(summary){
+    summary.textContent = favs.length
+      ? `저장됨: ${favs.join(", ")}`
+      : "저장된 좋아하는 음식이 없습니다.";
+  }
+}
+function saveFavoriteFoodsFromMeal(){
+  const input = $("#favoriteFoodInput");
+  saveFavoriteFoodsFromText(input ? input.value : "");
+  renderFavoriteFoodEditor();
+  if(typeof mealMode !== "undefined" && mealMode === "month") mealLoadMonth();
+  else if($("#date") && $("#date").value) onDay();
+  renderHomeWidgets();
+}
 function renderMenuItem(menuText){
   const hits = getMenuAllergyHits(menuText);
+  const favs = getMenuFavoriteHits(menuText);
   const safeText = escapeHtml(menuText);
-  if(!hits.length) return `<li class="allergySafe">${safeText}</li>`;
-  return `<li class="allergyHit">${safeText}<div style="font-size:12px;margin-top:4px">주의: ${hits.map(allergyLabel).join(", ")}</div></li>`;
+  if(hits.length) return `<li class="allergyHit">${safeText}<div style="font-size:12px;margin-top:4px">주의: ${hits.map(allergyLabel).join(", ")}</div></li>`;
+  if(favs.length) return `<li class="favoriteHit">${safeText}<div style="font-size:12px;margin-top:4px">좋아하는 음식: ${favs.map(escapeHtml).join(", ")}</div></li>`;
+  return `<li class="allergySafe">${safeText}</li>`;
 }
 function renderAllergySelector(){
   const grid = $("#allergyGrid");
@@ -1664,6 +1923,9 @@ function openSetupModalSafely(){
   const nameInput = $("#setupNameInput");
   if(nameInput) nameInput.value = localStorage.getItem(USER_NAME_KEY) || "";
 
+  const favoriteInput = $("#setupFavoriteInput");
+  if(favoriteInput) favoriteInput.value = getFavoriteFoods().join(", ");
+
   const privacy = $("#privacyAgreeCheck");
   if(privacy) privacy.checked = false;
 
@@ -1706,6 +1968,7 @@ function renderSetupStep(){
     $("#setupStepPrivacy"),
     $("#setupStepName"),
     $("#setupStepAllergy"),
+    $("#setupStepFavorite"),
     $("#setupStepWidget")
   ];
 
@@ -1718,8 +1981,11 @@ function renderSetupStep(){
   const done = $("#setupDoneBtn");
 
   if(prev) prev.style.display = setupStepIndex === 0 ? "none" : "inline-flex";
-  if(next) next.style.display = setupStepIndex < 3 ? "inline-flex" : "none";
-  if(done) done.style.display = setupStepIndex === 3 ? "inline-flex" : "none";
+  if(next) next.style.display = setupStepIndex < 4 ? "inline-flex" : "none";
+  if(done) done.style.display = setupStepIndex === 4 ? "inline-flex" : "none";
+
+  const bar = $("#setupProgressBar");
+  if(bar) bar.style.width = `${((setupStepIndex + 1) / 5) * 100}%`;
 }
 function setupNext(){
   if(setupStepIndex === 0){
@@ -1732,8 +1998,9 @@ function setupNext(){
 
   if(setupStepIndex === 1) saveSetupName();
   if(setupStepIndex === 2) saveSetupAllergy();
+  if(setupStepIndex === 3) saveSetupFavoriteFoods();
 
-  setupStepIndex = Math.min(3, setupStepIndex + 1);
+  setupStepIndex = Math.min(4, setupStepIndex + 1);
   renderSetupStep();
 }
 function setupPrev(){
@@ -1752,6 +2019,12 @@ function saveSetupAllergy(){
   const picked = Array.from(grid.querySelectorAll("input:checked")).map(x=>x.value);
   saveSelectedAllergies(picked);
   renderAllergySelector();
+  renderFavoriteFoodEditor();
+}
+function saveSetupFavoriteFoods(){
+  const input = $("#setupFavoriteInput");
+  saveFavoriteFoodsFromText(input ? input.value : "");
+  renderFavoriteFoodEditor();
 }
 function saveSetupWidgets(){
   const cfg = getHomeWidgetConfig();
@@ -1770,6 +2043,7 @@ function finishFirstSetup(){
 
   saveSetupName();
   saveSetupAllergy();
+  saveSetupFavoriteFoods();
   saveSetupWidgets();
 
   localStorage.setItem(FIRST_SETUP_KEY, "1");
@@ -1819,6 +2093,7 @@ async function initMeals(){
   const now = new Date();
   $("#mealMonth").value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}`;
   renderAllergySelector();
+  renderFavoriteFoodEditor();
 }
 let mealMode = "day";
 function toggleMealMode(){
@@ -1837,7 +2112,7 @@ async function onDay(){
     $("#meals").innerHTML = `<div class="notice">불러오는 중…</div>`;
     const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
     if(!meals.length){
-      $("#meals").innerHTML = `<div class="notice">선택한 날짜에는 급식 정보가 없습니다.</div>`;
+      $("#meals").innerHTML = `<div class="notice">선택한 날짜에는 급식 정보가 없어요.</div>`;
       $("#shareText").textContent = "";
       setNotice("", "급식 정보가 없습니다.", true);
       return;
@@ -1882,7 +2157,7 @@ async function mealLoadMonth(){
       }catch(_){}
     }
     if(!results.length){
-      $("#mealMonthTable").innerHTML = `<div class="notice">해당 월에는 급식 정보가 없습니다.</div>`;
+      $("#mealMonthTable").innerHTML = `<div class="notice">해당 월에는 급식 정보가 없네요.</div>`;
       return;
     }
     $("#mealMonthTable").innerHTML = `
@@ -1905,8 +2180,8 @@ async function copyTextReliable(text){
 }
 $("#btnCopy").addEventListener("click", async ()=>{
   const txt = $("#shareText").textContent || "";
-  if(!txt.trim()) return alert("복사할 급식 내용이 없습니다.");
-  alert(await copyTextReliable(txt) ? "급식 내용이 복사되었습니다." : "복사에 실패했습니다.");
+  if(!txt.trim()) return alert("복사할 급식 내용이 없어요.");
+  alert(await copyTextReliable(txt) ? "급식 내용이 복사되었어요." : "복사에 실패했어요.");
 });
 
 function setSchNotice(kind,text){
@@ -1970,7 +2245,7 @@ function homeRenderTodaySchedule(byDate){
   $("#homeSchDate").textContent = iso;
   $("#homeSchBody").innerHTML = items.length
     ? `<ul style="padding-left:18px;margin:0;line-height:1.8">${items.map(it=>`<li>${escapeHtml(it.title || it)}</li>`).join("")}</ul>`
-    : `<div class="muted">오늘 학사일정이 없습니다.</div>`;
+    : `<div class="muted">오늘은 학사일정이 없어요.</div>`;
 }
 
 const TT_KEY = "opoong_tt_v3";
@@ -2097,7 +2372,7 @@ function openModal(){
     ? "이미 설치되어 있습니다. 홈 화면의 O.Poong 아이콘으로 실행할 수 있습니다."
     : isIos()
       ? "iPhone/iPad는 Safari에서 공유 버튼을 누른 뒤 ‘홈 화면에 추가’를 선택하면 설치할 수 있습니다."
-      : "설치 버튼이 바로 뜨지 않으면 Chrome/Edge 주소창 오른쪽 또는 메뉴에서 ‘앱 설치’나 ‘홈 화면에 추가’를 선택해 주세요.";
+      : "설치 버튼이 바로 뜨지 않으면 Chrome/Edge 주소창 오른쪽 또는 메뉴에서 ‘앱 설치’나 ‘홈 화면에 추가’를 선택해 주세요. PWA 설치는 HTTPS, manifest.json, service-worker.js가 정상 연결되어야 표시됩니다.";
   $("#installGuideText").textContent = guide;
   $("#btnInstallNow").style.display = deferredPrompt ? "inline-flex" : "none";
   $("#modalBack").style.display = "flex";
@@ -2203,14 +2478,14 @@ async function renderHomeWidgets(){
     $("#homeMealBody").innerHTML = meals.length
       ? meals.map(m=>`<div style="margin-bottom:10px"><b>${escapeHtml(m.type)}</b><ul style="padding-left:18px;margin:6px 0 0">${m.menu.map(renderMenuItem).join("")}</ul></div>`).join("")
       : `<div class="muted">오늘 급식 정보가 없습니다.</div>`;
-  }catch{ $("#homeMealBody").innerHTML = `<div class="muted">급식 정보를 불러오지 못했습니다.</div>`; }
+  }catch{ $("#homeMealBody").innerHTML = `<div class="muted">급식 정보를 불러오지 못했어요.</div>`; }
 
   try{
     $("#homeSchDate").textContent = todayStr();
     $("#homeSchBody").innerHTML = `<div class="muted">불러오는 중…</div>`;
     const byDate = await fetchScheduleMonthProxy(todayYYYYMM());
     homeRenderTodaySchedule(byDate);
-  }catch{ $("#homeSchBody").innerHTML = `<div class="muted">학사일정을 불러오지 못했습니다.</div>`; }
+  }catch{ $("#homeSchBody").innerHTML = `<div class="muted">학사일정을 불러오지 못했어요.</div>`; }
 
   homeRenderTodayTimetable();
 }
