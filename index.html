@@ -948,6 +948,23 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
   }
 }
 
+
+/* ===== O.Poong home layout fix: left menu + compact widgets ===== */
+#view-home{padding:18px;}
+.homeDashboard{display:grid;grid-template-columns:minmax(0,.9fr) minmax(320px,1.1fr);gap:16px;align-items:stretch;}
+.homeDashboardHero,.homeDashboardWidgets{border:1px solid color-mix(in srgb,var(--line) 86%,transparent);border-radius:var(--radius);background:color-mix(in srgb,var(--card) 96%,transparent);box-shadow:var(--shadow2);}
+.homeDashboardHero{min-height:360px;padding:26px;display:flex;flex-direction:column;justify-content:center;align-items:flex-start;position:relative;overflow:hidden;}
+.homeDashboardHero::after{content:"";position:absolute;right:-70px;top:-70px;width:200px;height:200px;border-radius:70px;background:linear-gradient(135deg,color-mix(in srgb,var(--pri3) 36%,transparent),transparent);transform:rotate(20deg);}
+.homeDashboardTitle{margin:16px 0 0;font-size:clamp(36px,4.6vw,62px);line-height:1.05;letter-spacing:-2px;color:var(--text);}
+.homeDashboardMessage{margin:18px 0 0;color:var(--muted);font-size:clamp(17px,2vw,23px);line-height:1.65;font-weight:950;max-width:560px;}
+.homeDashboardWidgets{padding:14px;display:grid;grid-template-columns:1fr 1fr;gap:12px;max-height:520px;overflow:auto;}
+.homeDashboardWidgets .widget{min-height:160px;box-shadow:0 8px 18px rgba(15,23,42,.045);}
+.homeDashboardWidgets .widget[data-home-widget="meal"]{grid-column:1 / -1;}
+.homeDashboardWidgets .widgetBody{max-height:168px;overflow:auto;}
+.homeDashboardWidgets .widget[data-home-widget="meal"] .widgetBody{max-height:210px;}
+@media (max-width:960px){.homeDashboard{grid-template-columns:1fr}.homeDashboardWidgets{max-height:none}}
+@media (max-width:620px){.homeDashboardWidgets{grid-template-columns:1fr}.homeDashboardWidgets .widget[data-home-widget="meal"]{grid-column:auto}.homeDashboardHero{min-height:auto}}
+
 </style>
 </head>
 
@@ -1004,38 +1021,6 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
     <span class="pill">Notice</span>
   </div>
 
-  <section class="hero" aria-label="O.Poong 소개">
-    <div class="heroCard">
-      <span class="kicker">O.Poong Portal</span>
-      <h1>풍산고 생활,<br>한 화면에서.</h1>
-      <p id="personalHeroLine" class="heroText heroPersonalMessage">
-        오늘도 O.Poong에서 필요한 정보를 확인해보세요.
-      </p>
-      <div class="heroActions">
-        <button class="bigBtn" type="button" onclick="go('meal'); setTodayAndLoad();">오늘 급식 보기</button>
-        <button class="btn ghost" type="button" onclick="go('timetable'); ttRenderTable();">시간표 열기</button>
-        <button class="btn ghost" type="button" onclick="go('about')">서비스 소개</button>
-      </div>
-    </div>
-
-    <aside class="sideCard homeAlwaysWidgets" aria-label="오늘의 위젯">
-      <div class="widgetGrid">
-        <div class="widget" data-home-widget="meal">
-          <div class="widgetHead"><b>오늘의 급식</b><span class="pill" id="homeMealDate">-</span></div>
-          <div class="widgetBody" id="homeMealBody"><div class="muted">불러오는 중…</div></div>
-        </div>
-        <div class="widget" data-home-widget="schedule">
-          <div class="widgetHead"><b>오늘의 학사일정</b><span class="pill" id="homeSchDate">-</span></div>
-          <div class="widgetBody" id="homeSchBody"><div class="muted">불러오는 중…</div></div>
-        </div>
-        <div class="widget" data-home-widget="timetable">
-          <div class="widgetHead"><b>오늘의 시간표</b><span class="pill" id="homeTTDay">-</span></div>
-          <div class="widgetBody" id="homeTTBody"><div class="muted">시간표를 입력하면 표시됩니다.</div></div>
-        </div>
-      </div>
-    </aside>
-  </section>
-
   <div class="layout">
     <aside class="sideNav" aria-label="주요 메뉴">
       <div class="sideNavTitle">메뉴</div>
@@ -1053,32 +1038,34 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
 
     <main id="main" class="panel">
       <section class="section view active" id="view-home">
-        <div class="sectionHeader">
-          <div>
-            <h2>빠른 실행</h2>
-            <p>위쪽 위젯에서 오늘 급식·일정·시간표를 바로 확인할 수 있어요.</p>
+        <div class="homeDashboard">
+          <div class="homeDashboardHero">
+            <span class="kicker">O.Poong Portal</span>
+            <h2 class="homeDashboardTitle">풍산고 생활,<br>한 화면에서.</h2>
+            <p id="personalHeroLine" class="homeDashboardMessage">
+              오늘도 O.Poong에서 필요한 정보를 확인해보세요.
+            </p>
+            <div class="heroActions">
+              <button class="bigBtn" type="button" onclick="go('meal'); setTodayAndLoad();">오늘 급식 보기</button>
+              <button class="btn ghost" type="button" onclick="go('timetable'); ttRenderTable();">시간표 열기</button>
+              <button class="btn ghost" type="button" onclick="go('schedule'); scheduleLoadMonth();">학사일정 보기</button>
+            </div>
           </div>
-          <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn ghost" type="button" onclick="renderHomeWidgets()">새로고침</button>
-          </div>
-        </div>
 
-
-        <div class="cardGrid" data-home-widget="quickTools" style="margin-top:14px">
-          <article class="toolCard">
-            <b>급식 조회</b>
-            <p>NEIS 급식 데이터를 불러와 조식·중식·석식을 카드 또는 월별 표로 정리해드릴게요!</p>
-            <button class="smallbtn primary" type="button" onclick="go('meal'); setTodayAndLoad();">열기</button>
-          </article>
-          <article class="toolCard">
-            <b>시간표 저장</b>
-            <p>입력한 시간표는 이 기기의 브라우저에만 저장되며, 다른 사용자에게 전송되지 않아요.</p>
-            <button class="smallbtn ghost" type="button" onclick="go('timetable'); ttRenderTable();">열기</button>
-          </article>
-          <article class="toolCard">
-            <b>온웨이에듀 바로가기</b>
-            <p>링크 찾는 데 힘드셨죠? 제가 바로 찾아드렸어요!</p>
-          </article>
+          <aside class="homeDashboardWidgets" aria-label="오늘의 위젯">
+            <div class="widget" data-home-widget="meal">
+              <div class="widgetHead"><b>오늘의 급식</b><span class="pill" id="homeMealDate">-</span></div>
+              <div class="widgetBody" id="homeMealBody"><div class="muted">불러오는 중…</div></div>
+            </div>
+            <div class="widget" data-home-widget="schedule">
+              <div class="widgetHead"><b>오늘의 학사일정</b><span class="pill" id="homeSchDate">-</span></div>
+              <div class="widgetBody" id="homeSchBody"><div class="muted">불러오는 중…</div></div>
+            </div>
+            <div class="widget" data-home-widget="timetable">
+              <div class="widgetHead"><b>오늘의 시간표</b><span class="pill" id="homeTTDay">-</span></div>
+              <div class="widgetBody" id="homeTTBody"><div class="muted">시간표를 입력하면 표시됩니다.</div></div>
+            </div>
+          </aside>
         </div>
       </section>
 
@@ -1358,7 +1345,7 @@ SOFTWARE.
    수정하기 쉬운 설정 영역
    ========================= */
 const NOTICE_CONFIG = {
-  enabled: true,
+  enabled: false,
   title: "O.poong이 리뉴얼되었어요! 앞으로도 잘 부탁해요!",
   message: "지금은 테스트를 진행하고 있어요!.",
   buttonText: "도서관 사이트 테스트",
