@@ -1618,8 +1618,12 @@ SOFTWARE.
       <div id="setupStepFavorite" class="setupStep">
         <b style="color:var(--text)">좋아하는 음식이 있으신가요?</b>
         <div style="margin-top:8px">제가 파란색으로 추가해드릴게요!</div>
-        <input id="setupFavoriteInput" class="favoriteInput" type="text" maxlength="80" placeholder="예: 돈가스, 떡볶이, 김치찌개">
-        <div class="muted" style="margin-top:10px;font-size:13px">쉼표로 여러 개를 적을 수 있어요. 입력하지 않아도 넘어갈 수 있습니다.</div>
+        <div class="favoriteKeywordBox" style="margin-top:14px" onclick="document.querySelector('#setupFavoriteInput')?.focus()">
+          <div id="setupFavoriteFoodChips" class="favoriteFoodChips" aria-label="설정 중인 좋아하는 음식"></div>
+          <input id="setupFavoriteInput" class="favoriteInput favoriteMealInput" type="text" maxlength="80" placeholder="좋아하는 음식을 쓰고 쉼표(,)를 눌러주세요" onkeydown="handleSetupFavoriteFoodKeydown(event)" oninput="handleSetupFavoriteFoodInput(event)">
+        </div>
+        <div class="favoriteKeywordHint" style="margin-top:10px">예: 돈가스 입력 후 , → 키워드로 내려가고 계속 입력할 수 있어요.</div>
+        <div class="muted" style="margin-top:8px;font-size:13px">입력하지 않아도 넘어갈 수 있습니다.</div>
       </div>
 
       <div id="setupStepWidget" class="setupStep">
@@ -1946,6 +1950,40 @@ function handleFavoriteFoodInput(event){
   const input = event && event.target ? event.target : $("#favoriteFoodInput");
   if(input && /[,，\n]/.test(input.value)) addFavoriteFoodKeywordFromInput();
 }
+let setupFavoriteFoodsDraft = [];
+function renderSetupFavoriteFoodChips(){
+  const box = $("#setupFavoriteFoodChips");
+  if(!box) return;
+  box.innerHTML = setupFavoriteFoodsDraft.map((food, idx) => `
+    <span class="favoriteFoodChip">
+      ${escapeHtml(food)}
+      <button type="button" aria-label="${escapeHtml(food)} 삭제" onclick="removeSetupFavoriteFoodKeyword(${idx})">×</button>
+    </span>
+  `).join("");
+}
+function addSetupFavoriteFoodKeywordFromInput(){
+  const input = $("#setupFavoriteInput");
+  if(!input) return;
+  const words = String(input.value || "").split(/[,，\n]/).map(x=>x.trim()).filter(Boolean);
+  if(!words.length) return;
+  setupFavoriteFoodsDraft = [...new Set([...setupFavoriteFoodsDraft, ...words])];
+  input.value = "";
+  renderSetupFavoriteFoodChips();
+}
+function handleSetupFavoriteFoodKeydown(event){
+  if(event.key === "," || event.key === "Enter"){
+    event.preventDefault();
+    addSetupFavoriteFoodKeywordFromInput();
+  }
+}
+function handleSetupFavoriteFoodInput(event){
+  const input = event && event.target ? event.target : $("#setupFavoriteInput");
+  if(input && /[,，\n]/.test(input.value)) addSetupFavoriteFoodKeywordFromInput();
+}
+function removeSetupFavoriteFoodKeyword(index){
+  setupFavoriteFoodsDraft = setupFavoriteFoodsDraft.filter((_, idx) => idx !== index);
+  renderSetupFavoriteFoodChips();
+}
 function removeFavoriteFoodKeyword(food){
   const target = String(food || "").trim();
   const favs = getFavoriteFoods().filter(item => item !== target);
@@ -2063,7 +2101,9 @@ function openSetupModalSafely(){
   if(nameInput) nameInput.value = localStorage.getItem(USER_NAME_KEY) || "";
 
   const favoriteInput = $("#setupFavoriteInput");
-  if(favoriteInput) favoriteInput.value = getFavoriteFoods().join(", ");
+  if(favoriteInput) favoriteInput.value = "";
+  setupFavoriteFoodsDraft = getFavoriteFoods();
+  renderSetupFavoriteFoodChips();
 
   const privacy = $("#privacyAgreeCheck");
   if(privacy) privacy.checked = false;
@@ -2161,8 +2201,8 @@ function saveSetupAllergy(){
   renderFavoriteFoodEditor();
 }
 function saveSetupFavoriteFoods(){
-  const input = $("#setupFavoriteInput");
-  saveFavoriteFoodsFromText(input ? input.value : "");
+  addSetupFavoriteFoodKeywordFromInput();
+  localStorage.setItem(FAVORITE_FOOD_KEY, JSON.stringify([...new Set(setupFavoriteFoodsDraft)]));
   renderFavoriteFoodEditor();
 }
 function saveSetupWidgets(){
