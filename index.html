@@ -1230,6 +1230,126 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
   .firstStartActions{width:100%;}
   #firstStartBtn,#firstStartInstallBtn{flex:1 1 160px;}
 }
+
+
+/* ===== O.Poong mobile safe patch: start screen + install guide ===== */
+html,
+body{
+  max-width:100%;
+  overflow-x:hidden;
+}
+
+body.setup-pending{
+  overflow:auto!important;
+}
+
+body.setup-pending .firstStartBack{
+  position:fixed!important;
+  inset:0!important;
+  width:100%!important;
+  height:100dvh!important;
+  min-height:100dvh!important;
+  overflow-y:auto!important;
+  -webkit-overflow-scrolling:touch;
+  display:block!important;
+  padding:
+    max(14px, env(safe-area-inset-top))
+    max(14px, env(safe-area-inset-right))
+    max(18px, env(safe-area-inset-bottom))
+    max(14px, env(safe-area-inset-left))!important;
+}
+
+.firstStartCard{
+  width:100%!important;
+  min-height:100%!important;
+  height:auto!important;
+  overflow:visible!important;
+  justify-content:flex-start!important;
+  padding:86px 0 22px!important;
+}
+
+.firstStartInner{
+  width:100%!important;
+  margin:0!important;
+  padding:22px!important;
+  border-radius:26px!important;
+}
+
+.firstStartLogo{
+  font-size:clamp(38px,13vw,72px)!important;
+  letter-spacing:-2.4px!important;
+}
+
+.firstStartSlogan{
+  font-size:clamp(16px,5vw,22px)!important;
+}
+
+.firstStartDesc{
+  font-size:14.5px!important;
+  line-height:1.7!important;
+}
+
+.firstStartActions{
+  width:100%!important;
+  display:grid!important;
+  grid-template-columns:1fr 1fr!important;
+  gap:10px!important;
+}
+
+#firstStartBtn,
+#firstStartInstallBtn{
+  width:100%!important;
+  min-width:0!important;
+  min-height:54px!important;
+  flex:none!important;
+}
+
+.firstStartTopLogo{
+  top:max(16px, env(safe-area-inset-top))!important;
+  left:max(16px, env(safe-area-inset-left))!important;
+}
+
+.firstStartTopLogo,
+.firstStartLogoImg,
+.firstStartLogoFallback{
+  width:64px!important;
+  height:64px!important;
+  border-radius:22px!important;
+}
+
+.modalBack{
+  z-index:10000!important;
+  padding:
+    max(14px, env(safe-area-inset-top))
+    max(14px, env(safe-area-inset-right))
+    max(14px, env(safe-area-inset-bottom))
+    max(14px, env(safe-area-inset-left))!important;
+}
+
+.modal{
+  max-height:calc(100dvh - 28px)!important;
+  overflow:auto!important;
+}
+
+#modalBack{
+  align-items:center!important;
+  justify-content:center!important;
+}
+
+@media (max-width:420px){
+  .firstStartActions{
+    grid-template-columns:1fr!important;
+  }
+
+  .firstStartInner{
+    padding:20px 16px!important;
+  }
+
+  .firstStartDesc{
+    margin-top:14px!important;
+  }
+}
+
 </style>
 </head>
 
@@ -1252,7 +1372,7 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
     </p>
       <div class="firstStartActions">
         <button id="firstStartBtn" class="bigBtn" type="button" onclick="window.OPOONG_START_SAFE && window.OPOONG_START_SAFE(event)">시작하기</button>
-        <button id="firstStartInstallBtn" class="btn ghost" type="button" onclick="handleInstallClick(event)">앱 설치</button>
+        <button id="firstStartInstallBtn" class="btn ghost" type="button">앱 설치</button>
       </div>
     </div>
   </section>
@@ -2602,11 +2722,23 @@ function getInstallGuide(mode){
   return "설치 버튼이 바로 뜨지 않으면 Chrome/Edge 주소창 오른쪽 또는 메뉴에서 ‘앱 설치’나 ‘홈 화면에 추가’를 선택해 주세요. PWA 설치는 HTTPS, manifest.json, service-worker.js가 정상 연결되어야 표시됩니다.";
 }
 function openModal(mode){
-  $("#installGuideText").textContent = getInstallGuide(mode);
-  $("#btnInstallNow").style.display = (!isIos() && !isStandalone() && deferredPrompt) ? "inline-flex" : "none";
-  $("#modalBack").style.display = "flex";
+  const guideText = $("#installGuideText");
+  const installNow = $("#btnInstallNow");
+  const modalBack = $("#modalBack");
+  if(guideText) guideText.textContent = getInstallGuide(mode);
+  if(installNow) installNow.style.display = (!isIos() && !isStandalone() && deferredPrompt) ? "inline-flex" : "none";
+  if(modalBack){
+    modalBack.style.display = "flex";
+    modalBack.setAttribute("aria-hidden", "false");
+  }
 }
-function closeModal(){ $("#modalBack").style.display = "none"; }
+function closeModal(){
+  const modalBack = $("#modalBack");
+  if(modalBack){
+    modalBack.style.display = "none";
+    modalBack.setAttribute("aria-hidden", "true");
+  }
+}
 async function runInstallPromptThenGuide(){
   if(isStandalone()){
     openModal();
@@ -2649,6 +2781,8 @@ window.addEventListener("appinstalled", ()=>{
 });
 const installTopBtn = $("#btnInstallTop");
 if(installTopBtn) installTopBtn.addEventListener("click", handleInstallClick);
+const firstStartInstallBtn = $("#firstStartInstallBtn");
+if(firstStartInstallBtn) firstStartInstallBtn.addEventListener("click", handleInstallClick);
 const installNowBtn = $("#btnInstallNow");
 if(installNowBtn) installNowBtn.addEventListener("click", handleInstallClick);
 
