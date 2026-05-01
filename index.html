@@ -1350,6 +1350,88 @@ body.setup-pending .firstStartBack{
   }
 }
 
+
+/* ===== O.Poong patch: mobile scroll for academic schedule only ===== */
+#view-schedule{
+  overflow:visible;
+}
+#view-schedule .controls{
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+}
+#view-schedule #schList{
+  margin-top:14px;
+  max-width:100%;
+  overflow-x:auto;
+  overflow-y:visible;
+  -webkit-overflow-scrolling:touch;
+  padding-bottom:10px;
+}
+.scheduleCalendarScroll{
+  width:100%;
+  overflow-x:auto;
+  overflow-y:visible;
+  -webkit-overflow-scrolling:touch;
+  overscroll-behavior-x:contain;
+  padding-bottom:8px;
+}
+.scheduleCalendarGrid{
+  display:grid;
+  grid-template-columns:repeat(7,minmax(104px,1fr));
+  gap:8px;
+  min-width:760px;
+}
+.scheduleDayHead{
+  justify-content:center;
+  min-height:36px;
+}
+.scheduleDayCell{
+  min-height:112px;
+  margin-top:0;
+  padding:11px;
+  overflow-wrap:anywhere;
+}
+.scheduleDayCell ul{
+  padding-left:16px;
+  margin:8px 0 0;
+  line-height:1.55;
+}
+.scheduleEmptyCell{
+  min-height:112px;
+}
+@media (max-width:620px){
+  #view-schedule{
+    padding-left:12px;
+    padding-right:12px;
+  }
+  #view-schedule .sectionHeader{
+    margin-bottom:12px;
+  }
+  #view-schedule .controls{
+    flex-wrap:nowrap;
+    align-items:center;
+    padding:10px;
+  }
+  #view-schedule .controls > span{
+    flex:0 0 auto;
+  }
+  #view-schedule .controls input,
+  #view-schedule .controls button{
+    flex:0 0 auto;
+  }
+  #view-schedule #schMonth{
+    min-width:150px;
+  }
+  .scheduleCalendarGrid{
+    grid-template-columns:repeat(7,104px);
+    min-width:760px;
+  }
+  .scheduleDayCell{
+    min-height:118px;
+    font-size:13px;
+  }
+}
+
 </style>
 </head>
 
@@ -2536,13 +2618,15 @@ function renderScheduleCalendar(yyyymm, byDate){
   while(cells.length % 7 !== 0) cells.push(null);
   const dow = ["일","월","화","수","목","금","토"];
   $("#schList").innerHTML = `
-    <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px">
-      ${dow.map(d=>`<div class="pill" style="justify-content:center">${d}</div>`).join("")}
-      ${cells.map(cell=> cell ? `
-        <div class="contentBox" style="min-height:112px;margin-top:0;padding:11px">
-          <b style="color:var(--text)">${cell.d}</b>
-          ${cell.items.length ? `<ul style="padding-left:16px;margin:8px 0 0;line-height:1.55">${cell.items.map(it=>`<li>${escapeHtml(it.title || it)}</li>`).join("")}</ul>` : `<div class="muted" style="font-size:12px;margin-top:8px">일정 없음</div>`}
-        </div>` : `<div></div>`).join("")}
+    <div class="scheduleCalendarScroll" aria-label="학사일정 달력 가로 스크롤 영역">
+      <div class="scheduleCalendarGrid">
+        ${dow.map(d=>`<div class="pill scheduleDayHead">${d}</div>`).join("")}
+        ${cells.map(cell=> cell ? `
+          <div class="contentBox scheduleDayCell">
+            <b style="color:var(--text)">${cell.d}</b>
+            ${cell.items.length ? `<ul>${cell.items.map(it=>`<li>${escapeHtml(it.title || it)}</li>`).join("")}</ul>` : `<div class="muted" style="font-size:12px;margin-top:8px">일정 없음</div>`}
+          </div>` : `<div class="scheduleEmptyCell"></div>`).join("")}
+      </div>
     </div>`;
 }
 async function scheduleLoadMonth(){
