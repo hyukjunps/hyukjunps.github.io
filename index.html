@@ -1433,13 +1433,15 @@ body.setup-pending .firstStartBack{
 }
 
 
-/* ===== O.Poong Kakao AdFit placement ===== */
+
+/* ===== O.Poong Kakao AdFit reliable patch ===== */
 .adfitWrap{
-  width:100%;
-  margin:14px 0;
+  margin:18px 0 0;
   display:flex;
   justify-content:center;
   align-items:center;
+  width:100%;
+  overflow:hidden;
 }
 .adfitBox{
   width:min(100%,760px);
@@ -1462,13 +1464,16 @@ body.setup-pending .firstStartBack{
   font-weight:900;
   line-height:1;
 }
-.adfitWrap .adfitBox{min-height:66px;}
-.adfitWrap[data-ad-size="large"] .adfitBox{min-height:112px;}
-.adfitWrap ins.kakao_ad_area{
-  max-width:100%;
-}
+.adfitMobile .adfitBox{width:min(100%,340px);min-height:66px;}
+.adfitDesktop .adfitBox{min-height:112px;}
+.adfitWrap ins.kakao_ad_area{max-width:100%;}
+#view-onway .adfitWrap,#view-neis .adfitWrap{justify-content:flex-start;}
+#view-onway .adfitBox,#view-neis .adfitBox,#view-meal .adfitBox{width:min(100%,340px);}
 @media (max-width:760px){
-  .adfitWrap[data-ad-size="large"] .adfitBox{width:min(100%,340px);min-height:66px;}
+  .adfitDesktop{display:none!important;}
+}
+@media (min-width:761px){
+  .adfitMobile.homeTopMobile{display:none!important;}
 }
 
 </style>
@@ -1573,7 +1578,8 @@ body.setup-pending .firstStartBack{
             </div>
           </aside>
         </div>
-        <div class="adfitWrap" id="ad-home" aria-label="광고"></div>
+        <div class="adfitWrap adfitDesktop" id="ad-home" aria-label="광고"></div>
+        <div class="adfitWrap adfitMobile homeTopMobile" id="ad-home-mobile" aria-label="광고"></div>
       </section>
 
       <section class="section view" id="view-meal">
@@ -1637,8 +1643,9 @@ body.setup-pending .firstStartBack{
         </div>
         <div id="meals" style="margin-top:14px"></div>
         <div id="mealMonthTable" style="display:none"></div>
+        <div class="adfitWrap adfitMobile" id="ad-meal" aria-label="광고"></div>
+
         <div id="shareText"></div>
-        <div class="adfitWrap" id="ad-meal" aria-label="광고"></div>
       </section>
 
       <section class="section view" id="view-schedule">
@@ -1685,7 +1692,8 @@ body.setup-pending .firstStartBack{
         <div class="contentBox">
           링크 찾기 힘드셨죠? 제가 찾아드렸어요!
         </div>
-        <div class="adfitWrap" id="ad-onway" aria-label="광고"></div>
+        <div class="adfitWrap adfitMobile" id="ad-onway" aria-label="광고"></div>
+
         <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
           <button class="bigBtn" type="button" onclick="openOnway()">온웨이에듀 열기</button>
         </div>
@@ -1738,7 +1746,7 @@ body.setup-pending .firstStartBack{
             <button class="tabBtn" type="button" data-k="volunteer" aria-selected="false">봉사</button>
             <button class="tabBtn" type="button" data-k="behavior" aria-selected="false">행특</button>
           </div>
-          <div class="adfitWrap" id="ad-neis" aria-label="광고"></div>
+          <div class="adfitWrap adfitMobile" id="ad-neis" aria-label="광고"></div>
           <textarea id="neisText" placeholder="내용을 입력하세요."></textarea>
           <div class="progress"><div id="neisBarFill"></div></div>
           <div class="widgetGrid" style="margin-top:12px">
@@ -2011,47 +2019,6 @@ function todayYYYYMM(){
 }
 function ymInputToYYYYMM(v){ return String(v||"").replace("-",""); }
 
-/* ===== Kakao AdFit: old working SPA mount 방식 ===== */
-const ADS = {
-  home: { unit: "DAN-QDvR0fxl5ri9KE4D", w: 728, h: 90, container: "ad-home", size: "large" },
-  meal: { unit: "DAN-ps0PRxwqtGCGkBq2", w: 320, h: 50, container: "ad-meal", size: "small" },
-  onway:{ unit: "DAN-vszyC76aKoBwX0tg", w: 320, h: 50, container: "ad-onway", size: "small" },
-  neis: { unit: "DAN-ldKVhVTYzKi5pUti", w: 320, h: 50, container: "ad-neis", size: "small" }
-};
-
-function mountKakaoAd(containerId, unit, w, h, size){
-  const box = document.getElementById(containerId);
-  if(!box) return;
-
-  box.innerHTML = `
-    <div class="adfitBox">
-      <span class="adfitLabel">AD</span>
-    </div>
-  `;
-  box.setAttribute("data-ad-size", size === "large" ? "large" : "small");
-
-  const target = box.querySelector(".adfitBox");
-  const ins = document.createElement("ins");
-  ins.className = "kakao_ad_area";
-  ins.style.display = "none";
-  ins.setAttribute("data-ad-unit", unit);
-  ins.setAttribute("data-ad-width", String(w));
-  ins.setAttribute("data-ad-height", String(h));
-  target.appendChild(ins);
-
-  const s = document.createElement("script");
-  s.type = "text/javascript";
-  s.async = true;
-  s.src = "//t1.daumcdn.net/kas/static/ba.min.js?" + Date.now();
-  document.body.appendChild(s);
-}
-
-function loadAdForView(view){
-  const ad = ADS[view];
-  if(!ad) return;
-  mountKakaoAd(ad.container, ad.unit, ad.w, ad.h, ad.size);
-}
-
 function renderNoticeBanner(){
   const box = $("#noticeBanner");
   if(!box) return;
@@ -2135,7 +2102,62 @@ function go(view){
   if(view === "meal") { renderAllergySelector(); renderFavoriteFoodEditor(); }
   if(view === "timetable") ttRenderTable();
   if(view === "neis") neisInit();
-  loadAdForView(view);
+  loadKakaoAdsForView(view);
+}
+
+
+/* ===== O.Poong Kakao AdFit reliable loader =====
+   핵심: 숨겨진 section 안에 미리 <ins>를 넣지 않고,
+   화면이 열린 뒤 광고 영역을 새로 만들고 ba.min.js를 다시 실행합니다. */
+const KAKAO_ADS = {
+  homeDesktop: { unit: "DAN-QDvR0fxl5ri9KE4D", width: 728, height: 90, container: "ad-home" },
+  homeMobile: { unit: "DAN-ps0PRxwqtGCGkBq2", width: 320, height: 50, container: "ad-home-mobile" },
+  meal: { unit: "DAN-ldKVhVTYzKi5pUti", width: 320, height: 50, container: "ad-meal" },
+  onway: { unit: "DAN-vszyC76aKoBwX0tg", width: 320, height: 50, container: "ad-onway" },
+  neis: { unit: "DAN-ps0PRxwqtGCGkBq2", width: 320, height: 50, container: "ad-neis" }
+};
+
+function mountKakaoAd(ad){
+  const box = document.getElementById(ad.container);
+  if(!box) return;
+
+  box.innerHTML = `
+    <div class="adfitBox">
+      <span class="adfitLabel">AD</span>
+      <ins class="kakao_ad_area" style="display:none;"
+        data-ad-unit="${ad.unit}"
+        data-ad-width="${ad.width}"
+        data-ad-height="${ad.height}"></ins>
+    </div>
+  `;
+
+  const script = document.createElement("script");
+  script.type = "text/javascript";
+  script.async = true;
+  script.src = "https://t1.daumcdn.net/kas/static/ba.min.js?" + Date.now();
+  document.body.appendChild(script);
+}
+
+function clearKakaoAdBoxes(){
+  ["ad-home","ad-home-mobile","ad-meal","ad-onway","ad-neis"].forEach(id=>{
+    const box = document.getElementById(id);
+    if(box) box.innerHTML = "";
+  });
+}
+
+function loadKakaoAdsForView(view){
+  // 카카오 애드핏은 display:none인 section에서 먼저 실행되면 빈 박스로 남을 수 있어 약간 늦게 실행합니다.
+  // 동시에 여러 <ins>가 남아 있는 것도 막기 위해 현재 화면 광고만 남깁니다.
+  clearKakaoAdBoxes();
+  window.setTimeout(()=>{
+    if(view === "home"){
+      const isMobile = window.matchMedia("(max-width:760px)").matches;
+      mountKakaoAd(isMobile ? KAKAO_ADS.homeMobile : KAKAO_ADS.homeDesktop);
+    }
+    if(view === "meal") mountKakaoAd(KAKAO_ADS.meal);
+    if(view === "onway") mountKakaoAd(KAKAO_ADS.onway);
+    if(view === "neis") mountKakaoAd(KAKAO_ADS.neis);
+  }, 180);
 }
 
 function applyTheme(theme){
@@ -3055,6 +3077,5 @@ window.addEventListener("load",()=>{
   }
 });
 </script>
-
 </body>
 </html>
