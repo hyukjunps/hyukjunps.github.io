@@ -1432,6 +1432,48 @@ body.setup-pending .firstStartBack{
   }
 }
 
+
+/* ===== O.Poong Kakao AdFit placement ===== */
+.adfitWrap{
+  width:100%;
+  margin:14px 0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+}
+.adfitBox{
+  width:min(100%,760px);
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  padding:8px;
+  border:1px solid color-mix(in srgb,var(--line) 86%,transparent);
+  border-radius:20px;
+  background:color-mix(in srgb,var(--card) 82%,transparent);
+  box-shadow:0 8px 18px rgba(15,23,42,.04);
+  overflow:hidden;
+}
+.adfitLabel{
+  align-self:flex-start;
+  color:var(--muted);
+  font-size:11px;
+  font-weight:900;
+  line-height:1;
+}
+.adfitDesktop .adfitBox{min-height:112px;}
+.adfitMobile .adfitBox{width:min(100%,340px);min-height:66px;}
+.adfitWrap ins.kakao_ad_area{
+  max-width:100%;
+}
+@media (max-width:760px){
+  .adfitDesktop{display:none!important;}
+}
+@media (min-width:761px){
+  .adfitMobile{display:none!important;}
+}
+
 </style>
 </head>
 
@@ -1487,6 +1529,26 @@ body.setup-pending .firstStartBack{
       <p>새 소식이 생기면 이 영역에 표시됩니다.</p>
     </div>
     <span class="pill">Notice</span>
+  </div>
+
+  <div class="adfitWrap adfitDesktop" aria-label="광고">
+    <div class="adfitBox">
+      <span class="adfitLabel">AD</span>
+      <ins class="kakao_ad_area" style="display:none;"
+        data-ad-unit="DAN-QDvR0fxl5ri9KE4D"
+        data-ad-width="728"
+        data-ad-height="90"></ins>
+    </div>
+  </div>
+
+  <div class="adfitWrap adfitMobile" aria-label="광고">
+    <div class="adfitBox">
+      <span class="adfitLabel">AD</span>
+      <ins class="kakao_ad_area" style="display:none;"
+        data-ad-unit="DAN-ps0PRxwqtGCGkBq2"
+        data-ad-width="320"
+        data-ad-height="50"></ins>
+    </div>
   </div>
 
   <div class="layout">
@@ -1557,6 +1619,16 @@ body.setup-pending .firstStartBack{
           <button class="smallbtn primary" type="button" onclick="mealLoadMonth()">월별 조회</button>
         </div>
         <div id="notice" class="notice">급식 조회가 준비되었습니다.</div>
+
+  <div class="adfitWrap adfitMobile" aria-label="광고">
+    <div class="adfitBox">
+      <span class="adfitLabel">AD</span>
+      <ins class="kakao_ad_area" style="display:none;"
+        data-ad-unit="DAN-vszyC76aKoBwX0tg"
+        data-ad-width="320"
+        data-ad-height="50"></ins>
+    </div>
+  </div>
         <div class="notice">
           <b style="color:var(--text)">알레르기 번호 안내</b><br>
           1 난류 · 2 우유 · 3 메밀 · 4 땅콩 · 5 대두 · 6 밀 · 7 고등어 · 8 게 · 9 새우 · 10 돼지고기 · 11 복숭아 · 12 토마토 · 13 아황산염 · 14 호두 · 15 닭고기 · 16 쇠고기 · 17 오징어 · 18 조개류
@@ -1755,6 +1827,17 @@ SOFTWARE.
         </div>
       </section>
     </main>
+  </div>
+
+
+  <div class="adfitWrap adfitMobile" aria-label="광고">
+    <div class="adfitBox">
+      <span class="adfitLabel">AD</span>
+      <ins class="kakao_ad_area" style="display:none;"
+        data-ad-unit="DAN-ldKVhVTYzKi5pUti"
+        data-ad-width="320"
+        data-ad-height="50"></ins>
+    </div>
   </div>
 
   <footer class="footer">
@@ -2970,5 +3053,7 @@ window.addEventListener("load",()=>{
   }
 });
 </script>
+<script type="text/javascript" src="https://t1.kakaocdn.net/kas/static/ba.min.js" async></script>
+
 </body>
 </html>
