@@ -1467,6 +1467,22 @@ body.setup-pending .firstStartBack{
 .adfitWrap ins.kakao_ad_area{
   max-width:100%;
 }
+.adfitNative{
+  margin-top:18px;
+}
+.adfitNative .adfitBox{
+  background:linear-gradient(180deg,color-mix(in srgb,var(--card) 94%,transparent),color-mix(in srgb,var(--pri) 4%,var(--card)));
+  border-style:solid;
+}
+#view-onway .adfitNative,
+#view-neis .adfitNative{
+  justify-content:flex-start;
+}
+#view-onway .adfitNative .adfitBox,
+#view-neis .adfitNative .adfitBox,
+#view-meal .adfitNative .adfitBox{
+  width:min(100%,340px);
+}
 @media (max-width:760px){
   .adfitDesktop{display:none!important;}
 }
@@ -1531,26 +1547,6 @@ body.setup-pending .firstStartBack{
     <span class="pill">Notice</span>
   </div>
 
-  <div class="adfitWrap adfitDesktop" aria-label="광고">
-    <div class="adfitBox">
-      <span class="adfitLabel">AD</span>
-      <ins class="kakao_ad_area" style="display:none;"
-        data-ad-unit="DAN-QDvR0fxl5ri9KE4D"
-        data-ad-width="728"
-        data-ad-height="90"></ins>
-    </div>
-  </div>
-
-  <div class="adfitWrap adfitMobile" aria-label="광고">
-    <div class="adfitBox">
-      <span class="adfitLabel">AD</span>
-      <ins class="kakao_ad_area" style="display:none;"
-        data-ad-unit="DAN-ps0PRxwqtGCGkBq2"
-        data-ad-width="320"
-        data-ad-height="50"></ins>
-    </div>
-  </div>
-
   <div class="layout">
     <aside class="sideNav" aria-label="주요 메뉴">
       <div class="sideNavTitle">메뉴</div>
@@ -1596,6 +1592,16 @@ body.setup-pending .firstStartBack{
             </div>
           </aside>
         </div>
+
+        <div class="adfitWrap adfitDesktop adfitNative" aria-label="광고">
+          <div class="adfitBox">
+            <span class="adfitLabel">AD</span>
+            <ins class="kakao_ad_area" style="display:none;"
+              data-ad-unit="DAN-QDvR0fxl5ri9KE4D"
+              data-ad-width="728"
+              data-ad-height="90"></ins>
+          </div>
+        </div>
       </section>
 
       <section class="section view" id="view-meal">
@@ -1619,16 +1625,6 @@ body.setup-pending .firstStartBack{
           <button class="smallbtn primary" type="button" onclick="mealLoadMonth()">월별 조회</button>
         </div>
         <div id="notice" class="notice">급식 조회가 준비되었습니다.</div>
-
-  <div class="adfitWrap adfitMobile" aria-label="광고">
-    <div class="adfitBox">
-      <span class="adfitLabel">AD</span>
-      <ins class="kakao_ad_area" style="display:none;"
-        data-ad-unit="DAN-vszyC76aKoBwX0tg"
-        data-ad-width="320"
-        data-ad-height="50"></ins>
-    </div>
-  </div>
         <div class="notice">
           <b style="color:var(--text)">알레르기 번호 안내</b><br>
           1 난류 · 2 우유 · 3 메밀 · 4 땅콩 · 5 대두 · 6 밀 · 7 고등어 · 8 게 · 9 새우 · 10 돼지고기 · 11 복숭아 · 12 토마토 · 13 아황산염 · 14 호두 · 15 닭고기 · 16 쇠고기 · 17 오징어 · 18 조개류
@@ -1670,6 +1666,16 @@ body.setup-pending .firstStartBack{
         <div id="meals" style="margin-top:14px"></div>
         <div id="mealMonthTable" style="display:none"></div>
         <div id="shareText"></div>
+
+        <div class="adfitWrap adfitMobile adfitNative" aria-label="광고">
+          <div class="adfitBox">
+            <span class="adfitLabel">AD</span>
+            <ins class="kakao_ad_area" style="display:none;"
+              data-ad-unit="DAN-ps0PRxwqtGCGkBq2"
+              data-ad-width="320"
+              data-ad-height="50"></ins>
+          </div>
+        </div>
       </section>
 
       <section class="section view" id="view-schedule">
@@ -1718,6 +1724,15 @@ body.setup-pending .firstStartBack{
         </div>
         <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
           <button class="bigBtn" type="button" onclick="openOnway()">온웨이에듀 열기</button>
+        </div>
+        <div class="adfitWrap adfitMobile adfitNative" aria-label="광고">
+          <div class="adfitBox">
+            <span class="adfitLabel">AD</span>
+            <ins class="kakao_ad_area" style="display:none;"
+              data-ad-unit="DAN-vszyC76aKoBwX0tg"
+              data-ad-width="320"
+              data-ad-height="50"></ins>
+          </div>
         </div>
       </section>
 
@@ -1777,6 +1792,15 @@ body.setup-pending .firstStartBack{
           </div>
           <div class="notice" id="neisResultLine">공백 제외 0자, 공백 포함 0자, 0바이트</div>
           <button class="smallbtn ghost" type="button" id="neisClearBtn">전체 지우기</button>
+          <div class="adfitWrap adfitMobile adfitNative" aria-label="광고">
+            <div class="adfitBox">
+              <span class="adfitLabel">AD</span>
+              <ins class="kakao_ad_area" style="display:none;"
+                data-ad-unit="DAN-ldKVhVTYzKi5pUti"
+                data-ad-width="320"
+                data-ad-height="50"></ins>
+            </div>
+          </div>
           <div class="notice" style="font-size:12.5px">
             <b style="color:var(--text)">외부 데이터 안내</b><br>
             급식 정보는 NEIS 공개 API를 통해 불러옵니다. 학사일정은 별도 프록시가 연결된 경우에만 표시됩니다.
@@ -1829,16 +1853,6 @@ SOFTWARE.
     </main>
   </div>
 
-
-  <div class="adfitWrap adfitMobile" aria-label="광고">
-    <div class="adfitBox">
-      <span class="adfitLabel">AD</span>
-      <ins class="kakao_ad_area" style="display:none;"
-        data-ad-unit="DAN-ldKVhVTYzKi5pUti"
-        data-ad-width="320"
-        data-ad-height="50"></ins>
-    </div>
-  </div>
 
   <footer class="footer">
     <b style="color:var(--text)">O.Poong</b> ㅣ 풍산고 생활, 한 화면에서.<br>
