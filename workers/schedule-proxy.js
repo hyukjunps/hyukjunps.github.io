@@ -1,5 +1,6 @@
 const SCHOOL_SCHEDULE_URL = "https://school.gyo6.net/poongsanhs/schl/sv/schdulView/schdulCalendarView.do";
 const SCHOOL_SCHEDULE_MI = "167079";
+const SCHOOL_SYS_ID = "poongsanhs";
 const CACHE_TTL_SECONDS = 60 * 60 * 6;
 
 export default {
@@ -92,6 +93,7 @@ async function fetchOfficialScheduleHtml(ym) {
 
 async function fetchScheduleByGet(ym) {
   const url = new URL(SCHOOL_SCHEDULE_URL);
+  url.searchParams.set("sysId", SCHOOL_SYS_ID);
   url.searchParams.set("mi", SCHOOL_SCHEDULE_MI);
   url.searchParams.set("selectType", "haksa");
   url.searchParams.set("selectYearMonth", ym);
@@ -107,6 +109,7 @@ async function fetchScheduleByGet(ym) {
 
 async function fetchScheduleByPost(ym) {
   const body = new URLSearchParams({
+    sysId: SCHOOL_SYS_ID,
     mi: SCHOOL_SCHEDULE_MI,
     schdulSn: "",
     selectType: "haksa",
@@ -117,6 +120,7 @@ async function fetchScheduleByPost(ym) {
   });
 
   const url = new URL(SCHOOL_SCHEDULE_URL);
+  url.searchParams.set("sysId", SCHOOL_SYS_ID);
   url.searchParams.set("mi", SCHOOL_SCHEDULE_MI);
 
   const res = await fetch(url.toString(), {
@@ -137,7 +141,7 @@ function schoolHeaders() {
   return {
     "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
     "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.8",
-    "Referer": "https://school.gyo6.net/poongsanhs/schl/sv/schdulView/schdulCalendarView.do?mi=167079",
+    "Referer": "https://school.gyo6.net/poongsanhs/schl/sv/schdulView/schdulCalendarView.do?sysId=poongsanhs&mi=167079",
     "Cookie": "org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE=ko",
   };
 }
