@@ -9,6 +9,7 @@ export default {
 
     const url = new URL(request.url);
     const ym = normalizeYm(url.searchParams.get("ym"));
+    const debug = url.searchParams.get("debug") === "1";
 
     if (!ym) {
       return json({ ok: false, error: "ym must be YYYYMM or YYYY-MM" }, 400);
@@ -17,19 +18,25 @@ export default {
     try {
       const cache = caches.default;
       const cacheKey = new Request(`https://opoong.local/schedule/${ym}`);
-      const cached = await cache.match(cacheKey);
+      const cached = debug ? null : await cache.match(cacheKey);
       if (cached) return withCors(cached);
 
-      const html = await fetchOfficialScheduleHtml(ym);
-      const byDate = parseScheduleHtml(html, ym);
+      const fetched = await fetchOfficialScheduleHtml(ym);
+      const byDate = parseScheduleHtml(fetched.html, ym);
       const count = Object.values(byDate).reduce((sum, items) => sum + items.length, 0);
+
+      if (!count) {
+        throw new ScheduleMarkupError("Official schedule items were not found", fetched);
+      }
 
       const response = json({
         ok: true,
         source: "school.gyo6.net",
+        method: fetched.method,
         ym,
         count,
         byDate,
+        ...(debug ? { debug: makeDebug(fetched) } : {}),
       });
 
       response.headers.set("Cache-Control", `public, max-age=${CACHE_TTL_SECONDS}`);
@@ -43,10 +50,19 @@ export default {
         count: 0,
         byDate: {},
         error: error instanceof Error ? error.message : String(error),
+        ...(error && error.debug ? { debug: error.debug } : {}),
       }, 502);
     }
   },
 };
+
+class ScheduleMarkupError extends Error {
+  constructor(message, fetched) {
+    super(message);
+    this.name = "ScheduleMarkupError";
+    this.debug = makeDebug(fetched);
+  }
+}
 
 function normalizeYm(value) {
   const raw = String(value || "").replace(/[^0-9]/g, "");
@@ -59,27 +75,99 @@ function normalizeYm(value) {
 }
 
 async function fetchOfficialScheduleHtml(ym) {
+  const attempts = [
+    () => fetchScheduleByGet(ym),
+    () => fetchScheduleByPost(ym),
+  ];
+
+  let last = null;
+  for (const attempt of attempts) {
+    const fetched = await attempt();
+    last = fetched;
+    if (hasScheduleMarkup(fetched.html)) return fetched;
+  }
+
+  throw new ScheduleMarkupError("Official schedule markup was not found", last);
+}
+
+async function fetchScheduleByGet(ym) {
   const url = new URL(SCHOOL_SCHEDULE_URL);
   url.searchParams.set("mi", SCHOOL_SCHEDULE_MI);
+  url.searchParams.set("selectType", "haksa");
   url.searchParams.set("selectYearMonth", ym);
 
   const res = await fetch(url.toString(), {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (compatible; O.Poong-Schedule/1.0)",
-      "Accept": "text/html,application/xhtml+xml",
-      "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.8",
-      "Referer": "https://school.gyo6.net/poongsanhs/main.do?sysId=poongsanhs",
-    },
+    method: "GET",
+    redirect: "follow",
+    headers: schoolHeaders(),
   });
 
-  if (!res.ok) throw new Error(`Official schedule HTTP ${res.status}`);
+  return readScheduleResponse(res, "GET", url.toString());
+}
 
+async function fetchScheduleByPost(ym) {
+  const body = new URLSearchParams({
+    mi: SCHOOL_SCHEDULE_MI,
+    schdulSn: "",
+    selectType: "haksa",
+    selectYearMonth: ym,
+    schdulType: "",
+    schdulSeq: "",
+    schdulDate: "",
+  });
+
+  const url = new URL(SCHOOL_SCHEDULE_URL);
+  url.searchParams.set("mi", SCHOOL_SCHEDULE_MI);
+
+  const res = await fetch(url.toString(), {
+    method: "POST",
+    redirect: "follow",
+    headers: {
+      ...schoolHeaders(),
+      "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+      "Origin": "https://school.gyo6.net",
+    },
+    body,
+  });
+
+  return readScheduleResponse(res, "POST", url.toString());
+}
+
+function schoolHeaders() {
+  return {
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+    "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.8",
+    "Referer": "https://school.gyo6.net/poongsanhs/schl/sv/schdulView/schdulCalendarView.do?mi=167079",
+    "Cookie": "org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE=ko",
+  };
+}
+
+async function readScheduleResponse(res, method, requestedUrl) {
   const html = await res.text();
-  if (!html.includes("monthcal") || !html.includes("data-schdulTitle")) {
-    throw new Error("Official schedule markup was not found");
+
+  if (!res.ok) {
+    throw new ScheduleMarkupError(`Official schedule HTTP ${res.status}`, {
+      method,
+      requestedUrl,
+      finalUrl: res.url,
+      status: res.status,
+      contentType: res.headers.get("content-type") || "",
+      html,
+    });
   }
 
-  return html;
+  return {
+    method,
+    requestedUrl,
+    finalUrl: res.url,
+    status: res.status,
+    contentType: res.headers.get("content-type") || "",
+    html,
+  };
+}
+
+function hasScheduleMarkup(html) {
+  return /class=["'][^"']*monthcal/i.test(html) && /data-schdulTitle\s*=/i.test(html);
 }
 
 function parseScheduleHtml(html, ym) {
@@ -158,6 +246,26 @@ function decodeHtml(value) {
     }
     return named[lower] || `&${entity};`;
   });
+}
+
+function makeDebug(fetched) {
+  if (!fetched) return {};
+  const sample = String(fetched.html || "")
+    .replace(/\s+/g, " ")
+    .slice(0, 1200);
+
+  return {
+    method: fetched.method || "",
+    requestedUrl: fetched.requestedUrl || "",
+    finalUrl: fetched.finalUrl || "",
+    status: fetched.status || 0,
+    contentType: fetched.contentType || "",
+    htmlLength: String(fetched.html || "").length,
+    hasMonthcal: /monthcal/i.test(fetched.html || ""),
+    hasScheduleTitle: /data-schdulTitle\s*=/i.test(fetched.html || ""),
+    hasSelectYearMonth: /selectYearMonth/i.test(fetched.html || ""),
+    sample,
+  };
 }
 
 function escapeRegExp(value) {
