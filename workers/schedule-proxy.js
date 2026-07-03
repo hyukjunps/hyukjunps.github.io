@@ -1,4 +1,6 @@
-const SCHOOL_SCHEDULE_URL = "https://school.gyo6.net/poongsanhs/schl/sv/schdulView/schdulCalendarView.do";
+const SCHOOL_ORIGIN = "https://school.gyo6.net";
+const SCHOOL_MAIN_URL = `${SCHOOL_ORIGIN}/poongsanhs/main.do?sysId=poongsanhs`;
+const SCHOOL_SCHEDULE_URL = `${SCHOOL_ORIGIN}/poongsanhs/schl/sv/schdulView/schdulCalendarView.do`;
 const SCHOOL_SCHEDULE_MI = "167079";
 const SCHOOL_SYS_ID = "poongsanhs";
 const CACHE_TTL_SECONDS = 60 * 60 * 6;
@@ -76,22 +78,64 @@ function normalizeYm(value) {
 }
 
 async function fetchOfficialScheduleHtml(ym) {
+  const session = await warmSchoolSession();
   const attempts = [
-    () => fetchScheduleByGet(ym),
-    () => fetchScheduleByPost(ym),
+    () => fetchScheduleByGet(ym, session.cookie),
+    () => fetchScheduleByPost(ym, session.cookie),
   ];
 
   let last = null;
+  const attemptDebug = [session.debug];
+
   for (const attempt of attempts) {
     const fetched = await attempt();
+    fetched.attempts = attemptDebug;
     last = fetched;
+    attemptDebug.push(makeDebug(fetched));
     if (hasScheduleMarkup(fetched.html)) return fetched;
   }
 
+  if (last) last.attempts = attemptDebug;
   throw new ScheduleMarkupError("Official schedule markup was not found", last);
 }
 
-async function fetchScheduleByGet(ym) {
+async function warmSchoolSession() {
+  try {
+    const res = await fetch(SCHOOL_MAIN_URL, {
+      method: "GET",
+      redirect: "follow",
+      headers: browserHeaders({ referer: `${SCHOOL_ORIGIN}/poongsanhs/main.do` }),
+    });
+    const html = await res.text();
+    const cookie = mergeCookies(
+      "org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE=ko",
+      readSetCookieHeaders(res.headers),
+    );
+
+    return {
+      cookie,
+      debug: makeDebug({
+        method: "WARMUP",
+        requestedUrl: SCHOOL_MAIN_URL,
+        finalUrl: res.url,
+        status: res.status,
+        contentType: res.headers.get("content-type") || "",
+        html,
+      }),
+    };
+  } catch (error) {
+    return {
+      cookie: "org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE=ko",
+      debug: {
+        method: "WARMUP",
+        requestedUrl: SCHOOL_MAIN_URL,
+        error: error instanceof Error ? error.message : String(error),
+      },
+    };
+  }
+}
+
+async function fetchScheduleByGet(ym, cookie) {
   const url = new URL(SCHOOL_SCHEDULE_URL);
   url.searchParams.set("sysId", SCHOOL_SYS_ID);
   url.searchParams.set("mi", SCHOOL_SCHEDULE_MI);
@@ -101,13 +145,13 @@ async function fetchScheduleByGet(ym) {
   const res = await fetch(url.toString(), {
     method: "GET",
     redirect: "follow",
-    headers: schoolHeaders(),
+    headers: schoolHeaders(cookie),
   });
 
   return readScheduleResponse(res, "GET", url.toString());
 }
 
-async function fetchScheduleByPost(ym) {
+async function fetchScheduleByPost(ym, cookie) {
   const body = new URLSearchParams({
     sysId: SCHOOL_SYS_ID,
     mi: SCHOOL_SCHEDULE_MI,
@@ -127,9 +171,9 @@ async function fetchScheduleByPost(ym) {
     method: "POST",
     redirect: "follow",
     headers: {
-      ...schoolHeaders(),
+      ...schoolHeaders(cookie),
       "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
-      "Origin": "https://school.gyo6.net",
+      "Origin": SCHOOL_ORIGIN,
     },
     body,
   });
@@ -137,12 +181,22 @@ async function fetchScheduleByPost(ym) {
   return readScheduleResponse(res, "POST", url.toString());
 }
 
-function schoolHeaders() {
+function schoolHeaders(cookie) {
+  return browserHeaders({
+    referer: `${SCHOOL_SCHEDULE_URL}?sysId=${SCHOOL_SYS_ID}&mi=${SCHOOL_SCHEDULE_MI}`,
+    cookie,
+  });
+}
+
+function browserHeaders({ referer, cookie = "" }) {
   return {
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.8",
-    "Referer": "https://school.gyo6.net/poongsanhs/schl/sv/schdulView/schdulCalendarView.do?sysId=poongsanhs&mi=167079",
-    "Cookie": "org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE=ko",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+    "Accept-Language": "ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7",
+    "Cache-Control": "no-cache",
+    "Pragma": "no-cache",
+    "Referer": referer,
+    ...(cookie ? { "Cookie": cookie } : {}),
   };
 }
 
@@ -252,6 +306,34 @@ function decodeHtml(value) {
   });
 }
 
+function readSetCookieHeaders(headers) {
+  if (typeof headers.getSetCookie === "function") return headers.getSetCookie();
+  const single = headers.get("set-cookie");
+  return single ? [single] : [];
+}
+
+function mergeCookies(baseCookie, setCookieHeaders) {
+  const jar = new Map();
+  addCookieString(baseCookie, jar);
+
+  for (const header of setCookieHeaders || []) {
+    const pair = String(header || "").split(";", 1)[0];
+    addCookieString(pair, jar);
+  }
+
+  return Array.from(jar.entries()).map(([name, value]) => `${name}=${value}`).join("; ");
+}
+
+function addCookieString(cookie, jar) {
+  String(cookie || "").split(";").forEach((part) => {
+    const idx = part.indexOf("=");
+    if (idx <= 0) return;
+    const name = part.slice(0, idx).trim();
+    const value = part.slice(idx + 1).trim();
+    if (name) jar.set(name, value);
+  });
+}
+
 function makeDebug(fetched) {
   if (!fetched) return {};
   const sample = String(fetched.html || "")
@@ -269,6 +351,7 @@ function makeDebug(fetched) {
     hasScheduleTitle: /data-schdulTitle\s*=/i.test(fetched.html || ""),
     hasSelectYearMonth: /selectYearMonth/i.test(fetched.html || ""),
     sample,
+    ...(fetched.attempts ? { attempts: fetched.attempts } : {}),
   };
 }
 
