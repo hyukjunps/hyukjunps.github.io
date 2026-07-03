@@ -23,7 +23,7 @@ jobs:
           python-version: "3.x"
 
       - name: Fetch official school schedule
-        run: python scripts/sync_school_schedule.py --from 202501 --future 12
+        run: python scripts/sync_school_schedule.py --from 202001 --future 12
 
       - name: Commit updated schedule data
         run: |
