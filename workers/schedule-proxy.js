@@ -1,3 +1,4 @@
+const WORKER_VERSION = "schedule-proxy-20260703-no-attempts";
 const SCHOOL_ORIGIN = "https://school.gyo6.net";
 const SCHOOL_MAIN_URL = `${SCHOOL_ORIGIN}/poongsanhs/main.do?sysId=poongsanhs`;
 const SCHOOL_SCHEDULE_URL = `${SCHOOL_ORIGIN}/poongsanhs/schl/sv/schdulView/schdulCalendarView.do`;
@@ -8,14 +9,14 @@ const CACHE_TTL_SECONDS = 60 * 60 * 6;
 export default {
   async fetch(request, env, ctx) {
     if (request.method === "OPTIONS") return corsResponse(null, 204);
-    if (request.method !== "GET") return json({ ok: false, error: "Method not allowed" }, 405);
+    if (request.method !== "GET") return json({ ok: false, version: WORKER_VERSION, error: "Method not allowed" }, 405);
 
     const url = new URL(request.url);
     const ym = normalizeYm(url.searchParams.get("ym"));
     const debug = url.searchParams.get("debug") === "1";
 
     if (!ym) {
-      return json({ ok: false, error: "ym must be YYYYMM or YYYY-MM" }, 400);
+      return json({ ok: false, version: WORKER_VERSION, error: "ym must be YYYYMM or YYYY-MM" }, 400);
     }
 
     try {
@@ -34,6 +35,7 @@ export default {
 
       const response = json({
         ok: true,
+        version: WORKER_VERSION,
         source: "school.gyo6.net",
         method: fetched.method,
         ym,
@@ -48,6 +50,7 @@ export default {
     } catch (error) {
       return json({
         ok: false,
+        version: WORKER_VERSION,
         source: "school.gyo6.net",
         ym,
         count: 0,
@@ -79,26 +82,15 @@ function normalizeYm(value) {
 
 async function fetchOfficialScheduleHtml(ym) {
   const session = await warmSchoolSession();
-  const attempts = [
-    () => fetchScheduleByGet(ym, session.cookie),
-    () => fetchScheduleByPost(ym, session.cookie),
-  ];
+  const getResult = await fetchScheduleByGet(ym, session.cookie);
+  if (hasScheduleMarkup(getResult.html)) return getResult;
 
-  let last = null;
-  const attemptDebug = [session.debug];
+  const postResult = await fetchScheduleByPost(ym, session.cookie);
+  if (hasScheduleMarkup(postResult.html)) return postResult;
 
-  for (const attempt of attempts) {
-    const fetched = await attempt();
-    last = fetched;
-    attemptDebug.push(makeDebug(fetched));
-    if (hasScheduleMarkup(fetched.html)) {
-      fetched.attempts = attemptDebug;
-      return fetched;
-    }
-  }
-
-  if (last) last.attempts = attemptDebug;
-  throw new ScheduleMarkupError("Official schedule markup was not found", last);
+  postResult.warmup = session.debug;
+  postResult.getAttempt = makeDebug(getResult);
+  throw new ScheduleMarkupError("Official schedule markup was not found", postResult);
 }
 
 async function warmSchoolSession() {
@@ -353,7 +345,8 @@ function makeDebug(fetched) {
     hasScheduleTitle: /data-schdulTitle\s*=/i.test(fetched.html || ""),
     hasSelectYearMonth: /selectYearMonth/i.test(fetched.html || ""),
     sample,
-    ...(fetched.attempts ? { attempts: fetched.attempts } : {}),
+    ...(fetched.warmup ? { warmup: fetched.warmup } : {}),
+    ...(fetched.getAttempt ? { getAttempt: fetched.getAttempt } : {}),
   };
 }
 
