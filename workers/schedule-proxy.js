@@ -89,10 +89,12 @@ async function fetchOfficialScheduleHtml(ym) {
 
   for (const attempt of attempts) {
     const fetched = await attempt();
-    fetched.attempts = attemptDebug;
     last = fetched;
     attemptDebug.push(makeDebug(fetched));
-    if (hasScheduleMarkup(fetched.html)) return fetched;
+    if (hasScheduleMarkup(fetched.html)) {
+      fetched.attempts = attemptDebug;
+      return fetched;
+    }
   }
 
   if (last) last.attempts = attemptDebug;
