@@ -31,6 +31,15 @@ def target_months(start: str, past: int, future: int) -> list[str]:
     return [month_add(start, offset) for offset in range(-past, future + 1)]
 
 
+def month_range(start: str, end: str) -> list[str]:
+    months = []
+    current = start
+    while current <= end:
+        months.append(current)
+        current = month_add(current, 1)
+    return months
+
+
 def request_headers(referer: str) -> dict[str, str]:
     return {
         "User-Agent": (
@@ -173,13 +182,18 @@ def main() -> int:
     parser.add_argument("--start", default=datetime.now().strftime("%Y%m"))
     parser.add_argument("--past", type=int, default=2)
     parser.add_argument("--future", type=int, default=12)
+    parser.add_argument("--from", dest="from_month")
+    parser.add_argument("--to", dest="to_month")
     parser.add_argument("--sleep", type=float, default=0.35)
     args = parser.parse_args()
 
     opener = build_opener(HTTPCookieProcessor(CookieJar()))
     out_dir = Path(args.out)
 
-    for yyyymm in target_months(args.start, args.past, args.future):
+    end_month = args.to_month or month_add(args.start, args.future)
+    months = month_range(args.from_month, end_month) if args.from_month else target_months(args.start, args.past, args.future)
+
+    for yyyymm in months:
         try:
             count = sync_month(opener, out_dir, yyyymm)
             print(f"{yyyymm}: {count} events")
