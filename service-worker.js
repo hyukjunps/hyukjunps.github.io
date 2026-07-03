@@ -1,6 +1,5 @@
-const CACHE_VERSION = "v9"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v10"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
-const SCHEDULE_PROXY_HOST = "gkrtkdlfwjd.yyhhjj1068-c2c.workers.dev";
 
 const APP_SHELL = [
   "./",
@@ -30,36 +29,9 @@ self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
 });
 
-async function scheduleJsonResponse(yyyymm) {
-  const staticUrl = new URL(`./data/schedule/${yyyymm}.json`, self.location.href);
-  staticUrl.searchParams.set("v", Date.now().toString());
-
-  const res = await fetch(staticUrl.toString(), { cache: "no-store" });
-  if (!res.ok) throw new Error(`schedule json HTTP ${res.status}`);
-
-  const body = await res.text();
-  return new Response(body, {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json; charset=utf-8",
-      "Access-Control-Allow-Origin": "*",
-      "Cache-Control": "no-store",
-    },
-  });
-}
-
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
-
-  // 학사일정은 GitHub Actions가 매시간 갱신한 JSON을 우선 사용하고, 없으면 기존 프록시로 폴백합니다.
-  if (url.hostname === SCHEDULE_PROXY_HOST) {
-    const yyyymm = String(url.searchParams.get("ym") || "").replace(/[^0-9]/g, "");
-    if (/^20\d{4}$/.test(yyyymm)) {
-      event.respondWith(scheduleJsonResponse(yyyymm).catch(() => fetch(req)));
-      return;
-    }
-  }
 
   // 같은 origin만 처리
   if (url.origin !== self.location.origin) return;

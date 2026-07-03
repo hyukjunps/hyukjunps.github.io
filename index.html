@@ -1950,7 +1950,6 @@ const SCHOOL_NAME = "풍산고등학교";
 const SCHOOL_HOME_URL = "https://school.gyo6.net/poongsanhs/main.do?sysId=poongsanhs";
 const ONWAY_URL = "https://ps.onwayedu.co.kr/login/login.php";
 const LIBRARY_URL = "https://read365.edunet.net/PureScreen/SchoolSearch?schoolName=풍산고등학교&provCode=R10&neisCode=R100000999";
-const SCHEDULE_STATIC_BASE = "./data/schedule/";
 const SCHEDULE_PROXY_BASE = "https://gkrtkdlfwjd.yyhhjj1068-c2c.workers.dev/?ym=";
 
 const ALLERGY_ITEMS = [
@@ -2707,23 +2706,12 @@ function setSchNotice(kind,text){
   box.className = "notice" + (kind ? ` ${kind}` : "");
   box.textContent = text;
 }
-async function fetchScheduleMonthStatic(yyyymm){
-  const res = await fetch(`${SCHEDULE_STATIC_BASE}${encodeURIComponent(yyyymm)}.json?v=${Date.now()}`, { cache:"no-store" });
-  if(!res.ok) throw new Error("저장된 학사일정 없음 HTTP " + res.status);
-  const data = await res.json();
-  if(!data.ok) throw new Error(data.error || "저장된 학사일정 응답 오류");
-  return data.byDate || {};
-}
 async function fetchScheduleMonthProxy(yyyymm){
-  try{
-    return await fetchScheduleMonthStatic(yyyymm);
-  }catch(staticErr){
-    const res = await fetch(SCHEDULE_PROXY_BASE + encodeURIComponent(yyyymm));
-    if(!res.ok) throw new Error("학사일정 프록시 오류 HTTP " + res.status);
-    const data = await res.json();
-    if(!data.ok) throw new Error(data.error || staticErr.message || "학사일정 응답 오류");
-    return data.byDate || {};
-  }
+  const res = await fetch(`${SCHEDULE_PROXY_BASE}${encodeURIComponent(yyyymm)}&v=${Date.now()}`, { cache:"no-store" });
+  if(!res.ok) throw new Error("학사일정 프록시 오류 HTTP " + res.status);
+  const data = await res.json();
+  if(!data.ok) throw new Error(data.error || "학사일정 응답 오류");
+  return data.byDate || {};
 }
 function renderScheduleCalendar(yyyymm, byDate){
   const y = Number(yyyymm.slice(0,4)), m = Number(yyyymm.slice(4,6));
