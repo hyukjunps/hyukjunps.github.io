@@ -1464,49 +1464,6 @@ body.setup-pending .firstStartBack{
   font-weight:900;
   line-height:1;
 }
-.adfitTop{
-  width:100%;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-}
-.adfitHideBtn{
-  border:1px solid color-mix(in srgb,var(--pri) 18%,var(--line));
-  border-radius:999px;
-  background:color-mix(in srgb,var(--pri) 8%,var(--card));
-  color:var(--muted);
-  font-size:11px;
-  font-weight:1000;
-  line-height:1;
-  padding:7px 9px;
-}
-.adfitHideBtn:hover{
-  color:var(--text);
-  background:color-mix(in srgb,var(--pri) 12%,var(--card));
-}
-.adMuteBack{
-  position:fixed;
-  inset:0;
-  z-index:120;
-  display:none;
-  align-items:flex-end;
-  justify-content:center;
-  padding:16px;
-  background:rgba(15,23,42,.34);
-}
-.adMuteBack.show{display:flex}
-.adMuteBanner{
-  width:min(520px,100%);
-  border:1px solid color-mix(in srgb,var(--pri) 24%,var(--line));
-  border-radius:24px;
-  background:color-mix(in srgb,var(--card) 98%,transparent);
-  box-shadow:var(--shadow);
-  padding:16px;
-}
-.adMuteBanner strong{display:block;font-size:16px;color:var(--text)}
-.adMuteBanner p{margin:7px 0 14px;color:var(--muted);font-size:13.5px;font-weight:850;line-height:1.65}
-.adMuteActions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .adfitMobile .adfitBox{width:min(100%,340px);min-height:66px;}
 .adfitDesktop .adfitBox{min-height:112px;}
 .adfitWrap ins.kakao_ad_area{max-width:100%;}
@@ -2159,90 +2116,20 @@ const KAKAO_ADS = {
   onway: { unit: "DAN-vszyC76aKoBwX0tg", width: 320, height: 50, container: "ad-onway" },
   neis: { unit: "DAN-ps0PRxwqtGCGkBq2", width: 320, height: 50, container: "ad-neis" }
 };
-const AD_MUTE_KEY = "opoong_ads_hidden_until";
-
-function endOfTodayTime(){
-  const d = new Date();
-  d.setHours(23,59,59,999);
-  return d.getTime();
-}
-
-function areAdsHiddenToday(){
-  return Number(localStorage.getItem(AD_MUTE_KEY) || 0) > Date.now();
-}
-
-function hideAdsForToday(){
-  localStorage.setItem(AD_MUTE_KEY, String(endOfTodayTime()));
-  clearKakaoAdBoxes();
-  closeAdMuteBanner();
-}
-
-function ensureAdMuteBanner(){
-  let back = document.getElementById("adMuteBack");
-  if(back) return back;
-  back = document.createElement("div");
-  back.id = "adMuteBack";
-  back.className = "adMuteBack";
-  back.setAttribute("aria-hidden", "true");
-  back.innerHTML = `
-    <div class="adMuteBanner" role="dialog" aria-modal="true" aria-labelledby="adMuteTitle">
-      <strong id="adMuteTitle">오늘 하루 광고를 숨길까요?</strong>
-      <p>이 버튼을 누르면 오늘 하루동안 광고가 나오지 않아요!</p>
-      <div class="adMuteActions">
-        <button class="smallbtn ghost" type="button" data-ad-mute-close>계속 보기</button>
-        <button class="smallbtn primary" type="button" data-ad-mute-confirm>오늘 하루 숨기기</button>
-      </div>
-    </div>
-  `;
-  document.body.appendChild(back);
-  back.addEventListener("click", e=>{
-    if(e.target === back || e.target.closest("[data-ad-mute-close]")) closeAdMuteBanner();
-    if(e.target.closest("[data-ad-mute-confirm]")) hideAdsForToday();
-  });
-  return back;
-}
-
-function openAdMuteBanner(){
-  const back = ensureAdMuteBanner();
-  back.classList.add("show");
-  back.setAttribute("aria-hidden", "false");
-  const confirmBtn = back.querySelector("[data-ad-mute-confirm]");
-  if(confirmBtn) confirmBtn.focus();
-}
-
-function closeAdMuteBanner(){
-  const back = document.getElementById("adMuteBack");
-  if(!back) return;
-  back.classList.remove("show");
-  back.setAttribute("aria-hidden", "true");
-}
 
 function mountKakaoAd(ad){
   const box = document.getElementById(ad.container);
   if(!box) return;
-  if(areAdsHiddenToday()){
-    box.innerHTML = "";
-    return;
-  }
 
   box.innerHTML = `
     <div class="adfitBox">
-      <div class="adfitTop">
-        <span class="adfitLabel">AD</span>
-        <button class="adfitHideBtn" type="button" data-ad-hide-today>오늘 숨김</button>
-      </div>
+      <span class="adfitLabel">AD</span>
       <ins class="kakao_ad_area" style="display:none;"
         data-ad-unit="${ad.unit}"
         data-ad-width="${ad.width}"
         data-ad-height="${ad.height}"></ins>
     </div>
   `;
-  const hideBtn = box.querySelector("[data-ad-hide-today]");
-  if(hideBtn) hideBtn.addEventListener("click", e=>{
-    e.preventDefault();
-    e.stopPropagation();
-    openAdMuteBanner();
-  });
 
   const script = document.createElement("script");
   script.type = "text/javascript";
@@ -2262,9 +2149,7 @@ function loadKakaoAdsForView(view){
   // 카카오 애드핏은 display:none인 section에서 먼저 실행되면 빈 박스로 남을 수 있어 약간 늦게 실행합니다.
   // 동시에 여러 <ins>가 남아 있는 것도 막기 위해 현재 화면 광고만 남깁니다.
   clearKakaoAdBoxes();
-  if(areAdsHiddenToday()) return;
   window.setTimeout(()=>{
-    if(areAdsHiddenToday()) return;
     if(view === "home"){
       const isMobile = window.matchMedia("(max-width:760px)").matches;
       mountKakaoAd(isMobile ? KAKAO_ADS.homeMobile : KAKAO_ADS.homeDesktop);
