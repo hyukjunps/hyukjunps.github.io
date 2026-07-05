@@ -1506,25 +1506,6 @@ body.setup-pending .firstStartBack{
 }
 .adMuteBanner strong{display:block;font-size:16px;color:var(--text)}
 .adMuteBanner p{margin:7px 0 14px;color:var(--muted);font-size:13.5px;font-weight:850;line-height:1.65}
-.adMuteRewardAd{
-  margin:12px 0 0;
-  justify-content:center!important;
-}
-.adMuteRewardAd .adfitBox{
-  width:min(100%,340px);
-  min-height:66px;
-}
-.adMuteCountdown{
-  margin-top:12px;
-  padding:11px 12px;
-  border-radius:18px;
-  border:1px solid color-mix(in srgb,var(--ok) 24%,var(--line));
-  background:color-mix(in srgb,var(--ok) 8%,var(--card));
-  color:var(--text);
-  font-size:13px;
-  font-weight:1000;
-  line-height:1.55;
-}
 .adMuteActions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
 .adfitMobile .adfitBox{width:min(100%,340px);min-height:66px;}
 .adfitDesktop .adfitBox{min-height:112px;}
@@ -2179,9 +2160,6 @@ const KAKAO_ADS = {
   neis: { unit: "DAN-ps0PRxwqtGCGkBq2", width: 320, height: 50, container: "ad-neis" }
 };
 const AD_MUTE_KEY = "opoong_ads_hidden_until";
-const AD_MUTE_REWARD_SECONDS = 5;
-let adMuteTimer = null;
-let adMuteRemaining = AD_MUTE_REWARD_SECONDS;
 
 function endOfTodayTime(){
   const d = new Date();
@@ -2199,56 +2177,6 @@ function hideAdsForToday(){
   closeAdMuteBanner();
 }
 
-function resetAdMuteTimer(){
-  if(adMuteTimer){
-    clearInterval(adMuteTimer);
-    adMuteTimer = null;
-  }
-  adMuteRemaining = AD_MUTE_REWARD_SECONDS;
-}
-
-function updateAdMuteCountdown(){
-  const label = document.querySelector("[data-ad-mute-countdown]");
-  if(label) label.textContent = String(adMuteRemaining);
-}
-
-function mountAdMuteRewardAd(){
-  const box = document.getElementById("adMuteRewardAd");
-  if(!box) return;
-  const ad = KAKAO_ADS.homeMobile;
-  box.innerHTML = `
-    <div class="adfitBox">
-      <span class="adfitLabel">AD</span>
-      <ins class="kakao_ad_area" style="display:none;"
-        data-ad-unit="${ad.unit}"
-        data-ad-width="${ad.width}"
-        data-ad-height="${ad.height}"></ins>
-    </div>
-  `;
-
-  const script = document.createElement("script");
-  script.type = "text/javascript";
-  script.async = true;
-  script.src = "https://t1.daumcdn.net/kas/static/ba.min.js?" + Date.now();
-  document.body.appendChild(script);
-}
-
-function startAdMuteRewardTimer(){
-  resetAdMuteTimer();
-  updateAdMuteCountdown();
-  adMuteTimer = window.setInterval(()=>{
-    const back = document.getElementById("adMuteBack");
-    if(!back || !back.classList.contains("show")) return;
-    if(document.hidden) return;
-    adMuteRemaining -= 1;
-    updateAdMuteCountdown();
-    if(adMuteRemaining <= 0){
-      resetAdMuteTimer();
-      hideAdsForToday();
-    }
-  }, 1000);
-}
-
 function ensureAdMuteBanner(){
   let back = document.getElementById("adMuteBack");
   if(back) return back;
@@ -2258,18 +2186,18 @@ function ensureAdMuteBanner(){
   back.setAttribute("aria-hidden", "true");
   back.innerHTML = `
     <div class="adMuteBanner" role="dialog" aria-modal="true" aria-labelledby="adMuteTitle">
-      <strong id="adMuteTitle">마지막 광고를 5초만 유지해 주세요</strong>
-      <p>이 광고 배너가 열린 상태로 5초가 지나면 오늘 하루동안 광고가 자동으로 제거됩니다.</p>
-      <div class="adfitWrap adfitMobile adMuteRewardAd" id="adMuteRewardAd" aria-label="마지막 광고"></div>
-      <div class="adMuteCountdown"><span data-ad-mute-countdown>5</span>초 후 오늘 하루 광고가 제거됩니다.</div>
+      <strong id="adMuteTitle">오늘 하루 광고를 숨길까요?</strong>
+      <p>이 버튼을 누르면 오늘 하루동안 광고가 나오지 않아요!</p>
       <div class="adMuteActions">
-        <button class="smallbtn ghost" type="button" data-ad-mute-close>취소</button>
+        <button class="smallbtn ghost" type="button" data-ad-mute-close>계속 보기</button>
+        <button class="smallbtn primary" type="button" data-ad-mute-confirm>오늘 하루 숨기기</button>
       </div>
     </div>
   `;
   document.body.appendChild(back);
   back.addEventListener("click", e=>{
     if(e.target === back || e.target.closest("[data-ad-mute-close]")) closeAdMuteBanner();
+    if(e.target.closest("[data-ad-mute-confirm]")) hideAdsForToday();
   });
   return back;
 }
@@ -2278,20 +2206,15 @@ function openAdMuteBanner(){
   const back = ensureAdMuteBanner();
   back.classList.add("show");
   back.setAttribute("aria-hidden", "false");
-  mountAdMuteRewardAd();
-  startAdMuteRewardTimer();
-  const closeBtn = back.querySelector("[data-ad-mute-close]");
-  if(closeBtn) closeBtn.focus();
+  const confirmBtn = back.querySelector("[data-ad-mute-confirm]");
+  if(confirmBtn) confirmBtn.focus();
 }
 
 function closeAdMuteBanner(){
   const back = document.getElementById("adMuteBack");
   if(!back) return;
-  resetAdMuteTimer();
   back.classList.remove("show");
   back.setAttribute("aria-hidden", "true");
-  const rewardAd = document.getElementById("adMuteRewardAd");
-  if(rewardAd) rewardAd.innerHTML = "";
 }
 
 function mountKakaoAd(ad){
