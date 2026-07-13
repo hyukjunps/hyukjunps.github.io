@@ -3304,16 +3304,6 @@ function initWidgetSelector(){
 }
 
 
-function renderPersonalHeroLine(){
-  const box = $("#personalHeroLine");
-  if(!box) return;
-
-  const rawName = String(localStorage.getItem(USER_NAME_KEY) || "사용자").trim() || "사용자";
-  const name = escapeHtml(rawName);
-  const pick = PERSONAL_MESSAGES[Math.floor(Math.random() * PERSONAL_MESSAGES.length)];
-  box.innerHTML = escapeHtml(pick).replace("{name}", name);
-}
-
 function weatherIconFor(item){
   const pty = String(item?.precipitationType || "없음");
   if(pty.includes("눈")) return "❄️";
