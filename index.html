@@ -963,6 +963,18 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
 .homeDashboardWidgets .widget[data-home-widget="meal"]{grid-column:auto;grid-row:span 2;min-height:340px;}
 .homeDashboardWidgets .widgetBody{max-height:168px;overflow:auto;}
 .homeDashboardWidgets .widget[data-home-widget="meal"] .widgetBody{max-height:300px;}
+.weatherAlertBanner[hidden]{display:none!important;}
+.weatherAlertBanner{margin-top:12px;}
+.weatherAlertBanner.warning{background:color-mix(in srgb,var(--amber) 15%,var(--card));border-color:color-mix(in srgb,var(--amber) 45%,var(--line));}
+.weatherAlertBanner.danger{background:color-mix(in srgb,var(--warn) 13%,var(--card));border-color:color-mix(in srgb,var(--warn) 48%,var(--line));}
+.weatherNow{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.weatherIcon{font-size:34px;line-height:1;}
+.weatherTemp{font-size:30px;font-weight:1000;letter-spacing:-1px;}
+.weatherMeta{color:var(--muted);font-size:12px;font-weight:850;line-height:1.6;}
+.weatherHourly{display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin;}
+.weatherHour{flex:0 0 66px;padding:8px 6px;border:1px solid var(--line);border-radius:14px;text-align:center;background:color-mix(in srgb,var(--card) 94%,var(--bg));font-size:11px;font-weight:850;}
+.weatherHour b{display:block;margin:4px 0;font-size:14px;}
+.weatherStatus{margin-top:10px;padding-top:9px;border-top:1px solid var(--line);font-size:11px;color:var(--muted);font-weight:850;line-height:1.55;}
 @media (max-width:960px){.homeDashboard{grid-template-columns:1fr}.homeDashboardWidgets{max-height:none}}
 @media (max-width:620px){.homeDashboardWidgets{grid-template-columns:1fr}.homeDashboardWidgets .widget[data-home-widget="meal"]{grid-column:auto;grid-row:auto;min-height:260px}.homeDashboardHero{min-height:auto}}
 
@@ -1071,6 +1083,34 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
   max-height:285px!important;
   overflow:auto!important;
 }
+.homeDashboardWidgets .widget[data-home-widget="meal"]{
+  grid-row:span 2!important;
+  min-height:360px!important;
+}
+.homeDashboardWidgets .widget[data-home-widget="schedule"],
+.homeDashboardWidgets .widget[data-home-widget="timetable"]{
+  min-height:174px!important;
+  height:auto!important;
+}
+.homeDashboardWidgets .widget[data-home-widget="weather"]{
+  grid-column:2 / span 2!important;
+  min-height:174px!important;
+  height:auto!important;
+}
+.homeDashboardWidgets .widget[data-home-widget="weather"] .widgetBody{
+  max-height:none!important;
+  overflow:visible!important;
+}
+@media (max-width:620px){
+  .homeDashboardWidgets .widget[data-home-widget="meal"],
+  .homeDashboardWidgets .widget[data-home-widget="schedule"],
+  .homeDashboardWidgets .widget[data-home-widget="timetable"],
+  .homeDashboardWidgets .widget[data-home-widget="weather"]{
+    grid-column:auto!important;
+    grid-row:auto!important;
+    min-height:210px!important;
+  }
+}
 #firstSetupBack{
   padding:0!important;
   background:rgba(7,17,31,.62)!important;
@@ -1137,6 +1177,13 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
   .homeDashboardWidgets{grid-template-columns:1fr!important;}
   .homeDashboardWidgets .widget,
   .homeDashboardWidgets .widget[data-home-widget="meal"]{min-height:240px!important;}
+  .homeDashboardWidgets .widget[data-home-widget="meal"],
+  .homeDashboardWidgets .widget[data-home-widget="schedule"],
+  .homeDashboardWidgets .widget[data-home-widget="timetable"],
+  .homeDashboardWidgets .widget[data-home-widget="weather"]{
+    grid-column:auto!important;
+    grid-row:auto!important;
+  }
   #firstSetupBack .modalBody{align-items:flex-start!important;}
   .setupProgress{width:42vw;}
 }
@@ -1533,6 +1580,8 @@ body.setup-pending .firstStartBack{
     <span class="pill">Notice</span>
   </div>
 
+  <div id="weatherAlertBanner" class="noticeBanner topNotice weatherAlertBanner" aria-live="polite" hidden></div>
+
   <div class="layout">
     <aside class="sideNav" aria-label="주요 메뉴">
       <div class="sideNavTitle">메뉴</div>
@@ -1575,6 +1624,10 @@ body.setup-pending .firstStartBack{
             <div class="widget" data-home-widget="timetable">
               <div class="widgetHead"><b>오늘의 시간표</b><span class="pill" id="homeTTDay">-</span></div>
               <div class="widgetBody" id="homeTTBody"><div class="muted">시간표를 입력하면 표시됩니다.</div></div>
+            </div>
+            <div class="widget" data-home-widget="weather">
+              <div class="widgetHead"><b>풍산고 날씨</b><span class="pill" id="homeWeatherStatus">확인 중</span></div>
+              <div class="widgetBody" id="homeWeatherBody"><div class="muted">날씨 정보를 불러오는 중…</div></div>
             </div>
           </aside>
         </div>
@@ -1899,6 +1952,7 @@ SOFTWARE.
           <label class="setupOption"><input type="checkbox" data-setup-widget="meal" checked> 급식</label>
           <label class="setupOption"><input type="checkbox" data-setup-widget="schedule" checked> 학사일정</label>
           <label class="setupOption"><input type="checkbox" data-setup-widget="timetable" checked> 시간표</label>
+          <label class="setupOption"><input type="checkbox" data-setup-widget="weather" checked> 날씨·기상특보</label>
         </div>
       </div>
     </div>
@@ -1940,6 +1994,7 @@ const HOME_WIDGET_CONFIG = {
   meal: true,
   schedule: true,
   timetable: true,
+  weather: true,
   quickTools: true
 };
 
@@ -1951,6 +2006,7 @@ const SCHOOL_HOME_URL = "https://school.gyo6.net/poongsanhs/main.do?sysId=poongs
 const ONWAY_URL = "https://ps.onwayedu.co.kr/login/login.php";
 const LIBRARY_URL = "https://read365.edunet.net/PureScreen/SchoolSearch?schoolName=풍산고등학교&provCode=R10&neisCode=R100000999";
 const SCHEDULE_PROXY_BASE = "https://gkrtkdlfwjd.yyhhjj1068-c2c.workers.dev/?ym=";
+const WEATHER_API_BASE = "https://gkrtkdlfwjd.yyhhjj1068-c2c.workers.dev";
 
 const ALLERGY_ITEMS = [
   { no:"1", name:"난류" },
@@ -3031,9 +3087,113 @@ function renderPersonalHeroLine(){
   box.innerHTML = escapeHtml(pick).replace("{name}", name);
 }
 
+function weatherIconFor(item){
+  const pty = String(item?.precipitationType || "없음");
+  if(pty.includes("눈")) return "❄️";
+  if(pty.includes("비")) return "🌧️";
+  const sky = String(item?.sky || "");
+  if(sky.includes("흐림")) return "☁️";
+  if(sky.includes("구름")) return "⛅";
+  return "☀️";
+}
+
+function weatherHourLabel(iso){
+  const d = new Date(iso);
+  if(Number.isNaN(d.getTime())) return "-";
+  return `${pad2(d.getHours())}시`;
+}
+
+function weatherUpdatedLabel(iso){
+  const d = new Date(iso);
+  if(Number.isNaN(d.getTime())) return "업데이트 시각 없음";
+  return `${pad2(d.getHours())}:${pad2(d.getMinutes())} 업데이트`;
+}
+
+function renderWeatherAlertBanner(data){
+  const banner = $("#weatherAlertBanner");
+  if(!banner) return;
+
+  const official = Array.isArray(data.officialWarnings) ? data.officialWarnings : [];
+  const lifestyle = (Array.isArray(data.lifestyleAlerts) ? data.lifestyleAlerts : [])
+    .filter(item=>item.severity === "danger" || item.severity === "warning");
+  const alert = official[0] || lifestyle[0];
+
+  if(!alert){
+    banner.hidden = true;
+    banner.innerHTML = "";
+    banner.className = "noticeBanner topNotice weatherAlertBanner";
+    return;
+  }
+
+  const isOfficial = Boolean(alert.official);
+  const title = alert.title || "기상 안전 안내";
+  const message = isOfficial
+    ? `${alert.region || "안동"}에 기상청 공식 ${title}가 발표되었습니다. 최신 발표 내용을 확인해 주세요.`
+    : (alert.message || "기상 상황에 유의해 주세요.");
+  const level = alert.severity === "danger" || String(alert.level || "").includes("경보") ? "danger" : "warning";
+
+  banner.hidden = false;
+  banner.className = `noticeBanner topNotice weatherAlertBanner ${level}`;
+  banner.innerHTML = `<div><strong>${isOfficial ? "기상청 공식 특보" : "O.Poong 생활 기상안내"} · ${escapeHtml(title)}</strong><p>${escapeHtml(message)}</p></div><button class="btn ghost" type="button" onclick="window.open('https://www.weather.go.kr/w/special-report/overall.do','_blank','noopener,noreferrer')">기상청 확인</button>`;
+}
+
+async function renderHomeWeather(){
+  const body = $("#homeWeatherBody");
+  const status = $("#homeWeatherStatus");
+  if(!body || !status) return;
+
+  if(!WEATHER_API_BASE){
+    status.textContent = "설정 필요";
+    body.innerHTML = `<div class="muted">날씨 Worker 주소를 연결하면 표시됩니다.</div>`;
+    return;
+  }
+
+  status.textContent = "불러오는 중";
+  body.innerHTML = `<div class="muted">날씨 정보를 불러오는 중…</div>`;
+
+  try{
+    const base = WEATHER_API_BASE.replace(/\/$/, "");
+    const res = await fetch(`${base}/weather`, { cache:"no-store" });
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json();
+    if(!data?.ok) throw new Error(data?.error || "날씨 API 오류");
+
+    const current = data.current || {};
+    const hourly = Array.isArray(data.hourly) ? data.hourly : [];
+    const official = Array.isArray(data.officialWarnings) ? data.officialWarnings : [];
+    const currentSky = hourly[0]?.sky || current.precipitationType || "날씨";
+    const temp = Number.isFinite(current.temperatureC) ? `${current.temperatureC}℃` : "-";
+    const humidity = Number.isFinite(current.humidityPercent) ? `${current.humidityPercent}%` : "-";
+    const wind = Number.isFinite(current.windSpeedMs) ? `${current.windSpeedMs}m/s` : "-";
+    const warningLine = data.warningsStatus === "available"
+      ? (official.length ? `공식 특보 ${official.length}건` : "현재 안동 공식 특보 없음")
+      : "공식 특보 확인 지연";
+
+    status.textContent = official.length ? "특보" : currentSky;
+    body.innerHTML = `
+      <div class="weatherNow">
+        <span class="weatherIcon" aria-hidden="true">${weatherIconFor(hourly[0] || current)}</span>
+        <div><div class="weatherTemp">${escapeHtml(temp)}</div><div class="weatherMeta">${escapeHtml(currentSky)} · 습도 ${escapeHtml(humidity)} · 바람 ${escapeHtml(wind)}</div></div>
+      </div>
+      <div class="weatherHourly" aria-label="시간별 날씨">
+        ${hourly.map(item=>`<div class="weatherHour"><span>${escapeHtml(weatherHourLabel(item.forecastAt))}</span><b>${weatherIconFor(item)} ${Number.isFinite(item.temperatureC) ? `${item.temperatureC}°` : "-"}</b><span>${escapeHtml(item.sky || item.precipitationType || "-")}</span></div>`).join("")}
+      </div>
+      <div class="weatherStatus">${escapeHtml(warningLine)} · ${escapeHtml(weatherUpdatedLabel(data.updatedAt))} · 출처 기상청</div>`;
+
+    renderWeatherAlertBanner(data);
+  }catch(err){
+    console.error("O.Poong weather:", err);
+    status.textContent = "연결 오류";
+    body.innerHTML = `<div class="muted">날씨 정보를 불러오지 못했어요. 잠시 후 다시 확인해 주세요.</div>`;
+    const banner = $("#weatherAlertBanner");
+    if(banner) banner.hidden = true;
+  }
+}
+
 async function renderHomeWidgets(){
   applyHomeWidgetConfig();
   renderPersonalHeroLine();
+  renderHomeWeather();
   try{
     const ymd = toYMDNoDash(todayStr());
     $("#homeMealDate").textContent = ymd2str(ymd);
