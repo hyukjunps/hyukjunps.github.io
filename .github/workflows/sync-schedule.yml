@@ -1,6 +1,10 @@
 name: Sync school schedule
 
 on:
+  push:
+    paths:
+      - ".github/workflows/sync-schedule.yml"
+      - "scripts/sync_school_schedule.py"
   schedule:
     - cron: "17 */6 * * *"
   workflow_dispatch:
