@@ -35,7 +35,15 @@ jobs:
           import json
           from pathlib import Path
 
-          mojibake = ("?숇", "?꾩", "湲곕", "寃⑥", "諛⑺", "洹", "吏")
+          def looks_broken(title):
+              return any(
+                  0x80 <= ord(char) <= 0x9F
+                  or 0x400 <= ord(char) <= 0x4FF
+                  or 0x4E00 <= ord(char) <= 0x9FFF
+                  or ord(char) == 0xFFFD
+                  for char in title
+              )
+
           files = sorted(Path("data/schedule").glob("*.json"))
           if not files:
               raise SystemExit("No schedule JSON files were generated")
@@ -49,7 +57,7 @@ jobs:
                   for items in data.get("byDate", {}).values()
                   for item in items
               ]
-              broken = [title for title in titles if any(token in title for token in mojibake)]
+              broken = [title for title in titles if looks_broken(title)]
               if broken:
                   raise ValueError(f"Mojibake detected in {path}: {broken[:3]}")
           print(f"Validated {len(files)} schedule files")
