@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v15"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v14"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -27,42 +27,6 @@ self.addEventListener("activate", (event) => {
 /* 페이지에서 업데이트 적용을 원하면 SKIP_WAITING */
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
-});
-
-self.addEventListener("push", (event) => {
-  let data = {};
-  try {
-    data = event.data ? event.data.json() : {};
-  } catch (_) {
-    data = { body: event.data ? event.data.text() : "새로운 날씨 안내가 있어요." };
-  }
-
-  const severity = String(data.severity || "normal");
-  const options = {
-    body: data.body || "풍산고 날씨와 기상특보를 확인해 주세요.",
-    icon: "./android/launchericon-512-512.png",
-    badge: "./android/launchericon-512-512.png",
-    tag: data.tag || "opoong-weather",
-    renotify: severity === "danger" || severity === "warning",
-    requireInteraction: severity === "danger",
-    data: { url: data.url || "/?page=weather" },
-  };
-  event.waitUntil(
-    self.registration.showNotification(data.title || "O.Poong 날씨 알림", options),
-  );
-});
-
-self.addEventListener("notificationclick", (event) => {
-  event.notification.close();
-  const target = new URL(event.notification.data?.url || "/?page=weather", self.location.origin).href;
-  event.waitUntil((async () => {
-    const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
-    for (const client of windows) {
-      if ("navigate" in client) await client.navigate(target);
-      return client.focus();
-    }
-    return self.clients.openWindow(target);
-  })());
 });
 
 self.addEventListener("fetch", (event) => {
