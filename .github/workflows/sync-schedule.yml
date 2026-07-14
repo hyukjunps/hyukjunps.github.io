@@ -27,7 +27,33 @@ jobs:
           python-version: "3.x"
 
       - name: Fetch official school schedule
-        run: python scripts/sync_school_schedule.py --past 2 --future 12
+        run: python scripts/sync_school_schedule.py --past 12 --future 12
+
+      - name: Validate schedule data
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          mojibake = ("?숇", "?꾩", "湲곕", "寃⑥", "諛⑺", "洹", "吏")
+          files = sorted(Path("data/schedule").glob("*.json"))
+          if not files:
+              raise SystemExit("No schedule JSON files were generated")
+
+          for path in files:
+              data = json.loads(path.read_text(encoding="utf-8"))
+              if not data.get("ok") or data.get("ym") != path.stem:
+                  raise ValueError(f"Invalid schedule metadata: {path}")
+              titles = [
+                  item.get("title", "")
+                  for items in data.get("byDate", {}).values()
+                  for item in items
+              ]
+              broken = [title for title in titles if any(token in title for token in mojibake)]
+              if broken:
+                  raise ValueError(f"Mojibake detected in {path}: {broken[:3]}")
+          print(f"Validated {len(files)} schedule files")
+          PY
 
       - name: Commit updated schedule data
         run: |
