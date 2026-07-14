@@ -145,7 +145,8 @@ def main():
     out_dir = Path(args.out)
     successes = 0
     current_ok = False
-    for offset in range(-args.past, args.future + 1):
+    offsets = [0] + list(range(-args.past, 0)) + list(range(1, args.future + 1))
+    for offset in offsets:
         yyyymm = month_add(args.start, offset)
         try:
             count = sync_month(opener, out_dir, yyyymm)
