@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v14"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v15"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -35,6 +35,27 @@ self.addEventListener("fetch", (event) => {
 
   // 같은 origin만 처리
   if (url.origin !== self.location.origin) return;
+
+  // 학사일정 JSON은 항상 네트워크를 먼저 확인한다.
+  // 쿼리 문자열을 무시한 cache-first 정책이 과거의 깨진 JSON을 계속
+  // 반환하지 않도록 경로만으로 된 단일 키에 마지막 정상 응답을 저장한다.
+  if (url.pathname.includes("/data/schedule/") && url.pathname.endsWith(".json")) {
+    event.respondWith((async () => {
+      const cache = await caches.open(CACHE_NAME);
+      const cacheKey = new Request(`${url.origin}${url.pathname}`);
+
+      try {
+        const fresh = await fetch(req, { cache: "no-store" });
+        if (fresh.ok) await cache.put(cacheKey, fresh.clone());
+        return fresh;
+      } catch (error) {
+        const cached = await cache.match(cacheKey);
+        if (cached) return cached;
+        throw error;
+      }
+    })());
+    return;
+  }
 
   // 1) HTML(navigate): 온라인이면 무조건 최신(no-store) / 오프라인이면 캐시된 index로
   if (req.mode === "navigate") {
