@@ -155,6 +155,9 @@ def main():
             current_ok = current_ok or offset == 0
         except (HTTPError, URLError, TimeoutError, RuntimeError) as error:
             print(f"::warning::{yyyymm}: {error}", file=sys.stderr)
+            if offset == 0:
+                print("::error::Current-month schedule sync failed.", file=sys.stderr)
+                return 1
         time.sleep(0.4)
 
     if not successes or not current_ok:
