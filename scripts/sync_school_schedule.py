@@ -123,248 +123,44 @@ def sync_month(opener, out_dir, yyyymm):
         "sourceUrl": SCHEDULE_URL,
         "ym": yyyymm,
         "count": sum(map(len, by_date.values())),
-        "updatedAt": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00",-��h��춻�q�^u
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-03": [
-      {
-        "title": "귀교일",
-        "seq": "1818877",
-        "type": ""
-      },
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-04": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      },
-      {
-        "title": "동계방학 프로그램 운영",
-        "seq": "1818875",
-        "type": ""
-      }
-    ],
-    "2027-01-05": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-06": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-07": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-08": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      },
-      {
-        "title": "졸업식",
-        "seq": "1818876",
-        "type": ""
-      }
-    ],
-    "2027-01-09": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-10": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-11": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-12": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-13": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-14": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-15": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-16": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      },
-      {
-        "title": "선택 귀가",
-        "seq": "1818878",
-        "type": ""
-      }
-    ],
-    "2027-01-17": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-18": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-19": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-20": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-21": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-22": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-23": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-24": [
-      {
-        "title": "2027학년도 신입생 오리엔테이션",
-        "seq": "1818879",
-        "type": ""
-      },
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-25": [
-      {
-        "title": "2027학년도 신입생 오리엔테이션",
-        "seq": "1818879",
-        "type": ""
-      },
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-26": [
-      {
-        "title": "2027학년도 신입생 오리엔테이션",
-        "seq": "1818879",
-        "type": ""
-      },
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-27": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-28": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-29": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-30": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ],
-    "2027-01-31": [
-      {
-        "title": "겨울 방학",
-        "seq": "1818874",
-        "type": ""
-      }
-    ]
-  }
-}
+        "updatedAt": datetime.now(UTC).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "byDate": by_date,
+    }
+    out_dir.mkdir(parents=True, exist_ok=True)
+    (out_dir / f"{yyyymm}.json").write_text(
+        json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8"
+    )
+    return payload["count"]
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--out", default="data/schedule")
+    parser.add_argument("--start", default=datetime.now().strftime("%Y%m"))
+    parser.add_argument("--past", type=int, default=2)
+    parser.add_argument("--future", type=int, default=12)
+    args = parser.parse_args()
+
+    opener = build_opener(HTTPCookieProcessor(CookieJar()))
+    out_dir = Path(args.out)
+    successes = 0
+    current_ok = False
+    for offset in range(-args.past, args.future + 1):
+        yyyymm = month_add(args.start, offset)
+        try:
+            count = sync_month(opener, out_dir, yyyymm)
+            print(f"{yyyymm}: {count} events")
+            successes += 1
+            current_ok = current_ok or offset == 0
+        except (HTTPError, URLError, TimeoutError, RuntimeError) as error:
+            print(f"::warning::{yyyymm}: {error}", file=sys.stderr)
+        time.sleep(0.4)
+
+    if not successes or not current_ok:
+        print("::error::Current-month schedule sync failed.", file=sys.stderr)
+        return 1
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
