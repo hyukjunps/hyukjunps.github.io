@@ -1281,18 +1281,6 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
 .weatherAlertItem strong{display:block;}
 .weatherAlertItem p{margin:6px 0 0;color:var(--muted);font-size:13px;font-weight:850;line-height:1.65;}
 .weatherSourceLine{margin-top:12px;color:var(--muted);font-size:11.5px;font-weight:850;text-align:right;}
-.weatherPushCard{margin-top:14px;padding:18px;border:1px solid color-mix(in srgb,var(--pri) 30%,var(--line));border-radius:var(--radius);background:linear-gradient(135deg,color-mix(in srgb,var(--pri) 10%,var(--card)),var(--card));box-shadow:var(--shadow2);}
-.weatherPushHead{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;flex-wrap:wrap;}
-.weatherPushHead h3{margin:0;font-size:18px;}
-.weatherPushHead p{margin:6px 0 0;color:var(--muted);font-size:13px;font-weight:850;line-height:1.6;}
-.weatherPushStatus{margin-top:13px;padding:11px 13px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--bg) 35%,var(--card));font-size:13px;font-weight:900;}
-.weatherPushStatus.on{border-color:color-mix(in srgb,var(--ok) 40%,var(--line));background:color-mix(in srgb,var(--ok) 10%,var(--card));color:color-mix(in srgb,var(--ok) 75%,var(--text));}
-.weatherPushStatus.err{border-color:color-mix(in srgb,var(--warn) 40%,var(--line));background:color-mix(in srgb,var(--warn) 9%,var(--card));}
-.weatherPushPrefs{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin-top:12px;}
-.weatherPushPref{display:flex;align-items:center;gap:8px;padding:10px 11px;border:1px solid var(--line);border-radius:15px;background:var(--card);font-size:12px;font-weight:900;cursor:pointer;}
-.weatherPushPref input{width:17px;height:17px;accent-color:var(--pri);}
-.weatherPushActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;}
-.weatherPushHint{margin-top:10px;color:var(--muted);font-size:11.5px;font-weight:850;line-height:1.6;}
 
 @media (max-width:1180px){
   .homeDashboard{grid-template-columns:1fr!important;}
@@ -1318,7 +1306,6 @@ body.home-view .sideCard.homeAlwaysWidgets .widgetBody{
   .weatherDetailNow{width:100%;}
   .weatherMetricGrid{grid-template-columns:repeat(2,minmax(0,1fr));}
   .weatherForecastGrid{grid-template-columns:repeat(6,124px);}
-  .weatherPushPrefs{grid-template-columns:repeat(2,minmax(0,1fr));}
 }
 
 
@@ -1777,26 +1764,6 @@ body.setup-pending .firstStartBack{
           </div>
           <button class="smallbtn primary" type="button" onclick="renderWeatherDetail(true)">새로고침</button>
         </div>
-        <div class="weatherPushCard" id="weatherPushCard">
-          <div class="weatherPushHead">
-            <div><h3>날씨 푸시 알림</h3><p>O.Poong을 열지 않아도 새 기상특보와 가까운 위험 날씨를 알려드려요.</p></div>
-            <span class="pill" id="weatherPushBadge">확인 중</span>
-          </div>
-          <div class="weatherPushStatus" id="weatherPushStatus" aria-live="polite">이 기기의 알림 상태를 확인하고 있어요.</div>
-          <div class="weatherPushPrefs" id="weatherPushPrefs">
-            <label class="weatherPushPref"><input type="checkbox" data-push-pref="official" checked> 공식 특보</label>
-            <label class="weatherPushPref"><input type="checkbox" data-push-pref="heat" checked> 폭염·체감더위</label>
-            <label class="weatherPushPref"><input type="checkbox" data-push-pref="rain" checked> 2시간 내 비</label>
-            <label class="weatherPushPref"><input type="checkbox" data-push-pref="wind" checked> 강풍</label>
-            <label class="weatherPushPref"><input type="checkbox" data-push-pref="daily" checked> 매일 07시 브리핑</label>
-          </div>
-          <div class="weatherPushActions">
-            <button class="smallbtn primary" id="btnPushEnable" type="button" onclick="enableWeatherPush()">날씨 알림 켜기</button>
-            <button class="smallbtn ghost" id="btnPushTest" type="button" onclick="sendWeatherPushTest()" hidden>테스트 알림</button>
-            <button class="smallbtn ghost" id="btnPushDisable" type="button" onclick="disableWeatherPush()" hidden>알림 끄기</button>
-          </div>
-          <div class="weatherPushHint" id="weatherPushHint">알림 권한은 버튼을 누를 때만 요청하며, 구독정보는 푸시 발송 목적으로만 저장됩니다.</div>
-        </div>
         <div id="weatherDetailStatus" class="notice">날씨 정보를 불러오는 중…</div>
         <div id="weatherDetailContent" aria-live="polite"></div>
       </section>
@@ -2173,7 +2140,6 @@ const ONWAY_URL = "https://ps.onwayedu.co.kr/login/login.php";
 const LIBRARY_URL = "https://read365.edunet.net/PureScreen/SchoolSearch?schoolName=풍산고등학교&provCode=R10&neisCode=R100000999";
 const SCHEDULE_PROXY_BASE = "https://gkrtkdlfwjd.yyhhjj1068-c2c.workers.dev/?ym=";
 const WEATHER_API_BASE = "https://gkrtkdlfwjd.yyhhjj1068-c2c.workers.dev";
-const PUSH_PREFERENCES_KEY = "opoong_weather_push_preferences_v1";
 
 const ALLERGY_ITEMS = [
   { no:"1", name:"난류" },
@@ -2805,250 +2771,6 @@ function skipFirstSetup(){
   if(setupBack) setupBack.style.display = "none";
   showFirstStartOnly();
 }
-let pushServerConfig = null;
-let weatherPushBusy = false;
-
-function weatherPushSupported(){
-  return "serviceWorker" in navigator && "PushManager" in window && "Notification" in window;
-}
-
-function pushPreferences(){
-  try{
-    return {
-      official:true,
-      heat:true,
-      rain:true,
-      wind:true,
-      daily:true,
-      ...JSON.parse(localStorage.getItem(PUSH_PREFERENCES_KEY) || "{}")
-    };
-  }catch{
-    return {official:true,heat:true,rain:true,wind:true,daily:true};
-  }
-}
-
-function readPushPreferencesFromUi(){
-  const current = pushPreferences();
-  $$('[data-push-pref]').forEach(input=>{ current[input.dataset.pushPref] = input.checked; });
-  return current;
-}
-
-function applyPushPreferencesToUi(){
-  const saved = pushPreferences();
-  $$('[data-push-pref]').forEach(input=>{ input.checked = saved[input.dataset.pushPref] !== false; });
-}
-
-function setWeatherPushStatus(text, type = ""){
-  const status = $("#weatherPushStatus");
-  if(!status) return;
-  status.className = `weatherPushStatus${type ? ` ${type}` : ""}`;
-  status.textContent = text;
-}
-
-function setWeatherPushBusy(busy){
-  weatherPushBusy = busy;
-  ["#btnPushEnable","#btnPushTest","#btnPushDisable"].forEach(selector=>{
-    const button = $(selector);
-    if(button) button.disabled = busy;
-  });
-}
-
-async function fetchPushServerConfig(force = false){
-  if(pushServerConfig && !force) return pushServerConfig;
-  const base = WEATHER_API_BASE.replace(/\/$/, "");
-  const response = await fetch(`${base}/push/config`, {cache:"no-store"});
-  if(!response.ok) throw new Error(`푸시 설정 HTTP ${response.status}`);
-  const data = await response.json();
-  pushServerConfig = data;
-  return data;
-}
-
-function pushApplicationServerKey(value){
-  const padding = "=".repeat((4 - value.length % 4) % 4);
-  const base64 = (value + padding).replace(/-/g, "+").replace(/_/g, "/");
-  const raw = atob(base64);
-  return Uint8Array.from([...raw].map(char=>char.charCodeAt(0)));
-}
-
-async function currentPushSubscription(){
-  const registration = await navigator.serviceWorker.ready;
-  return registration.pushManager.getSubscription();
-}
-
-async function savePushSubscription(subscription){
-  const base = WEATHER_API_BASE.replace(/\/$/, "");
-  const preferences = readPushPreferencesFromUi();
-  localStorage.setItem(PUSH_PREFERENCES_KEY, JSON.stringify(preferences));
-  const response = await fetch(`${base}/push/subscribe`, {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({subscription:subscription.toJSON(),preferences})
-  });
-  const data = await response.json().catch(()=>({}));
-  if(!response.ok || !data.ok) throw new Error(data.error || `구독 저장 HTTP ${response.status}`);
-  return data;
-}
-
-async function renderWeatherPushSettings(){
-  const badge = $("#weatherPushBadge");
-  const enable = $("#btnPushEnable");
-  const test = $("#btnPushTest");
-  const disable = $("#btnPushDisable");
-  const hint = $("#weatherPushHint");
-  if(!badge || !enable || !test || !disable) return;
-  applyPushPreferencesToUi();
-
-  if(!weatherPushSupported()){
-    badge.textContent = "지원 안 됨";
-    enable.hidden = true;
-    test.hidden = true;
-    disable.hidden = true;
-    setWeatherPushStatus("이 브라우저에서는 Web Push 알림을 지원하지 않아요.", "err");
-    return;
-  }
-  if(isIos() && !isStandalone()){
-    badge.textContent = "설치 필요";
-    enable.hidden = false;
-    enable.disabled = true;
-    test.hidden = true;
-    disable.hidden = true;
-    setWeatherPushStatus("아이폰에서는 O.Poong을 홈 화면에 추가한 뒤 설치된 앱에서 알림을 켜주세요.");
-    if(hint) hint.textContent = "Safari 공유 버튼 → 홈 화면에 추가 → O.Poong 앱 실행 → 날씨 메뉴에서 알림 켜기";
-    return;
-  }
-
-  try{
-    const config = await fetchPushServerConfig();
-    if(!config.enabled || !config.publicKey){
-      badge.textContent = "서버 준비 중";
-      enable.hidden = false;
-      enable.disabled = true;
-      test.hidden = true;
-      disable.hidden = true;
-      setWeatherPushStatus("Cloudflare 푸시 서버 설정이 완료되면 이 기기에서 알림을 켤 수 있어요.");
-      return;
-    }
-    const subscription = await currentPushSubscription();
-    const denied = Notification.permission === "denied";
-    if(subscription){
-      badge.textContent = "켜짐";
-      enable.hidden = true;
-      test.hidden = false;
-      disable.hidden = false;
-      setWeatherPushStatus("이 기기는 날씨 푸시 알림을 받고 있어요.", "on");
-    }else{
-      badge.textContent = denied ? "차단됨" : "꺼짐";
-      enable.hidden = false;
-      enable.disabled = denied;
-      test.hidden = true;
-      disable.hidden = true;
-      setWeatherPushStatus(denied ? "브라우저 설정에서 O.Poong 알림 차단을 해제해 주세요." : "알림을 켜면 새로운 위험 날씨만 선별해서 알려드려요.", denied ? "err" : "");
-    }
-  }catch(error){
-    console.error("O.Poong push settings:", error);
-    badge.textContent = "연결 대기";
-    enable.hidden = false;
-    enable.disabled = true;
-    test.hidden = true;
-    disable.hidden = true;
-    setWeatherPushStatus("푸시 서버가 아직 준비되지 않았어요. 날씨 정보는 정상적으로 이용할 수 있습니다.");
-  }
-}
-
-async function enableWeatherPush(){
-  if(weatherPushBusy || !weatherPushSupported()) return;
-  if(isIos() && !isStandalone()) return renderWeatherPushSettings();
-  setWeatherPushBusy(true);
-  setWeatherPushStatus("알림 권한을 확인하고 있어요…");
-  try{
-    const permissionPromise = Notification.requestPermission();
-    const configPromise = fetchPushServerConfig();
-    const [permission, config] = await Promise.all([permissionPromise, configPromise]);
-    if(permission !== "granted") throw new Error("알림 권한이 허용되지 않았습니다.");
-    if(!config.enabled || !config.publicKey) throw new Error("푸시 서버 설정이 완료되지 않았습니다.");
-    const registration = await navigator.serviceWorker.ready;
-    const subscription = await registration.pushManager.getSubscription() || await registration.pushManager.subscribe({
-      userVisibleOnly:true,
-      applicationServerKey:pushApplicationServerKey(config.publicKey)
-    });
-    await savePushSubscription(subscription);
-    setWeatherPushStatus("날씨 푸시 알림이 켜졌어요. 테스트 알림으로 확인해보세요.", "on");
-  }catch(error){
-    console.error("O.Poong push enable:", error);
-    setWeatherPushStatus(error.message || "날씨 알림을 켜지 못했어요.", "err");
-  }finally{
-    setWeatherPushBusy(false);
-    await renderWeatherPushSettings();
-  }
-}
-
-async function disableWeatherPush(){
-  if(weatherPushBusy || !weatherPushSupported()) return;
-  setWeatherPushBusy(true);
-  try{
-    const subscription = await currentPushSubscription();
-    if(subscription){
-      const endpoint = subscription.endpoint;
-      const base = WEATHER_API_BASE.replace(/\/$/, "");
-      await fetch(`${base}/push/unsubscribe`, {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body:JSON.stringify({endpoint})
-      }).catch(()=>null);
-      await subscription.unsubscribe();
-    }
-    setWeatherPushStatus("이 기기의 날씨 푸시 알림을 껐어요.");
-  }catch(error){
-    setWeatherPushStatus(error.message || "알림을 끄지 못했어요.", "err");
-  }finally{
-    setWeatherPushBusy(false);
-    await renderWeatherPushSettings();
-  }
-}
-
-async function sendWeatherPushTest(){
-  if(weatherPushBusy) return;
-  setWeatherPushBusy(true);
-  setWeatherPushStatus("테스트 알림을 보내고 있어요…");
-  try{
-    const subscription = await currentPushSubscription();
-    if(!subscription) throw new Error("먼저 날씨 알림을 켜주세요.");
-    const base = WEATHER_API_BASE.replace(/\/$/, "");
-    const response = await fetch(`${base}/push/test`, {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body:JSON.stringify({subscription:subscription.toJSON()})
-    });
-    const data = await response.json().catch(()=>({}));
-    if(!response.ok || !data.ok) throw new Error(data.error || "테스트 알림 발송 실패");
-    setWeatherPushStatus("테스트 알림을 보냈어요. 기기의 알림창을 확인해 주세요.", "on");
-  }catch(error){
-    setWeatherPushStatus(error.message || "테스트 알림을 보내지 못했어요.", "err");
-  }finally{
-    setWeatherPushBusy(false);
-  }
-}
-
-function initWeatherPush(){
-  applyPushPreferencesToUi();
-  $$('[data-push-pref]').forEach(input=>{
-    if(input.dataset.pushBound === "1") return;
-    input.dataset.pushBound = "1";
-    input.addEventListener("change", async()=>{
-      const preferences = readPushPreferencesFromUi();
-      localStorage.setItem(PUSH_PREFERENCES_KEY, JSON.stringify(preferences));
-      try{
-        const subscription = weatherPushSupported() ? await currentPushSubscription() : null;
-        if(subscription) await savePushSubscription(subscription);
-      }catch(error){
-        console.error("O.Poong push preference:", error);
-        setWeatherPushStatus("알림 항목 저장이 지연되고 있어요. 잠시 후 다시 시도해 주세요.", "err");
-      }
-    });
-  });
-  renderWeatherPushSettings();
-}
-
 let weatherDataCache = null;
 let weatherDataPromise = null;
 
@@ -3839,10 +3561,8 @@ window.addEventListener("load",()=>{
   initRoute();
   openFirstSetupIfNeeded();
   if("serviceWorker" in navigator){
-    navigator.serviceWorker.register("./service-worker.js")
-      .then(()=>initWeatherPush())
-      .catch(()=>initWeatherPush());
-  }else initWeatherPush();
+    navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
+  }
 });
 </script>
 </body>
