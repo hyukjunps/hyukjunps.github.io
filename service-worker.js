@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v24"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v25"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
