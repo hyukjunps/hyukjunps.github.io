@@ -1721,6 +1721,34 @@ body.setup-pending .firstStartBack{
   .ddayDelete{grid-column:2;grid-row:2;padding:0 5px}
 }
 
+
+/* ===== O.Poong desktop dashboard stable grid ===== */
+@media (min-width:761px){
+  .homeDashboardWidgets{
+    display:grid!important;
+    grid-template-columns:minmax(250px,.95fr) repeat(2,minmax(150px,.55fr))!important;
+    grid-template-rows:112px auto auto!important;
+    grid-auto-flow:row!important;
+    align-items:stretch!important;
+  }
+  .homeDashboardWidgets .widget[data-home-widget="meal"]{
+    grid-column:1!important;grid-row:1 / span 2!important;
+  }
+  .homeDashboardWidgets .widget[data-home-widget="weather"]{
+    grid-column:2 / span 2!important;grid-row:1!important;
+  }
+  .homeDashboardWidgets .widget[data-home-widget="schedule"]{
+    grid-column:2!important;grid-row:2!important;
+  }
+  .homeDashboardWidgets .widget[data-home-widget="timetable"]{
+    grid-column:3!important;grid-row:2!important;
+    display:flex!important;visibility:visible!important;
+  }
+  .homeDashboardWidgets .widget[data-home-widget="dday"]{
+    grid-column:1 / -1!important;grid-row:3!important;
+  }
+}
+
 </style>
 </head>
 
@@ -3387,9 +3415,12 @@ if(installNowBtn) installNowBtn.addEventListener("click", handleInstallClick);
 function getHomeWidgetConfig(){
   try{
     const saved = JSON.parse(localStorage.getItem("opoong_home_widgets") || "{}");
-    return {...HOME_WIDGET_CONFIG, ...saved};
+    const config = {...HOME_WIDGET_CONFIG, ...saved};
+    // 시간표는 핵심 홈 기능이므로 과거 설정값 때문에 웹에서 사라지지 않도록 항상 표시합니다.
+    config.timetable = true;
+    return config;
   }catch{
-    return {...HOME_WIDGET_CONFIG};
+    return {...HOME_WIDGET_CONFIG, timetable:true};
   }
 }
 function saveHomeWidgetConfig(cfg){
