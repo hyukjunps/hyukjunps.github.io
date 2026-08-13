@@ -2321,10 +2321,10 @@ SOFTWARE.
    ========================= */
 const NOTICE_CONFIG = {
   enabled: true,
-  title: "O.Poong 점검 완료",
-  message: "모든 기능이 정상적으로 작동해요! 안심하고 사용하세요!.",
-  buttonText: "설문조사 참여하기",
-  buttonUrl: "https://docs.google.com/forms/d/e/1FAIpQLSfqXyx46QZ4t3BpG3myNtKZkoA7tvrcA4ot5ytiBiWiFVBQ_A/viewform?usp=dialog",
+  title: "O.Poong 나이스 계산기로 불편을 드려 죄송해요.",
+  message: "기능은 곧 삭제될 예정이며, 디데이 기능이 추가되었습니다.",
+  buttonText: "",
+  buttonUrl: "",
 
   /*
     공지 배너 색상 수정:
@@ -2347,15 +2347,15 @@ const NOTICE_CONFIG = {
   - version: 공지 내용을 바꿀 때 값을 변경하면 이미 닫은 사용자에게도 다시 표시
 */
 const FULLSCREEN_NOTICE_CONFIG = {
-  enabled: false,
+  enabled: true,
   version: "2026-08-13-1",
   title: "중요 공지",
-  message: "공지 내용을 여기에 입력하세요.",
+  message: "O.Poong 서비스 점검 중입니다. 다음에 다시 찾아주세요.",
   icon: "📢",
   iconUrl: "",
   fullScreen: true,
-  blockAccess: false,
-  showCloseButton: true,
+  blockAccess: true,
+  showCloseButton: false,
   buttonText: "",
   buttonUrl: ""
 };
