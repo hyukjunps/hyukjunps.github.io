@@ -1780,34 +1780,18 @@ body.setup-pending .firstStartBack{
 
 
 
-/* ===== O.Poong Jump game + points shop ===== */
-html[data-game-bg="sky"]{--bg:#eef7ff;--bg2:#ddecff}
-html[data-game-bg="mint"]{--bg:#effcf6;--bg2:#d9f8e9}
-html[data-game-bg="sunset"]{--bg:#fff5ee;--bg2:#ffe2d1}
-html[data-game-bg="violet"]{--bg:#f7f2ff;--bg2:#e8dcff}
-html[data-game-bg="midnight"]{--bg:#10192b;--bg2:#162646}
-html[data-theme="dark"][data-game-bg="sky"]{--bg:#071524;--bg2:#0a2944}
-html[data-theme="dark"][data-game-bg="mint"]{--bg:#071b18;--bg2:#0b3028}
-html[data-theme="dark"][data-game-bg="sunset"]{--bg:#21110c;--bg2:#3b1d13}
-html[data-theme="dark"][data-game-bg="violet"]{--bg:#140d25;--bg2:#28174b}
-html[data-theme="dark"][data-game-bg="midnight"]{--bg:#050913;--bg2:#0b1325}
-body.opoong-ad-free .adfitWrap{display:none!important}
+/* ===== O.Poong Jump mini game ===== */
 .gameSectionHeader{align-items:center}
-.gameWallet{
-  display:flex;align-items:center;gap:10px;padding:10px 14px;
-  border:1px solid color-mix(in srgb,var(--pri) 28%,var(--line));
-  border-radius:999px;background:color-mix(in srgb,var(--pri) 8%,var(--card));
-  box-shadow:0 8px 18px color-mix(in srgb,var(--pri) 8%,transparent);
-}
-.gameWallet span{color:var(--muted);font-size:12px;font-weight:900}
-.gameWallet strong{color:var(--pri);font-size:18px}
-.gameLayout{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(300px,.75fr);gap:14px;align-items:start}
-.gamePlayCard,.gameShopCard{
-  border:1px solid var(--line);border-radius:26px;background:color-mix(in srgb,var(--card) 95%,transparent);
+.gamePlayCard{
+  max-width:920px;
+  margin:0 auto;
+  padding:14px;
+  border:1px solid var(--line);
+  border-radius:26px;
+  background:color-mix(in srgb,var(--card) 95%,transparent);
   box-shadow:var(--shadow2);
 }
-.gamePlayCard{padding:14px}
-.gameHud{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:11px}
+.gameHud{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-bottom:11px}
 .gameHud>div{padding:10px 12px;border:1px solid var(--line);border-radius:16px;background:var(--card2)}
 .gameHud span{display:block;color:var(--muted);font-size:11px;font-weight:900}
 .gameHud strong{display:block;margin-top:3px;font-size:18px}
@@ -1825,53 +1809,12 @@ body.opoong-ad-free .adfitWrap{display:none!important}
 .gameControls{display:flex;align-items:center;gap:9px;flex-wrap:wrap;margin-top:11px}
 .gameControls .muted{margin-left:auto;font-size:11.5px;font-weight:850}
 .gameJumpButton{min-width:86px}
-.gameShopCard{padding:15px}
-.gameShopHead{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
-.gameShopHead b{display:block;font-size:18px}
-.gameShopHead span:not(.pill){display:block;margin-top:4px;color:var(--muted);font-size:11px;font-weight:800}
-.gameShopCard h3{margin:17px 0 8px;font-size:14px}
-.gameShopStatus{min-height:0;margin-top:10px;color:var(--pri);font-size:12px;font-weight:900}
-.gameShopStatus:empty{display:none}
-.gameShopGrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-.gameShopItem{
-  min-width:0;padding:10px;border:1px solid var(--line);border-radius:16px;
-  background:var(--card2);
-}
-.gameShopPreview{
-  height:45px;margin-bottom:8px;border-radius:13px;
-  display:flex;align-items:center;justify-content:center;overflow:hidden;
-  background:linear-gradient(135deg,var(--preview-a),var(--preview-b));
-}
-.gameSkinPreview{
-  width:34px;height:34px;border:3px solid var(--preview-ink);border-radius:12px;
-  display:flex;align-items:center;justify-content:center;color:var(--preview-ink);
-  background:var(--preview-core);font-size:22px;font-weight:1000;box-shadow:0 5px 12px rgba(15,23,42,.18)
-}
-.gameShopItem b{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;font-size:12.5px}
-.gameShopPrice{display:block;margin:3px 0 7px;color:var(--muted);font-size:10.5px;font-weight:850}
-.gameShopItem button{width:100%;min-height:34px;padding:7px 8px;font-size:11px}
-.gameShopItem.equipped{border-color:color-mix(in srgb,var(--ok) 54%,var(--line));background:color-mix(in srgb,var(--ok) 8%,var(--card))}
-.gameAdPass{
-  padding:12px;border:1px solid color-mix(in srgb,var(--pri) 30%,var(--line));
-  border-radius:17px;background:linear-gradient(135deg,color-mix(in srgb,var(--pri) 9%,var(--card)),var(--card));
-}
-.gameAdPassTop{display:flex;align-items:center;justify-content:space-between;gap:10px}
-.gameAdPassTop b{font-size:13px}
-.gameAdPassTop span{color:var(--pri);font-size:12px;font-weight:1000}
-.gameAdPass p{margin:6px 0 10px;color:var(--muted);font-size:11px;font-weight:800;line-height:1.5}
-.gameAdPass button{width:100%}
-@media(max-width:980px){
-  .gameLayout{grid-template-columns:1fr}
-  .gameShopGrid{grid-template-columns:repeat(4,minmax(0,1fr))}
-}
 @media(max-width:620px){
   #view-game{padding:12px}
-  .gameWallet{width:100%;justify-content:space-between}
   .gameHud>div{padding:8px}
   .gameHud strong{font-size:16px}
   .gameCanvasWrap{border-radius:17px}
   .gameControls .muted{width:100%;margin-left:0}
-  .gameShopGrid{grid-template-columns:repeat(2,minmax(0,1fr))}
   .gameMessage strong{font-size:20px}
 }
 
@@ -2197,7 +2140,7 @@ body.full-notice-locked{overflow:hidden}
         <a class="navBtn" data-view="meal" href="/?page=meal" onclick="event.preventDefault(); go('meal'); setTodayAndLoad();"><span class="left"><span class="icon">식</span><span><span class="title">급식</span><br><span class="hint">일별/월별</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="schedule" href="/?page=schedule" onclick="event.preventDefault(); go('schedule'); scheduleLoadMonth();"><span class="left"><span class="icon">일</span><span><span class="title">학사일정</span><br><span class="hint">월별 달력</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="timetable" href="/?page=timetable" onclick="event.preventDefault(); go('timetable'); ttRenderTable();"><span class="left"><span class="icon">표</span><span><span class="title">시간표</span><br><span class="hint">로컬 저장</span></span></span><span>›</span></a>
-        <a class="navBtn" data-view="game" href="/?page=game" onclick="event.preventDefault(); go('game')"><span class="left"><span class="icon">겜</span><span><span class="title">O.Poong 점프</span><br><span class="hint">게임·포인트 상점</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="game" href="/?page=game" onclick="event.preventDefault(); go('game')"><span class="left"><span class="icon">겜</span><span><span class="title">O.Poong 점프</span><br><span class="hint">미니게임</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="onway" href="/?page=onway" onclick="event.preventDefault(); go('onway')"><span class="left"><span class="icon">온</span><span><span class="title">온웨이에듀</span><br><span class="hint">외부 링크</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="school" href="/?page=school" onclick="event.preventDefault(); go('school')"><span class="left"><span class="icon">학</span><span><span class="title">학교 홈페이지</span><br><span class="hint">공식 사이트</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="library" href="/?page=library" onclick="event.preventDefault(); go('library')"><span class="left"><span class="icon">책</span><span><span class="title">도서관 조회</span><br><span class="hint">풍산고 도서관</span></span></span><span>›</span></a>
@@ -2370,48 +2313,27 @@ body.full-notice-locked{overflow:hidden}
         <div class="sectionHeader gameSectionHeader">
           <div>
             <h2>O.Poong 점프</h2>
-            <p>장애물을 뛰어넘어 포인트를 모으고 스킨·배경색·광고 제거권을 구매하세요.</p>
+            <p>화면을 누르거나 스페이스바를 눌러 장애물을 뛰어넘으세요.</p>
           </div>
-          <div class="gameWallet" aria-label="게임 보유 포인트"><span>보유 포인트</span><strong id="gameWalletPoints">0 P</strong></div>
         </div>
 
-        <div class="gameLayout">
-          <div class="gamePlayCard">
-            <div class="gameHud">
-              <div><span>현재 점수</span><strong id="gameScore">0</strong></div>
-              <div><span>최고 점수</span><strong id="gameBest">0</strong></div>
-              <div><span>이번 획득</span><strong id="gameEarned">0 P</strong></div>
-            </div>
-            <div class="gameCanvasWrap">
-              <canvas id="opoongGameCanvas" width="900" height="320" tabindex="0" aria-label="O.Poong 점프 게임. 화면을 누르거나 스페이스바로 점프하세요."></canvas>
-              <div id="gameMessage" class="gameMessage">
-                <strong>준비됐나요?</strong>
-                <span>화면 터치 또는 스페이스바로 점프</span>
-              </div>
-            </div>
-            <div class="gameControls">
-              <button id="gameStartButton" class="bigBtn" type="button" onclick="startOpoongGame()">게임 시작</button>
-              <button class="btn ghost gameJumpButton" type="button" onclick="opoongGameJump()">점프</button>
-              <span class="muted">점수 10점마다 1P가 적립돼요.</span>
+        <div class="gamePlayCard">
+          <div class="gameHud">
+            <div><span>현재 점수</span><strong id="gameScore">0</strong></div>
+            <div><span>최고 점수</span><strong id="gameBest">0</strong></div>
+          </div>
+          <div class="gameCanvasWrap">
+            <canvas id="opoongGameCanvas" width="900" height="320" tabindex="0" aria-label="O.Poong 점프 게임. 화면을 누르거나 스페이스바로 점프하세요."></canvas>
+            <div id="gameMessage" class="gameMessage">
+              <strong>준비됐나요?</strong>
+              <span>화면 터치 또는 스페이스바로 점프</span>
             </div>
           </div>
-
-          <aside class="gameShopCard" aria-label="게임 포인트 상점">
-            <div class="gameShopHead">
-              <div><b>포인트 상점</b><span>확률형 상품 없이 정가로 구매해요.</span></div>
-              <span class="pill">SHOP</span>
-            </div>
-            <div id="gameShopStatus" class="gameShopStatus" aria-live="polite"></div>
-
-            <h3>캐릭터 스킨</h3>
-            <div id="gameSkinShop" class="gameShopGrid"></div>
-
-            <h3>O.Poong 배경색</h3>
-            <div id="gameBackgroundShop" class="gameShopGrid"></div>
-
-            <h3>광고 제거</h3>
-            <div id="gameAdPass" class="gameAdPass"></div>
-          </aside>
+          <div class="gameControls">
+            <button id="gameStartButton" class="bigBtn" type="button" onclick="startOpoongGame()">게임 시작</button>
+            <button class="btn ghost gameJumpButton" type="button" onclick="opoongGameJump()">점프</button>
+            <span class="muted">PC: 스페이스바 또는 ↑ · 모바일: 화면 터치</span>
+          </div>
         </div>
       </section>
 
@@ -3026,215 +2948,25 @@ function installRipple(){
 }
 
 
-/* ===== O.Poong Jump: isolated local game data (never touches timetable storage) ===== */
-const OPOONG_GAME_KEY = "opoong_game_v1";
-const OPOONG_GAME_SKINS = [
-  {id:"classic",name:"클래식 블루",price:0,a:"#123ac8",b:"#315cff",core:"#ffffff",ink:"#07111f"},
-  {id:"mint",name:"민트",price:120,a:"#059669",b:"#34d399",core:"#ecfdf5",ink:"#064e3b"},
-  {id:"sunset",name:"선셋",price:260,a:"#f97316",b:"#fb7185",core:"#fff7ed",ink:"#7c2d12"},
-  {id:"galaxy",name:"갤럭시",price:420,a:"#4c1d95",b:"#2563eb",core:"#ede9fe",ink:"#312e81"}
-];
-const OPOONG_GAME_BACKGROUNDS = [
-  {id:"default",name:"기본",price:0,a:"#edf4ff",b:"#f5f7fb"},
-  {id:"sky",name:"스카이",price:220,a:"#ddecff",b:"#eef7ff"},
-  {id:"mint",name:"민트",price:320,a:"#d9f8e9",b:"#effcf6"},
-  {id:"sunset",name:"선셋",price:420,a:"#ffe2d1",b:"#fff5ee"},
-  {id:"violet",name:"바이올렛",price:520,a:"#e8dcff",b:"#f7f2ff"},
-  {id:"midnight",name:"미드나이트",price:650,a:"#162646",b:"#10192b"}
-];
-const OPOONG_AD_PASS_PRICE = 1500;
-const OPOONG_AD_PASS_MS = 7 * 24 * 60 * 60 * 1000;
-
-function defaultOpoongGameState(){
-  return {
-    points:0,
-    best:0,
-    ownedSkins:["classic"],
-    equippedSkin:"classic",
-    ownedBackgrounds:["default"],
-    equippedBackground:"default",
-    adFreeUntil:0
-  };
+/* ===== O.Poong Jump mini game: high score only ===== */
+const OPOONG_JUMP_BEST_KEY = "opoong_jump_best_v1";
+function loadOpoongBest(){
+  try{return Math.max(0,Math.floor(Number(localStorage.getItem(OPOONG_JUMP_BEST_KEY))||0));}
+  catch(e){return 0;}
 }
-function loadOpoongGameState(){
-  const base=defaultOpoongGameState();
-  try{
-    const raw=JSON.parse(localStorage.getItem(OPOONG_GAME_KEY)||"{}");
-    const skins=Array.isArray(raw.ownedSkins)?raw.ownedSkins:[];
-    const backgrounds=Array.isArray(raw.ownedBackgrounds)?raw.ownedBackgrounds:[];
-    return {
-      points:Math.max(0,Math.floor(Number(raw.points)||0)),
-      best:Math.max(0,Math.floor(Number(raw.best)||0)),
-      ownedSkins:Array.from(new Set(["classic"].concat(skins))),
-      equippedSkin:OPOONG_GAME_SKINS.some(function(x){return x.id===raw.equippedSkin;})?raw.equippedSkin:"classic",
-      ownedBackgrounds:Array.from(new Set(["default"].concat(backgrounds))),
-      equippedBackground:OPOONG_GAME_BACKGROUNDS.some(function(x){return x.id===raw.equippedBackground;})?raw.equippedBackground:"default",
-      adFreeUntil:Math.max(0,Number(raw.adFreeUntil)||0)
-    };
-  }catch(e){
-    return base;
-  }
+function saveOpoongBest(value){
+  try{localStorage.setItem(OPOONG_JUMP_BEST_KEY,String(Math.max(0,Math.floor(value||0))));}catch(e){}
 }
-function saveOpoongGameState(){
-  try{localStorage.setItem(OPOONG_GAME_KEY,JSON.stringify(opoongGameState));}catch(e){}
-}
-let opoongGameState=loadOpoongGameState();
-
-function isOpoongAdFree(){
-  return Number(loadOpoongGameState().adFreeUntil||0)>Date.now();
-}
-function applyOpoongBackground(){
-  const id=opoongGameState.equippedBackground||"default";
-  if(id==="default") delete document.documentElement.dataset.gameBg;
-  else document.documentElement.dataset.gameBg=id;
-}
-function formatOpoongPass(until){
-  if(!until||until<=Date.now()) return "사용 중이 아님";
-  const remain=until-Date.now();
-  const days=Math.floor(remain/86400000);
-  const hours=Math.floor((remain%86400000)/3600000);
-  if(days>0) return days+"일 "+hours+"시간 남음";
-  const minutes=Math.max(1,Math.ceil(remain/60000));
-  return hours>0?hours+"시간 남음":minutes+"분 남음";
-}
-function currentOpoongView(){
-  const active=document.querySelector(".view.active");
-  return active&&active.id?active.id.replace("view-",""):"home";
-}
-function refreshOpoongAdAccess(loadWhenExpired){
-  const active=isOpoongAdFree();
-  const was=document.body.classList.contains("opoong-ad-free");
-  document.body.classList.toggle("opoong-ad-free",active);
-  if(active) clearKakaoAdBoxes();
-  else if(was&&loadWhenExpired) loadKakaoAdsForView(currentOpoongView());
-  return active;
-}
-function gameShopMessage(message){
-  const box=document.getElementById("gameShopStatus");
-  if(!box) return;
-  box.textContent=message||"";
-  if(message) window.setTimeout(function(){if(box.textContent===message) box.textContent="";},2600);
-}
-function gameItemButton(label,onclick,kind,disabled){
-  return '<button class="smallbtn '+(kind||"ghost")+'" type="button" '+(disabled?"disabled ":"")+'onclick="'+onclick+'">'+label+'</button>';
-}
-function renderOpoongShop(){
-  opoongGameState=loadOpoongGameState();
-  applyOpoongBackground();
-  refreshOpoongAdAccess(false);
-
-  const points=document.getElementById("gameWalletPoints");
-  const best=document.getElementById("gameBest");
-  if(points) points.textContent=opoongGameState.points.toLocaleString("ko-KR")+" P";
-  if(best) best.textContent=opoongGameState.best.toLocaleString("ko-KR");
-
-  const skinBox=document.getElementById("gameSkinShop");
-  if(skinBox){
-    skinBox.innerHTML=OPOONG_GAME_SKINS.map(function(item){
-      const owned=opoongGameState.ownedSkins.includes(item.id);
-      const equipped=opoongGameState.equippedSkin===item.id;
-      let button;
-      if(equipped) button=gameItemButton("사용 중","", "ghost",true);
-      else if(owned) button=gameItemButton("장착","equipOpoongSkin('"+item.id+"')","primary",false);
-      else button=gameItemButton(item.price+" P 구매","buyOpoongSkin('"+item.id+"')","ghost",false);
-      return '<div class="gameShopItem '+(equipped?"equipped":"")+'">'+
-        '<div class="gameShopPreview" style="--preview-a:'+item.a+';--preview-b:'+item.b+';--preview-core:'+item.core+';--preview-ink:'+item.ink+'"><div class="gameSkinPreview">P</div></div>'+
-        '<b>'+item.name+'</b><span class="gameShopPrice">'+(item.price?item.price+" P":"기본 제공")+'</span>'+button+'</div>';
-    }).join("");
-  }
-
-  const bgBox=document.getElementById("gameBackgroundShop");
-  if(bgBox){
-    bgBox.innerHTML=OPOONG_GAME_BACKGROUNDS.map(function(item){
-      const owned=opoongGameState.ownedBackgrounds.includes(item.id);
-      const equipped=opoongGameState.equippedBackground===item.id;
-      let button;
-      if(equipped) button=gameItemButton("적용 중","", "ghost",true);
-      else if(owned) button=gameItemButton("적용","equipOpoongBackground('"+item.id+"')","primary",false);
-      else button=gameItemButton(item.price+" P 구매","buyOpoongBackground('"+item.id+"')","ghost",false);
-      return '<div class="gameShopItem '+(equipped?"equipped":"")+'">'+
-        '<div class="gameShopPreview" style="--preview-a:'+item.a+';--preview-b:'+item.b+'"></div>'+
-        '<b>'+item.name+'</b><span class="gameShopPrice">'+(item.price?item.price+" P":"기본 제공")+'</span>'+button+'</div>';
-    }).join("");
-  }
-
-  const passBox=document.getElementById("gameAdPass");
-  if(passBox){
-    const active=opoongGameState.adFreeUntil>Date.now();
-    passBox.innerHTML='<div class="gameAdPassTop"><b>7일 광고 제거권</b><span>'+formatOpoongPass(opoongGameState.adFreeUntil)+'</span></div>'+
-      '<p>구매 즉시 모든 O.Poong 광고 영역이 숨겨져요. 사용 중 다시 구매하면 만료일에서 7일 연장됩니다.</p>'+
-      gameItemButton(active?"7일 연장 · "+OPOONG_AD_PASS_PRICE+" P":"구매 · "+OPOONG_AD_PASS_PRICE+" P","buyOpoongAdPass()","primary",false);
-  }
-}
-function spendOpoongPoints(price){
-  opoongGameState=loadOpoongGameState();
-  if(opoongGameState.points<price){
-    gameShopMessage("포인트가 "+(price-opoongGameState.points)+" P 부족해요.");
-    return false;
-  }
-  opoongGameState.points-=price;
-  return true;
-}
-function buyOpoongSkin(id){
-  const item=OPOONG_GAME_SKINS.find(function(x){return x.id===id;});
-  if(!item||opoongGameState.ownedSkins.includes(id)) return equipOpoongSkin(id);
-  if(!spendOpoongPoints(item.price)) return;
-  opoongGameState.ownedSkins.push(id);
-  opoongGameState.equippedSkin=id;
-  saveOpoongGameState();
-  renderOpoongShop();
-  drawOpoongGame();
-  gameShopMessage(item.name+" 스킨을 구매하고 장착했어요.");
-}
-function equipOpoongSkin(id){
-  opoongGameState=loadOpoongGameState();
-  if(!opoongGameState.ownedSkins.includes(id)) return;
-  opoongGameState.equippedSkin=id;
-  saveOpoongGameState();
-  renderOpoongShop();
-  drawOpoongGame();
-  gameShopMessage("스킨을 변경했어요.");
-}
-function buyOpoongBackground(id){
-  const item=OPOONG_GAME_BACKGROUNDS.find(function(x){return x.id===id;});
-  opoongGameState=loadOpoongGameState();
-  if(!item||opoongGameState.ownedBackgrounds.includes(id)) return equipOpoongBackground(id);
-  if(!spendOpoongPoints(item.price)) return;
-  opoongGameState.ownedBackgrounds.push(id);
-  opoongGameState.equippedBackground=id;
-  saveOpoongGameState();
-  renderOpoongShop();
-  gameShopMessage(item.name+" 배경색을 구매하고 적용했어요.");
-}
-function equipOpoongBackground(id){
-  opoongGameState=loadOpoongGameState();
-  if(!opoongGameState.ownedBackgrounds.includes(id)) return;
-  opoongGameState.equippedBackground=id;
-  saveOpoongGameState();
-  renderOpoongShop();
-  gameShopMessage("O.Poong 배경색을 변경했어요.");
-}
-function buyOpoongAdPass(){
-  if(!spendOpoongPoints(OPOONG_AD_PASS_PRICE)) return;
-  const base=Math.max(Date.now(),Number(opoongGameState.adFreeUntil)||0);
-  opoongGameState.adFreeUntil=base+OPOONG_AD_PASS_MS;
-  saveOpoongGameState();
-  clearKakaoAdBoxes();
-  document.body.classList.add("opoong-ad-free");
-  renderOpoongShop();
-  gameShopMessage("광고 제거가 7일 연장됐어요.");
-}
-
+let opoongBest=loadOpoongBest();
 const opoongRunner={
   running:false,
   over:false,
   raf:0,
   last:0,
   score:0,
-  earned:0,
   spawn:0,
   speed:340,
-  player:{x:78,y:210,w:52,h:58,vy:0},
+  player:{x:78,y:212,w:52,h:58,vy:0},
   obstacles:[]
 };
 function opoongRoundRect(ctx,x,y,w,h,r){
@@ -3247,9 +2979,6 @@ function opoongRoundRect(ctx,x,y,w,h,r){
   ctx.arcTo(x,y,x+w,y,radius);
   ctx.closePath();
 }
-function opoongSkin(){
-  return OPOONG_GAME_SKINS.find(function(x){return x.id===opoongGameState.equippedSkin;})||OPOONG_GAME_SKINS[0];
-}
 function drawOpoongGame(){
   const canvas=document.getElementById("opoongGameCanvas");
   if(!canvas) return;
@@ -3260,50 +2989,57 @@ function drawOpoongGame(){
   sky.addColorStop(.7,"#edf8ff");
   sky.addColorStop(1,"#d8f3df");
   ctx.fillStyle=sky;ctx.fillRect(0,0,w,h);
+
   ctx.fillStyle="rgba(255,255,255,.72)";
   for(let i=0;i<5;i++){
     const x=(i*210-(opoongRunner.score*4)%210)-60;
-    ctx.beginPath();ctx.arc(x,58+(i%2)*26,28,0,Math.PI*2);ctx.arc(x+31,52+(i%2)*26,36,0,Math.PI*2);ctx.arc(x+68,61+(i%2)*26,25,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();
+    ctx.arc(x,58+(i%2)*26,28,0,Math.PI*2);
+    ctx.arc(x+31,52+(i%2)*26,36,0,Math.PI*2);
+    ctx.arc(x+68,61+(i%2)*26,25,0,Math.PI*2);
+    ctx.fill();
   }
+
   ctx.fillStyle="#b9e6bf";ctx.fillRect(0,ground,w,h-ground);
   ctx.fillStyle="#72b77a";ctx.fillRect(0,ground,w,5);
   ctx.strokeStyle="rgba(48,94,55,.2)";ctx.lineWidth=2;
-  for(let x=-(opoongRunner.score*9)%42;x<w;x+=42){ctx.beginPath();ctx.moveTo(x,ground+20);ctx.lineTo(x+17,ground+9);ctx.stroke();}
+  for(let x=-(opoongRunner.score*9)%42;x<w;x+=42){
+    ctx.beginPath();ctx.moveTo(x,ground+20);ctx.lineTo(x+17,ground+9);ctx.stroke();
+  }
 
   opoongRunner.obstacles.forEach(function(obstacle){
     const gradient=ctx.createLinearGradient(obstacle.x,obstacle.y,obstacle.x+obstacle.w,obstacle.y+obstacle.h);
     gradient.addColorStop(0,"#f97316");gradient.addColorStop(1,"#ef4444");
-    ctx.fillStyle=gradient;opoongRoundRect(ctx,obstacle.x,obstacle.y,obstacle.w,obstacle.h,7);ctx.fill();
+    ctx.fillStyle=gradient;
+    opoongRoundRect(ctx,obstacle.x,obstacle.y,obstacle.w,obstacle.h,7);
+    ctx.fill();
     ctx.fillStyle="rgba(255,255,255,.9)";
     ctx.font="900 13px system-ui";ctx.textAlign="center";
     ctx.fillText(obstacle.h>48?"시험":"책",obstacle.x+obstacle.w/2,obstacle.y+Math.min(27,obstacle.h/2+5));
   });
 
-  const p=opoongRunner.player,skin=opoongSkin();
+  const p=opoongRunner.player;
   const playerGradient=ctx.createLinearGradient(p.x,p.y,p.x+p.w,p.y+p.h);
-  playerGradient.addColorStop(0,skin.a);playerGradient.addColorStop(1,skin.b);
+  playerGradient.addColorStop(0,"#123ac8");playerGradient.addColorStop(1,"#315cff");
   ctx.save();
   ctx.shadowColor="rgba(15,23,42,.2)";ctx.shadowBlur=12;ctx.shadowOffsetY=7;
   ctx.fillStyle=playerGradient;opoongRoundRect(ctx,p.x,p.y,p.w,p.h,15);ctx.fill();
   ctx.restore();
-  ctx.fillStyle=skin.core;opoongRoundRect(ctx,p.x+8,p.y+7,p.w-16,p.h-14,10);ctx.fill();
-  ctx.fillStyle=skin.ink;ctx.font="1000 30px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";
+  ctx.fillStyle="#fff";opoongRoundRect(ctx,p.x+8,p.y+7,p.w-16,p.h-14,10);ctx.fill();
+  ctx.fillStyle="#07111f";ctx.font="1000 30px system-ui";ctx.textAlign="center";ctx.textBaseline="middle";
   ctx.fillText("P",p.x+p.w/2,p.y+p.h/2+1);
 }
 function updateOpoongHud(){
   const score=document.getElementById("gameScore");
-  const earned=document.getElementById("gameEarned");
   const best=document.getElementById("gameBest");
   if(score) score.textContent=Math.floor(opoongRunner.score).toLocaleString("ko-KR");
-  if(earned) earned.textContent=opoongRunner.earned.toLocaleString("ko-KR")+" P";
-  if(best) best.textContent=Math.max(opoongGameState.best,Math.floor(opoongRunner.score)).toLocaleString("ko-KR");
+  if(best) best.textContent=Math.max(opoongBest,Math.floor(opoongRunner.score)).toLocaleString("ko-KR");
 }
 function resetOpoongRunner(){
   opoongRunner.running=false;
   opoongRunner.over=false;
   opoongRunner.last=0;
   opoongRunner.score=0;
-  opoongRunner.earned=0;
   opoongRunner.spawn=.9;
   opoongRunner.speed=340;
   opoongRunner.player={x:78,y:212,w:52,h:58,vy:0};
@@ -3325,31 +3061,27 @@ function startOpoongGame(){
   opoongRunner.raf=requestAnimationFrame(opoongGameFrame);
 }
 function opoongGameJump(){
-  if(!document.getElementById("view-game")||!document.getElementById("view-game").classList.contains("active")) return;
+  const view=document.getElementById("view-game");
+  if(!view||!view.classList.contains("active")) return;
   if(!opoongRunner.running){
     startOpoongGame();
     return;
   }
   const groundY=270-opoongRunner.player.h;
-  if(opoongRunner.player.y>=groundY-2){
-    opoongRunner.player.vy=-760;
-  }
+  if(opoongRunner.player.y>=groundY-2) opoongRunner.player.vy=-760;
 }
 function endOpoongGame(){
   opoongRunner.running=false;
   opoongRunner.over=true;
   const finalScore=Math.floor(opoongRunner.score);
-  const reward=Math.max(0,Math.floor(finalScore/10));
-  opoongRunner.earned=reward;
-  opoongGameState=loadOpoongGameState();
-  opoongGameState.points+=reward;
-  opoongGameState.best=Math.max(opoongGameState.best,finalScore);
-  saveOpoongGameState();
+  if(finalScore>opoongBest){
+    opoongBest=finalScore;
+    saveOpoongBest(opoongBest);
+  }
   updateOpoongHud();
-  renderOpoongShop();
   const message=document.getElementById("gameMessage");
   if(message){
-    message.innerHTML="<strong>게임 끝! +"+reward+" P</strong><span>화면을 누르면 다시 시작해요.</span>";
+    message.innerHTML="<strong>게임 끝! "+finalScore+"점</strong><span>화면을 누르면 다시 시작해요.</span>";
     message.classList.remove("hidden");
   }
   const button=document.getElementById("gameStartButton");
@@ -3394,24 +3126,17 @@ function opoongGameFrame(timestamp){
   opoongRunner.raf=requestAnimationFrame(opoongGameFrame);
 }
 function initOpoongGame(){
-  opoongGameState=loadOpoongGameState();
-  applyOpoongBackground();
-  refreshOpoongAdAccess(false);
+  opoongBest=loadOpoongBest();
   resetOpoongRunner();
-  renderOpoongShop();
   const canvas=document.getElementById("opoongGameCanvas");
   if(canvas) canvas.addEventListener("pointerdown",function(event){event.preventDefault();opoongGameJump();});
   document.addEventListener("keydown",function(event){
-    if((event.code==="Space"||event.key==="ArrowUp")&&document.getElementById("view-game")&&document.getElementById("view-game").classList.contains("active")){
+    const view=document.getElementById("view-game");
+    if((event.code==="Space"||event.key==="ArrowUp")&&view&&view.classList.contains("active")){
       event.preventDefault();
       opoongGameJump();
     }
   });
-  window.setInterval(function(){
-    opoongGameState=loadOpoongGameState();
-    refreshOpoongAdAccess(true);
-    if(document.getElementById("view-game")&&document.getElementById("view-game").classList.contains("active")) renderOpoongShop();
-  },60000);
 }
 
 
@@ -3434,7 +3159,7 @@ function initRoute(){
   if(view === "meal") setTodayAndLoad();
   if(view === "schedule") scheduleLoadMonth();
   if(view === "timetable") ttRenderTable();
-  if(view === "game") renderOpoongShop();
+  if(view === "game") drawOpoongGame();
 }
 function go(view){
   if(view === "about") view = "policy";
@@ -3449,7 +3174,7 @@ function go(view){
   if(view === "weather") renderWeatherDetail();
   if(view === "meal") { renderAllergySelector(); renderFavoriteFoodEditor(); }
   if(view === "timetable") ttRenderTable();
-  if(view === "game") { renderOpoongShop(); drawOpoongGame(); }
+  if(view === "game") drawOpoongGame();
   loadKakaoAdsForView(view);
 }
 
@@ -3465,7 +3190,6 @@ const KAKAO_ADS = {
 };
 
 function mountKakaoAd(ad){
-  if(isOpoongAdFree()) return;
   const box = document.getElementById(ad.container);
   if(!box) return;
 
@@ -3497,8 +3221,6 @@ function loadKakaoAdsForView(view){
   // 카카오 애드핏은 display:none인 section에서 먼저 실행되면 빈 박스로 남을 수 있어 약간 늦게 실행합니다.
   // 동시에 여러 <ins>가 남아 있는 것도 막기 위해 현재 화면 광고만 남깁니다.
   clearKakaoAdBoxes();
-  if(isOpoongAdFree()) { document.body.classList.add("opoong-ad-free"); return; }
-  document.body.classList.remove("opoong-ad-free");
   window.setTimeout(()=>{
     if(view === "home"){
       const isMobile = window.matchMedia("(max-width:760px)").matches;
@@ -4771,7 +4493,7 @@ const GLOBAL_SEARCH_STATIC = [
   {title:"급식 조회",description:"오늘 또는 날짜별 급식 확인",type:"메뉴",route:"meal",keywords:"급식 조식 중식 석식 메뉴 밥"},
   {title:"학사일정",description:"학교 행사와 월별 달력",type:"메뉴",route:"schedule",keywords:"일정 시험 행사 방학 개학"},
   {title:"시간표",description:"요일별 수업 시간표",type:"메뉴",route:"timetable",keywords:"시간표 교시 수업 과목"},
-  {title:"O.Poong 점프",description:"미니게임·포인트 상점·스킨·배경색",type:"게임",route:"game",keywords:"게임 미니게임 점프 포인트 상점 스킨 배경 광고 제거"},
+  {title:"O.Poong 점프",description:"장애물을 피하는 미니게임",type:"게임",route:"game",keywords:"게임 미니게임 점프 최고 점수"},
   {title:"온웨이에듀",description:"상벌점·외출 관리 시스템",type:"바로가기",route:"onway",keywords:"상점 벌점 외출"},
   {title:"학교 홈페이지",description:"풍산고등학교 공식 사이트",type:"바로가기",route:"school",keywords:"학교 공지 공식"},
   {title:"도서관 조회",description:"풍산고 도서관 자료 검색",type:"바로가기",route:"library",keywords:"책 도서 독서"},
