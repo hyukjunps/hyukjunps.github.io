@@ -1749,6 +1749,46 @@ body.setup-pending .firstStartBack{
   }
 }
 
+
+/* ===== Weather overflow + D-DAY settings + configurable notice ===== */
+.homeDashboardWidgets .widget[data-home-widget="weather"]{overflow:hidden!important}
+.homeDashboardWidgets .widget[data-home-widget="weather"] .widgetHead{min-width:0}
+.weatherWidgetHeadActions{min-width:0;max-width:62%;flex:0 1 auto}
+#homeWeatherStatus{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.weatherNowCompact{min-width:0;max-width:100%}
+.weatherNowCompact>div{min-width:0}
+.weatherNowCompact .weatherCondition{max-width:100%;overflow-wrap:anywhere;word-break:keep-all;line-height:1.35}
+.ddayGear{
+  width:38px;height:38px;padding:0;border-radius:50%;font-size:19px;
+  border:1px solid var(--line);background:var(--card);color:var(--text);
+  display:inline-flex;align-items:center;justify-content:center;
+}
+.ddaySettingsList{display:grid;gap:9px;margin-top:12px}
+.ddayEditItem{display:grid;grid-template-columns:minmax(0,1fr) 150px auto;gap:8px;align-items:center;padding:10px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--card) 95%,var(--bg))}
+.ddayEditItem input{width:100%;min-width:0}
+.ddaySettingsTabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.ddaySettingsSection{display:none}.ddaySettingsSection.active{display:block}
+.fullNoticeBack{
+  position:fixed;inset:0;z-index:10000;display:none;align-items:center;justify-content:center;
+  padding:18px;background:rgba(7,17,31,.68);backdrop-filter:blur(14px);
+}
+.fullNoticeBack.open{display:flex}
+.fullNoticeBack.fullscreen{padding:0}
+.fullNoticeCard{
+  position:relative;width:min(680px,100%);max-height:calc(100svh - 36px);overflow:auto;
+  padding:clamp(24px,5vw,48px);border-radius:30px;border:1px solid var(--line);
+  background:var(--card);color:var(--text);box-shadow:0 30px 90px rgba(0,0,0,.35);text-align:center;
+}
+.fullNoticeBack.fullscreen .fullNoticeCard{width:100%;height:100svh;max-height:none;border:0;border-radius:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.fullNoticeClose{position:absolute;right:18px;top:18px;width:44px;height:44px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--text);font-size:23px;font-weight:900}
+.fullNoticeIcon{width:88px;height:88px;border-radius:28px;margin:0 auto 20px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--pri) 10%,var(--card));font-size:46px;overflow:hidden}
+.fullNoticeIcon img{width:100%;height:100%;object-fit:cover}
+.fullNoticeCard h2{margin:0;font-size:clamp(28px,5vw,48px);letter-spacing:-1.4px}
+.fullNoticeMessage{max-width:650px;margin:16px auto 0;color:var(--muted);font-size:16px;font-weight:800;line-height:1.8;white-space:pre-line}
+.fullNoticeActions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:24px}
+body.full-notice-locked{overflow:hidden}
+@media(max-width:620px){.ddayEditItem{grid-template-columns:1fr}.weatherWidgetHeadActions{max-width:55%}}
+
 </style>
 </head>
 
@@ -1857,24 +1897,15 @@ body.setup-pending .firstStartBack{
               <div class="widgetBody" id="homeWeatherBody"><div class="muted">날씨 정보를 불러오는 중…</div></div>
             </div>
             <div class="widget" data-home-widget="dday">
-              <div class="widgetHead"><b>나의 D-DAY</b><span class="pill" id="homeDdayStatus">저장 0개</span></div>
+              <div class="widgetHead">
+                <b>나의 D-DAY</b>
+                <span style="display:flex;align-items:center;gap:8px">
+                  <span class="pill" id="homeDdayStatus">저장 0개</span>
+                  <button class="ddayGear" type="button" onclick="openDdaySettings()" aria-label="D-DAY 설정">⚙</button>
+                </span>
+              </div>
               <div class="widgetBody">
-                <div id="homeDdayBody"><div class="muted">D-DAY를 추가해 보세요.</div></div>
-                <div class="ddayActions">
-                  <button class="smallbtn primary" type="button" onclick="toggleDdayManager('custom')">직접 추가</button>
-                  <button class="smallbtn ghost" type="button" onclick="toggleDdayManager('recommend')">학사일정에서 선택</button>
-                </div>
-                <div class="ddayManager" id="ddayCustomManager">
-                  <div class="ddayForm">
-                    <input id="ddayTitle" type="text" maxlength="30" placeholder="예: 2학기 중간고사" aria-label="D-DAY 이름">
-                    <input id="ddayDate" type="date" aria-label="D-DAY 날짜">
-                    <button class="smallbtn primary" type="button" onclick="addCustomDday()">추가</button>
-                  </div>
-                </div>
-                <div class="ddayManager" id="ddayRecommendManager">
-                  <div class="muted" style="font-size:12px">앞으로의 학사일정을 불러와 추천해 드려요.</div>
-                  <div class="ddayRecommendList" id="ddayRecommendList"></div>
-                </div>
+                <div id="homeDdayBody"><div class="muted">톱니바퀴를 눌러 D-DAY를 추가해 보세요.</div></div>
               </div>
             </div>
           </aside>
@@ -2142,6 +2173,47 @@ SOFTWARE.
 
 <textarea id="copyHelper" aria-hidden="true"></textarea>
 
+<div id="ddaySettingsBack" class="modalBack" role="dialog" aria-modal="true" aria-label="D-DAY 설정">
+  <div class="modal">
+    <div class="modalHead">
+      <b>D-DAY 설정</b>
+      <button class="btn ghost" type="button" onclick="closeDdaySettings()">닫기</button>
+    </div>
+    <div class="modalBody">
+      <div class="ddaySettingsTabs">
+        <button class="tabBtn" type="button" data-dday-tab="manage" aria-selected="true" onclick="showDdaySettingsTab('manage')">수정·삭제</button>
+        <button class="tabBtn" type="button" data-dday-tab="custom" aria-selected="false" onclick="showDdaySettingsTab('custom')">직접 추가</button>
+        <button class="tabBtn" type="button" data-dday-tab="recommend" aria-selected="false" onclick="showDdaySettingsTab('recommend')">학사일정 추천</button>
+      </div>
+      <section class="ddaySettingsSection active" id="ddaySettingsManage">
+        <div class="muted" style="font-size:13px">저장한 D-DAY의 이름과 날짜를 바꾸거나 삭제할 수 있어요.</div>
+        <div class="ddaySettingsList" id="ddaySettingsList"></div>
+      </section>
+      <section class="ddaySettingsSection" id="ddaySettingsCustom">
+        <div class="ddayForm">
+          <input id="ddayTitle" type="text" maxlength="30" placeholder="예: 2학기 중간고사" aria-label="D-DAY 이름">
+          <input id="ddayDate" type="date" aria-label="D-DAY 날짜">
+          <button class="smallbtn primary" type="button" onclick="addCustomDday()">추가</button>
+        </div>
+      </section>
+      <section class="ddaySettingsSection" id="ddaySettingsRecommend">
+        <div class="muted" style="font-size:13px">앞으로의 학사일정에서 D-DAY를 선택하세요.</div>
+        <div class="ddayRecommendList" id="ddayRecommendList"></div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<div id="fullNoticeBack" class="fullNoticeBack" role="dialog" aria-modal="true" aria-label="중요 공지">
+  <div class="fullNoticeCard">
+    <button id="fullNoticeClose" class="fullNoticeClose" type="button" onclick="closeFullNotice()" aria-label="공지 닫기">×</button>
+    <div id="fullNoticeIcon" class="fullNoticeIcon" aria-hidden="true"></div>
+    <h2 id="fullNoticeTitle"></h2>
+    <div id="fullNoticeMessage" class="fullNoticeMessage"></div>
+    <div id="fullNoticeActions" class="fullNoticeActions"></div>
+  </div>
+</div>
+
 <div id="modalBack" class="modalBack" role="dialog" aria-modal="true" aria-label="앱 설치 안내">
   <div class="modal">
     <div class="modalHead">
@@ -2254,6 +2326,29 @@ const NOTICE_CONFIG = {
 };
 
 /*
+  전체화면 공지 설정
+  - enabled: 팝업 켜기/끄기
+  - blockAccess: true면 공지를 닫을 수 없어 사이트 진입 차단
+  - showCloseButton: X 버튼 표시 여부(blockAccess가 true면 자동으로 숨김)
+  - icon: 이모지나 짧은 글자
+  - iconUrl: 직접 올린 이미지 주소. 입력하면 icon보다 우선 표시
+  - version: 공지 내용을 바꿀 때 값을 변경하면 이미 닫은 사용자에게도 다시 표시
+*/
+const FULLSCREEN_NOTICE_CONFIG = {
+  enabled: false,
+  version: "2026-08-13-1",
+  title: "중요 공지",
+  message: "공지 내용을 여기에 입력하세요.",
+  icon: "📢",
+  iconUrl: "",
+  fullScreen: true,
+  blockAccess: false,
+  showCloseButton: true,
+  buttonText: "",
+  buttonUrl: ""
+};
+
+/*
   홈화면 위젯 선택:
   true = 보이기, false = 숨기기
 */
@@ -2345,6 +2440,43 @@ function todayYYYYMM(){
   return `${d.getFullYear()}${pad2(d.getMonth()+1)}`;
 }
 function ymInputToYYYYMM(v){ return String(v||"").replace("-",""); }
+
+function renderFullScreenNotice(){
+  const cfg = FULLSCREEN_NOTICE_CONFIG;
+  const back = $("#fullNoticeBack");
+  if(!back || !cfg.enabled) return;
+  const dismissedKey = "opoong_full_notice_dismissed_" + String(cfg.version || "1");
+  if(!cfg.blockAccess && localStorage.getItem(dismissedKey)==="1") return;
+
+  back.classList.toggle("fullscreen", cfg.fullScreen !== false);
+  back.classList.add("open");
+  document.body.classList.add("full-notice-locked");
+
+  const close = $("#fullNoticeClose");
+  close.style.display = (!cfg.blockAccess && cfg.showCloseButton) ? "inline-flex" : "none";
+
+  const icon = $("#fullNoticeIcon");
+  if(cfg.iconUrl){
+    icon.innerHTML = `<img src="${escapeHtml(cfg.iconUrl)}" alt="">`;
+  }else{
+    icon.textContent = cfg.icon || "📢";
+  }
+  $("#fullNoticeTitle").textContent = cfg.title || "공지";
+  $("#fullNoticeMessage").textContent = cfg.message || "";
+
+  const actions = $("#fullNoticeActions");
+  actions.innerHTML = cfg.buttonText && cfg.buttonUrl
+    ? `<button class="bigBtn" type="button" onclick="window.open('${escapeHtml(cfg.buttonUrl)}','_blank','noopener,noreferrer')">${escapeHtml(cfg.buttonText)}</button>`
+    : "";
+}
+function closeFullNotice(){
+  const cfg = FULLSCREEN_NOTICE_CONFIG;
+  if(cfg.blockAccess) return;
+  const back = $("#fullNoticeBack");
+  back?.classList.remove("open");
+  document.body.classList.remove("full-notice-locked");
+  localStorage.setItem("opoong_full_notice_dismissed_" + String(cfg.version || "1"), "1");
+}
 
 function renderNoticeBanner(){
   const box = $("#noticeBanner");
@@ -3686,17 +3818,61 @@ function renderDdayWidget(){
   if(!body || !status) return;
   const items = loadDdays().sort((a,b)=>a.date.localeCompare(b.date));
   status.textContent = "저장 " + items.length + "개";
-  body.innerHTML = items.length ? '<div class="ddayList">' + items.map((item,index)=>`
+  body.innerHTML = items.length ? '<div class="ddayList">' + items.map(item=>`
     <div class="ddayItem">
       <div class="ddayItemText"><b>${escapeHtml(item.title)}</b><span>${escapeHtml(item.date)}</span></div>
       <div class="ddayCount">${ddayLabel(item.date)}</div>
-      <button class="ddayDelete" type="button" aria-label="${escapeHtml(item.title)} 삭제" onclick="removeDday(${index})">삭제</button>
-    </div>`).join("") + "</div>" : '<div class="muted">아직 저장한 D-DAY가 없어요.</div>';
+    </div>`).join("") + "</div>" : '<div class="muted">아직 저장한 D-DAY가 없어요. 톱니바퀴를 눌러 추가해 보세요.</div>';
 }
 function removeDday(sortedIndex){
   const sorted = loadDdays().sort((a,b)=>a.date.localeCompare(b.date));
+  const item = sorted[sortedIndex];
+  if(!item || !confirm(`"${item.title}" D-DAY를 삭제할까요?`)) return;
   sorted.splice(sortedIndex,1);
   saveDdays(sorted);
+  renderDdaySettingsList();
+}
+function openDdaySettings(){
+  const back = $("#ddaySettingsBack");
+  if(!back) return;
+  back.style.display = "flex";
+  back.setAttribute("aria-hidden","false");
+  showDdaySettingsTab("manage");
+  renderDdaySettingsList();
+}
+function closeDdaySettings(){
+  const back = $("#ddaySettingsBack");
+  if(back){back.style.display="none";back.setAttribute("aria-hidden","true")}
+}
+function showDdaySettingsTab(tab){
+  $("[data-dday-tab]").forEach(btn=>btn.setAttribute("aria-selected",btn.dataset.ddayTab===tab?"true":"false"));
+  const map={manage:"#ddaySettingsManage",custom:"#ddaySettingsCustom",recommend:"#ddaySettingsRecommend"};
+  Object.entries(map).forEach(([key,selector])=>$(selector)?.classList.toggle("active",key===tab));
+  if(tab==="manage") renderDdaySettingsList();
+  if(tab==="recommend") loadDdayRecommendations();
+}
+function renderDdaySettingsList(){
+  const box = $("#ddaySettingsList");
+  if(!box) return;
+  const items = loadDdays().sort((a,b)=>a.date.localeCompare(b.date));
+  box.innerHTML = items.length ? items.map((item,index)=>`
+    <div class="ddayEditItem">
+      <input id="ddayEditTitle${index}" type="text" maxlength="30" value="${escapeHtml(item.title)}" aria-label="D-DAY 이름">
+      <input id="ddayEditDate${index}" type="date" value="${escapeHtml(item.date)}" aria-label="D-DAY 날짜">
+      <span style="display:flex;gap:7px">
+        <button class="smallbtn primary" type="button" onclick="updateDday(${index})">저장</button>
+        <button class="smallbtn ghost" type="button" onclick="removeDday(${index})">삭제</button>
+      </span>
+    </div>`).join("") : '<div class="muted">수정할 D-DAY가 없어요.</div>';
+}
+function updateDday(sortedIndex){
+  const sorted = loadDdays().sort((a,b)=>a.date.localeCompare(b.date));
+  const title = String($("#ddayEditTitle"+sortedIndex)?.value || "").trim();
+  const date = String($("#ddayEditDate"+sortedIndex)?.value || "");
+  if(!title || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert("이름과 날짜를 모두 입력해 주세요.");
+  sorted[sortedIndex] = {title,date};
+  saveDdays(sorted);
+  renderDdaySettingsList();
 }
 function addDday(title,date){
   title = String(title || "").trim();
@@ -3713,7 +3889,8 @@ function addCustomDday(){
   if(title.trim() && date){
     $("#ddayTitle").value = "";
     $("#ddayDate").value = "";
-    $("#ddayCustomManager").classList.remove("open");
+    showDdaySettingsTab("manage");
+    renderDdaySettingsList();
   }
 }
 function toggleDdayManager(mode){
@@ -3817,6 +3994,7 @@ document.addEventListener("click", function(e){
 window.addEventListener("load",()=>{
   installRipple();
   renderNoticeBanner();
+  renderFullScreenNotice();
   initWidgetSelector();
   const savedTheme = localStorage.getItem("opoong_theme");
   if(savedTheme === "dark" || savedTheme === "light") applyTheme(savedTheme);
