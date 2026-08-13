@@ -3857,7 +3857,7 @@ function closeDdaySettings(){
   if(back){back.style.display="none";back.setAttribute("aria-hidden","true")}
 }
 function showDdaySettingsTab(tab){
-  $("[data-dday-tab]").forEach(btn=>btn.setAttribute("aria-selected",btn.dataset.ddayTab===tab?"true":"false"));
+  document.querySelectorAll("[data-dday-tab]").forEach(btn=>btn.setAttribute("aria-selected",btn.dataset.ddayTab===tab?"true":"false"));
   const map={manage:"#ddaySettingsManage",custom:"#ddaySettingsCustom",recommend:"#ddaySettingsRecommend"};
   Object.entries(map).forEach(([key,selector])=>$(selector)?.classList.toggle("active",key===tab));
   if(tab==="manage") renderDdaySettingsList();
