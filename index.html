@@ -283,6 +283,15 @@ input[type="number"]{width:112px}
 }
 .notice.ok{border-color:color-mix(in srgb,var(--ok) 35%,var(--line));background:color-mix(in srgb,var(--ok) 10%,var(--card));color:color-mix(in srgb,var(--ok) 72%,var(--text))}
 .notice.err{border-color:color-mix(in srgb,var(--warn) 35%,var(--line));background:color-mix(in srgb,var(--warn) 10%,var(--card));color:color-mix(in srgb,var(--warn) 76%,var(--text))}
+.neisWarning{
+  margin:0 0 12px;padding:14px 16px;border-radius:20px;
+  border:1px solid color-mix(in srgb,var(--amber) 42%,var(--line));
+  background:color-mix(in srgb,var(--amber) 11%,var(--card));
+  color:color-mix(in srgb,var(--amber) 72%,var(--text));
+  font-size:13.5px;font-weight:800;line-height:1.75;
+}
+.neisWarning strong{display:block;margin-bottom:3px;color:var(--text);font-size:14px}
+.neisWarning a{color:var(--pri);font-weight:1000;text-underline-offset:3px}
 .pill{
   display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;
   background:color-mix(in srgb,var(--pri) 8%,var(--card));border:1px solid color-mix(in srgb,var(--pri) 18%,var(--line));
@@ -1933,6 +1942,11 @@ body.setup-pending .firstStartBack{
             <button class="tabBtn" type="button" data-k="behavior" aria-selected="false">행특</button>
           </div>
           <div class="adfitWrap adfitMobile" id="ad-neis" aria-label="광고"></div>
+          <aside class="neisWarning" role="note" aria-label="바이트 계산 주의사항">
+            <strong>계산 결과를 한 번 더 확인해 주세요.</strong>
+            이 계산기는 실제 나이스의 계산 결과와 다를 수 있습니다. 교육부 방침을 적용한 최신 엔진이지만, 일부 특수문자가 6바이트로 계산되므로 오차가 발생할 수 있어 특수문자 사용을 자제하는 것을 권장합니다. 혹시 모를 상황에 대비해
+            <a href="https://hjh010501.github.io/neis-counter/" target="_blank" rel="noopener noreferrer">다른 나이스 바이트 계산기와 비교해 보세요.</a>
+          </aside>
           <textarea id="neisText" placeholder="내용을 입력하세요."></textarea>
           <div class="progress"><div id="neisBarFill"></div></div>
           <div class="widgetGrid" style="margin-top:12px">
