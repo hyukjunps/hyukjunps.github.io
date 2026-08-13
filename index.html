@@ -1856,6 +1856,7 @@ body.full-notice-locked{overflow:hidden}
         <a class="navBtn" data-view="meal" href="/?page=meal" onclick="event.preventDefault(); go('meal'); setTodayAndLoad();"><span class="left"><span class="icon">식</span><span><span class="title">급식</span><br><span class="hint">일별/월별</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="schedule" href="/?page=schedule" onclick="event.preventDefault(); go('schedule'); scheduleLoadMonth();"><span class="left"><span class="icon">일</span><span><span class="title">학사일정</span><br><span class="hint">월별 달력</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="timetable" href="/?page=timetable" onclick="event.preventDefault(); go('timetable'); ttRenderTable();"><span class="left"><span class="icon">표</span><span><span class="title">시간표</span><br><span class="hint">로컬 저장</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="ocut" href="/?page=ocut" onclick="event.preventDefault(); go('ocut')"><span class="left"><span class="icon">컷</span><span><span class="title">O.Cut</span><br><span class="hint">네 컷 촬영</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="onway" href="/?page=onway" onclick="event.preventDefault(); go('onway')"><span class="left"><span class="icon">온</span><span><span class="title">온웨이에듀</span><br><span class="hint">외부 링크</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="school" href="/?page=school" onclick="event.preventDefault(); go('school')"><span class="left"><span class="icon">학</span><span><span class="title">학교 홈페이지</span><br><span class="hint">공식 사이트</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="library" href="/?page=library" onclick="event.preventDefault(); go('library')"><span class="left"><span class="icon">책</span><span><span class="title">도서관 조회</span><br><span class="hint">풍산고 도서관</span></span></span><span>›</span></a>
@@ -2038,6 +2039,21 @@ body.full-notice-locked{overflow:hidden}
 
         <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
           <button class="bigBtn" type="button" onclick="openOnway()">온웨이에듀 열기</button>
+        </div>
+      </section>
+
+      <section class="section view" id="view-ocut">
+        <div class="sectionHeader">
+          <div>
+            <h2>O.Cut</h2>
+            <p>필터와 프레임을 골라 나만의 네 컷 사진을 만들 수 있어요.</p>
+          </div>
+        </div>
+        <div class="contentBox">
+          10초마다 한 장씩 총 4장을 촬영한 뒤 필터·프레임·문구를 선택해 저장합니다. 촬영을 시작할 때 브라우저의 카메라 권한을 허용해 주세요.
+        </div>
+        <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
+          <button class="bigBtn" type="button" onclick="openOCut()">O.Cut 열기</button>
         </div>
       </section>
 
@@ -2300,6 +2316,7 @@ const SD_SCHUL_CODE = "8750475";
 const SCHOOL_NAME = "풍산고등학교";
 const SCHOOL_HOME_URL = "https://school.gyo6.net/poongsanhs/main.do?sysId=poongsanhs";
 const ONWAY_URL = "https://ps.onwayedu.co.kr/login/login.php";
+const OCUT_URL = "https://hyukjunps.github.io/O.Cut.github.io/";
 const LIBRARY_URL = "https://read365.edunet.net/PureScreen/SchoolSearch?schoolName=풍산고등학교&provCode=R10&neisCode=R100000999";
 const SCHEDULE_DATA_BASE = "./data/schedule/";
 const WEATHER_API_BASE = "https://gkrtkdlfwjd.yyhhjj1068-c2c.workers.dev";
@@ -2471,7 +2488,7 @@ function pageUrl(view){
 function initRoute(){
   const params = new URLSearchParams(window.location.search);
   const page = params.get("page") || "home";
-  const allowed = ["home","weather","meal","schedule","timetable","onway","school","library","policy","about"];
+  const allowed = ["home","weather","meal","schedule","timetable","ocut","onway","school","library","policy","about"];
   const view = allowed.includes(page) ? page : "home";
 
   go(view);
@@ -3313,6 +3330,7 @@ function homeRenderTodayTimetable(){
 }
 
 function openOnway(){ window.open(ONWAY_URL,"_blank","noopener,noreferrer"); }
+function openOCut(){ window.open(OCUT_URL,"_blank","noopener,noreferrer"); }
 function openSchoolHome(){ window.open(SCHOOL_HOME_URL,"_blank","noopener,noreferrer"); }
 function openLibrary(){ window.open(LIBRARY_URL,"_blank","noopener,noreferrer"); }
 
