@@ -1789,67 +1789,63 @@ body.full-notice-locked{overflow:hidden}
 @media(max-width:560px){.weatherCurrentLine .weatherCondition{max-width:110px}}
 
 
-/* ===== O.Poong mobile compact horizontal navigation ===== */
+/* ===== O.Poong mobile 1:9 compact icon navigation ===== */
 @media (max-width:760px){
   .layout{
     grid-template-columns:minmax(0,1fr)!important;
-    gap:12px!important;
+    gap:10px!important;
   }
   .sideNav{
     position:relative!important;
     top:auto!important;
-    width:100%!important;
-    padding:8px!important;
-    border-radius:22px!important;
+    width:min(100%,420px)!important;
+    max-width:420px!important;
+    margin:0 auto!important;
+    padding:5px!important;
+    border-radius:17px!important;
     overflow:hidden!important;
   }
   .sideNavTitle{
     display:none!important;
   }
   .navGrid{
-    display:flex!important;
-    grid-template-columns:none!important;
-    gap:7px!important;
+    display:grid!important;
+    grid-template-columns:repeat(9,minmax(0,1fr))!important;
+    gap:3px!important;
     width:100%!important;
-    max-width:100%!important;
-    padding:1px 1px 5px!important;
-    overflow-x:auto!important;
-    overflow-y:hidden!important;
-    overscroll-behavior-x:contain;
-    scroll-snap-type:x proximity;
-    scrollbar-width:none;
-    -webkit-overflow-scrolling:touch;
-  }
-  .navGrid::-webkit-scrollbar{
-    display:none;
+    padding:0!important;
+    overflow:visible!important;
   }
   .navBtn{
-    flex:0 0 auto!important;
-    width:auto!important;
-    min-width:auto!important;
-    min-height:46px!important;
-    padding:7px 10px!important;
-    border-radius:15px!important;
+    width:100%!important;
+    min-width:0!important;
+    min-height:34px!important;
+    height:34px!important;
+    padding:2px!important;
+    border-radius:11px!important;
     justify-content:center!important;
-    scroll-snap-align:center;
+    box-shadow:none!important;
   }
   .navBtn .left{
-    gap:7px!important;
+    width:100%!important;
+    justify-content:center!important;
+    gap:0!important;
   }
   .navBtn .icon{
-    width:30px!important;
-    height:30px!important;
-    border-radius:11px!important;
-    font-size:12px!important;
+    width:27px!important;
+    height:27px!important;
+    border-radius:9px!important;
+    font-size:11px!important;
   }
-  .navBtn .title{
-    font-size:13px!important;
-    white-space:nowrap!important;
-  }
+  .navBtn .title,
   .navBtn .hint,
   .navBtn br,
   .navBtn > span:last-child{
     display:none!important;
+  }
+  .navBtn[data-active="1"]{
+    transform:none!important;
+    box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--pri) 42%,transparent)!important;
   }
   .panel{
     min-width:0!important;
@@ -2531,20 +2527,9 @@ function installRipple(){
 }
 
 function setActiveNav(view){
-  let active = null;
-  $(".navBtn").forEach(b => {
-    const selected = b.dataset.view === view;
-    b.dataset.active = selected ? "1" : "0";
-    if(selected) active = b;
+  $$(".navBtn").forEach(b => {
+    b.dataset.active = b.dataset.view === view ? "1" : "0";
   });
-  if(active && window.matchMedia("(max-width:760px)").matches){
-    window.requestAnimationFrame(()=>{
-      const nav = active.closest(".navGrid");
-      if(!nav) return;
-      const left = active.offsetLeft - (nav.clientWidth - active.clientWidth) / 2;
-      nav.scrollTo({left:Math.max(0,left),behavior:"smooth"});
-    });
-  }
 }
 function pageUrl(view){
   return view === "home" ? "/" : `/?page=${encodeURIComponent(view)}`;
