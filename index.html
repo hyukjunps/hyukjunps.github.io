@@ -1652,6 +1652,27 @@ body.setup-pending .firstStartBack{
   .adfitMobile.homeTopMobile{display:none!important;}
 }
 
+
+/* ===== O.Poong D-DAY widget ===== */
+.homeDashboardWidgets .widget[data-home-widget="dday"]{grid-column:1 / -1;min-height:190px}
+.homeDashboardWidgets .widget[data-home-widget="dday"] .widgetBody{max-height:none;overflow:visible}
+.ddayList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.ddayItem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 11px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--card) 94%,var(--bg))}
+.ddayItemText{min-width:0}.ddayItemText b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:13px}.ddayItemText span{display:block;margin-top:3px;color:var(--muted);font-size:11px;font-weight:850}
+.ddayCount{flex:0 0 auto;color:var(--pri);font-size:18px;font-weight:1000}
+.ddayDelete{border:0;background:transparent;color:var(--muted);font-size:12px;font-weight:900;padding:5px}
+.ddayActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}
+.ddayActions .smallbtn{min-height:38px;padding:8px 11px;font-size:12px}
+.ddayManager{display:none;margin-top:10px;padding:11px;border:1px solid var(--line);border-radius:16px;background:color-mix(in srgb,var(--pri) 5%,var(--card))}
+.ddayManager.open{display:block}
+.ddayForm{display:grid;grid-template-columns:minmax(0,1fr) 150px auto;gap:7px}
+.ddayForm input{width:100%;min-width:0;min-height:42px}
+.ddayForm .smallbtn{min-height:42px}
+.ddayRecommendList{display:grid;gap:7px;margin-top:9px;max-height:220px;overflow:auto}
+.ddayRecommendItem{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:9px 10px;border:1px solid var(--line);border-radius:14px;background:var(--card);font-size:12px;font-weight:850}
+.ddayRecommendItem span{color:var(--muted)}
+@media(max-width:620px){.ddayList{grid-template-columns:1fr}.ddayForm{grid-template-columns:1fr}.homeDashboardWidgets .widget[data-home-widget="dday"]{grid-column:auto}}
+
 </style>
 </head>
 
@@ -1758,6 +1779,27 @@ body.setup-pending .firstStartBack{
             <div class="widget" data-home-widget="weather">
               <div class="widgetHead"><b>풍산고 날씨</b><span class="weatherWidgetHeadActions"><span class="pill" id="homeWeatherStatus">확인 중</span><button class="weatherWidgetLink" type="button" onclick="go('weather')">상세 ›</button></span></div>
               <div class="widgetBody" id="homeWeatherBody"><div class="muted">날씨 정보를 불러오는 중…</div></div>
+            </div>
+            <div class="widget" data-home-widget="dday">
+              <div class="widgetHead"><b>나의 D-DAY</b><span class="pill" id="homeDdayStatus">저장 0개</span></div>
+              <div class="widgetBody">
+                <div id="homeDdayBody"><div class="muted">D-DAY를 추가해 보세요.</div></div>
+                <div class="ddayActions">
+                  <button class="smallbtn primary" type="button" onclick="toggleDdayManager('custom')">직접 추가</button>
+                  <button class="smallbtn ghost" type="button" onclick="toggleDdayManager('recommend')">학사일정에서 선택</button>
+                </div>
+                <div class="ddayManager" id="ddayCustomManager">
+                  <div class="ddayForm">
+                    <input id="ddayTitle" type="text" maxlength="30" placeholder="예: 2학기 중간고사" aria-label="D-DAY 이름">
+                    <input id="ddayDate" type="date" aria-label="D-DAY 날짜">
+                    <button class="smallbtn primary" type="button" onclick="addCustomDday()">추가</button>
+                  </div>
+                </div>
+                <div class="ddayManager" id="ddayRecommendManager">
+                  <div class="muted" style="font-size:12px">앞으로의 학사일정을 불러와 추천해 드려요.</div>
+                  <div class="ddayRecommendList" id="ddayRecommendList"></div>
+                </div>
+              </div>
             </div>
           </aside>
         </div>
@@ -2144,6 +2186,7 @@ const HOME_WIDGET_CONFIG = {
   schedule: true,
   timetable: true,
   weather: true,
+  dday: true,
   quickTools: true
 };
 
@@ -3541,8 +3584,132 @@ async function renderWeatherDetail(force = false){
   }
 }
 
+
+const DDAY_KEY = "opoong_ddays_v1";
+let ddayScheduleCache = [];
+function loadDdays(){
+  try{
+    const data = JSON.parse(localStorage.getItem(DDAY_KEY) || "[]");
+    return Array.isArray(data) ? data.filter(x=>x && x.title && /^\d{4}-\d{2}-\d{2}$/.test(x.date)) : [];
+  }catch{return []}
+}
+function saveDdays(items){
+  localStorage.setItem(DDAY_KEY, JSON.stringify(items));
+  renderDdayWidget();
+}
+function ddayValue(dateStr){
+  const today = new Date();
+  const start = new Date(today.getFullYear(),today.getMonth(),today.getDate());
+  const parts = dateStr.split("-").map(Number);
+  const target = new Date(parts[0],parts[1]-1,parts[2]);
+  return Math.round((target-start)/86400000);
+}
+function ddayLabel(dateStr){
+  const days = ddayValue(dateStr);
+  return days === 0 ? "D-DAY" : days > 0 ? "D-" + days : "D+" + Math.abs(days);
+}
+function renderDdayWidget(){
+  const body = $("#homeDdayBody");
+  const status = $("#homeDdayStatus");
+  if(!body || !status) return;
+  const items = loadDdays().sort((a,b)=>a.date.localeCompare(b.date));
+  status.textContent = "저장 " + items.length + "개";
+  body.innerHTML = items.length ? '<div class="ddayList">' + items.map((item,index)=>`
+    <div class="ddayItem">
+      <div class="ddayItemText"><b>${escapeHtml(item.title)}</b><span>${escapeHtml(item.date)}</span></div>
+      <div class="ddayCount">${ddayLabel(item.date)}</div>
+      <button class="ddayDelete" type="button" aria-label="${escapeHtml(item.title)} 삭제" onclick="removeDday(${index})">삭제</button>
+    </div>`).join("") + "</div>" : '<div class="muted">아직 저장한 D-DAY가 없어요.</div>';
+}
+function removeDday(sortedIndex){
+  const sorted = loadDdays().sort((a,b)=>a.date.localeCompare(b.date));
+  sorted.splice(sortedIndex,1);
+  saveDdays(sorted);
+}
+function addDday(title,date){
+  title = String(title || "").trim();
+  if(!title || !/^\d{4}-\d{2}-\d{2}$/.test(date)) return alert("이름과 날짜를 모두 입력해 주세요.");
+  const items = loadDdays();
+  if(items.some(x=>x.title===title && x.date===date)) return alert("이미 추가된 D-DAY예요.");
+  items.push({title,date});
+  saveDdays(items);
+}
+function addCustomDday(){
+  const title = $("#ddayTitle").value;
+  const date = $("#ddayDate").value;
+  addDday(title,date);
+  if(title.trim() && date){
+    $("#ddayTitle").value = "";
+    $("#ddayDate").value = "";
+    $("#ddayCustomManager").classList.remove("open");
+  }
+}
+function toggleDdayManager(mode){
+  const custom = $("#ddayCustomManager");
+  const recommend = $("#ddayRecommendManager");
+  if(mode === "custom"){
+    const willOpen = !custom.classList.contains("open");
+    custom.classList.toggle("open",willOpen);
+    recommend.classList.remove("open");
+    if(willOpen) $("#ddayTitle").focus();
+  }else{
+    const willOpen = !recommend.classList.contains("open");
+    recommend.classList.toggle("open",willOpen);
+    custom.classList.remove("open");
+    if(willOpen) loadDdayRecommendations();
+  }
+}
+function monthKeyOffset(offset){
+  const d = new Date();
+  d.setDate(1);
+  d.setMonth(d.getMonth()+offset);
+  return String(d.getFullYear()) + pad2(d.getMonth()+1);
+}
+async function loadDdayRecommendations(){
+  const box = $("#ddayRecommendList");
+  if(!box) return;
+  box.innerHTML = '<div class="muted">학사일정을 불러오는 중…</div>';
+  try{
+    const months = [0,1,2].map(monthKeyOffset);
+    const results = await Promise.all(months.map(fetchScheduleMonthProxy));
+    const today = todayStr();
+    const all = [];
+    results.forEach(byDate=>Object.entries(byDate).forEach(([date,items])=>{
+      if(date < today) return;
+      (items || []).forEach(item=>all.push({date,title:String(item.title || item)}));
+    }));
+    const seen = new Set();
+    ddayScheduleCache = all
+      .sort((a,b)=>a.date.localeCompare(b.date))
+      .filter(item=>{
+        const key = item.date+"|"+item.title;
+        if(seen.has(key)) return false;
+        seen.add(key); return true;
+      }).slice(0,40);
+    renderDdayRecommendations();
+  }catch{
+    box.innerHTML = '<div class="muted">추천 학사일정을 불러오지 못했어요.</div>';
+  }
+}
+function renderDdayRecommendations(){
+  const box = $("#ddayRecommendList");
+  if(!box) return;
+  const saved = loadDdays();
+  box.innerHTML = ddayScheduleCache.length ? ddayScheduleCache.map((item,index)=>{
+    const added = saved.some(x=>x.title===item.title && x.date===item.date);
+    return `<div class="ddayRecommendItem"><div><b>${escapeHtml(item.title)}</b><br><span>${escapeHtml(item.date)} · ${ddayLabel(item.date)}</span></div><button class="smallbtn ${added?"ghost":"primary"}" type="button" ${added?"disabled":""} onclick="addRecommendedDday(${index})">${added?"추가됨":"추가"}</button></div>`;
+  }).join("") : '<div class="muted">앞으로 3개월 안에 추천할 학사일정이 없어요.</div>';
+}
+function addRecommendedDday(index){
+  const item = ddayScheduleCache[index];
+  if(!item) return;
+  addDday(item.title,item.date);
+  renderDdayRecommendations();
+}
+
 async function renderHomeWidgets(){
   applyHomeWidgetConfig();
+  renderDdayWidget();
   renderPersonalHeroLine();
   renderHomeWeather();
   try{
