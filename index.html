@@ -1673,6 +1673,54 @@ body.setup-pending .firstStartBack{
 .ddayRecommendItem span{color:var(--muted)}
 @media(max-width:620px){.ddayList{grid-template-columns:1fr}.ddayForm{grid-template-columns:1fr}.homeDashboardWidgets .widget[data-home-widget="dday"]{grid-column:auto}}
 
+
+/* ===== O.Poong readability fix: compact weather + wide D-DAY ===== */
+.homeDashboardWidgets .widget[data-home-widget="weather"]{
+  grid-column:2 / span 2!important;
+  grid-row:1!important;
+  min-height:112px!important;
+  height:112px!important;
+}
+.homeDashboardWidgets .widget[data-home-widget="weather"] .widgetBody{
+  display:flex!important;align-items:center!important;
+  max-height:none!important;overflow:visible!important;
+}
+.homeDashboardWidgets .widget[data-home-widget="dday"]{
+  grid-column:1 / -1!important;
+  grid-row:3!important;
+  min-height:0!important;
+  height:auto!important;
+}
+.homeDashboardWidgets .widget[data-home-widget="dday"] .widgetBody{
+  max-height:none!important;overflow:visible!important;
+}
+.weatherNowCompact{display:flex;align-items:center;gap:12px}
+.weatherNowCompact .weatherIcon{font-size:30px}
+.weatherNowCompact .weatherTemp{font-size:27px}
+.weatherNowCompact .weatherCondition{color:var(--muted);font-size:13px;font-weight:900;margin-top:2px}
+.ddayList{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))!important}
+.ddayItem{display:grid!important;grid-template-columns:minmax(0,1fr) auto auto!important;min-width:0}
+.ddayItemText b{font-size:14px!important}
+.ddayItemText span{white-space:nowrap}
+.ddayCount{font-size:20px!important;white-space:nowrap}
+.ddayDelete{white-space:nowrap}
+.ddayActions{align-items:center}
+.ddayManager{width:100%}
+.ddayRecommendItem>div{min-width:0}
+.ddayRecommendItem b{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+@media(max-width:760px){
+  .homeDashboardWidgets .widget[data-home-widget="weather"],
+  .homeDashboardWidgets .widget[data-home-widget="dday"]{
+    grid-column:1 / -1!important;grid-row:auto!important
+  }
+}
+@media(max-width:560px){
+  .homeDashboardWidgets .widget[data-home-widget="weather"]{height:112px!important;min-height:112px!important}
+  .ddayList{grid-template-columns:1fr!important}
+  .ddayItem{grid-template-columns:minmax(0,1fr) auto!important}
+  .ddayDelete{grid-column:2;grid-row:2;padding:0 5px}
+}
+
 </style>
 </head>
 
@@ -3433,44 +3481,37 @@ async function renderHomeWeather(){
 
   if(!WEATHER_API_BASE){
     status.textContent = "설정 필요";
-    body.innerHTML = `<div class="muted">날씨 Worker 주소를 연결하면 표시됩니다.</div>`;
+    body.innerHTML = `<div class="muted">날씨 정보를 불러올 수 없어요.</div>`;
     return;
   }
 
-  status.textContent = "불러오는 중";
-  body.innerHTML = `<div class="muted">날씨 정보를 불러오는 중…</div>`;
+  status.textContent = "확인 중";
+  body.innerHTML = `<div class="muted">현재 날씨를 불러오는 중…</div>`;
 
   try{
     const data = await fetchWeatherData();
-
     const current = data.current || {};
     const hourly = Array.isArray(data.hourly) ? data.hourly : [];
-    const official = Array.isArray(data.officialWarnings) ? data.officialWarnings : [];
-    const currentSky = hourly[0]?.sky || current.precipitationType || "날씨";
+    const currentItem = hourly[0] || current;
+    const currentSky = currentItem.sky || current.precipitationType || "현재 날씨";
     const temp = Number.isFinite(current.temperatureC) ? `${current.temperatureC}℃` : "-";
-    const humidity = Number.isFinite(current.humidityPercent) ? `${current.humidityPercent}%` : "-";
-    const wind = Number.isFinite(current.windSpeedMs) ? `${current.windSpeedMs}m/s` : "-";
-    const warningLine = data.warningsStatus === "available"
-      ? (official.length ? `공식 특보 ${official.length}건` : "현재 안동 공식 특보 없음")
-      : "공식 특보 확인 지연";
 
-    status.textContent = official.length ? "특보" : currentSky;
+    status.textContent = currentSky;
     body.innerHTML = `
-      <div class="weatherNow">
-        <span class="weatherIcon" aria-hidden="true">${weatherIconFor(hourly[0] || current)}</span>
-        <div><div class="weatherTemp">${escapeHtml(temp)}</div><div class="weatherMeta">${escapeHtml(currentSky)} · 습도 ${escapeHtml(humidity)} · 바람 ${escapeHtml(wind)}</div></div>
-      </div>
-      <div class="weatherHourly" aria-label="시간별 날씨">
-        ${hourly.map(item=>`<div class="weatherHour"><span>${escapeHtml(weatherHourLabel(item.forecastAt))}</span><b>${weatherIconFor(item)} ${Number.isFinite(item.temperatureC) ? `${item.temperatureC}°` : "-"}</b><span>${escapeHtml(item.sky || item.precipitationType || "-")}</span></div>`).join("")}
-      </div>
-      <div class="weatherStatus">${escapeHtml(warningLine)} · ${escapeHtml(weatherUpdatedLabel(data.updatedAt))} · 출처 기상청</div>`;
+      <div class="weatherNowCompact">
+        <span class="weatherIcon" aria-hidden="true">${weatherIconFor(currentItem)}</span>
+        <div>
+          <div class="weatherTemp">${escapeHtml(temp)}</div>
+          <div class="weatherCondition">${escapeHtml(currentSky)}</div>
+        </div>
+      </div>`;
 
     renderWeatherAlertBanner(data);
     renderPersonalHeroLine(data);
   }catch(err){
     console.error("O.Poong weather:", err);
     status.textContent = "연결 오류";
-    body.innerHTML = `<div class="muted">날씨 정보를 불러오지 못했어요. 잠시 후 다시 확인해 주세요.</div>`;
+    body.innerHTML = `<div class="muted">현재 날씨를 불러오지 못했어요.</div>`;
     const banner = $("#weatherAlertBanner");
     if(banner) banner.hidden = true;
     renderPersonalHeroLine();
