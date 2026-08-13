@@ -1789,6 +1789,18 @@ body.setup-pending .firstStartBack{
 body.full-notice-locked{overflow:hidden}
 @media(max-width:620px){.ddayEditItem{grid-template-columns:1fr}.weatherWidgetHeadActions{max-width:55%}}
 
+
+/* ===== Definitive compact weather line ===== */
+.weatherCurrentLine{display:flex;align-items:baseline;gap:7px;min-width:0;max-width:100%}
+.weatherCurrentLine .weatherTemp{flex:0 0 auto;font-size:27px!important;line-height:1!important}
+.weatherCurrentLine .weatherCondition{
+  display:block;min-width:0;max-width:150px;margin:0!important;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+  color:var(--muted);font-size:13px;font-weight:900;line-height:1.25;
+}
+.homeDashboardWidgets .widget[data-home-widget="weather"] .widgetBody{min-height:38px!important}
+@media(max-width:560px){.weatherCurrentLine .weatherCondition{max-width:110px}}
+
 </style>
 </head>
 
@@ -3659,13 +3671,13 @@ async function renderHomeWeather(){
     const currentSky = currentItem.sky || current.precipitationType || "현재 날씨";
     const temp = Number.isFinite(current.temperatureC) ? `${current.temperatureC}℃` : "-";
 
-    status.textContent = currentSky;
+    status.textContent = "현재";
     body.innerHTML = `
       <div class="weatherNowCompact">
         <span class="weatherIcon" aria-hidden="true">${weatherIconFor(currentItem)}</span>
-        <div>
-          <div class="weatherTemp">${escapeHtml(temp)}</div>
-          <div class="weatherCondition">${escapeHtml(currentSky)}</div>
+        <div class="weatherCurrentLine">
+          <span class="weatherTemp">${escapeHtml(temp)}</span>
+          <span class="weatherCondition" title="${escapeHtml(currentSky)}">· ${escapeHtml(currentSky)}</span>
         </div>
       </div>`;
 
