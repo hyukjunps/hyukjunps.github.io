@@ -1852,6 +1852,57 @@ body.full-notice-locked{overflow:hidden}
   }
 }
 
+
+/* ===== O.Poong global search + editable home widgets ===== */
+.topSearchBtn{min-width:48px}
+.homeHeroTools{width:100%;display:flex;align-items:center;justify-content:space-between;gap:10px;position:relative;z-index:2}
+.homeWidgetEditBtn{min-height:40px;padding:8px 11px}
+.featureModal{width:min(780px,100%);max-height:min(820px,calc(100dvh - 28px));display:flex;flex-direction:column}
+.featureModal .modalBody{overflow:auto}
+.searchInputWrap{display:flex;align-items:center;gap:10px;border:1px solid var(--line);border-radius:18px;padding:0 13px;background:color-mix(in srgb,var(--card) 94%,transparent)}
+.searchInputWrap>span{font-size:22px;color:var(--muted);font-weight:1000}
+.searchInputWrap input{width:100%;border:0!important;background:transparent!important;outline:0!important;box-shadow:none!important}
+.searchStatus{margin:11px 2px;color:var(--muted);font-size:12.5px;font-weight:850}
+.searchResults{display:flex;flex-direction:column;gap:8px}
+.searchResultItem{width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 13px;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--card) 95%,transparent);color:var(--text);text-align:left}
+.searchResultItem:hover{border-color:color-mix(in srgb,var(--pri) 38%,var(--line));background:color-mix(in srgb,var(--pri) 7%,var(--card))}
+.searchResultText{min-width:0}
+.searchResultText b{display:block;font-size:14px}
+.searchResultText span{display:block;margin-top:4px;color:var(--muted);font-size:12px;font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.searchResultType{flex:0 0 auto;padding:6px 9px;border-radius:999px;background:color-mix(in srgb,var(--pri) 9%,var(--card));color:var(--pri);font-size:11px;font-weight:1000}
+.searchEmpty{padding:28px 12px;text-align:center;color:var(--muted);font-weight:850}
+.widgetEditorHelp{margin:0 0 13px;color:var(--muted);font-size:13px;font-weight:800;line-height:1.65}
+.widgetEditorList{display:flex;flex-direction:column;gap:9px}
+.widgetEditorRow{display:grid;grid-template-columns:minmax(170px,1fr) auto auto;gap:10px;align-items:center;padding:11px;border:1px solid var(--line);border-radius:18px;background:color-mix(in srgb,var(--card) 95%,transparent)}
+.widgetEditorIdentity{display:flex;align-items:center;gap:9px;min-width:0}
+.widgetEditorIcon{width:34px;height:34px;border-radius:12px;display:flex;align-items:center;justify-content:center;background:color-mix(in srgb,var(--pri) 9%,var(--card));font-size:12px;font-weight:1000}
+.widgetEditorIdentity b{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.widgetVisibleToggle{display:flex;align-items:center;gap:6px;color:var(--muted);font-size:12px;font-weight:900;white-space:nowrap}
+.widgetVisibleToggle input{width:18px;height:18px;min-height:0}
+.widgetEditorControls{display:flex;align-items:center;gap:6px}
+.widgetSizeSelect{min-height:38px;padding:7px 9px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font-weight:850}
+.widgetMoveBtn{width:38px;height:38px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font-weight:1000}
+.homeDashboardWidgets.widgetLayoutActive{grid-template-columns:repeat(2,minmax(0,1fr))!important;grid-template-rows:none!important;grid-auto-flow:row dense!important;align-content:start!important}
+.homeDashboardWidgets [data-widget-size="small"] .widgetBody{max-height:64px!important;overflow:auto!important}
+.homeDashboardWidgets [data-widget-size="normal"] .widgetBody{max-height:230px!important;overflow:auto!important}
+.homeDashboardWidgets [data-widget-size="wide"] .widgetBody{max-height:280px!important;overflow:auto!important}
+@media(max-width:760px){
+  .topSearchBtn{width:42px;min-width:42px;padding:9px!important}
+  .topSearchLabel{display:none}
+  .homeDashboardWidgets.widgetLayoutActive{grid-template-columns:minmax(0,1fr)!important}
+  .widgetEditorRow{grid-template-columns:1fr auto}
+  .widgetEditorControls{grid-column:1 / -1;justify-content:flex-end}
+  .featureModalBack{padding:8px}
+  .featureModal{max-height:calc(100dvh - 16px);border-radius:22px}
+}
+@media(max-width:420px){
+  .widgetEditorRow{grid-template-columns:1fr}
+  .widgetVisibleToggle{justify-self:start}
+  .widgetEditorControls{grid-column:1;justify-content:stretch}
+  .widgetSizeSelect{flex:1}
+  .homeWidgetEditBtn{font-size:12px;padding:7px 9px}
+}
+
 </style>
 </head>
 
@@ -1894,6 +1945,7 @@ body.full-notice-locked{overflow:hidden}
       </div>
     </div>
     <div class="actions">
+      <button id="globalSearchButton" class="btn ghost topSearchBtn" type="button" onclick="openGlobalSearch()" aria-label="통합 검색"><span aria-hidden="true">⌕</span><span class="topSearchLabel">검색</span></button>
       <div id="userBadge" class="userBadge">사용자</div>
       <button id="btnInstallTop" class="btn ok" type="button">앱 설치</button>
       <button id="btnLight" class="btn ghost" type="button">라이트</button>
@@ -1931,7 +1983,10 @@ body.full-notice-locked{overflow:hidden}
       <section class="section view active" id="view-home">
         <div class="homeDashboard">
           <div class="homeDashboardHero">
-            <span class="kicker">O.Poong Portal</span>
+            <div class="homeHeroTools">
+              <span class="kicker">O.Poong Portal</span>
+              <button class="smallbtn ghost homeWidgetEditBtn" type="button" onclick="openWidgetEditor()" aria-label="홈 위젯 편집">⚙ 위젯 편집</button>
+            </div>
             <h2 id="personalHeroLine" class="homeDashboardTitle">오늘도 O.Poong에서 필요한 정보를 확인해보세요.</h2>
             <p id="personalHeroWeatherLine" class="homeDashboardMessage">현재 날씨를 확인해 오늘 하루를 준비하고 있어요.</p>
             <div class="heroActions">
@@ -2197,6 +2252,40 @@ body.full-notice-locked{overflow:hidden}
         <div class="muted" style="font-size:13px">앞으로의 학사일정에서 D-DAY를 선택하세요.</div>
         <div class="ddayRecommendList" id="ddayRecommendList"></div>
       </section>
+    </div>
+  </div>
+</div>
+
+<div id="globalSearchBack" class="modalBack featureModalBack" role="dialog" aria-modal="true" aria-hidden="true" aria-label="O.Poong 통합 검색" onclick="if(event.target===this) closeGlobalSearch()">
+  <div class="modal featureModal searchModal">
+    <div class="modalHead">
+      <b>통합 검색</b>
+      <button class="btn ghost" type="button" onclick="closeGlobalSearch()">닫기</button>
+    </div>
+    <div class="modalBody">
+      <label class="searchInputWrap">
+        <span aria-hidden="true">⌕</span>
+        <input id="globalSearchInput" type="search" autocomplete="off" placeholder="급식, 일정, 시간표, 메뉴 검색" aria-label="검색어">
+      </label>
+      <div id="globalSearchStatus" class="searchStatus">메뉴와 학교생활 정보를 검색할 수 있어요.</div>
+      <div id="globalSearchResults" class="searchResults" role="list"></div>
+    </div>
+  </div>
+</div>
+
+<div id="widgetEditorBack" class="modalBack featureModalBack" role="dialog" aria-modal="true" aria-hidden="true" aria-label="홈 위젯 편집" onclick="if(event.target===this) closeWidgetEditor()">
+  <div class="modal featureModal widgetEditorModal">
+    <div class="modalHead">
+      <b>홈 위젯 편집</b>
+      <button class="btn ghost" type="button" onclick="closeWidgetEditor()">닫기</button>
+    </div>
+    <div class="modalBody">
+      <p class="widgetEditorHelp">표시 여부와 크기를 바꾸고, 화살표로 위젯 순서를 정할 수 있어요. 설정은 이 기기에 저장됩니다.</p>
+      <div id="widgetEditorList" class="widgetEditorList"></div>
+    </div>
+    <div class="modalFoot">
+      <button class="btn ghost" type="button" onclick="resetWidgetLayout()">기본값 복원</button>
+      <button class="btn primary" type="button" onclick="closeWidgetEditor()">완료</button>
     </div>
   </div>
 </div>
@@ -3477,48 +3566,171 @@ const installNowBtn = $("#btnInstallNow");
 if(installNowBtn) installNowBtn.addEventListener("click", handleInstallClick);
 
 
-function getHomeWidgetConfig(){
+const HOME_WIDGET_LAYOUT_KEY = "opoong_home_widget_layout_v1";
+const HOME_WIDGET_META = [
+  {key:"weather", label:"풍산고 날씨", icon:"날", defaultSize:"small"},
+  {key:"meal", label:"오늘의 급식", icon:"식", defaultSize:"normal"},
+  {key:"schedule", label:"오늘의 학사일정", icon:"일", defaultSize:"normal"},
+  {key:"timetable", label:"오늘의 시간표", icon:"표", defaultSize:"normal"},
+  {key:"dday", label:"나의 D-DAY", icon:"D", defaultSize:"wide"}
+];
+const HOME_WIDGET_SIZES = ["small","normal","wide"];
+
+function defaultHomeWidgetLayout(){
+  let legacy = {};
+  try{ legacy = JSON.parse(localStorage.getItem("opoong_home_widgets") || "{}"); }catch(e){}
+  return HOME_WIDGET_META.map(function(item){
+    return {key:item.key,visible:item.key === "timetable" ? true : legacy[item.key] !== false,size:item.defaultSize};
+  });
+}
+function normalizeHomeWidgetLayout(input){
+  const source = Array.isArray(input) ? input : [];
+  const byKey = {};
+  source.forEach(function(item){
+    if(item && HOME_WIDGET_META.some(function(meta){return meta.key===item.key;})) byKey[item.key] = item;
+  });
+  return HOME_WIDGET_META.map(function(meta){
+    const saved = byKey[meta.key] || {};
+    return {key:meta.key,visible:saved.visible !== false,size:HOME_WIDGET_SIZES.includes(saved.size) ? saved.size : meta.defaultSize};
+  }).sort(function(a,b){
+    const ai = source.findIndex(function(item){return item && item.key===a.key;});
+    const bi = source.findIndex(function(item){return item && item.key===b.key;});
+    if(ai<0 && bi<0) return 0;
+    if(ai<0) return 1;
+    if(bi<0) return -1;
+    return ai-bi;
+  });
+}
+function getHomeWidgetLayout(){
   try{
-    const saved = JSON.parse(localStorage.getItem("opoong_home_widgets") || "{}");
-    const config = {...HOME_WIDGET_CONFIG, ...saved};
-    // 시간표는 핵심 홈 기능이므로 과거 설정값 때문에 웹에서 사라지지 않도록 항상 표시합니다.
-    config.timetable = true;
-    return config;
-  }catch{
-    return {...HOME_WIDGET_CONFIG, timetable:true};
-  }
+    const saved = JSON.parse(localStorage.getItem(HOME_WIDGET_LAYOUT_KEY) || "null");
+    return saved ? normalizeHomeWidgetLayout(saved) : defaultHomeWidgetLayout();
+  }catch(e){return defaultHomeWidgetLayout();}
+}
+function saveHomeWidgetLayout(layout){
+  const normalized = normalizeHomeWidgetLayout(layout);
+  localStorage.setItem(HOME_WIDGET_LAYOUT_KEY, JSON.stringify(normalized));
+  const flags = {};
+  normalized.forEach(function(item){flags[item.key]=item.visible;});
+  localStorage.setItem("opoong_home_widgets",JSON.stringify(flags));
+  return normalized;
+}
+function getHomeWidgetConfig(){
+  const config = Object.assign({},HOME_WIDGET_CONFIG);
+  getHomeWidgetLayout().forEach(function(item){config[item.key]=item.visible;});
+  return config;
 }
 function saveHomeWidgetConfig(cfg){
-  localStorage.setItem("opoong_home_widgets", JSON.stringify(cfg));
+  const layout = getHomeWidgetLayout();
+  layout.forEach(function(item){
+    if(Object.prototype.hasOwnProperty.call(cfg,item.key)) item.visible = cfg[item.key] !== false;
+  });
+  saveHomeWidgetLayout(layout);
+}
+function widgetMinimumHeight(key,size){
+  if(size==="small") return "112px";
+  if(key==="meal") return "260px";
+  if(key==="dday") return "160px";
+  return "170px";
 }
 function applyHomeWidgetConfig(){
-  const cfg = getHomeWidgetConfig();
-  $$("[data-home-widget]").forEach(el=>{
-    const key = el.dataset.homeWidget;
-    el.classList.toggle("homeWidgetHidden", cfg[key] === false);
+  const layout = getHomeWidgetLayout();
+  const container = document.querySelector(".homeDashboardWidgets");
+  if(container) container.classList.add("widgetLayoutActive");
+  layout.forEach(function(item,index){
+    const el = document.querySelector('[data-home-widget="'+item.key+'"]');
+    if(!el) return;
+    el.classList.toggle("homeWidgetHidden",item.visible===false);
+    el.dataset.widgetSize=item.size;
+    el.style.order=String(index);
+    el.style.setProperty("grid-column",item.size==="wide" ? "1 / -1" : "auto","important");
+    el.style.setProperty("grid-row","auto","important");
+    el.style.setProperty("height","auto","important");
+    el.style.setProperty("min-height",widgetMinimumHeight(item.key,item.size),"important");
+    if(container) container.appendChild(el);
   });
-  $$("[data-widget-toggle]").forEach(input=>{
-    input.checked = cfg[input.dataset.widgetToggle] !== false;
+  $$("[data-setup-widget]").forEach(function(input){
+    const item=layout.find(function(row){return row.key===input.dataset.setupWidget;});
+    if(item) input.checked=item.visible;
   });
 }
-function toggleWidgetSelector(){
-  const box = $("#widgetSelector");
+function renderWidgetEditor(){
+  const box=$("#widgetEditorList");
   if(!box) return;
-  box.style.display = box.style.display === "none" ? "block" : "none";
-  applyHomeWidgetConfig();
+  const layout=getHomeWidgetLayout();
+  box.innerHTML=layout.map(function(item,index){
+    const meta=HOME_WIDGET_META.find(function(row){return row.key===item.key;});
+    const sizeOptions=[
+      {value:"small",label:"작게"},
+      {value:"normal",label:"보통"},
+      {value:"wide",label:"넓게"}
+    ].map(function(option){
+      return '<option value="'+option.value+'"'+(item.size===option.value?' selected':'')+'>'+option.label+'</option>';
+    }).join("");
+    return '<div class="widgetEditorRow">'+
+      '<div class="widgetEditorIdentity"><span class="widgetEditorIcon">'+escapeHtml(meta.icon)+'</span><b>'+escapeHtml(meta.label)+'</b></div>'+
+      '<label class="widgetVisibleToggle"><input type="checkbox" '+(item.visible?'checked ':'')+'onchange="setWidgetVisibility(\''+item.key+'\',this.checked)"> 표시</label>'+
+      '<div class="widgetEditorControls">'+
+        '<select class="widgetSizeSelect" aria-label="'+escapeHtml(meta.label)+' 크기" onchange="setWidgetSize(\''+item.key+'\',this.value)">'+sizeOptions+'</select>'+
+        '<button class="widgetMoveBtn" type="button" onclick="moveWidget(\''+item.key+'\',-1)" aria-label="위로 이동" '+(index===0?'disabled':'')+'>↑</button>'+
+        '<button class="widgetMoveBtn" type="button" onclick="moveWidget(\''+item.key+'\',1)" aria-label="아래로 이동" '+(index===layout.length-1?'disabled':'')+'>↓</button>'+
+      '</div>'+
+    '</div>';
+  }).join("");
 }
-function initWidgetSelector(){
-  $$("[data-widget-toggle]").forEach(input=>{
-    input.addEventListener("change", ()=>{
-      const cfg = getHomeWidgetConfig();
-      cfg[input.dataset.widgetToggle] = input.checked;
-      saveHomeWidgetConfig(cfg);
-      applyHomeWidgetConfig();
-    });
-  });
-  applyHomeWidgetConfig();
+function openWidgetEditor(){
+  const back=$("#widgetEditorBack");
+  if(!back) return;
+  renderWidgetEditor();
+  back.style.display="flex";
+  back.setAttribute("aria-hidden","false");
 }
-
+function closeWidgetEditor(){
+  const back=$("#widgetEditorBack");
+  if(!back) return;
+  back.style.display="none";
+  back.setAttribute("aria-hidden","true");
+}
+function setWidgetVisibility(key,visible){
+  const layout=getHomeWidgetLayout();
+  const item=layout.find(function(row){return row.key===key;});
+  if(!item) return;
+  item.visible=Boolean(visible);
+  saveHomeWidgetLayout(layout);
+  applyHomeWidgetConfig();
+  renderWidgetEditor();
+}
+function setWidgetSize(key,size){
+  if(!HOME_WIDGET_SIZES.includes(size)) return;
+  const layout=getHomeWidgetLayout();
+  const item=layout.find(function(row){return row.key===key;});
+  if(!item) return;
+  item.size=size;
+  saveHomeWidgetLayout(layout);
+  applyHomeWidgetConfig();
+  renderWidgetEditor();
+}
+function moveWidget(key,delta){
+  const layout=getHomeWidgetLayout();
+  const index=layout.findIndex(function(row){return row.key===key;});
+  const next=index+Number(delta);
+  if(index<0||next<0||next>=layout.length) return;
+  const temp=layout[index];
+  layout[index]=layout[next];
+  layout[next]=temp;
+  saveHomeWidgetLayout(layout);
+  applyHomeWidgetConfig();
+  renderWidgetEditor();
+}
+function resetWidgetLayout(){
+  if(!confirm("위젯 설정을 기본값으로 되돌릴까요?")) return;
+  localStorage.removeItem(HOME_WIDGET_LAYOUT_KEY);
+  localStorage.removeItem("opoong_home_widgets");
+  applyHomeWidgetConfig();
+  renderWidgetEditor();
+}
+function toggleWidgetSelector(){openWidgetEditor();}
+function initWidgetSelector(){applyHomeWidgetConfig();}
 
 function weatherIconFor(item){
   const pty = String(item?.precipitationType || "없음");
@@ -3889,6 +4101,142 @@ function addRecommendedDday(index){
   renderDdayRecommendations();
 }
 
+const GLOBAL_SEARCH_STATIC = [
+  {title:"홈 대시보드",description:"오늘 급식·날씨·일정·시간표 위젯",type:"메뉴",route:"home",keywords:"홈 메인 위젯"},
+  {title:"풍산고 날씨",description:"현재 날씨와 예보·특보",type:"메뉴",route:"weather",keywords:"날씨 기온 비 눈 우산 특보"},
+  {title:"급식 조회",description:"오늘 또는 날짜별 급식 확인",type:"메뉴",route:"meal",keywords:"급식 조식 중식 석식 메뉴 밥"},
+  {title:"학사일정",description:"학교 행사와 월별 달력",type:"메뉴",route:"schedule",keywords:"일정 시험 행사 방학 개학"},
+  {title:"시간표",description:"요일별 수업 시간표",type:"메뉴",route:"timetable",keywords:"시간표 교시 수업 과목"},
+  {title:"온웨이에듀",description:"상벌점·외출 관리 시스템",type:"바로가기",route:"onway",keywords:"상점 벌점 외출"},
+  {title:"학교 홈페이지",description:"풍산고등학교 공식 사이트",type:"바로가기",route:"school",keywords:"학교 공지 공식"},
+  {title:"도서관 조회",description:"풍산고 도서관 자료 검색",type:"바로가기",route:"library",keywords:"책 도서 독서"},
+  {title:"안내·정책",description:"서비스 소개와 개인정보 안내",type:"메뉴",route:"policy",keywords:"안내 정책 개인정보"},
+  {title:"D-DAY 설정",description:"나의 디데이 추가·수정",type:"기능",route:"home",action:"dday",keywords:"디데이 시험 날짜"}
+];
+let globalSearchDynamic=[];
+let globalSearchVisibleResults=[];
+let globalSearchDataPromise=null;
+function normalizeSearchText(value){return String(value||"").toLowerCase().replace(/\s+/g,"");}
+function scoreSearchItem(item,query){
+  const q=normalizeSearchText(query);
+  if(!q) return 1;
+  const title=normalizeSearchText(item.title);
+  const body=normalizeSearchText((item.description||"")+" "+(item.keywords||""));
+  if(title===q) return 100;
+  if(title.startsWith(q)) return 70;
+  if(title.includes(q)) return 50;
+  if(body.includes(q)) return 25;
+  return 0;
+}
+async function refreshGlobalSearchData(){
+  if(globalSearchDataPromise) return globalSearchDataPromise;
+  globalSearchDataPromise=(async function(){
+    const items=[];
+    try{
+      const ymd=toYMDNoDash(todayStr());
+      const meals=await fetchMealsDay(SD_SCHUL_CODE,ymd);
+      meals.forEach(function(meal){
+        meal.menu.forEach(function(menu){
+          items.push({title:menu.replace(/\s*\([^)]*\)\s*/g," ").trim(),description:todayStr()+" · "+meal.type,type:"오늘 급식",route:"meal",date:todayStr(),keywords:meal.type+" "+menu});
+        });
+      });
+    }catch(e){}
+    try{
+      const months=[0,1,2].map(monthKeyOffset);
+      const results=await Promise.all(months.map(function(month){return fetchScheduleMonthProxy(month).catch(function(){return {};});}));
+      results.forEach(function(byDate){
+        Object.keys(byDate).forEach(function(date){
+          (byDate[date]||[]).forEach(function(entry){
+            const title=String(entry.title||entry);
+            items.push({title:title,description:date+" 학사일정",type:"학사일정",route:"schedule",date:date,keywords:title+" 행사 시험 일정"});
+          });
+        });
+      });
+    }catch(e){}
+    try{
+      const store=ttLoad();
+      TT_DAYS.forEach(function(day,dayIndex){
+        for(let period=1;period<=store.periods;period++){
+          const subject=String(store.data[period+"_"+dayIndex]||"").trim();
+          if(subject) items.push({title:subject,description:day+"요일 "+period+"교시",type:"시간표",route:"timetable",keywords:subject+" "+day+"요일 교시"});
+        }
+      });
+    }catch(e){}
+    try{
+      loadDdays().forEach(function(item){
+        items.push({title:item.title,description:item.date+" · "+ddayLabel(item.date),type:"D-DAY",route:"home",action:"dday",keywords:item.title+" 디데이 날짜"});
+      });
+    }catch(e){}
+    globalSearchDynamic=items;
+    return items;
+  })();
+  try{return await globalSearchDataPromise;}
+  finally{globalSearchDataPromise=null;}
+}
+function renderGlobalSearchResults(){
+  const input=$("#globalSearchInput");
+  const box=$("#globalSearchResults");
+  const status=$("#globalSearchStatus");
+  if(!input||!box||!status) return;
+  const query=input.value.trim();
+  const combined=GLOBAL_SEARCH_STATIC.concat(globalSearchDynamic);
+  globalSearchVisibleResults=combined.map(function(item){return {item:item,score:scoreSearchItem(item,query)};})
+    .filter(function(row){return query ? row.score>0 : row.item.type==="메뉴" || row.item.type==="기능";})
+    .sort(function(a,b){return b.score-a.score;}).slice(0,20).map(function(row){return row.item;});
+  status.textContent=query ? globalSearchVisibleResults.length+"개의 결과" : "검색어를 입력하거나 자주 쓰는 기능을 선택하세요.";
+  box.innerHTML=globalSearchVisibleResults.length ? globalSearchVisibleResults.map(function(item,index){
+    return '<button class="searchResultItem" type="button" role="listitem" onclick="openGlobalSearchResult('+index+')">'+
+      '<span class="searchResultText"><b>'+escapeHtml(item.title)+'</b><span>'+escapeHtml(item.description||"")+'</span></span>'+
+      '<span class="searchResultType">'+escapeHtml(item.type||"기능")+'</span></button>';
+  }).join("") : '<div class="searchEmpty">일치하는 결과가 없어요.<br>다른 검색어를 입력해 보세요.</div>';
+}
+async function openGlobalSearch(){
+  const back=$("#globalSearchBack");
+  const input=$("#globalSearchInput");
+  if(!back||!input) return;
+  back.style.display="flex";
+  back.setAttribute("aria-hidden","false");
+  input.value="";
+  renderGlobalSearchResults();
+  window.setTimeout(function(){input.focus();},50);
+  const status=$("#globalSearchStatus");
+  if(status) status.textContent="학교생활 정보를 불러오는 중…";
+  await refreshGlobalSearchData();
+  if(back.style.display==="flex") renderGlobalSearchResults();
+}
+function closeGlobalSearch(){
+  const back=$("#globalSearchBack");
+  if(!back) return;
+  back.style.display="none";
+  back.setAttribute("aria-hidden","true");
+}
+function openGlobalSearchResult(index){
+  const item=globalSearchVisibleResults[index];
+  if(!item) return;
+  closeGlobalSearch();
+  go(item.route||"home");
+  if(item.route==="meal"){
+    if(item.date&&$("#date")) $("#date").value=item.date;
+    onDay();
+  }else if(item.route==="schedule"){
+    if(item.date&&$("#schMonth")) $("#schMonth").value=item.date.slice(0,7);
+    scheduleLoadMonth();
+  }else if(item.route==="timetable"){
+    ttRenderTable();
+  }else if(item.action==="dday"){
+    window.setTimeout(openDdaySettings,120);
+  }
+}
+function initGlobalSearch(){
+  const input=$("#globalSearchInput");
+  if(input) input.addEventListener("input",renderGlobalSearchResults);
+  document.addEventListener("keydown",function(event){
+    if(event.key!=="Escape") return;
+    closeGlobalSearch();
+    closeWidgetEditor();
+  });
+}
+
 async function renderHomeWidgets(){
   applyHomeWidgetConfig();
   renderDdayWidget();
@@ -3929,6 +4277,7 @@ window.addEventListener("load",()=>{
   renderNoticeBanner();
   renderFullScreenNotice();
   initWidgetSelector();
+  initGlobalSearch();
   const savedTheme = localStorage.getItem("opoong_theme");
   if(savedTheme === "dark" || savedTheme === "light") applyTheme(savedTheme);
   initMeals();
