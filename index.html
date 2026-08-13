@@ -211,6 +211,145 @@ h1{margin:16px 0 0;font-size:clamp(32px,5vw,58px);line-height:1.04;letter-spacin
   margin-top:14px;
   box-shadow:var(--shadow2);
 }
+
+/* ===== Notice + class Now Bar (read-only timetable companion) ===== */
+.topStatusGrid{
+  margin-top:14px;
+  display:grid;
+  grid-template-columns:minmax(0,1fr);
+  gap:12px;
+  align-items:stretch;
+}
+.topStatusGrid.hasNowBar{
+  grid-template-columns:repeat(2,minmax(0,1fr));
+}
+.topStatusGrid .topNotice{
+  margin-top:0;
+  min-width:0;
+  height:100%;
+}
+.classNowBar{
+  position:relative;
+  min-width:0;
+  min-height:82px;
+  padding:13px 15px;
+  overflow:hidden;
+  border:1px solid rgba(255,255,255,.12);
+  border-radius:22px;
+  color:#fff;
+  background:
+    radial-gradient(circle at 85% 10%,rgba(96,165,250,.28),transparent 35%),
+    linear-gradient(135deg,#09111f,#17243a 58%,#203354);
+  box-shadow:0 14px 34px rgba(15,23,42,.24);
+}
+.classNowBar[hidden]{display:none!important}
+.classNowBarInner{
+  position:relative;
+  z-index:1;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  gap:12px;
+  align-items:center;
+  min-height:54px;
+}
+.classNowInfo{min-width:0}
+.classNowEyebrow{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  margin-bottom:4px;
+  color:#bfdbfe;
+  font-size:11.5px;
+  font-weight:950;
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+.classNowDot{
+  width:7px;
+  height:7px;
+  flex:0 0 auto;
+  border-radius:50%;
+  background:#60a5fa;
+  box-shadow:0 0 0 5px rgba(96,165,250,.13);
+}
+.classNowBar.is-live .classNowDot{
+  background:#34d399;
+  box-shadow:0 0 0 5px rgba(52,211,153,.14);
+}
+.classNowTitle{
+  display:block;
+  overflow:hidden;
+  color:#fff;
+  font-size:17px;
+  font-weight:1000;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.classNowDetail{
+  display:block;
+  margin-top:3px;
+  overflow:hidden;
+  color:#cbd5e1;
+  font-size:11.5px;
+  font-weight:800;
+  white-space:nowrap;
+  text-overflow:ellipsis;
+}
+.classNowCountdown{
+  min-width:70px;
+  text-align:right;
+  white-space:nowrap;
+}
+.classNowMinutes{
+  display:block;
+  color:#fff;
+  font-size:26px;
+  line-height:1;
+  letter-spacing:-1px;
+}
+.classNowUnit{
+  display:block;
+  margin-top:4px;
+  color:#bfdbfe;
+  font-size:10.5px;
+  font-weight:900;
+}
+.classNowProgress{
+  position:absolute;
+  left:15px;
+  right:15px;
+  bottom:9px;
+  height:3px;
+  overflow:hidden;
+  border-radius:99px;
+  background:rgba(255,255,255,.14);
+}
+.classNowProgress > i{
+  display:block;
+  width:0;
+  height:100%;
+  border-radius:inherit;
+  background:linear-gradient(90deg,#60a5fa,#34d399);
+  transition:width .35s ease;
+}
+@media(max-width:620px){
+  .topStatusGrid{gap:8px}
+  .topStatusGrid.hasNowBar{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .topStatusGrid.hasNowBar .noticeBanner{padding:11px;border-radius:19px}
+  .topStatusGrid.hasNowBar .noticeBanner strong{font-size:12.5px;line-height:1.45}
+  .topStatusGrid.hasNowBar .noticeBanner p{font-size:11px;line-height:1.45}
+  .topStatusGrid.hasNowBar .noticeBanner .pill{display:none}
+  .classNowBar{min-height:80px;padding:11px 12px;border-radius:19px}
+  .classNowBarInner{grid-template-columns:minmax(0,1fr) auto;gap:7px}
+  .classNowEyebrow{font-size:10px}
+  .classNowTitle{font-size:14px}
+  .classNowDetail{font-size:10px}
+  .classNowCountdown{min-width:48px}
+  .classNowMinutes{font-size:21px}
+  .classNowUnit{font-size:9px}
+  .classNowProgress{left:12px;right:12px;bottom:7px}
+}
 .homeWidgetHidden{display:none!important}
 
 .layout{
@@ -1926,12 +2065,29 @@ body.full-notice-locked{overflow:hidden}
     </div>
   </header>
 
-  <div id="noticeBanner" class="noticeBanner empty topNotice" aria-label="공지사항">
-    <div>
-      <strong>공지사항이 없습니다</strong>
-      <p>새 소식이 생기면 이 영역에 표시됩니다.</p>
+  <div id="topStatusGrid" class="topStatusGrid">
+    <div id="noticeBanner" class="noticeBanner empty topNotice" aria-label="공지사항">
+      <div>
+        <strong>공지사항이 없습니다</strong>
+        <p>새 소식이 생기면 이 영역에 표시됩니다.</p>
+      </div>
+      <span class="pill">Notice</span>
     </div>
-    <span class="pill">Notice</span>
+
+    <section id="classNowBar" class="classNowBar" aria-label="현재 시간표" aria-live="polite" hidden>
+      <div class="classNowBarInner">
+        <div class="classNowInfo">
+          <div id="classNowEyebrow" class="classNowEyebrow"><span class="classNowDot" aria-hidden="true"></span><span>시간표</span></div>
+          <strong id="classNowTitle" class="classNowTitle">수업 정보를 확인하는 중</strong>
+          <span id="classNowDetail" class="classNowDetail"></span>
+        </div>
+        <div class="classNowCountdown">
+          <strong id="classNowMinutes" class="classNowMinutes">--</strong>
+          <span id="classNowUnit" class="classNowUnit">분 남음</span>
+        </div>
+      </div>
+      <div class="classNowProgress" aria-hidden="true"><i id="classNowProgressFill"></i></div>
+    </section>
   </div>
 
   <div id="weatherAlertBanner" class="noticeBanner topNotice weatherAlertBanner" aria-live="polite" hidden></div>
@@ -2550,6 +2706,161 @@ function renderNoticeBanner(){
     : `<span class="pill">Notice</span>`;
 
   box.innerHTML = `<div><strong>${escapeHtml(NOTICE_CONFIG.title)}</strong><p>${escapeHtml(NOTICE_CONFIG.message)}</p></div>${btn}`;
+}
+
+/* Samsung Now Bar-inspired class countdown.
+   Reads opoong_tt_v2 only; it never writes, migrates, clears, or renames timetable data. */
+const CLASS_NOW_SCHEDULE = [
+  { period:1, start:"08:10", end:"09:00" },
+  { period:2, start:"09:10", end:"10:00" },
+  { period:3, start:"10:10", end:"11:00" },
+  { period:4, start:"11:10", end:"12:00" },
+  { period:5, start:"12:10", end:"13:00" },
+  { type:"lunch", start:"13:00", end:"14:00" },
+  { period:6, start:"14:00", end:"14:50" },
+  { period:7, start:"15:00", end:"15:50" },
+  { period:8, start:"16:10", end:"17:00" },
+  { period:9, start:"17:10", end:"18:00" }
+];
+
+function classNowAt(date, hhmm){
+  const parts = hhmm.split(":").map(Number);
+  const point = new Date(date);
+  point.setHours(parts[0], parts[1], 0, 0);
+  return point;
+}
+function classNowMinutesLeft(from, to){
+  return Math.max(1, Math.ceil((to.getTime() - from.getTime()) / 60000));
+}
+function classNowSubject(store, period, dayIdx){
+  const value = store && store.data ? store.data[String(period) + "_" + String(dayIdx)] : "";
+  return typeof value === "string" ? value.trim() : "";
+}
+function hasWeekdayTimetable(store){
+  if(!store || !store.data) return false;
+  for(let day=0; day<5; day++){
+    for(let period=1; period<=9; period++){
+      if(classNowSubject(store, period, day)) return true;
+    }
+  }
+  return false;
+}
+function setClassNowBarVisible(visible){
+  const grid = document.getElementById("topStatusGrid");
+  const bar = document.getElementById("classNowBar");
+  if(!grid || !bar) return;
+  bar.hidden = !visible;
+  grid.classList.toggle("hasNowBar", visible);
+}
+function renderClassNowBar(now){
+  const bar = document.getElementById("classNowBar");
+  if(!bar) return;
+
+  const current = now || new Date();
+  const jsDay = current.getDay();
+  const dayIdx = jsDay - 1;
+  let store;
+  try{ store = ttLoad(); }catch{ store = null; }
+
+  if(dayIdx < 0 || dayIdx > 4 || !hasWeekdayTimetable(store)){
+    setClassNowBarVisible(false);
+    return;
+  }
+
+  setClassNowBarVisible(true);
+  bar.classList.remove("is-live");
+
+  const eyebrow = document.getElementById("classNowEyebrow");
+  const title = document.getElementById("classNowTitle");
+  const detail = document.getElementById("classNowDetail");
+  const minutes = document.getElementById("classNowMinutes");
+  const unit = document.getElementById("classNowUnit");
+  const progress = document.getElementById("classNowProgressFill");
+  const dayName = ["월","화","수","목","금"][dayIdx];
+
+  const slots = CLASS_NOW_SCHEDULE.map(function(slot){
+    return Object.assign({}, slot, {
+      startAt:classNowAt(current, slot.start),
+      endAt:classNowAt(current, slot.end)
+    });
+  });
+
+  let active = null;
+  let next = null;
+  for(let i=0; i<slots.length; i++){
+    const slot = slots[i];
+    if(current >= slot.startAt && current < slot.endAt){
+      active = slot;
+      break;
+    }
+    if(current < slot.startAt){
+      next = slot;
+      break;
+    }
+  }
+
+  if(active){
+    const left = classNowMinutesLeft(current, active.endAt);
+    const total = Math.max(1, (active.endAt - active.startAt) / 60000);
+    const elapsed = Math.max(0, (current - active.startAt) / 60000);
+    const percent = Math.min(100, Math.max(0, elapsed / total * 100));
+    bar.classList.add("is-live");
+    if(active.type === "lunch"){
+      eyebrow.lastElementChild.textContent = dayName + "요일 · 점심시간";
+      title.textContent = "점심 식사";
+      detail.textContent = "14:00까지";
+    }else{
+      const subject = classNowSubject(store, active.period, dayIdx);
+      eyebrow.lastElementChild.textContent = dayName + "요일 · " + active.period + "교시 수업 중";
+      title.textContent = subject || active.period + "교시";
+      detail.textContent = active.end + " 종료";
+    }
+    minutes.textContent = String(left);
+    unit.textContent = "분 남음";
+    progress.style.width = percent.toFixed(1) + "%";
+    return;
+  }
+
+  if(next){
+    const left = classNowMinutesLeft(current, next.startAt);
+    if(next.type === "lunch"){
+      eyebrow.lastElementChild.textContent = dayName + "요일 · 다음 일정";
+      title.textContent = "점심시간";
+      detail.textContent = "13:00 시작";
+    }else{
+      const subject = classNowSubject(store, next.period, dayIdx);
+      eyebrow.lastElementChild.textContent = dayName + "요일 · 다음 " + next.period + "교시";
+      title.textContent = subject || next.period + "교시";
+      detail.textContent = next.start + " 시작";
+    }
+    minutes.textContent = String(left);
+    unit.textContent = "분 후";
+    progress.style.width = "0%";
+    return;
+  }
+
+  eyebrow.lastElementChild.textContent = dayName + "요일 · 오늘 일정";
+  title.textContent = "오늘 수업이 끝났어요";
+  detail.textContent = "내일 시간표도 미리 확인해 보세요.";
+  minutes.textContent = "완료";
+  unit.textContent = "";
+  progress.style.width = "100%";
+}
+function initClassNowBar(){
+  renderClassNowBar(new Date());
+  window.setInterval(function(){ renderClassNowBar(new Date()); }, 30000);
+  window.addEventListener("storage", function(event){
+    if(event.key === TT_KEY) renderClassNowBar(new Date());
+  });
+  document.addEventListener("input", function(event){
+    if(event.target && event.target.matches("#ttTableWrap .ttCellInput, #ttPeriods")){
+      window.setTimeout(function(){ renderClassNowBar(new Date()); }, 0);
+    }
+  });
+  document.addEventListener("click", function(event){
+    const control = event.target.closest("[onclick*='ttRenderTable'], [onclick*='ttReset']");
+    if(control) window.setTimeout(function(){ renderClassNowBar(new Date()); }, 0);
+  });
 }
 
 function installRipple(){
@@ -4086,6 +4397,7 @@ document.addEventListener("click", function(e){
 window.addEventListener("load",()=>{
   installRipple();
   renderNoticeBanner();
+  initClassNowBar();
   renderFullScreenNotice();
   initWidgetSelector();
   initGlobalSearch();
