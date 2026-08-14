@@ -2116,10 +2116,10 @@ html[data-shop-maze="space"] .mazeBoard{background:#020617}html[data-shop-maze="
 html[data-shop-maze="ice"] .mazeBoard{background:#0e7490}html[data-shop-maze="ice"] .mazeCell{background:#ecfeff}html[data-shop-maze="ice"] .mazeCell.wall{background:#155e75}
 html[data-shop-maze="school"] .mazeBoard{background:#7c2d12}html[data-shop-maze="school"] .mazeCell{background:#fef3c7}html[data-shop-maze="school"] .mazeCell.wall{background:#92400e}
 .mazeCell.fog:not(.player){background:#07111f!important}.mazeCell.goal.fog{box-shadow:none}
-html[data-shop-season="spring"]{--bg:#fff1f7;--bg2:#fdf2f8;--pri3:#f9a8d4}
-html[data-shop-season="summer"]{--bg:#ecfeff;--bg2:#e0f2fe;--pri3:#38bdf8}
-html[data-shop-season="exam"]{--bg:#fffbeb;--bg2:#fef3c7;--pri3:#f59e0b}
-html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri3:#ef4444}
+html[data-shop-season="spring"]{--bg:#fff1f7;--bg2:#fdf2f8;--pri:#be185d;--pri2:#db2777;--pri3:#f9a8d4;--line2:#fbcfe8}
+html[data-shop-season="summer"]{--bg:#ecfeff;--bg2:#e0f2fe;--pri:#0369a1;--pri2:#0284c7;--pri3:#38bdf8;--line2:#bae6fd}
+html[data-shop-season="exam"]{--bg:#fffbeb;--bg2:#fef3c7;--pri:#b45309;--pri2:#d97706;--pri3:#f59e0b;--line2:#fde68a}
+html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pri2:#15803d;--pri3:#ef4444;--line2:#bbf7d0}
 @media(max-width:620px){.gameShopItems{grid-template-columns:1fr}.gameShopCard{padding:13px}.shopQuickOnway{width:42px;min-width:42px;padding:9px!important;font-size:0}.shopQuickOnway:before{content:"온";font-size:12px}}
 
 
@@ -3286,6 +3286,9 @@ function buyOrApplyOpoongColor(id){
   }
   opoongRewards.color=id;
   saveOpoongRewards();
+  if(typeof opoongShop!=="undefined"){
+    opoongShop=loadOpoongShop();opoongShop.equipped.custom=false;opoongShop.equipped.season="";saveOpoongShop();applyOpoongShop();
+  }
   renderOpoongColorShop();
   gameRewardMessage(item.name+" 색상을 적용했어요.");
 }
@@ -3316,6 +3319,7 @@ function saveOpoongShop(){try{localStorage.setItem(OPOONG_SHOP_KEY,JSON.stringif
 function shopOwns(id){return opoongShop.owned.includes(id);}
 function applyOpoongShop(){
   opoongShop=loadOpoongShop();
+  if(opoongShop.equipped.season&&opoongShop.equipped.custom){opoongShop.equipped.custom=false;saveOpoongShop();}
   ["completion","snake","mine","maze","timetable","nowbar","focus","season"].forEach(function(id){
     const value=opoongShop.equipped[id];if(value)document.documentElement.dataset["shop"+id.charAt(0).toUpperCase()+id.slice(1)]=value;
     else delete document.documentElement.dataset["shop"+id.charAt(0).toUpperCase()+id.slice(1)];
@@ -3338,12 +3342,15 @@ function buyOpoongShopProduct(id){
   const item=OPOONG_SHOP_PRODUCTS.find(function(x){return x.id===id;});if(!item||item.special==="rename"||shopOwns(id))return;
   if(!shopSpend(item.price,item.name))return;
   opoongShop.owned.push(id);if(item.variants&&item.variants[0])opoongShop.equipped[id]=item.variants[0][0];
-  if(id==="custom")opoongShop.equipped.custom=true;
+  if(id==="custom"){opoongShop.equipped.custom=true;opoongShop.equipped.season="";}
+  if(id==="season"){opoongShop.equipped.custom=false;opoongRewards=loadOpoongRewards();opoongRewards.color="blue";saveOpoongRewards();}
   saveOpoongShop();applyOpoongShop();renderOpoongColorShop();gameRewardMessage(item.name+" 팩을 구매했어요.");
 }
 function equipOpoongShopVariant(id,value){
   const item=OPOONG_SHOP_PRODUCTS.find(function(x){return x.id===id;});if(!item||!shopOwns(id)||!item.variants||!item.variants.some(function(v){return v[0]===value;}))return;
-  opoongShop.equipped[id]=value;saveOpoongShop();applyOpoongShop();renderOpoongShopCatalog();
+  opoongShop.equipped[id]=value;
+  if(id==="season"){opoongShop.equipped.custom=false;opoongRewards=loadOpoongRewards();opoongRewards.color="blue";saveOpoongRewards();}
+  saveOpoongShop();applyOpoongColor();applyOpoongShop();renderOpoongShopCatalog();
   if(id==="snake")drawSnakeGame();if(id==="mine")renderMines();if(id==="maze")renderMaze();
   gameRewardMessage(item.name+" · "+item.variants.find(function(v){return v[0]===value;})[1]+" 적용");
 }
@@ -3356,7 +3363,18 @@ function purchaseOpoongNameChange(){
 }
 function setOpoongCustomColor(value){
   if(!shopOwns("custom"))return;const color=String(value||"");if(!/^#[0-9a-f]{6}$/i.test(color))return;
-  opoongShop.customColor=color;opoongShop.equipped.custom=true;saveOpoongShop();applyOpoongShop();renderOpoongShopCatalog();gameRewardMessage("자유 색상을 적용했어요.");
+  opoongShop.customColor=color;opoongShop.equipped.custom=true;opoongShop.equipped.season="";
+  opoongRewards=loadOpoongRewards();opoongRewards.color="blue";saveOpoongRewards();
+  saveOpoongShop();applyOpoongColor();applyOpoongShop();renderOpoongShopCatalog();gameRewardMessage("자유 색상을 적용했어요.");
+}
+function disableOpoongShopTheme(id){
+  if(!shopOwns(id))return;
+  if(id==="custom")opoongShop.equipped.custom=false;
+  else opoongShop.equipped[id]="";
+  saveOpoongShop();applyOpoongColor();applyOpoongShop();renderOpoongShopCatalog();
+  if(id==="snake")drawSnakeGame();if(id==="mine")renderMines();if(id==="maze")renderMaze();
+  const item=OPOONG_SHOP_PRODUCTS.find(function(x){return x.id===id;});
+  gameRewardMessage((item?item.name:"테마")+" 사용을 껐어요.");
 }
 function renderOpoongShopCatalog(){
   opoongShop=loadOpoongShop();applyOpoongShop();const box=document.getElementById("gameShopItems");if(!box)return;
@@ -3364,10 +3382,10 @@ function renderOpoongShopCatalog(){
     const owned=shopOwns(item.id),special=item.special||"",active=opoongShop.equipped[item.id]||"";
     let controls="";
     if(item.variants){
-      controls='<div class="gameShopVariants">'+item.variants.map(function(v){return'<button class="smallbtn '+(active===v[0]?"primary":"ghost")+'" type="button" '+(!owned||active===v[0]?"disabled":"")+' onclick="equipOpoongShopVariant(\''+item.id+'\',\''+v[0]+'\')">'+v[1]+'</button>';}).join("")+'</div>';
+      controls='<div class="gameShopVariants"><button class="smallbtn '+(!active?"primary":"ghost")+'" type="button" '+(!owned||!active?"disabled":"")+' onclick="disableOpoongShopTheme(\''+item.id+'\')">사용 안 함</button>'+item.variants.map(function(v){return'<button class="smallbtn '+(active===v[0]?"primary":"ghost")+'" type="button" '+(!owned||active===v[0]?"disabled":"")+' onclick="equipOpoongShopVariant(\''+item.id+'\',\''+v[0]+'\')">'+v[1]+'</button>';}).join("")+'</div>';
     }
     if(special==="rename")controls+='<button class="smallbtn primary gameShopAction" type="button" onclick="purchaseOpoongNameChange()">300 P로 이름 변경</button>';
-    else if(special==="custom"&&owned)controls+='<div class="gameShopCustom"><input id="opoongCustomColor" type="color" value="'+opoongShop.customColor+'" aria-label="O.Poong 자유 색상"><button class="smallbtn primary gameShopAction" type="button" onclick="setOpoongCustomColor(document.getElementById(\'opoongCustomColor\').value)">색상 적용</button></div>';
+    else if(special==="custom"&&owned)controls+='<div class="gameShopCustom"><input id="opoongCustomColor" type="color" value="'+opoongShop.customColor+'" aria-label="O.Poong 자유 색상"><button class="smallbtn primary gameShopAction" type="button" onclick="setOpoongCustomColor(document.getElementById(\'opoongCustomColor\').value)">색상 적용</button></div><button class="smallbtn ghost gameShopAction" type="button" '+(!opoongShop.equipped.custom?'disabled':'')+' onclick="disableOpoongShopTheme(\'custom\')">자유 색상 사용 안 함</button>';
     else if(!owned)controls+='<button class="smallbtn primary gameShopAction" type="button" onclick="buyOpoongShopProduct(\''+item.id+'\')">'+item.price.toLocaleString("ko-KR")+' P로 팩 구매</button>';
     else if(special==="onway")controls+='<button class="smallbtn ghost gameShopAction" type="button" onclick="openOnway()">바로가기 사용</button>';
     return'<article class="gameShopCard '+(owned?"owned":"")+'"><div class="gameShopCardTop"><span class="gameShopIcon">'+item.icon+'</span><span class="gameShopPrice">'+(special==="rename"?item.price+" P / 1회":owned?"보유 중":item.price.toLocaleString("ko-KR")+" P")+'</span></div><div><h3>'+item.name+'</h3><p>'+item.desc+'</p></div>'+controls+'</article>';
@@ -3387,7 +3405,7 @@ function getOpoongMineSymbols(){
   return{mine:"✹",flag:"⚑"};
 }
 function playFocusCompletionEffect(){
-  if(!shopOwns("completion"))return;const type=opoongShop.equipped.completion||"star",symbols=type==="firework"?["✦","✧","💥"]:type==="confetti"?["▰","◆","●"]:["★","✦","☆"];
+  if(!shopOwns("completion")||!opoongShop.equipped.completion)return;const type=opoongShop.equipped.completion,symbols=type==="firework"?["✦","✧","💥"]:type==="confetti"?["▰","◆","●"]:["★","✦","☆"];
   const layer=document.createElement("div");layer.className="focusCelebration";
   for(let i=0;i<28;i++){const p=document.createElement("i");p.textContent=symbols[i%symbols.length];p.style.setProperty("--fx",(Math.cos(i)*60+(Math.random()-.5)*window.innerWidth*.85)+"px");p.style.setProperty("--fy",(Math.sin(i)*70+(Math.random()-.55)*window.innerHeight*.8)+"px");p.style.setProperty("--fr",(Math.random()*720-360)+"deg");p.style.color=["#facc15","#38bdf8","#f472b6","#4ade80"][i%4];p.style.animationDelay=(Math.random()*.25)+"s";layer.appendChild(p);}
   document.body.appendChild(layer);setTimeout(function(){layer.remove();},2300);
