@@ -2122,6 +2122,17 @@ html[data-shop-season="exam"]{--bg:#fffbeb;--bg2:#fef3c7;--pri3:#f59e0b}
 html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri3:#ef4444}
 @media(max-width:620px){.gameShopItems{grid-template-columns:1fr}.gameShopCard{padding:13px}.shopQuickOnway{width:42px;min-width:42px;padding:9px!important;font-size:0}.shopQuickOnway:before{content:"온";font-size:12px}}
 
+
+/* hidden developer point mode */
+#adminLogoTrigger{cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:manipulation}
+.adminPointBack[hidden]{display:none!important}.adminPointBack{position:fixed;z-index:50000;inset:0;display:grid;place-items:center;padding:16px;background:rgba(2,6,23,.72);backdrop-filter:blur(10px)}
+.adminPointModal{width:min(520px,100%);overflow:hidden;border:1px solid var(--line);border-radius:28px;background:var(--card);box-shadow:0 28px 90px rgba(0,0,0,.4)}
+.adminPointHead{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:17px 18px;border-bottom:1px solid var(--line)}.adminPointBody{padding:18px}
+.adminPointBalance{display:flex;align-items:center;justify-content:space-between;padding:15px;border-radius:18px;background:color-mix(in srgb,var(--pri) 8%,var(--card))}.adminPointBalance span{color:var(--muted);font-size:12px;font-weight:900}.adminPointBalance strong{color:var(--pri);font-size:25px}
+.adminPointInput{display:grid;gap:7px;margin-top:14px}.adminPointInput label{font-size:12px;font-weight:950}.adminPointInput input{width:100%;font-size:18px;font-weight:950}
+.adminPointActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}.adminPointActions button{min-height:44px}.adminPointDanger{color:#fff!important;border-color:#dc2626!important;background:#dc2626!important}.adminPointNote{margin:12px 2px 0;color:var(--muted);font-size:11px;font-weight:800;line-height:1.6}
+@media(max-width:420px){.adminPointActions{grid-template-columns:1fr}}
+
 </style>
 </head>
 
@@ -2155,7 +2166,7 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri3:#ef4444}
 <div class="wrap">
   <header class="topbar" aria-label="상단 메뉴">
     <div class="brand">
-      <div class="logoWrap" aria-hidden="true">
+      <div id="adminLogoTrigger" class="logoWrap" role="button" tabindex="0" aria-label="O.Poong 홈 로고">
         <img class="logo" src="./android-launchericon-512-512.png" data-logo-fallbacks="./logo.png|./O.poong.png|./O.Poong.png|./opoong.png" alt="O.Poong 로고" onerror="opoongLogoFallback(this)">
       </div>
       <div class="brandText">
@@ -2776,6 +2787,23 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri3:#ef4444}
       <button id="setupDoneBtn" class="btn ok" type="button" onclick="finishFirstSetup()" style="display:none">완료</button>
     </div>
   </div>
+</div>
+
+<div id="adminPointBack" class="adminPointBack" hidden role="dialog" aria-modal="true" aria-labelledby="adminPointTitle">
+ <section class="adminPointModal">
+  <div class="adminPointHead"><b id="adminPointTitle">O.Poong 개발자 포인트</b><button class="btn ghost" type="button" onclick="closeAdminPointMode()">닫기</button></div>
+  <div class="adminPointBody">
+   <div class="adminPointBalance"><span>현재 보유 포인트</span><strong id="adminPointBalance">0 P</strong></div>
+   <div class="adminPointInput"><label for="adminPointAmount">변경할 포인트</label><input id="adminPointAmount" type="number" inputmode="numeric" min="0" max="9999999" step="1" value="100"></div>
+   <div class="adminPointActions">
+    <button class="smallbtn primary" type="button" onclick="adminAdjustPoints(1)">입력값만큼 충전</button>
+    <button class="smallbtn ghost" type="button" onclick="adminAdjustPoints(-1)">입력값만큼 차감</button>
+    <button class="smallbtn ghost" type="button" onclick="adminSetPoints()">입력값으로 설정</button>
+    <button class="smallbtn adminPointDanger" type="button" onclick="adminClearPoints()">모두 0P로 초기화</button>
+   </div>
+   <p class="adminPointNote">포인트만 변경됩니다. 구매 상품·시간표·집중 기록·게임 기록은 유지됩니다.</p>
+  </div>
+ </section>
 </div>
 
 <script>
@@ -5646,6 +5674,7 @@ window.addEventListener("load",()=>{
   initWidgetSelector();
   initGlobalSearch();
   initOpoongGame();
+  initAdminPointMode();
   initFocusTracker();
   const savedTheme = localStorage.getItem("opoong_theme");
   if(savedTheme === "dark" || savedTheme === "light") applyTheme(savedTheme);
@@ -5658,6 +5687,27 @@ window.addEventListener("load",()=>{
     navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
   }
 });
+
+/* home logo: 20 taps -> developer points */
+let adminLogoTapCount=0,adminLogoTapTimer=0;
+function resetAdminLogoTaps(){adminLogoTapCount=0;clearTimeout(adminLogoTapTimer);adminLogoTapTimer=0;}
+function handleAdminLogoTap(){
+ const home=document.getElementById("view-home");if(!home||!home.classList.contains("active")){resetAdminLogoTaps();return;}
+ adminLogoTapCount++;clearTimeout(adminLogoTapTimer);adminLogoTapTimer=setTimeout(resetAdminLogoTaps,4500);
+ if(adminLogoTapCount<20)return;resetAdminLogoTaps();
+ const code=prompt("관리자 비밀번호를 입력하세요.");if(code===null)return;
+ if(String(code).trim()!=="0715"){alert("관리자 비밀번호가 올바르지 않습니다.");return;}openAdminPointMode();
+}
+function readAdminPointAmount(){const input=document.getElementById("adminPointAmount"),value=Math.floor(Number(input&&input.value));if(!Number.isFinite(value)||value<0||value>9999999){alert("0부터 9,999,999 사이의 정수를 입력하세요.");if(input)input.focus();return null;}return value;}
+function refreshAdminPointMode(){opoongRewards=loadOpoongRewards();const b=document.getElementById("adminPointBalance");if(b)b.textContent=opoongRewards.points.toLocaleString("ko-KR")+" P";renderOpoongColorShop();if(typeof updateFocusWallet==="function")updateFocusWallet();}
+function openAdminPointMode(){const back=document.getElementById("adminPointBack");if(!back)return;back.hidden=false;refreshAdminPointMode();const input=document.getElementById("adminPointAmount");if(input){input.value="100";setTimeout(function(){input.focus();input.select();},0);}}
+function closeAdminPointMode(){const back=document.getElementById("adminPointBack");if(back)back.hidden=true;}
+function adminCommitPoints(value,message){opoongRewards=loadOpoongRewards();opoongRewards.points=Math.max(0,Math.min(9999999,Math.floor(Number(value)||0)));saveOpoongRewards();refreshAdminPointMode();gameRewardMessage(message);}
+function adminAdjustPoints(direction){const amount=readAdminPointAmount();if(amount===null)return;adminCommitPoints(loadOpoongRewards().points+(direction>0?amount:-amount),direction>0?"관리자 충전 완료":"관리자 차감 완료");}
+function adminSetPoints(){const amount=readAdminPointAmount();if(amount!==null)adminCommitPoints(amount,"관리자 설정 완료");}
+function adminClearPoints(){if(confirm("포인트를 모두 0P로 초기화할까요? 구매 상품과 기록은 유지됩니다."))adminCommitPoints(0,"관리자 초기화 완료");}
+function initAdminPointMode(){const logo=document.getElementById("adminLogoTrigger");if(!logo)return;logo.addEventListener("click",handleAdminLogoTap);logo.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();handleAdminLogoTap();}});const back=document.getElementById("adminPointBack");if(back)back.addEventListener("click",function(e){if(e.target===back)closeAdminPointMode();});}
+
 </script>
 </body>
 </html>
