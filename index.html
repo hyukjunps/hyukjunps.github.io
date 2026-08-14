@@ -1811,7 +1811,9 @@ html[data-opoong-color="pink"]{--pri:#be185d;--pri2:#db2777;--pri3:#f9a8d4;--lin
 .tttModeSwitch{display:flex;justify-content:center;gap:8px;margin:0 0 11px}.tttModeSwitch .smallbtn[aria-pressed="true"]{color:#fff;border-color:var(--pri);background:var(--pri)}.tttCell.ttt-selected{outline:4px solid color-mix(in srgb,var(--pri) 38%,transparent);border-color:var(--pri);transform:translateY(-3px)}
 .stackHud{grid-template-columns:repeat(3,minmax(0,1fr))}.stackCanvasWrap{max-width:480px;margin:0 auto;background:#dff4ff}.stackCanvasWrap #stackCanvas{display:block;width:100%;height:auto;aspect-ratio:480/520;touch-action:manipulation;outline:none}
 .waterBoard{display:grid;grid-template-columns:repeat(3,76px);justify-content:center;gap:18px 24px;min-height:410px;padding:24px 12px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(155deg,#24183a,#36245a)}.waterTube{position:relative;width:76px;height:170px;padding:12px 10px 9px;border:0;background:transparent;cursor:pointer;transition:.16s}.waterTube:before{content:"";position:absolute;inset:10px 10px 7px;border:4px solid rgba(255,255,255,.78);border-top:0;border-radius:0 0 22px 22px;box-shadow:inset 0 0 18px rgba(255,255,255,.12)}.waterTube:after{content:"";position:absolute;left:5px;right:5px;top:6px;height:9px;border:4px solid rgba(255,255,255,.84);border-radius:999px}.waterTube.selected{transform:translateY(-10px);filter:drop-shadow(0 9px 8px rgba(250,204,21,.28))}.waterLayers{position:absolute;z-index:1;left:14px;right:14px;bottom:11px;display:flex;flex-direction:column-reverse;overflow:hidden;height:137px;border-radius:0 0 17px 17px}.waterLayer{height:34px;flex:0 0 34px;background:var(--liquid);box-shadow:inset 0 5px rgba(255,255,255,.18)}.waterTubeLabel{position:absolute;z-index:2;left:0;right:0;bottom:-11px;color:rgba(255,255,255,.7);font-size:10px;font-weight:900}
-.colorBlockArea{display:grid;grid-template-columns:minmax(260px,480px) minmax(180px,260px);align-items:start;justify-content:center;gap:14px}.colorBlockBoard{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;padding:8px;border:1px solid var(--line);border-radius:19px;background:#202650}.colorBlockCell{aspect-ratio:1;min-width:0;padding:0;border:0;border-radius:7px;background:rgba(255,255,255,.075);cursor:pointer}.colorBlockCell.filled{background:var(--block);box-shadow:inset 0 4px rgba(255,255,255,.24),0 3px 5px rgba(15,23,42,.2)}.colorPieceTray{display:grid;gap:9px}.colorPiece{display:grid;place-content:center;min-height:102px;padding:10px;border:1px solid var(--line);border-radius:17px;background:var(--card2);cursor:pointer}.colorPiece.selected{border-color:var(--pri);outline:3px solid color-mix(in srgb,var(--pri) 20%,transparent)}.colorPiece.used{opacity:.35;cursor:default}.colorPieceGrid{display:grid;gap:4px}.colorPieceGrid i{width:24px;height:24px;border-radius:5px;background:transparent}.colorPieceGrid i.on{background:var(--block);box-shadow:inset 0 3px rgba(255,255,255,.25)}
+.colorBlockArea{display:grid;grid-template-columns:minmax(260px,480px) minmax(180px,260px);align-items:start;justify-content:center;gap:14px}.colorBlockBoard{display:grid;grid-template-columns:repeat(8,1fr);gap:4px;padding:8px;border:1px solid var(--line);border-radius:19px;background:#202650}.colorBlockCell{aspect-ratio:1;min-width:0;padding:0;border:0;border-radius:7px;background:rgba(255,255,255,.075);cursor:pointer;transition:.1s}.colorBlockCell.filled{background:var(--block);box-shadow:inset 0 4px rgba(255,255,255,.24),0 3px 5px rgba(15,23,42,.2)}.colorBlockCell.drop-valid{outline:3px solid #86efac;background:rgba(34,197,94,.42);transform:scale(.93)}.colorBlockCell.drop-invalid{outline:3px solid #fca5a5;background:rgba(239,68,68,.38)}
+.colorPieceTray{display:grid;gap:9px}.colorPiece{display:grid;place-content:center;min-height:102px;padding:10px;border:1px solid var(--line);border-radius:17px;background:var(--card2);cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}.colorPiece:active{cursor:grabbing}.colorPiece.selected{border-color:var(--pri);outline:3px solid color-mix(in srgb,var(--pri) 20%,transparent)}.colorPiece.used{opacity:.35;cursor:default}.colorPieceGrid{display:grid;gap:4px}.colorPieceGrid i{width:24px;height:24px;border-radius:5px;background:transparent}.colorPieceGrid i.on{background:var(--block);box-shadow:inset 0 3px rgba(255,255,255,.25)}
+.colorDragGhost{position:fixed;z-index:9999;left:0;top:0;padding:9px;border-radius:15px;background:rgba(255,255,255,.88);box-shadow:0 14px 32px rgba(15,23,42,.28);pointer-events:none;transform:translate(-50%,-120%) scale(1.08);opacity:.96}.colorDragGhost .colorPieceGrid i{width:27px;height:27px}
 .gameColorShop{max-width:920px;margin:14px auto 0;padding:15px;border:1px solid var(--line);border-radius:24px;background:color-mix(in srgb,var(--card) 95%,transparent);box-shadow:var(--shadow2)}
 .gameColorShopHead{display:flex;justify-content:space-between;gap:10px}.gameColorShopHead b{font-size:17px}.gameColorShopHead p{margin:4px 0 0;color:var(--muted);font-size:11.5px;font-weight:800}
 .gameColorItems{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px}.gameColorItem{padding:10px;border:1px solid var(--line);border-radius:17px;background:var(--card2)}.gameColorItem.active{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--card))}
@@ -1819,6 +1821,19 @@ html[data-opoong-color="pink"]{--pri:#be185d;--pri2:#db2777;--pri3:#f9a8d4;--lin
 @media(max-width:900px){.gameCardGrid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media(max-width:760px){.gameColorItems{grid-template-columns:repeat(3,minmax(0,1fr))}.colorBlockArea{grid-template-columns:1fr}.colorPieceTray{grid-template-columns:repeat(3,1fr)}.colorPiece{min-height:86px}.colorPieceGrid i{width:19px;height:19px}}
 @media(max-width:620px){#view-game{padding:12px}.gameWallet{width:100%;justify-content:space-between}.gameLibraryLead{align-items:start;flex-direction:column;gap:3px}.gameCardGrid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}.gameCard{border-radius:19px}.gameCover{border-radius:14px}.gameHudFour{grid-template-columns:repeat(2,minmax(0,1fr))}.gameHud>div{padding:8px}.stackHud{grid-template-columns:repeat(3,minmax(0,1fr))}.stackHud strong{font-size:15px}.gameCanvasWrap{border-radius:17px}.gameControls .muted{width:100%;margin-left:0}.tttBoard{grid-template-columns:repeat(3,minmax(72px,96px));min-height:330px;padding:10px}.tttCell{font-size:38px}.waterBoard{grid-template-columns:repeat(3,66px);gap:14px 12px;min-height:380px;padding:21px 5px}.waterTube{width:66px;height:155px}.waterLayers{height:122px}.waterLayer{height:30px;flex-basis:30px}.gameColorItems{grid-template-columns:repeat(2,minmax(0,1fr))}}
+
+
+/* ===== O.Poong Focus tracker ===== */
+.focusHeaderWallet{display:flex;align-items:center;gap:9px;padding:10px 14px;border:1px solid color-mix(in srgb,var(--pri) 30%,var(--line));border-radius:999px;background:color-mix(in srgb,var(--pri) 9%,var(--card))}.focusHeaderWallet span{color:var(--muted);font-size:11px;font-weight:900}.focusHeaderWallet strong{color:var(--pri);font-size:18px}
+.focusLayout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(300px,.95fr);gap:14px}.focusTimerCard,.focusSideCard{padding:17px;border:1px solid var(--line);border-radius:26px;background:color-mix(in srgb,var(--card) 95%,transparent);box-shadow:var(--shadow2)}
+.focusSetup{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:10px;align-items:center}.focusSetup input{width:100%}.focusGoalButtons{display:flex;gap:6px;flex-wrap:wrap}.focusGoalButtons .smallbtn{min-height:42px;padding:9px 11px}.focusGoalButtons .smallbtn[aria-pressed="true"]{color:#fff;background:var(--pri)}
+.focusRing{--focus-progress:0deg;position:relative;display:grid;place-items:center;width:min(300px,82vw);aspect-ratio:1;margin:20px auto;border-radius:50%;background:conic-gradient(var(--pri) var(--focus-progress),color-mix(in srgb,var(--pri) 10%,var(--line)) 0);box-shadow:0 18px 38px color-mix(in srgb,var(--pri) 14%,transparent)}.focusRing:before{content:"";position:absolute;inset:18px;border-radius:50%;background:var(--card);box-shadow:inset 0 0 0 1px var(--line)}.focusRingInner{position:relative;z-index:1;text-align:center}.focusRingInner span{display:block;color:var(--muted);font-size:12px;font-weight:900}.focusRingInner strong{display:block;margin:5px 0;color:var(--text);font-size:47px;letter-spacing:-2px}.focusRingInner b{color:var(--pri);font-size:12px}
+.focusActions{display:flex;justify-content:center;gap:8px;flex-wrap:wrap}.focusState{text-align:center;margin:12px 0 0;color:var(--muted);font-size:12px;font-weight:850;min-height:18px}.focusMessage{min-height:20px;margin-top:9px;text-align:center;color:var(--pri);font-size:12px;font-weight:950}
+.focusStats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.focusStat{padding:13px;border:1px solid var(--line);border-radius:18px;background:var(--card2)}.focusStat span{display:block;color:var(--muted);font-size:10.5px;font-weight:900}.focusStat strong{display:block;margin-top:5px;font-size:20px}
+.focusWeekTitle{display:flex;align-items:center;justify-content:space-between;margin:18px 2px 10px}.focusWeekTitle b{font-size:15px}.focusWeekTitle span{color:var(--muted);font-size:10.5px;font-weight:850}.focusWeek{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));align-items:end;gap:6px;height:180px;padding:14px 8px 8px;border:1px solid var(--line);border-radius:20px;background:var(--card2)}.focusDay{display:grid;grid-template-rows:1fr auto auto;align-items:end;gap:5px;height:100%;text-align:center}.focusDayBar{display:block;width:75%;min-height:5px;margin:0 auto;border-radius:999px 999px 5px 5px;background:linear-gradient(var(--pri2),var(--pri));box-shadow:0 5px 10px color-mix(in srgb,var(--pri) 20%,transparent)}.focusDay b{font-size:9px}.focusDay span{color:var(--muted);font-size:9px;font-weight:900}
+.focusRule{margin-top:14px;padding:14px;border:1px solid color-mix(in srgb,var(--pri) 25%,var(--line));border-radius:22px;background:color-mix(in srgb,var(--pri) 7%,var(--card));color:var(--muted);font-size:12px;font-weight:800;line-height:1.75}.focusRule b{color:var(--text)}
+@media(max-width:820px){.focusLayout{grid-template-columns:1fr}.focusSetup{grid-template-columns:1fr}.focusGoalButtons{justify-content:center}}
+@media(max-width:520px){#view-focus{padding:12px}.focusHeaderWallet{width:100%;justify-content:space-between}.focusTimerCard,.focusSideCard{padding:13px;border-radius:22px}.focusRing{width:min(260px,78vw)}.focusRingInner strong{font-size:40px}.focusWeek{height:155px;padding-left:5px;padding-right:5px}.focusDay b{font-size:8px}}
 
 /* ===== O.Poong D-DAY widget ===== */
 .homeDashboardWidgets .widget[data-home-widget="dday"]{grid-column:1 / -1;min-height:190px}
@@ -2142,6 +2157,7 @@ body.full-notice-locked{overflow:hidden}
         <a class="navBtn" data-view="meal" href="/?page=meal" onclick="event.preventDefault(); go('meal'); setTodayAndLoad();"><span class="left"><span class="icon">식</span><span><span class="title">급식</span><br><span class="hint">일별/월별</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="schedule" href="/?page=schedule" onclick="event.preventDefault(); go('schedule'); scheduleLoadMonth();"><span class="left"><span class="icon">일</span><span><span class="title">학사일정</span><br><span class="hint">월별 달력</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="timetable" href="/?page=timetable" onclick="event.preventDefault(); go('timetable'); ttRenderTable();"><span class="left"><span class="icon">표</span><span><span class="title">시간표</span><br><span class="hint">로컬 저장</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="focus" href="/?page=focus" onclick="event.preventDefault(); go('focus')"><span class="left"><span class="icon">집</span><span><span class="title">집중 기록</span><br><span class="hint">공부 타이머</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="game" href="/?page=game" onclick="event.preventDefault(); go('game')"><span class="left"><span class="icon">겜</span><span><span class="title">미니게임</span><br><span class="hint">게임 5종</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="onway" href="/?page=onway" onclick="event.preventDefault(); go('onway')"><span class="left"><span class="icon">온</span><span><span class="title">온웨이에듀</span><br><span class="hint">외부 링크</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="school" href="/?page=school" onclick="event.preventDefault(); go('school')"><span class="left"><span class="icon">학</span><span><span class="title">학교 홈페이지</span><br><span class="hint">공식 사이트</span></span></span><span>›</span></a>
@@ -2311,6 +2327,63 @@ body.full-notice-locked{overflow:hidden}
         <div id="ttTableWrap" class="ttWrap"></div>
       </section>
 
+
+      <section class="section view" id="view-focus">
+        <div class="sectionHeader">
+          <div>
+            <h2>집중 기록</h2>
+            <p>공부 시간을 기록하고 집중한 만큼 O.Poong 포인트를 모아보세요.</p>
+          </div>
+          <div class="focusHeaderWallet"><span>보유 포인트</span><strong id="focusPoints">0 P</strong></div>
+        </div>
+
+        <div class="focusLayout">
+          <div class="focusTimerCard">
+            <div class="focusSetup">
+              <input id="focusSubject" type="text" maxlength="24" placeholder="공부할 과목 또는 활동" aria-label="집중 과목" />
+              <div class="focusGoalButtons" aria-label="목표 시간">
+                <button class="smallbtn ghost" type="button" data-focus-goal="25" aria-pressed="true" onclick="setFocusGoal(25)">25분</button>
+                <button class="smallbtn ghost" type="button" data-focus-goal="40" aria-pressed="false" onclick="setFocusGoal(40)">40분</button>
+                <button class="smallbtn ghost" type="button" data-focus-goal="50" aria-pressed="false" onclick="setFocusGoal(50)">50분</button>
+                <button class="smallbtn ghost" type="button" data-focus-goal="60" aria-pressed="false" onclick="setFocusGoal(60)">60분</button>
+              </div>
+            </div>
+
+            <div id="focusRing" class="focusRing">
+              <div class="focusRingInner">
+                <span id="focusSubjectLabel">집중 준비</span>
+                <strong id="focusTime">00:00:00</strong>
+                <b id="focusGoalLabel">목표 25분</b>
+              </div>
+            </div>
+
+            <div class="focusActions">
+              <button id="focusStartBtn" class="bigBtn" type="button" onclick="startOrResumeFocus()">집중 시작</button>
+              <button id="focusPauseBtn" class="btn ghost" type="button" onclick="pauseFocusTimer()" disabled>일시정지</button>
+              <button id="focusFinishBtn" class="btn ghost" type="button" onclick="finishFocusSession()" disabled>기록 종료</button>
+            </div>
+            <p id="focusState" class="focusState">과목과 목표 시간을 정한 뒤 시작하세요.</p>
+            <div id="focusMessage" class="focusMessage" aria-live="polite"></div>
+          </div>
+
+          <aside class="focusSideCard">
+            <div class="focusStats">
+              <div class="focusStat"><span>오늘 공부</span><strong id="focusTodayTime">0분</strong></div>
+              <div class="focusStat"><span>완료 세션</span><strong id="focusTodaySessions">0회</strong></div>
+              <div class="focusStat"><span>획득 포인트</span><strong id="focusTodayEarned">+0 P</strong></div>
+              <div class="focusStat"><span>차감 포인트</span><strong id="focusTodayPenalty">-0 P</strong></div>
+            </div>
+            <div class="focusWeekTitle"><b>최근 7일</b><span>일별 공부 시간</span></div>
+            <div id="focusWeek" class="focusWeek" aria-label="최근 7일 공부 기록"></div>
+          </aside>
+        </div>
+
+        <div class="focusRule">
+          <b>포인트 규칙</b><br>
+          집중 10분마다 +5P가 지급되며 하루 최대 60P까지 받을 수 있어요. 집중 중 O.Poong을 15초 이상 벗어나면 그 시간은 공부 기록에서 제외되고 -2P가 적용됩니다. 한 세션의 최대 차감은 10P예요. 웹앱 특성상 다른 앱의 종류는 알 수 없으며, 화면 끄기도 이탈로 감지될 수 있습니다. 이동 전에 일시정지를 누르면 차감되지 않아요.
+        </div>
+      </section>
+
       <section class="section view" id="view-game">
         <div class="sectionHeader gameSectionHeader">
           <div>
@@ -2385,7 +2458,7 @@ body.full-notice-locked{overflow:hidden}
           <div id="tttBoard" class="tttBoard" aria-label="틱택토 게임판"></div>
           <div class="gameControls">
             <button class="bigBtn" type="button" onclick="resetTicTacToe()">새 게임</button>
-            <span class="muted">이동 모드에서는 X 3개를 놓은 뒤 내 말을 빈칸으로 옮겨요.</span>
+            <span class="muted">이동 모드에서는 X 3개를 놓은 뒤 내 말을 빈칸으로 옮겨요. · AI 난이도 쉬움</span>
           </div>
         </div>
 
@@ -2432,7 +2505,7 @@ body.full-notice-locked{overflow:hidden}
           </div>
           <div class="gameControls">
             <button class="bigBtn" type="button" onclick="newColorBlocksGame()">새 게임</button>
-            <span class="muted">조각을 선택한 뒤 게임판에서 시작 위치를 누르세요.</span>
+            <span class="muted">조각을 게임판으로 끌어 놓으세요. 탭으로 선택한 뒤 칸을 눌러도 돼요.</span>
           </div>
         </div>
 
@@ -3116,6 +3189,8 @@ function renderOpoongColorShop(){
   applyOpoongColor();
   const wallet=document.getElementById("gamePoints");
   if(wallet)wallet.textContent=opoongRewards.points.toLocaleString("ko-KR")+" P";
+  const focusWallet=document.getElementById("focusPoints");
+  if(focusWallet)focusWallet.textContent=opoongRewards.points.toLocaleString("ko-KR")+" P";
   const box=document.getElementById("gameColorItems");
   if(!box)return;
   box.innerHTML=OPOONG_COLORS.map(function(item){
@@ -3401,13 +3476,9 @@ function chooseTttComputerPlacement(){
     return -1;
   }
   let choice=winningMove("O");
-  if(choice<0)choice=winningMove("X");
-  if(choice<0&&tttBoardState[4]==="")choice=4;
-  if(choice<0){
-    const corners=empty.filter(function(index){return[0,2,6,8].includes(index);});
-    const choices=corners.length?corners:empty;
-    choice=choices[Math.floor(Math.random()*choices.length)];
-  }
+  if(choice<0&&Math.random()<.55)choice=winningMove("X");
+  if(choice<0&&tttBoardState[4]===""&&Math.random()<.4)choice=4;
+  if(choice<0)choice=empty[Math.floor(Math.random()*empty.length)];
   return choice;
 }
 function countTttNextWins(mark){
@@ -3439,8 +3510,11 @@ function chooseTttComputerShift(){
   });
   const winning=candidates.find(function(item){return item.wins;});
   if(winning)return winning;
-  candidates.sort(function(a,b){return b.score-a.score;});
-  return candidates[0]||null;
+  if(Math.random()<.32){
+    candidates.sort(function(a,b){return b.score-a.score;});
+    return candidates[0]||null;
+  }
+  return candidates[Math.floor(Math.random()*candidates.length)]||null;
 }
 function finishTttHumanTurn(){
   let line=tttWinningLine("X");
@@ -3646,6 +3720,7 @@ const COLOR_BLOCK_SHAPES=[
   [[0,0],[1,0],[0,1],[1,1]],[[0,0],[0,1],[1,1]],[[0,0],[1,0],[2,0],[1,1]],[[0,0],[1,0],[1,1],[2,1]]
 ];
 let colorBlockBoardState=Array(64).fill(0),colorBlockPieces=[],colorBlockSelected=-1,colorBlockScore=0,colorBlockBest=0,colorBlockGameOver=false,colorBlockRewarded=false;
+let colorBlockDrag=null,colorBlockIgnoreClickUntil=0;
 function loadColorBlockBest(){return Math.max(0,Number(localStorage.getItem(OPOONG_BLOCKS_BEST_KEY)||0));}
 function setColorBlockStatus(text){const box=document.getElementById("colorBlockStatus");if(box)box.textContent=text;}
 function makeColorBlockPieces(){
@@ -3655,6 +3730,7 @@ function makeColorBlockPieces(){
   colorBlockSelected=-1;
 }
 function newColorBlocksGame(){
+  abortColorBlockDrag();
   colorBlockBoardState=Array(64).fill(0);colorBlockScore=0;colorBlockGameOver=false;colorBlockRewarded=false;
   makeColorBlockPieces();setColorBlockStatus("진행 중");renderColorBlocks();
 }
@@ -3672,11 +3748,84 @@ function canPlaceColorPieceAnywhere(piece){
   for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(canPlaceColorPiece(piece,r,c))return true;
   return false;
 }
-function selectColorPiece(index){
+function selectColorPiece(index,force){
+  if(!force&&Date.now()<colorBlockIgnoreClickUntil)return;
   if(colorBlockGameOver||!colorBlockPieces[index]||colorBlockPieces[index].used)return;
   colorBlockSelected=colorBlockSelected===index?-1:index;
   setColorBlockStatus(colorBlockSelected<0?"조각을 선택하세요":"게임판에서 놓을 위치를 선택하세요");
   renderColorBlocks();
+}
+function clearColorBlockDropPreview(){
+  document.querySelectorAll(".colorBlockCell.drop-valid,.colorBlockCell.drop-invalid").forEach(function(cell){cell.classList.remove("drop-valid","drop-invalid");});
+}
+function previewColorBlockDrop(piece,row,col,valid){
+  clearColorBlockDropPreview();
+  piece.shape.forEach(function(p){
+    const r=row+p[1],c=col+p[0];
+    const cell=document.querySelector('.colorBlockCell[data-row="'+r+'"][data-col="'+c+'"]');
+    if(cell)cell.classList.add(valid?"drop-valid":"drop-invalid");
+  });
+}
+function colorBlockDragTarget(clientX,clientY){
+  let cell=document.elementFromPoint(clientX,clientY-58);
+  if(!cell||!cell.closest(".colorBlockCell"))cell=document.elementFromPoint(clientX,clientY);
+  cell=cell&&cell.closest(".colorBlockCell");
+  if(!cell||!cell.closest("#colorBlockBoard"))return null;
+  return {row:Number(cell.dataset.row),col:Number(cell.dataset.col)};
+}
+function moveColorBlockDrag(event){
+  const drag=colorBlockDrag;if(!drag||event.pointerId!==drag.pointerId)return;
+  event.preventDefault();
+  if(Math.hypot(event.clientX-drag.startX,event.clientY-drag.startY)>5)drag.moved=true;
+  drag.ghost.style.left=event.clientX+"px";drag.ghost.style.top=event.clientY+"px";
+  const target=colorBlockDragTarget(event.clientX,event.clientY);
+  drag.target=target;
+  if(target){
+    drag.valid=canPlaceColorPiece(colorBlockPieces[drag.index],target.row,target.col);
+    previewColorBlockDrop(colorBlockPieces[drag.index],target.row,target.col,drag.valid);
+    setColorBlockStatus(drag.valid?"여기에 놓을 수 있어요.":"이 위치에는 놓을 수 없어요.");
+  }else{
+    drag.valid=false;clearColorBlockDropPreview();setColorBlockStatus("조각을 게임판 위로 옮겨보세요.");
+  }
+}
+function endColorBlockDrag(event,cancelled){
+  const drag=colorBlockDrag;if(!drag||event.pointerId!==drag.pointerId)return;
+  event.preventDefault();colorBlockDrag=null;colorBlockIgnoreClickUntil=Date.now()+350;
+  document.removeEventListener("pointermove",moveColorBlockDrag);
+  document.removeEventListener("pointerup",finishColorBlockDrag);
+  document.removeEventListener("pointercancel",cancelColorBlockDrag);
+  clearColorBlockDropPreview();if(drag.ghost)drag.ghost.remove();
+  if(!cancelled&&drag.valid&&drag.target){
+    colorBlockSelected=drag.index;placeColorBlock(drag.target.row,drag.target.col);
+  }else if(!cancelled&&!drag.moved){
+    selectColorPiece(drag.index,true);
+  }else{
+    setColorBlockStatus(cancelled?"드래그를 취소했어요.":"놓을 수 있는 칸 위에서 손을 떼세요.");
+    renderColorBlocks();
+  }
+}
+function finishColorBlockDrag(event){endColorBlockDrag(event,false);}
+function cancelColorBlockDrag(event){endColorBlockDrag(event,true);}
+function abortColorBlockDrag(){
+  const drag=colorBlockDrag;if(!drag)return;
+  colorBlockDrag=null;
+  document.removeEventListener("pointermove",moveColorBlockDrag);
+  document.removeEventListener("pointerup",finishColorBlockDrag);
+  document.removeEventListener("pointercancel",cancelColorBlockDrag);
+  clearColorBlockDropPreview();if(drag.ghost)drag.ghost.remove();
+}
+function startColorBlockDrag(event,index){
+  if(colorBlockGameOver||colorBlockDrag||!colorBlockPieces[index]||colorBlockPieces[index].used)return;
+  event.preventDefault();event.stopPropagation();
+  const grid=event.currentTarget.querySelector(".colorPieceGrid"),ghost=document.createElement("div");
+  ghost.className="colorDragGhost";ghost.innerHTML=grid.outerHTML;document.body.appendChild(ghost);
+  colorBlockDrag={index:index,pointerId:event.pointerId,startX:event.clientX,startY:event.clientY,moved:false,valid:false,target:null,ghost:ghost};
+  event.currentTarget.classList.add("selected");
+  setColorBlockStatus("게임판의 원하는 위치로 끌어 놓으세요.");
+  document.addEventListener("pointermove",moveColorBlockDrag,{passive:false});
+  document.addEventListener("pointerup",finishColorBlockDrag,{passive:false});
+  document.addEventListener("pointercancel",cancelColorBlockDrag,{passive:false});
+  moveColorBlockDrag(event);
 }
 function clearColorBlockLines(){
   const fullRows=[],fullCols=[];
@@ -3712,13 +3861,14 @@ function placeColorBlock(row,col){
 function renderColorBlocks(){
   const board=document.getElementById("colorBlockBoard"),tray=document.getElementById("colorPieceTray");if(!board||!tray)return;
   board.innerHTML=colorBlockBoardState.map(function(color,index){
-    return '<button class="colorBlockCell '+(color?"filled":"")+'" style="--block:'+(COLOR_BLOCK_PALETTE[color]||"transparent")+'" type="button" onclick="placeColorBlock('+Math.floor(index/8)+','+(index%8)+')" aria-label="'+(Math.floor(index/8)+1)+'행 '+(index%8+1)+'열"></button>';
+    const row=Math.floor(index/8),col=index%8;
+    return '<button class="colorBlockCell '+(color?"filled":"")+'" data-row="'+row+'" data-col="'+col+'" style="--block:'+(COLOR_BLOCK_PALETTE[color]||"transparent")+'" type="button" onclick="placeColorBlock('+row+','+col+')" aria-label="'+(row+1)+'행 '+(col+1)+'열"></button>';
   }).join("");
   tray.innerHTML=colorBlockPieces.map(function(piece,index){
     const size=colorPieceSize(piece.shape),occupied=new Set(piece.shape.map(function(p){return p[0]+"_"+p[1];}));
     let cells="";
     for(let y=0;y<size.h;y++)for(let x=0;x<size.w;x++)cells+='<i class="'+(occupied.has(x+"_"+y)?"on":"")+'" style="--block:'+COLOR_BLOCK_PALETTE[piece.color]+'"></i>';
-    return '<button class="colorPiece '+(colorBlockSelected===index?"selected ":"")+(piece.used?"used":"")+'" type="button" onclick="selectColorPiece('+index+')" '+(piece.used?"disabled":"")+'><span class="colorPieceGrid" style="grid-template-columns:repeat('+size.w+',1fr)">'+cells+'</span></button>';
+    return '<button class="colorPiece '+(colorBlockSelected===index?"selected ":"")+(piece.used?"used":"")+'" type="button" onpointerdown="startColorBlockDrag(event,'+index+')" onclick="selectColorPiece('+index+')" '+(piece.used?"disabled":"")+' aria-label="'+(index+1)+'번 블록 조각, 드래그하거나 눌러 선택"><span class="colorPieceGrid" style="grid-template-columns:repeat('+size.w+',1fr)">'+cells+'</span></button>';
   }).join("");
   document.getElementById("colorBlockScore").textContent=colorBlockScore+"점";
   document.getElementById("colorBlockBest").textContent=Math.max(colorBlockBest,colorBlockScore)+"점";
@@ -3735,6 +3885,7 @@ function renderGameLibraryStats(){
   if(blocks)blocks.textContent="최고 "+Math.max(colorBlockBest||0,colorBlockScore||0)+"점";
 }
 function stopActiveMiniGame(){
+  abortColorBlockDrag();
   opoongRunner.running=false;if(opoongRunner.raf)cancelAnimationFrame(opoongRunner.raf);
   clearTimeout(tttComputerTimer);tttComputerThinking=false;
   opoongStack.running=false;if(opoongStack.raf)cancelAnimationFrame(opoongStack.raf);
@@ -3786,6 +3937,206 @@ function initOpoongGame(){
 }
 
 
+
+/* ===== O.Poong Focus tracker ===== */
+const OPOONG_FOCUS_LOG_KEY="opoong_focus_log_v1";
+const OPOONG_FOCUS_SESSION_KEY="opoong_focus_session_v1";
+const FOCUS_DAILY_REWARD_LIMIT=60;
+const FOCUS_SESSION_PENALTY_LIMIT=10;
+let focusTickTimer=0;
+let focusSession={started:false,running:false,subject:"",goal:25,elapsed:0,credited:0,lastTick:0,awayAt:0,penaltyTotal:0,date:""};
+
+function focusDefaultSession(){
+  return {started:false,running:false,subject:"",goal:25,elapsed:0,credited:0,lastTick:0,awayAt:0,penaltyTotal:0,date:todayStr()};
+}
+function loadFocusLog(){try{return JSON.parse(localStorage.getItem(OPOONG_FOCUS_LOG_KEY)||"{}")}catch{return{}}}
+function saveFocusLog(log){try{localStorage.setItem(OPOONG_FOCUS_LOG_KEY,JSON.stringify(log));}catch(e){}}
+function loadFocusSession(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(OPOONG_FOCUS_SESSION_KEY)||"{}");
+    return Object.assign(focusDefaultSession(),raw);
+  }catch{return focusDefaultSession();}
+}
+function saveFocusSession(){try{localStorage.setItem(OPOONG_FOCUS_SESSION_KEY,JSON.stringify(focusSession));}catch(e){}}
+function focusDayRecord(log,date){
+  if(!log[date])log[date]={seconds:0,sessions:0,earned:0,penalty:0};
+  return log[date];
+}
+function formatFocusTime(seconds){
+  seconds=Math.max(0,Math.floor(seconds||0));
+  const h=Math.floor(seconds/3600),m=Math.floor((seconds%3600)/60),s=seconds%60;
+  return [h,m,s].map(function(v){return String(v).padStart(2,"0");}).join(":");
+}
+function focusShortTime(seconds){
+  const minutes=Math.floor(Math.max(0,seconds||0)/60);
+  if(minutes<60)return minutes+"분";
+  return Math.floor(minutes/60)+"시간 "+(minutes%60)+"분";
+}
+function showFocusMessage(message){
+  const box=document.getElementById("focusMessage");if(!box)return;
+  box.textContent=message||"";
+  if(message)window.setTimeout(function(){if(box.textContent===message)box.textContent="";},3000);
+}
+function updateFocusWallet(){
+  const box=document.getElementById("focusPoints");if(!box)return;
+  opoongRewards=loadOpoongRewards();box.textContent=opoongRewards.points.toLocaleString("ko-KR")+" P";
+}
+function deductFocusPoints(amount,label){
+  amount=Math.max(0,Math.floor(Number(amount)||0));if(!amount)return 0;
+  opoongRewards=loadOpoongRewards();
+  const actual=Math.min(amount,opoongRewards.points);
+  opoongRewards.points-=actual;saveOpoongRewards();renderOpoongColorShop();updateFocusWallet();
+  showFocusMessage(actual?(label||"집중 이탈")+" · -"+actual+" P":"차감할 포인트가 없어요.");
+  return actual;
+}
+function updateFocusElapsed(){
+  if(!focusSession.started||!focusSession.running||focusSession.awayAt)return;
+  const now=Date.now();
+  if(!focusSession.lastTick)focusSession.lastTick=now;
+  const delta=Math.max(0,Math.floor((now-focusSession.lastTick)/1000));
+  if(delta>0){focusSession.elapsed+=delta;focusSession.lastTick+=delta*1000;}
+}
+function creditFocusBlocks(){
+  if(!focusSession.started)return;
+  const blocks=Math.floor(focusSession.elapsed/600);
+  if(blocks<=focusSession.credited)return;
+  const newBlocks=blocks-focusSession.credited;
+  focusSession.credited=blocks;
+  const log=loadFocusLog(),record=focusDayRecord(log,focusSession.date||todayStr());
+  const available=Math.max(0,FOCUS_DAILY_REWARD_LIMIT-record.earned);
+  const reward=Math.min(available,newBlocks*5);
+  if(reward>0){
+    record.earned+=reward;saveFocusLog(log);
+    awardOpoongPoints(reward,"집중 기록");
+    showFocusMessage("집중 10분 달성 · +"+reward+" P");
+  }else showFocusMessage("오늘 공부 보상 한도 60P를 달성했어요.");
+}
+function renderFocusWeek(log){
+  const box=document.getElementById("focusWeek");if(!box)return;
+  const days=[];
+  for(let offset=6;offset>=0;offset--){
+    const date=new Date();date.setDate(date.getDate()-offset);
+    const key=date.getFullYear()+"-"+String(date.getMonth()+1).padStart(2,"0")+"-"+String(date.getDate()).padStart(2,"0");
+    const record=log[key]||{seconds:0};
+    days.push({date:date,key:key,seconds:Number(record.seconds)||0});
+  }
+  const max=Math.max(1800,...days.map(function(day){return day.seconds;}));
+  const labels=["일","월","화","수","목","금","토"];
+  box.innerHTML=days.map(function(day){
+    const height=Math.max(4,Math.round(day.seconds/max*100));
+    return '<div class="focusDay"><i class="focusDayBar" style="height:'+height+'%"></i><b>'+focusShortTime(day.seconds)+'</b><span>'+labels[day.date.getDay()]+'</span></div>';
+  }).join("");
+}
+function renderFocusTracker(){
+  const time=document.getElementById("focusTime");if(!time)return;
+  const log=loadFocusLog(),today=focusDayRecord(log,todayStr());
+  const activeToday=focusSession.started&&focusSession.date===todayStr()?focusSession.elapsed:0;
+  const progress=Math.min(1,focusSession.elapsed/Math.max(60,focusSession.goal*60));
+  document.getElementById("focusRing").style.setProperty("--focus-progress",Math.round(progress*360)+"deg");
+  time.textContent=formatFocusTime(focusSession.elapsed);
+  document.getElementById("focusGoalLabel").textContent="목표 "+focusSession.goal+"분";
+  document.getElementById("focusSubjectLabel").textContent=focusSession.started?(focusSession.subject||"자율학습"):"집중 준비";
+  document.getElementById("focusTodayTime").textContent=focusShortTime((today.seconds||0)+activeToday);
+  document.getElementById("focusTodaySessions").textContent=(today.sessions||0)+"회";
+  document.getElementById("focusTodayEarned").textContent="+"+(today.earned||0)+" P";
+  document.getElementById("focusTodayPenalty").textContent="-"+(today.penalty||0)+" P";
+  const input=document.getElementById("focusSubject");if(input){input.disabled=focusSession.started;if(focusSession.started)input.value=focusSession.subject;}
+  document.querySelectorAll("[data-focus-goal]").forEach(function(button){
+    button.setAttribute("aria-pressed",String(Number(button.dataset.focusGoal)===focusSession.goal));
+    button.disabled=focusSession.started;
+  });
+  const start=document.getElementById("focusStartBtn"),pause=document.getElementById("focusPauseBtn"),finish=document.getElementById("focusFinishBtn");
+  start.textContent=focusSession.started&&!focusSession.running?"다시 집중":"집중 시작";
+  start.disabled=focusSession.started&&focusSession.running;
+  pause.disabled=!focusSession.started||!focusSession.running;
+  finish.disabled=!focusSession.started;
+  const state=document.getElementById("focusState");
+  if(state)state.textContent=!focusSession.started?"과목과 목표 시간을 정한 뒤 시작하세요.":focusSession.running?(focusSession.awayAt?"화면을 벗어난 시간을 확인하고 있어요.":"집중 시간 측정 중 · 10분마다 5P"):"일시정지 중 · 다시 집중하거나 기록을 종료하세요.";
+  updateFocusWallet();renderFocusWeek(log);
+}
+function setFocusGoal(minutes){
+  if(focusSession.started)return;
+  focusSession.goal=[25,40,50,60].includes(Number(minutes))?Number(minutes):25;
+  saveFocusSession();renderFocusTracker();
+}
+function startOrResumeFocus(){
+  if(!focusSession.started){
+    const input=document.getElementById("focusSubject");
+    focusSession=focusDefaultSession();focusSession.started=true;
+    focusSession.subject=String(input&&input.value||"자율학습").trim()||"자율학습";
+  }
+  focusSession.running=true;focusSession.awayAt=0;focusSession.lastTick=Date.now();
+  saveFocusSession();renderFocusTracker();showFocusMessage("집중을 시작했어요.");
+}
+function pauseFocusTimer(){
+  if(!focusSession.started||!focusSession.running)return;
+  updateFocusElapsed();creditFocusBlocks();focusSession.running=false;focusSession.awayAt=0;
+  saveFocusSession();renderFocusTracker();showFocusMessage("일시정지했어요. 이 상태에서는 이탈 차감이 없어요.");
+}
+function applyFocusDeparturePenalty(label){
+  if(!focusSession.started||!focusSession.running)return;
+  const remaining=Math.max(0,FOCUS_SESSION_PENALTY_LIMIT-focusSession.penaltyTotal);
+  const wanted=Math.min(2,remaining);
+  if(!wanted)return;
+  const actual=deductFocusPoints(wanted,label||"집중 중 화면 이탈");
+  focusSession.penaltyTotal+=wanted;
+  const log=loadFocusLog(),record=focusDayRecord(log,focusSession.date||todayStr());
+  record.penalty=(record.penalty||0)+actual;saveFocusLog(log);
+}
+function finishFocusSession(){
+  if(!focusSession.started)return;
+  updateFocusElapsed();creditFocusBlocks();
+  const elapsed=focusSession.elapsed,subject=focusSession.subject;
+  const log=loadFocusLog(),record=focusDayRecord(log,focusSession.date||todayStr());
+  record.seconds=(record.seconds||0)+elapsed;
+  if(elapsed>=60)record.sessions=(record.sessions||0)+1;
+  saveFocusLog(log);
+  focusSession=focusDefaultSession();saveFocusSession();renderFocusTracker();
+  showFocusMessage((subject||"집중")+" 기록 완료 · "+focusShortTime(elapsed));
+}
+function handleFocusVisibility(){
+  if(!focusSession.started||!focusSession.running)return;
+  if(document.hidden){
+    updateFocusElapsed();creditFocusBlocks();focusSession.awayAt=Date.now();saveFocusSession();
+  }else if(focusSession.awayAt){
+    const awaySeconds=Math.floor((Date.now()-focusSession.awayAt)/1000);
+    if(awaySeconds>=15)applyFocusDeparturePenalty("15초 이상 화면 이탈");
+    focusSession.awayAt=0;focusSession.lastTick=Date.now();saveFocusSession();renderFocusTracker();
+  }
+}
+function leaveFocusForMenu(){
+  if(!focusSession.started||!focusSession.running)return;
+  updateFocusElapsed();creditFocusBlocks();applyFocusDeparturePenalty("집중 중 다른 메뉴 이용");
+  focusSession.running=false;focusSession.awayAt=0;saveFocusSession();renderFocusTracker();
+}
+function focusTick(){
+  if(focusSession.started&&focusSession.running&&!focusSession.awayAt){
+    updateFocusElapsed();creditFocusBlocks();
+    if(focusSession.elapsed%5===0)saveFocusSession();
+    renderFocusTracker();
+  }
+}
+function initFocusTracker(){
+  focusSession=loadFocusSession();
+  if(focusSession.started&&focusSession.running){
+    const now=Date.now(),awayFrom=focusSession.awayAt||focusSession.lastTick||now;
+    focusSession.awayAt=awayFrom;
+    if(!document.hidden){
+      const awaySeconds=Math.floor((now-awayFrom)/1000);
+      if(awaySeconds>=15)applyFocusDeparturePenalty("O.Poong 재접속 전 화면 이탈");
+      focusSession.awayAt=0;focusSession.lastTick=now;
+    }
+    saveFocusSession();
+  }
+  document.addEventListener("visibilitychange",handleFocusVisibility);
+  window.addEventListener("beforeunload",function(){
+    if(focusSession.started&&focusSession.running&&!focusSession.awayAt){updateFocusElapsed();focusSession.awayAt=Date.now();}
+    saveFocusSession();
+  });
+  focusTickTimer=window.setInterval(focusTick,1000);
+  renderFocusTracker();
+}
+
 function setActiveNav(view){
   $$(".navBtn").forEach(b => {
     b.dataset.active = b.dataset.view === view ? "1" : "0";
@@ -3797,7 +4148,7 @@ function pageUrl(view){
 function initRoute(){
   const params = new URLSearchParams(window.location.search);
   const page = params.get("page") || "home";
-  const allowed = ["home","weather","meal","schedule","timetable","game","onway","school","library","policy","about"];
+  const allowed = ["home","weather","meal","schedule","timetable","focus","game","onway","school","library","policy","about"];
   const view = allowed.includes(page) ? page : "home";
 
   go(view);
@@ -3809,6 +4160,8 @@ function initRoute(){
 }
 function go(view){
   if(view === "about") view = "policy";
+  const currentFocus=document.getElementById("view-focus");
+  if(view!=="focus"&&currentFocus&&currentFocus.classList.contains("active"))leaveFocusForMenu();
   if(view !== "game"){
     opoongRunner.running=false;
     if(opoongRunner.raf) cancelAnimationFrame(opoongRunner.raf);
@@ -5146,6 +5499,7 @@ const GLOBAL_SEARCH_STATIC = [
   {title:"급식 조회",description:"오늘 또는 날짜별 급식 확인",type:"메뉴",route:"meal",keywords:"급식 조식 중식 석식 메뉴 밥"},
   {title:"학사일정",description:"학교 행사와 월별 달력",type:"메뉴",route:"schedule",keywords:"일정 시험 행사 방학 개학"},
   {title:"시간표",description:"요일별 수업 시간표",type:"메뉴",route:"timetable",keywords:"시간표 교시 수업 과목"},
+  {title:"집중 기록",description:"공부 타이머·일별 공부 시간·포인트 보상",type:"기능",route:"focus",keywords:"집중 공부 타이머 열품타 스톱워치 기록 포인트 과목"},
   {title:"미니게임",description:"점프·틱택토·블록 쌓기·워터 소트·컬러 블록",type:"게임",route:"game",keywords:"게임 미니게임 점프 새 별 2단점프 틱택토 말 이동 블록 쌓기 워터 소트 물 정리 컬러 블록 퍼즐 포인트 색상"},
   {title:"온웨이에듀",description:"상벌점·외출 관리 시스템",type:"바로가기",route:"onway",keywords:"상점 벌점 외출"},
   {title:"학교 홈페이지",description:"풍산고등학교 공식 사이트",type:"바로가기",route:"school",keywords:"학교 공지 공식"},
@@ -5319,6 +5673,7 @@ window.addEventListener("load",()=>{
   initWidgetSelector();
   initGlobalSearch();
   initOpoongGame();
+  initFocusTracker();
   const savedTheme = localStorage.getItem("opoong_theme");
   if(savedTheme === "dark" || savedTheme === "light") applyTheme(savedTheme);
   initMeals();
