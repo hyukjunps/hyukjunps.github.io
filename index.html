@@ -2079,6 +2079,48 @@ body.full-notice-locked{overflow:hidden}
   .featureModal{max-height:calc(100dvh - 16px);border-radius:22px}
 }
 
+
+/* ===== O.Poong point shop packs ===== */
+.gameColorShop{display:grid;gap:18px}
+.gameShopSection{display:grid;gap:10px}
+.gameShopTitle{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.gameShopTitle b{font-size:16px}.gameShopTitle span{color:var(--muted);font-size:11px;font-weight:850}
+.gameShopItems{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.gameShopCard{display:grid;gap:10px;min-width:0;padding:15px;border:1px solid var(--line);border-radius:20px;background:color-mix(in srgb,var(--card) 94%,transparent);box-shadow:var(--shadow2)}
+.gameShopCard.owned{border-color:color-mix(in srgb,var(--ok) 42%,var(--line));background:color-mix(in srgb,var(--ok) 6%,var(--card))}
+.gameShopCardTop{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+.gameShopIcon{display:grid;place-items:center;width:40px;height:40px;flex:0 0 auto;border-radius:14px;background:color-mix(in srgb,var(--pri) 11%,var(--card));font-size:21px}
+.gameShopCard h3{margin:0;font-size:14px}.gameShopCard p{min-height:34px;margin:4px 0 0;color:var(--muted);font-size:11px;font-weight:800;line-height:1.55}
+.gameShopPrice{white-space:nowrap;color:var(--pri);font-size:13px;font-weight:1000}
+.gameShopVariants{display:flex;gap:6px;flex-wrap:wrap}.gameShopVariants button{padding:7px 9px;border-radius:999px;font-size:10.5px}
+.gameShopAction{width:100%;min-height:40px}
+.gameShopCustom{display:flex;align-items:center;gap:8px}.gameShopCustom input[type=color]{width:48px;height:40px;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
+.shopQuickOnway{border-color:color-mix(in srgb,var(--ok) 42%,var(--line))!important;background:color-mix(in srgb,var(--ok) 11%,var(--card))!important}
+.focusCelebration{position:fixed;z-index:40000;inset:0;pointer-events:none;overflow:hidden}
+.focusCelebration i{position:absolute;left:50%;top:50%;font-style:normal;font-size:clamp(24px,5vw,54px);animation:shopCelebrate 1.8s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes shopCelebrate{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}18%{opacity:1}100%{opacity:0;transform:translate(var(--fx),var(--fy)) rotate(var(--fr)) scale(1.25)}}
+html[data-shop-timetable="notebook"] #view-timetable .ttWrap{padding:18px;border-radius:18px;background:repeating-linear-gradient(#fff 0 31px,#dbeafe 32px);box-shadow:inset 4px 0 #fca5a5}
+html[data-theme="dark"][data-shop-timetable="notebook"] #view-timetable .ttWrap{background:repeating-linear-gradient(#172033 0 31px,#334155 32px)}
+html[data-shop-timetable="navy"] #view-timetable .ttWrap{padding:14px;border-radius:18px;background:#10233f}html[data-shop-timetable="navy"] #view-timetable .ttTable th{color:#bfdbfe}
+html[data-shop-timetable="pastel"] #view-timetable .ttWrap{padding:14px;border-radius:18px;background:linear-gradient(135deg,#fce7f3,#e0f2fe,#ecfccb)}
+html[data-shop-nowbar="samsung"] .classNowBar{border-radius:30px;background:linear-gradient(135deg,#020617,#172554 55%,#312e81)}
+html[data-shop-nowbar="minimal"] .classNowBar{border-radius:16px;background:#111827;box-shadow:none}
+html[data-shop-nowbar="neon"] .classNowBar{border-color:#22d3ee;background:#030712;box-shadow:0 0 24px rgba(34,211,238,.36),inset 0 0 18px rgba(168,85,247,.18)}
+html[data-shop-focus="library"] .focusLockOverlay{background:radial-gradient(circle at 50% 0,rgba(245,158,11,.22),transparent 35%),linear-gradient(135deg,#21160e,#09090b)}
+html[data-shop-focus="night"] .focusLockOverlay{background:radial-gradient(circle at 15% 15%,rgba(255,255,255,.18) 0 2px,transparent 3px),radial-gradient(circle at 80% 30%,rgba(255,255,255,.12) 0 1px,transparent 2px),linear-gradient(#080d2b,#111827)}
+html[data-shop-focus="ocean"] .focusLockOverlay{background:radial-gradient(circle at 30% 10%,rgba(34,211,238,.28),transparent 36%),linear-gradient(#082f49,#0c4a6e)}
+html[data-shop-focus="forest"] .focusLockOverlay{background:radial-gradient(circle at 50% 0,rgba(74,222,128,.22),transparent 36%),linear-gradient(#052e16,#0f241a)}
+html[data-shop-maze="forest"] .mazeBoard{background:#14532d}html[data-shop-maze="forest"] .mazeCell{background:#dcfce7}html[data-shop-maze="forest"] .mazeCell.wall{background:#166534}
+html[data-shop-maze="space"] .mazeBoard{background:#020617}html[data-shop-maze="space"] .mazeCell{background:#312e81}html[data-shop-maze="space"] .mazeCell.wall{background:#0f172a}
+html[data-shop-maze="ice"] .mazeBoard{background:#0e7490}html[data-shop-maze="ice"] .mazeCell{background:#ecfeff}html[data-shop-maze="ice"] .mazeCell.wall{background:#155e75}
+html[data-shop-maze="school"] .mazeBoard{background:#7c2d12}html[data-shop-maze="school"] .mazeCell{background:#fef3c7}html[data-shop-maze="school"] .mazeCell.wall{background:#92400e}
+.mazeCell.fog:not(.player){background:#07111f!important}.mazeCell.goal.fog{box-shadow:none}
+html[data-shop-season="spring"]{--bg:#fff1f7;--bg2:#fdf2f8;--pri3:#f9a8d4}
+html[data-shop-season="summer"]{--bg:#ecfeff;--bg2:#e0f2fe;--pri3:#38bdf8}
+html[data-shop-season="exam"]{--bg:#fffbeb;--bg2:#fef3c7;--pri3:#f59e0b}
+html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri3:#ef4444}
+@media(max-width:620px){.gameShopItems{grid-template-columns:1fr}.gameShopCard{padding:13px}.shopQuickOnway{width:42px;min-width:42px;padding:9px!important;font-size:0}.shopQuickOnway:before{content:"온";font-size:12px}}
+
 </style>
 </head>
 
@@ -2123,6 +2165,7 @@ body.full-notice-locked{overflow:hidden}
     <div class="actions">
       <button id="globalSearchButton" class="btn ghost topSearchBtn" type="button" onclick="openGlobalSearch()" aria-label="통합 검색"><span aria-hidden="true">⌕</span><span class="topSearchLabel">검색</span></button>
       <div id="userBadge" class="userBadge">사용자</div>
+      <button id="onwayShopShortcut" class="btn shopQuickOnway" type="button" onclick="openOnway()" hidden>온웨이에듀</button>
       <button id="btnInstallTop" class="btn ok" type="button">앱 설치</button>
       <button id="btnLight" class="btn ghost" type="button">라이트</button>
       <button id="btnDark" class="btn ghost" type="button">다크</button>
@@ -2485,15 +2528,22 @@ body.full-notice-locked{overflow:hidden}
         </div>
 
 
-        <div id="gameMazePanel" class="gamePlayCard miniGamePanel" hidden><div class="gameHud stackHud"><div><span>현재 이동</span><strong id="mazeMoves">0회</strong></div><div><span>최고 기록</span><strong id="mazeBest">-</strong></div><div><span>상태</span><strong id="mazeStatus">준비</strong></div></div><div id="mazeBoard" class="mazeBoard"></div><div class="gameDpad"><button class="smallbtn ghost up" onclick="moveMaze(-1,0)">↑</button><button class="smallbtn ghost left" onclick="moveMaze(0,-1)">←</button><button class="smallbtn ghost down" onclick="moveMaze(1,0)">↓</button><button class="smallbtn ghost right" onclick="moveMaze(0,1)">→</button></div><div class="gameControls"><button class="bigBtn" onclick="newMazeGame()">새 미로</button><span class="muted">스와이프나 방향 버튼으로 이동하세요.</span></div></div>
+        <div id="gameMazePanel" class="gamePlayCard miniGamePanel" hidden><div class="gameHud stackHud"><div><span>현재 이동</span><strong id="mazeMoves">0회</strong></div><div><span>최고 기록</span><strong id="mazeBest">-</strong></div><div><span>남은 시간</span><strong id="mazeTime">90초</strong></div></div><div id="mazeBoard" class="mazeBoard" aria-label="21 곱하기 21 고난도 미로"></div><div class="gameDpad"><button class="smallbtn ghost up" onclick="moveMaze(-1,0)">↑</button><button class="smallbtn ghost left" onclick="moveMaze(0,-1)">←</button><button class="smallbtn ghost down" onclick="moveMaze(1,0)">↓</button><button class="smallbtn ghost right" onclick="moveMaze(0,1)">→</button></div><div class="gameControls"><button class="bigBtn" onclick="newMazeGame()">새 미로</button><span id="mazeStatus" class="muted">21×21 · 90초 · 주변 시야만 보여요.</span></div></div>
         <div id="gameSnakePanel" class="gamePlayCard miniGamePanel" hidden><div class="gameHud stackHud"><div><span>점수</span><strong id="snakeScore">0점</strong></div><div><span>최고</span><strong id="snakeBest">0점</strong></div><div><span>상태</span><strong id="snakeStatus">준비</strong></div></div><div class="gameCanvasWrap snakeCanvasWrap"><canvas id="snakeCanvas" width="600" height="420"></canvas></div><div class="gameDpad"><button class="smallbtn ghost up" onclick="setSnakeDirection(-1,0)">↑</button><button class="smallbtn ghost left" onclick="setSnakeDirection(0,-1)">←</button><button class="smallbtn ghost down" onclick="setSnakeDirection(1,0)">↓</button><button class="smallbtn ghost right" onclick="setSnakeDirection(0,1)">→</button></div><div class="gameControls"><button id="snakeStartBtn" class="bigBtn" onclick="startSnakeGame()">게임 시작</button><button class="btn ghost" onclick="resetSnakeGame()">다시 시작</button><span class="muted">스와이프나 방향 버튼으로 움직이세요.</span></div></div>
         <div id="gameMinePanel" class="gamePlayCard miniGamePanel" hidden><div class="gameHud stackHud"><div><span>남은 지뢰</span><strong id="mineRemaining">10개</strong></div><div><span>시간</span><strong id="mineTime">0초</strong></div><div><span>최고</span><strong id="mineBest">-</strong></div></div><div class="mineToolbar"><button id="mineFlagMode" class="smallbtn ghost" aria-pressed="false" onclick="toggleMineFlagMode()">🚩 깃발 모드 끄기</button></div><div id="mineBoard" class="mineBoard"></div><div class="gameControls"><button class="bigBtn" onclick="newMinesGame()">새 게임</button><span id="mineStatus" class="muted">첫 칸은 안전해요.</span></div></div>
-        <section id="gameColorShop" class="gameColorShop" aria-label="O.Poong 색상 상점">
+        <section id="gameColorShop" class="gameColorShop" aria-label="O.Poong 포인트 상점">
           <div class="gameColorShopHead">
-            <div><b>O.Poong 색상</b><p>포인트로 구매한 색상은 이 기기에서 계속 사용할 수 있어요.</p></div>
-            <span class="pill">COLOR</span>
+            <div><b>O.Poong 포인트샵</b><p>게임과 집중으로 모은 포인트로 디자인 팩을 구매하고 자유롭게 장착하세요.</p></div>
+            <span class="pill">SHOP</span>
           </div>
-          <div id="gameColorItems" class="gameColorItems"></div>
+          <div class="gameShopSection">
+            <div class="gameShopTitle"><b>기본 테마 색상</b><span>구매 후 계속 사용</span></div>
+            <div id="gameColorItems" class="gameColorItems"></div>
+          </div>
+          <div class="gameShopSection">
+            <div class="gameShopTitle"><b>꾸미기 상품</b><span>팩 구매 · 포함 디자인 자유 장착</span></div>
+            <div id="gameShopItems" class="gameShopItems"></div>
+          </div>
           <div id="gameRewardMessage" class="gameRewardMessage" aria-live="polite"></div>
         </section>
       </section>
@@ -3172,6 +3222,7 @@ function renderOpoongColorShop(){
   if(focusWallet)focusWallet.textContent=opoongRewards.points.toLocaleString("ko-KR")+" P";
   const box=document.getElementById("gameColorItems");
   if(!box)return;
+  renderOpoongShopCatalog();
   box.innerHTML=OPOONG_COLORS.map(function(item){
     const owned=opoongRewards.owned.includes(item.id);
     const active=opoongRewards.color===item.id;
@@ -3209,6 +3260,110 @@ function buyOrApplyOpoongColor(id){
   renderOpoongColorShop();
   gameRewardMessage(item.name+" 색상을 적용했어요.");
 }
+
+/* O.Poong permanent point-shop packs (kept separate from reward/timetable storage) */
+const OPOONG_SHOP_KEY="opoong_point_shop_v1";
+const OPOONG_SHOP_PRODUCTS=[
+  {id:"completion",icon:"✨",name:"집중 완료 효과",price:150,desc:"집중 완료 때 별·불꽃·종이꽃 애니메이션",variants:[["star","별"],["firework","불꽃"],["confetti","종이꽃"]]},
+  {id:"snake",icon:"🐍",name:"스네이크 스킨",price:200,desc:"로봇·무지개·네온 뱀",variants:[["robot","로봇"],["rainbow","무지개"],["neon","네온"]]},
+  {id:"mine",icon:"🚩",name:"지뢰찾기 아이콘 팩",price:200,desc:"지뢰와 깃발 모양 변경",variants:[["classic","클래식"],["chemistry","실험실"],["space","우주"]]},
+  {id:"maze",icon:"🧭",name:"미로 테마",price:250,desc:"숲·우주·얼음·학교 테마",variants:[["forest","숲"],["space","우주"],["ice","얼음"],["school","학교"]]},
+  {id:"rename",icon:"✏️",name:"이름 변경",price:300,desc:"O.Poong에 표시되는 이름을 1회 변경",special:"rename"},
+  {id:"timetable",icon:"📘",name:"시간표 스킨",price:350,desc:"공책·다크블루·파스텔 스타일",variants:[["notebook","공책"],["navy","다크블루"],["pastel","파스텔"]]},
+  {id:"nowbar",icon:"⌛",name:"나우바 디자인",price:400,desc:"삼성 스타일·미니멀·네온",variants:[["samsung","삼성"],["minimal","미니멀"],["neon","네온"]]},
+  {id:"focus",icon:"🌙",name:"집중화면 테마",price:500,desc:"도서관·밤하늘·바다·숲",variants:[["library","도서관"],["night","밤하늘"],["ocean","바다"],["forest","숲"]]},
+  {id:"onway",icon:"↗️",name:"온웨이에듀 바로가기",price:500,desc:"상단에 온웨이에듀 빠른 실행 버튼 생성",special:"onway"},
+  {id:"custom",icon:"🎨",name:"자유 색상 선택권",price:1000,desc:"원하는 색으로 O.Poong 테마 제작",special:"custom"},
+  {id:"season",icon:"🎁",name:"계절 한정 세트",price:1200,desc:"봄·여름·시험기간·크리스마스 세트",variants:[["spring","봄"],["summer","여름"],["exam","시험기간"],["christmas","크리스마스"]]}
+];
+function loadOpoongShop(){
+  try{
+    const raw=JSON.parse(localStorage.getItem(OPOONG_SHOP_KEY)||"{}");
+    return {owned:Array.from(new Set(Array.isArray(raw.owned)?raw.owned:[])),equipped:raw.equipped&&typeof raw.equipped==="object"?raw.equipped:{},customColor:/^#[0-9a-f]{6}$/i.test(raw.customColor||"")?raw.customColor:"#1e40af"};
+  }catch(e){return{owned:[],equipped:{},customColor:"#1e40af"};}
+}
+let opoongShop=loadOpoongShop();
+function saveOpoongShop(){try{localStorage.setItem(OPOONG_SHOP_KEY,JSON.stringify(opoongShop));}catch(e){}}
+function shopOwns(id){return opoongShop.owned.includes(id);}
+function applyOpoongShop(){
+  opoongShop=loadOpoongShop();
+  ["completion","snake","mine","maze","timetable","nowbar","focus","season"].forEach(function(id){
+    const value=opoongShop.equipped[id];if(value)document.documentElement.dataset["shop"+id.charAt(0).toUpperCase()+id.slice(1)]=value;
+    else delete document.documentElement.dataset["shop"+id.charAt(0).toUpperCase()+id.slice(1)];
+  });
+  if(opoongShop.equipped.custom&&shopOwns("custom")){
+    document.documentElement.style.setProperty("--pri",opoongShop.customColor);
+    document.documentElement.style.setProperty("--pri2",opoongShop.customColor);
+  }else{
+    document.documentElement.style.removeProperty("--pri");
+    document.documentElement.style.removeProperty("--pri2");
+  }
+  const quick=document.getElementById("onwayShopShortcut");if(quick)quick.hidden=!shopOwns("onway");
+}
+function shopSpend(price,label){
+  opoongRewards=loadOpoongRewards();
+  if(opoongRewards.points<price){gameRewardMessage(label+" 구매에 "+(price-opoongRewards.points)+" P가 부족해요.");return false;}
+  opoongRewards.points-=price;saveOpoongRewards();return true;
+}
+function buyOpoongShopProduct(id){
+  const item=OPOONG_SHOP_PRODUCTS.find(function(x){return x.id===id;});if(!item||item.special==="rename"||shopOwns(id))return;
+  if(!shopSpend(item.price,item.name))return;
+  opoongShop.owned.push(id);if(item.variants&&item.variants[0])opoongShop.equipped[id]=item.variants[0][0];
+  if(id==="custom")opoongShop.equipped.custom=true;
+  saveOpoongShop();applyOpoongShop();renderOpoongColorShop();gameRewardMessage(item.name+" 팩을 구매했어요.");
+}
+function equipOpoongShopVariant(id,value){
+  const item=OPOONG_SHOP_PRODUCTS.find(function(x){return x.id===id;});if(!item||!shopOwns(id)||!item.variants||!item.variants.some(function(v){return v[0]===value;}))return;
+  opoongShop.equipped[id]=value;saveOpoongShop();applyOpoongShop();renderOpoongShopCatalog();
+  if(id==="snake")drawSnakeGame();if(id==="mine")renderMines();if(id==="maze")renderMaze();
+  gameRewardMessage(item.name+" · "+item.variants.find(function(v){return v[0]===value;})[1]+" 적용");
+}
+function purchaseOpoongNameChange(){
+  const current=String(localStorage.getItem(USER_NAME_KEY)||"").trim();
+  const name=window.prompt("새 이름을 입력하세요. (1~12자)",current||"사용자");if(name===null)return;
+  const clean=String(name).trim().slice(0,12);if(!clean){gameRewardMessage("이름을 한 글자 이상 입력하세요.");return;}
+  if(!shopSpend(300,"이름 변경"))return;
+  localStorage.setItem(USER_NAME_KEY,clean);updateUserBadge();renderHomeWidgets();renderOpoongColorShop();gameRewardMessage(clean+"님으로 이름을 변경했어요.");
+}
+function setOpoongCustomColor(value){
+  if(!shopOwns("custom"))return;const color=String(value||"");if(!/^#[0-9a-f]{6}$/i.test(color))return;
+  opoongShop.customColor=color;opoongShop.equipped.custom=true;saveOpoongShop();applyOpoongShop();renderOpoongShopCatalog();gameRewardMessage("자유 색상을 적용했어요.");
+}
+function renderOpoongShopCatalog(){
+  opoongShop=loadOpoongShop();applyOpoongShop();const box=document.getElementById("gameShopItems");if(!box)return;
+  box.innerHTML=OPOONG_SHOP_PRODUCTS.map(function(item){
+    const owned=shopOwns(item.id),special=item.special||"",active=opoongShop.equipped[item.id]||"";
+    let controls="";
+    if(item.variants){
+      controls='<div class="gameShopVariants">'+item.variants.map(function(v){return'<button class="smallbtn '+(active===v[0]?"primary":"ghost")+'" type="button" '+(!owned||active===v[0]?"disabled":"")+' onclick="equipOpoongShopVariant(\''+item.id+'\',\''+v[0]+'\')">'+v[1]+'</button>';}).join("")+'</div>';
+    }
+    if(special==="rename")controls+='<button class="smallbtn primary gameShopAction" type="button" onclick="purchaseOpoongNameChange()">300 P로 이름 변경</button>';
+    else if(special==="custom"&&owned)controls+='<div class="gameShopCustom"><input id="opoongCustomColor" type="color" value="'+opoongShop.customColor+'" aria-label="O.Poong 자유 색상"><button class="smallbtn primary gameShopAction" type="button" onclick="setOpoongCustomColor(document.getElementById(\'opoongCustomColor\').value)">색상 적용</button></div>';
+    else if(!owned)controls+='<button class="smallbtn primary gameShopAction" type="button" onclick="buyOpoongShopProduct(\''+item.id+'\')">'+item.price.toLocaleString("ko-KR")+' P로 팩 구매</button>';
+    else if(special==="onway")controls+='<button class="smallbtn ghost gameShopAction" type="button" onclick="openOnway()">바로가기 사용</button>';
+    return'<article class="gameShopCard '+(owned?"owned":"")+'"><div class="gameShopCardTop"><span class="gameShopIcon">'+item.icon+'</span><span class="gameShopPrice">'+(special==="rename"?item.price+" P / 1회":owned?"보유 중":item.price.toLocaleString("ko-KR")+" P")+'</span></div><div><h3>'+item.name+'</h3><p>'+item.desc+'</p></div>'+controls+'</article>';
+  }).join("");
+}
+function getOpoongSnakePalette(){
+  const skin=opoongShop.equipped.snake;
+  if(skin==="robot")return{bg:"#111827",food:"#fb7185",head:"#e2e8f0",body:"#64748b"};
+  if(skin==="rainbow")return{bg:"#172554",food:"#fff",head:"#facc15",body:"rainbow"};
+  if(skin==="neon")return{bg:"#020617",food:"#f0abfc",head:"#22d3ee",body:"#a855f7"};
+  return{bg:"#071f17",food:"#fb7185",head:"#facc15",body:"#4ade80"};
+}
+function getOpoongMineSymbols(){
+  const skin=opoongShop.equipped.mine;
+  if(skin==="chemistry")return{mine:"⚗",flag:"🧪"};
+  if(skin==="space")return{mine:"☄",flag:"🚀"};
+  return{mine:"✹",flag:"⚑"};
+}
+function playFocusCompletionEffect(){
+  if(!shopOwns("completion"))return;const type=opoongShop.equipped.completion||"star",symbols=type==="firework"?["✦","✧","💥"]:type==="confetti"?["▰","◆","●"]:["★","✦","☆"];
+  const layer=document.createElement("div");layer.className="focusCelebration";
+  for(let i=0;i<28;i++){const p=document.createElement("i");p.textContent=symbols[i%symbols.length];p.style.setProperty("--fx",(Math.cos(i)*60+(Math.random()-.5)*window.innerWidth*.85)+"px");p.style.setProperty("--fy",(Math.sin(i)*70+(Math.random()-.55)*window.innerHeight*.8)+"px");p.style.setProperty("--fr",(Math.random()*720-360)+"deg");p.style.color=["#facc15","#38bdf8","#f472b6","#4ade80"][i%4];p.style.animationDelay=(Math.random()*.25)+"s";layer.appendChild(p);}
+  document.body.appendChild(layer);setTimeout(function(){layer.remove();},2300);
+}
+
 
 /* Enhanced O.Poong Jump */
 const opoongRunner={
@@ -3693,13 +3848,14 @@ function undoWaterMove(){
 
 
 /* Maze, Snake, Minesweeper */
-const OPOONG_MAZE_BEST_KEY="opoong_maze_best_v1",MAZE_SIZE=13;
-let mazeGrid=[],mazePlayer={r:1,c:1},mazeMoves=0,mazeSolved=false,mazeSwipeStart=null;
+const OPOONG_MAZE_BEST_KEY="opoong_maze_best_v1",MAZE_SIZE=21,MAZE_LIMIT=90;
+let mazeGrid=[],mazePlayer={r:1,c:1},mazeMoves=0,mazeSolved=false,mazeFailed=false,mazeStarted=false,mazeSwipeStart=null,mazeSeconds=MAZE_LIMIT,mazeTimer=0;
 function loadMazeBest(){return Math.max(0,Number(localStorage.getItem(OPOONG_MAZE_BEST_KEY)||0));}
-function carveMaze(r,c){mazeGrid[r][c]=0;[[-2,0],[2,0],[0,-2],[0,2]].sort(function(){return Math.random()-.5;}).forEach(function(d){const nr=r+d[0],nc=c+d[1];if(nr>0&&nr<12&&nc>0&&nc<12&&mazeGrid[nr][nc]){mazeGrid[r+d[0]/2][c+d[1]/2]=0;carveMaze(nr,nc);}});}
-function newMazeGame(){mazeGrid=Array.from({length:13},function(){return Array(13).fill(1);});carveMaze(1,1);mazeGrid[11][11]=0;mazePlayer={r:1,c:1};mazeMoves=0;mazeSolved=false;renderMaze();}
-function renderMaze(){const b=document.getElementById("mazeBoard");if(!b)return;b.style.setProperty("--maze-size",13);b.innerHTML=mazeGrid.flatMap(function(row,r){return row.map(function(cell,c){let k="mazeCell"+(cell?" wall":"")+(r===11&&c===11?" goal":"")+(r===mazePlayer.r&&c===mazePlayer.c?" player":"");return'<i class="'+k+'"></i>';});}).join("");const best=loadMazeBest();document.getElementById("mazeMoves").textContent=mazeMoves+"회";document.getElementById("mazeBest").textContent=best?best+"회":"-";document.getElementById("mazeStatus").textContent=mazeSolved?"탈출 성공":"출구 찾는 중";}
-function moveMaze(dr,dc){if(mazeSolved||!mazeGrid.length)return;const r=mazePlayer.r+dr,c=mazePlayer.c+dc;if(!mazeGrid[r]||mazeGrid[r][c]!==0)return;mazePlayer={r:r,c:c};mazeMoves++;if(r===11&&c===11){mazeSolved=true;const best=loadMazeBest();if(!best||mazeMoves<best)localStorage.setItem(OPOONG_MAZE_BEST_KEY,String(mazeMoves));awardOpoongPoints(8,"미로 탈출 성공");}renderMaze();renderGameLibraryStats();}
+function carveMaze(r,c){mazeGrid[r][c]=0;[[-2,0],[2,0],[0,-2],[0,2]].sort(function(){return Math.random()-.5;}).forEach(function(d){const nr=r+d[0],nc=c+d[1];if(nr>0&&nr<MAZE_SIZE-1&&nc>0&&nc<MAZE_SIZE-1&&mazeGrid[nr][nc]){mazeGrid[r+d[0]/2][c+d[1]/2]=0;carveMaze(nr,nc);}});}
+function startMazeTimer(){if(mazeStarted||mazeSolved||mazeFailed)return;mazeStarted=true;mazeTimer=setInterval(function(){if(mazeSolved||mazeFailed){clearInterval(mazeTimer);return;}mazeSeconds--;if(mazeSeconds<=0){mazeSeconds=0;mazeFailed=true;clearInterval(mazeTimer);}renderMaze();},1000);}
+function newMazeGame(){clearInterval(mazeTimer);mazeGrid=Array.from({length:MAZE_SIZE},function(){return Array(MAZE_SIZE).fill(1);});carveMaze(1,1);mazeGrid[MAZE_SIZE-2][MAZE_SIZE-2]=0;mazePlayer={r:1,c:1};mazeMoves=0;mazeSolved=false;mazeFailed=false;mazeStarted=false;mazeSeconds=MAZE_LIMIT;mazeTimer=0;renderMaze();}
+function renderMaze(){const b=document.getElementById("mazeBoard");if(!b)return;const goal=MAZE_SIZE-2;b.style.setProperty("--maze-size",MAZE_SIZE);b.innerHTML=mazeGrid.flatMap(function(row,r){return row.map(function(cell,c){const visible=Math.abs(r-mazePlayer.r)+Math.abs(c-mazePlayer.c)<=4;let k="mazeCell"+(cell?" wall":"")+(r===goal&&c===goal?" goal":"")+(r===mazePlayer.r&&c===mazePlayer.c?" player":"")+(!visible&&!(r===goal&&c===goal)?" fog":"");return'<i class="'+k+'"></i>';});}).join("");const best=loadMazeBest();document.getElementById("mazeMoves").textContent=mazeMoves+"회";document.getElementById("mazeBest").textContent=best?best+"회":"-";document.getElementById("mazeTime").textContent=mazeSeconds+"초";document.getElementById("mazeStatus").textContent=mazeSolved?"탈출 성공!":mazeFailed?"시간 초과 · 새 미로에 도전하세요.":mazeStarted?"21×21 고난도 · 출구는 오른쪽 아래예요.":"첫 이동부터 90초가 시작돼요.";}
+function moveMaze(dr,dc){if(mazeSolved||mazeFailed||!mazeGrid.length)return;const r=mazePlayer.r+dr,c=mazePlayer.c+dc;if(!mazeGrid[r]||mazeGrid[r][c]!==0)return;mazePlayer={r:r,c:c};mazeMoves++;startMazeTimer();const goal=MAZE_SIZE-2;if(r===goal&&c===goal){mazeSolved=true;clearInterval(mazeTimer);const best=loadMazeBest();if(!best||mazeMoves<best)localStorage.setItem(OPOONG_MAZE_BEST_KEY,String(mazeMoves));awardOpoongPoints(16,"고난도 미로 탈출 성공");}renderMaze();renderGameLibraryStats();}
 function mazeSwipeDown(e){mazeSwipeStart={x:e.clientX,y:e.clientY};}
 function mazeSwipeUp(e){if(!mazeSwipeStart)return;const x=e.clientX-mazeSwipeStart.x,y=e.clientY-mazeSwipeStart.y;mazeSwipeStart=null;if(Math.max(Math.abs(x),Math.abs(y))<18)return;if(Math.abs(x)>Math.abs(y))moveMaze(0,x>0?1:-1);else moveMaze(y>0?1:-1,0);}
 
@@ -3711,7 +3867,7 @@ function resetSnakeGame(){clearInterval(snakeTimer);snakeTimer=0;snakeRunning=fa
 function startSnakeGame(){if(snakeOver||!snakeBody.length)resetSnakeGame();if(snakeRunning)return;snakeRunning=true;snakeTimer=setInterval(snakeStep,125);drawSnakeGame();}
 function setSnakeDirection(dr,dc){const n={x:dc,y:dr};if(n.x===-snakeDirection.x&&n.y===-snakeDirection.y)return;snakeNextDirection=n;if(!snakeRunning)startSnakeGame();}
 function snakeStep(){snakeDirection=snakeNextDirection;const h={x:snakeBody[0].x+snakeDirection.x,y:snakeBody[0].y+snakeDirection.y};if(h.x<0||h.x>=20||h.y<0||h.y>=14||snakeBody.some(function(p){return p.x===h.x&&p.y===h.y;})){snakeRunning=false;snakeOver=true;clearInterval(snakeTimer);snakeTimer=0;if(snakeScore>loadSnakeBest())localStorage.setItem(OPOONG_SNAKE_BEST_KEY,String(snakeScore));if(snakeScore)awardOpoongPoints(Math.max(2,Math.floor(snakeScore/2)),"스네이크");drawSnakeGame();renderGameLibraryStats();return;}snakeBody.unshift(h);if(h.x===snakeFood.x&&h.y===snakeFood.y){snakeScore++;placeSnakeFood();}else snakeBody.pop();drawSnakeGame();}
-function drawSnakeGame(){const c=document.getElementById("snakeCanvas");if(!c)return;const g=c.getContext("2d"),w=c.width/20,h=c.height/14;g.fillStyle="#071f17";g.fillRect(0,0,c.width,c.height);g.fillStyle="#fb7185";g.beginPath();g.arc((snakeFood.x+.5)*w,(snakeFood.y+.5)*h,Math.min(w,h)*.32,0,Math.PI*2);g.fill();snakeBody.forEach(function(p,i){g.fillStyle=i?"#4ade80":"#facc15";g.fillRect(p.x*w+3,p.y*h+3,w-6,h-6);});document.getElementById("snakeScore").textContent=snakeScore+"점";document.getElementById("snakeBest").textContent=Math.max(loadSnakeBest(),snakeScore)+"점";document.getElementById("snakeStatus").textContent=snakeOver?"게임 종료":snakeRunning?"진행 중":"준비";document.getElementById("snakeStartBtn").textContent=snakeRunning?"진행 중":"게임 시작";}
+function drawSnakeGame(){const c=document.getElementById("snakeCanvas");if(!c)return;const g=c.getContext("2d"),w=c.width/20,h=c.height/14,palette=getOpoongSnakePalette();g.fillStyle=palette.bg;g.fillRect(0,0,c.width,c.height);g.fillStyle=palette.food;g.beginPath();g.arc((snakeFood.x+.5)*w,(snakeFood.y+.5)*h,Math.min(w,h)*.32,0,Math.PI*2);g.fill();snakeBody.forEach(function(p,i){g.fillStyle=i?(palette.body==="rainbow"?["#f43f5e","#f59e0b","#22c55e","#38bdf8","#a855f7"][i%5]:palette.body):palette.head;g.fillRect(p.x*w+3,p.y*h+3,w-6,h-6);});document.getElementById("snakeScore").textContent=snakeScore+"점";document.getElementById("snakeBest").textContent=Math.max(loadSnakeBest(),snakeScore)+"점";document.getElementById("snakeStatus").textContent=snakeOver?"게임 종료":snakeRunning?"진행 중":"준비";document.getElementById("snakeStartBtn").textContent=snakeRunning?"진행 중":"게임 시작";}
 function snakeSwipeDown(e){snakeSwipeStart={x:e.clientX,y:e.clientY};}
 function snakeSwipeUp(e){if(!snakeSwipeStart)return;const x=e.clientX-snakeSwipeStart.x,y=e.clientY-snakeSwipeStart.y;snakeSwipeStart=null;if(Math.max(Math.abs(x),Math.abs(y))<18)return;if(Math.abs(x)>Math.abs(y))setSnakeDirection(0,x>0?1:-1);else setSnakeDirection(y>0?1:-1,0);}
 
@@ -3727,7 +3883,7 @@ function toggleMineFlag(i){if(mineEnded)return;const c=mineCells[i];if(c&&!c.ope
 function toggleMineFlagMode(){mineFlagMode=!mineFlagMode;renderMines();}
 function checkMineWin(){if(!mineCells.length||!mineCells.every(function(c){return c.mine||c.open;}))return;mineEnded=true;clearInterval(mineTimer);mineTimer=0;mineElapsed=mineStartedAt?Math.floor((Date.now()-mineStartedAt)/1000):0;if(!loadMineBest()||mineElapsed<loadMineBest())localStorage.setItem(OPOONG_MINE_BEST_KEY,String(mineElapsed));awardOpoongPoints(10,"지뢰찾기 성공");document.getElementById("mineStatus").textContent="모든 안전한 칸을 찾았어요!";renderGameLibraryStats();}
 function renderMineHud(){const f=mineCells.filter(function(c){return c.flag;}).length;document.getElementById("mineRemaining").textContent=Math.max(0,10-f)+"개";document.getElementById("mineTime").textContent=mineElapsed+"초";document.getElementById("mineBest").textContent=loadMineBest()?loadMineBest()+"초":"-";const b=document.getElementById("mineFlagMode");b.setAttribute("aria-pressed",String(mineFlagMode));b.textContent=mineFlagMode?"🚩 깃발 모드 켜짐":"🚩 깃발 모드 끄기";}
-function renderMines(){const b=document.getElementById("mineBoard");if(!b)return;b.innerHTML=mineCells.map(function(c,i){let t="",k="mineCell";if(c.open){k+=" open";if(c.mine){k+=" mine";t="✹";}else if(c.number){k+=" n"+c.number;t=c.number;}}else if(c.flag){k+=" flag";t="⚑";}return'<button class="'+k+'" onclick="openMineCell('+i+')" oncontextmenu="event.preventDefault();toggleMineFlag('+i+')">'+t+'</button>';}).join("");renderMineHud();}
+function renderMines(){const b=document.getElementById("mineBoard");if(!b)return;const symbols=getOpoongMineSymbols();b.innerHTML=mineCells.map(function(c,i){let t="",k="mineCell";if(c.open){k+=" open";if(c.mine){k+=" mine";t=symbols.mine;}else if(c.number){k+=" n"+c.number;t=c.number;}}else if(c.flag){k+=" flag";t=symbols.flag;}return'<button class="'+k+'" onclick="openMineCell('+i+')" oncontextmenu="event.preventDefault();toggleMineFlag('+i+')">'+t+'</button>';}).join("");renderMineHud();}
 
 function renderGameLibraryStats(){
   const jump=document.getElementById("gameCardJumpMeta"),ttt=document.getElementById("gameCardTttMeta"),stack=document.getElementById("gameCardStackMeta"),water=document.getElementById("gameCardWaterMeta"),maze=document.getElementById("gameCardMazeMeta"),snake=document.getElementById("gameCardSnakeMeta"),mine=document.getElementById("gameCardMineMeta");
@@ -3769,6 +3925,7 @@ function initOpoongGame(){
   opoongBest=loadOpoongBest();
   opoongRewards=loadOpoongRewards();
   applyOpoongColor();
+  applyOpoongShop();
   const winsBox=document.getElementById("tttWins");
   if(winsBox)winsBox.textContent=loadTttWins()+"승";
   opoongStackBest=loadStackBest();
@@ -3934,7 +4091,7 @@ function finishFocusSession(){
   const elapsed=focusSession.elapsed,subjectName=focusSession.subjectName||focusSession.subject||"기타",subjectId=focusSession.subjectId||"legacy",subjectColor=focusSession.subjectColor||"#64748b",log=loadFocusLog(),record=focusDayRecord(log,focusSession.date||todayStr());
   record.seconds+=elapsed;record.longest=Math.max(record.longest,elapsed);if(elapsed>=60)record.sessions++;
   const item=record.bySubject[subjectId]||(record.bySubject[subjectId]={name:subjectName,color:subjectColor,seconds:0,sessions:0});item.name=subjectName;item.color=subjectColor;item.seconds=(Number(item.seconds)||0)+elapsed;if(elapsed>=60)item.sessions=(Number(item.sessions)||0)+1;
-  saveFocusLog(log);focusSession=focusDefaultSession();saveFocusSession();releaseFocusWakeLock();leaveFocusModeVisual();renderFocusTracker();showFocusMessage(subjectName+" 기록 완료 · "+focusShortTime(elapsed));
+  saveFocusLog(log);playFocusCompletionEffect();focusSession=focusDefaultSession();saveFocusSession();releaseFocusWakeLock();leaveFocusModeVisual();renderFocusTracker();showFocusMessage(subjectName+" 기록 완료 · "+focusShortTime(elapsed));
 }
 function handleFocusVisibility(){
   if(!focusSession.started||!focusSession.running)return;
