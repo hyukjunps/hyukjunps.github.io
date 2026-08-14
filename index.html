@@ -1800,12 +1800,14 @@ html[data-opoong-color="pink"]{--pri:#be185d;--pri2:#db2777;--pri3:#f9a8d4;--lin
 .tttBoard{display:grid;grid-template-columns:repeat(3,minmax(86px,120px));gap:9px;justify-content:center;align-content:center;min-height:380px;padding:16px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(160deg,color-mix(in srgb,var(--pri3) 10%,var(--card2)),var(--card))}
 .tttCell{aspect-ratio:1;border:1px solid color-mix(in srgb,var(--pri) 22%,var(--line));border-radius:22px;background:var(--card);color:var(--pri);font-size:46px;font-weight:1000;box-shadow:0 8px 18px rgba(15,23,42,.06);transition:.16s}
 .tttCell:not(:disabled):hover{border-color:var(--pri);transform:translateY(-2px)}.tttCell.ttt-o{color:var(--ok)}.tttCell.ttt-win{background:color-mix(in srgb,var(--ok) 13%,var(--card));border-color:var(--ok)}
+.tttModeSwitch{display:flex;justify-content:center;gap:8px;margin:0 0 11px}.tttModeSwitch .smallbtn[aria-pressed="true"]{color:#fff;border-color:var(--pri);background:var(--pri)}.tttCell.ttt-selected{outline:4px solid color-mix(in srgb,var(--pri) 38%,transparent);border-color:var(--pri);transform:translateY(-3px)}
+.stackHud{grid-template-columns:repeat(3,minmax(0,1fr))}.stackCanvasWrap{max-width:480px;margin:0 auto;background:#dff4ff}.stackCanvasWrap #stackCanvas{display:block;width:100%;height:auto;aspect-ratio:480/520;touch-action:manipulation;outline:none}
 .gameColorShop{max-width:920px;margin:14px auto 0;padding:15px;border:1px solid var(--line);border-radius:24px;background:color-mix(in srgb,var(--card) 95%,transparent);box-shadow:var(--shadow2)}
 .gameColorShopHead{display:flex;justify-content:space-between;gap:10px}.gameColorShopHead b{font-size:17px}.gameColorShopHead p{margin:4px 0 0;color:var(--muted);font-size:11.5px;font-weight:800}
 .gameColorItems{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:12px}.gameColorItem{padding:10px;border:1px solid var(--line);border-radius:17px;background:var(--card2)}.gameColorItem.active{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 8%,var(--card))}
 .gameColorSwatch{height:42px;margin-bottom:8px;border-radius:13px;background:linear-gradient(135deg,var(--swatch-a),var(--swatch-b))}.gameColorItem b{display:block;font-size:12.5px}.gameColorItem span{display:block;margin:3px 0 7px;color:var(--muted);font-size:10.5px;font-weight:850}.gameColorItem button{width:100%;min-height:34px;padding:7px;font-size:11px}.gameRewardMessage{min-height:17px;margin-top:9px;color:var(--pri);font-size:12px;font-weight:900}
 @media(max-width:760px){.gameColorItems{grid-template-columns:repeat(3,minmax(0,1fr))}}
-@media(max-width:620px){#view-game{padding:12px}.gameWallet{width:100%;justify-content:space-between}.gameHudFour{grid-template-columns:repeat(2,minmax(0,1fr))}.gameHud>div{padding:8px}.gameCanvasWrap{border-radius:17px}.gameControls .muted{width:100%;margin-left:0}.tttBoard{grid-template-columns:repeat(3,minmax(72px,96px));min-height:330px;padding:10px}.tttCell{font-size:38px}.gameColorItems{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:620px){#view-game{padding:12px}.gameWallet{width:100%;justify-content:space-between}.gameHudFour{grid-template-columns:repeat(2,minmax(0,1fr))}.gameHud>div{padding:8px}.stackHud{grid-template-columns:repeat(3,minmax(0,1fr))}.stackHud strong{font-size:15px}.gameCanvasWrap{border-radius:17px}.gameControls .muted{width:100%;margin-left:0}.tttBoard{grid-template-columns:repeat(3,minmax(72px,96px));min-height:330px;padding:10px}.tttCell{font-size:38px}.gameColorItems{grid-template-columns:repeat(2,minmax(0,1fr))}}
 
 /* ===== O.Poong D-DAY widget ===== */
 .homeDashboardWidgets .widget[data-home-widget="dday"]{grid-column:1 / -1;min-height:190px}
@@ -2129,7 +2131,7 @@ body.full-notice-locked{overflow:hidden}
         <a class="navBtn" data-view="meal" href="/?page=meal" onclick="event.preventDefault(); go('meal'); setTodayAndLoad();"><span class="left"><span class="icon">식</span><span><span class="title">급식</span><br><span class="hint">일별/월별</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="schedule" href="/?page=schedule" onclick="event.preventDefault(); go('schedule'); scheduleLoadMonth();"><span class="left"><span class="icon">일</span><span><span class="title">학사일정</span><br><span class="hint">월별 달력</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="timetable" href="/?page=timetable" onclick="event.preventDefault(); go('timetable'); ttRenderTable();"><span class="left"><span class="icon">표</span><span><span class="title">시간표</span><br><span class="hint">로컬 저장</span></span></span><span>›</span></a>
-        <a class="navBtn" data-view="game" href="/?page=game" onclick="event.preventDefault(); go('game')"><span class="left"><span class="icon">겜</span><span><span class="title">미니게임</span><br><span class="hint">점프·틱택토</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="game" href="/?page=game" onclick="event.preventDefault(); go('game')"><span class="left"><span class="icon">겜</span><span><span class="title">미니게임</span><br><span class="hint">점프·틱택토·쌓기</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="onway" href="/?page=onway" onclick="event.preventDefault(); go('onway')"><span class="left"><span class="icon">온</span><span><span class="title">온웨이에듀</span><br><span class="hint">외부 링크</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="school" href="/?page=school" onclick="event.preventDefault(); go('school')"><span class="left"><span class="icon">학</span><span><span class="title">학교 홈페이지</span><br><span class="hint">공식 사이트</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="library" href="/?page=library" onclick="event.preventDefault(); go('library')"><span class="left"><span class="icon">책</span><span><span class="title">도서관 조회</span><br><span class="hint">풍산고 도서관</span></span></span><span>›</span></a>
@@ -2302,7 +2304,7 @@ body.full-notice-locked{overflow:hidden}
         <div class="sectionHeader gameSectionHeader">
           <div>
             <h2>O.Poong 미니게임</h2>
-            <p>점프와 틱택토로 포인트를 모아 O.Poong 색상을 바꿔보세요.</p>
+            <p>점프·틱택토·블록 쌓기로 포인트를 모아 O.Poong 색상을 바꿔보세요.</p>
           </div>
           <div class="gameWallet"><span>보유 포인트</span><strong id="gamePoints">0 P</strong></div>
         </div>
@@ -2310,6 +2312,7 @@ body.full-notice-locked{overflow:hidden}
         <div class="miniGameTabs" role="tablist" aria-label="미니게임 선택">
           <button id="miniTabJump" class="tabBtn" type="button" aria-selected="true" onclick="switchMiniGame('jump')">O.Poong 점프</button>
           <button id="miniTabTtt" class="tabBtn" type="button" aria-selected="false" onclick="switchMiniGame('ttt')">틱택토</button>
+          <button id="miniTabStack" class="tabBtn" type="button" aria-selected="false" onclick="switchMiniGame('stack')">블록 쌓기</button>
         </div>
 
         <div id="gameJumpPanel" class="gamePlayCard miniGamePanel">
@@ -2335,10 +2338,31 @@ body.full-notice-locked{overflow:hidden}
             <div><span>누적 승리</span><strong id="tttWins">0승</strong></div>
             <div><span>현재 상태</span><strong id="tttStatus">내 차례</strong></div>
           </div>
+          <div class="tttModeSwitch" aria-label="틱택토 게임 방식">
+            <button id="tttModeNormal" class="smallbtn" type="button" aria-pressed="true" onclick="setTttMode('normal')">일반 모드</button>
+            <button id="tttModeMove" class="smallbtn" type="button" aria-pressed="false" onclick="setTttMode('move')">말 이동 모드</button>
+          </div>
           <div id="tttBoard" class="tttBoard" aria-label="틱택토 게임판"></div>
           <div class="gameControls">
             <button class="bigBtn" type="button" onclick="resetTicTacToe()">새 게임</button>
-            <span class="muted">나는 X, 컴퓨터는 O예요.</span>
+            <span class="muted">이동 모드에서는 X 3개를 놓은 뒤 내 말을 빈칸으로 옮겨요.</span>
+          </div>
+        </div>
+
+        <div id="gameStackPanel" class="gamePlayCard miniGamePanel" hidden>
+          <div class="gameHud stackHud">
+            <div><span>현재 층</span><strong id="stackScore">0층</strong></div>
+            <div><span>최고 기록</span><strong id="stackBest">0층</strong></div>
+            <div><span>현재 상태</span><strong id="stackStatus">준비</strong></div>
+          </div>
+          <div class="gameCanvasWrap stackCanvasWrap">
+            <canvas id="stackCanvas" width="480" height="520" tabindex="0" aria-label="움직이는 블록을 맞춰 쌓는 게임"></canvas>
+            <div id="stackMessage" class="gameMessage"><strong>블록 쌓기</strong><span>움직이는 블록이 아래 블록과 겹칠 때 놓으세요.</span></div>
+          </div>
+          <div class="gameControls">
+            <button id="stackStartButton" class="bigBtn" type="button" onclick="startStackGame()">게임 시작</button>
+            <button class="btn ghost" type="button" onclick="dropStackBlock()">블록 놓기</button>
+            <span class="muted">화면 터치 또는 스페이스바로도 놓을 수 있어요.</span>
           </div>
         </div>
 
@@ -3239,30 +3263,51 @@ function opoongGameFrame(timestamp){
 /* Tic-Tac-Toe */
 let tttBoardState=Array(9).fill("");
 let tttGameOver=false;
+let tttComputerThinking=false;
 let tttComputerTimer=0;
+let tttMode="normal";
+let tttSelected=-1;
 const TTT_LINES=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]];
 function tttWinningLine(mark){
   return TTT_LINES.find(function(line){return line.every(function(index){return tttBoardState[index]===mark;});})||null;
 }
+function tttMarkCount(mark){
+  return tttBoardState.filter(function(value){return value===mark;}).length;
+}
 function setTttStatus(text){
   const box=document.getElementById("tttStatus");if(box)box.textContent=text;
 }
+function setTttMode(mode){
+  tttMode=mode==="move"?"move":"normal";
+  const normal=document.getElementById("tttModeNormal"),move=document.getElementById("tttModeMove");
+  if(normal)normal.setAttribute("aria-pressed",String(tttMode==="normal"));
+  if(move)move.setAttribute("aria-pressed",String(tttMode==="move"));
+  resetTicTacToe();
+}
 function renderTicTacToe(line){
   const board=document.getElementById("tttBoard");if(!board)return;
+  const xCount=tttMarkCount("X");
   board.innerHTML=tttBoardState.map(function(mark,index){
     const win=line&&line.includes(index);
-    return '<button class="tttCell '+(mark==="O"?"ttt-o ":"")+(win?"ttt-win":"")+'" type="button" data-index="'+index+'" '+(mark||tttGameOver?"disabled":"")+'>'+mark+'</button>';
+    const selected=tttSelected===index;
+    let disabled=tttGameOver||tttComputerThinking;
+    if(!disabled&&tttMode==="normal"&&mark)disabled=true;
+    if(!disabled&&tttMode==="move"&&xCount<3&&mark)disabled=true;
+    if(!disabled&&tttMode==="move"&&xCount>=3&&mark==="O")disabled=true;
+    const label=mark?(mark==="X"?"내 말 X":"컴퓨터 말 O"):"빈칸";
+    return '<button class="tttCell '+(mark==="O"?"ttt-o ":"")+(selected?"ttt-selected ":"")+(win?"ttt-win":"")+'" type="button" data-index="'+index+'" aria-label="'+(index+1)+'번 칸 '+label+'" '+(disabled?"disabled":"")+'>'+mark+'</button>';
   }).join("");
   board.querySelectorAll(".tttCell").forEach(function(cell){
     cell.onclick=function(){playTicTacToe(Number(cell.dataset.index));};
   });
 }
 function resetTicTacToe(){
-  clearTimeout(tttComputerTimer);tttBoardState=Array(9).fill("");tttGameOver=false;
-  setTttStatus("내 차례");renderTicTacToe();
+  clearTimeout(tttComputerTimer);
+  tttBoardState=Array(9).fill("");tttGameOver=false;tttComputerThinking=false;tttSelected=-1;
+  setTttStatus(tttMode==="move"?"내 말 놓기 (0/3)":"내 차례");renderTicTacToe();
 }
 function finishTicTacToe(text,line,result){
-  tttGameOver=true;setTttStatus(text);
+  tttGameOver=true;tttComputerThinking=false;tttSelected=-1;setTttStatus(text);
   let reward=2;
   if(result==="win"){
     const wins=loadTttWins()+1;saveTttWins(wins);
@@ -3274,7 +3319,7 @@ function finishTicTacToe(text,line,result){
   awardOpoongPoints(reward,"틱택토 "+text);
   renderTicTacToe(line);
 }
-function chooseTttComputerMove(){
+function chooseTttComputerPlacement(){
   const empty=tttBoardState.map(function(value,index){return value?"":index;}).filter(function(value){return value!=="";});
   function winningMove(mark){
     for(const index of empty){
@@ -3295,36 +3340,181 @@ function chooseTttComputerMove(){
   }
   return choice;
 }
-function playTicTacToe(index){
-  if(tttGameOver||tttBoardState[index])return;
-  tttBoardState[index]="X";
+function countTttNextWins(mark){
+  const froms=tttBoardState.map(function(value,index){return value===mark?index:-1;}).filter(function(index){return index>=0;});
+  const empties=tttBoardState.map(function(value,index){return value?"":index;}).filter(function(value){return value!=="";});
+  let count=0;
+  froms.forEach(function(from){
+    empties.forEach(function(to){
+      tttBoardState[from]="";tttBoardState[to]=mark;
+      if(tttWinningLine(mark))count++;
+      tttBoardState[to]="";tttBoardState[from]=mark;
+    });
+  });
+  return count;
+}
+function chooseTttComputerShift(){
+  const froms=tttBoardState.map(function(value,index){return value==="O"?index:-1;}).filter(function(index){return index>=0;});
+  const empties=tttBoardState.map(function(value,index){return value?"":index;}).filter(function(value){return value!=="";});
+  const candidates=[];
+  froms.forEach(function(from){
+    empties.forEach(function(to){
+      tttBoardState[from]="";tttBoardState[to]="O";
+      const wins=Boolean(tttWinningLine("O"));
+      const danger=countTttNextWins("X");
+      let score=(to===4?8:[0,2,6,8].includes(to)?4:2)-danger*30+Math.random();
+      tttBoardState[to]="";tttBoardState[from]="O";
+      candidates.push({from:from,to:to,wins:wins,score:score});
+    });
+  });
+  const winning=candidates.find(function(item){return item.wins;});
+  if(winning)return winning;
+  candidates.sort(function(a,b){return b.score-a.score;});
+  return candidates[0]||null;
+}
+function finishTttHumanTurn(){
   let line=tttWinningLine("X");
   if(line){finishTicTacToe("내 승리!",line,"win");return;}
-  if(tttBoardState.every(Boolean)){finishTicTacToe("무승부",null,"draw");return;}
-  setTttStatus("컴퓨터 생각 중");renderTicTacToe();
+  if(tttMode==="normal"&&tttBoardState.every(Boolean)){finishTicTacToe("무승부",null,"draw");return;}
+  tttComputerThinking=true;tttSelected=-1;setTttStatus("컴퓨터 생각 중");renderTicTacToe();
   tttComputerTimer=setTimeout(function(){
-    const choice=chooseTttComputerMove();
-    tttBoardState[choice]="O";
+    if(tttGameOver)return;
+    if(tttMode==="move"&&tttMarkCount("O")>=3){
+      const move=chooseTttComputerShift();
+      if(move){tttBoardState[move.from]="";tttBoardState[move.to]="O";}
+    }else{
+      const choice=chooseTttComputerPlacement();
+      if(choice!==undefined)tttBoardState[choice]="O";
+    }
+    tttComputerThinking=false;
     line=tttWinningLine("O");
     if(line){finishTicTacToe("컴퓨터 승리",line,"lose");return;}
-    if(tttBoardState.every(Boolean)){finishTicTacToe("무승부",null,"draw");return;}
-    setTttStatus("내 차례");renderTicTacToe();
+    if(tttMode==="normal"&&tttBoardState.every(Boolean)){finishTicTacToe("무승부",null,"draw");return;}
+    setTttStatus(tttMode==="move"&&tttMarkCount("X")>=3?"옮길 내 말을 선택하세요":tttMode==="move"?"내 말 놓기 ("+tttMarkCount("X")+"/3)":"내 차례");
+    renderTicTacToe();
   },360);
 }
-function switchMiniGame(game){
-  const jump=document.getElementById("gameJumpPanel"),ttt=document.getElementById("gameTttPanel");
-  if(!jump||!ttt)return;
-  const showTtt=game==="ttt";
-  jump.hidden=showTtt;ttt.hidden=!showTtt;
-  document.getElementById("miniTabJump").setAttribute("aria-selected",String(!showTtt));
-  document.getElementById("miniTabTtt").setAttribute("aria-selected",String(showTtt));
-  if(showTtt){
-    opoongRunner.running=false;
-    if(opoongRunner.raf)cancelAnimationFrame(opoongRunner.raf);
-    resetTicTacToe();
-  }else{
-    clearTimeout(tttComputerTimer);drawOpoongGame();
+function playTicTacToe(index){
+  if(tttGameOver||tttComputerThinking)return;
+  if(tttMode==="normal"){
+    if(tttBoardState[index])return;
+    tttBoardState[index]="X";finishTttHumanTurn();return;
   }
+  if(tttMarkCount("X")<3){
+    if(tttBoardState[index])return;
+    tttBoardState[index]="X";
+    finishTttHumanTurn();return;
+  }
+  if(tttBoardState[index]==="X"){
+    tttSelected=tttSelected===index?-1:index;
+    setTttStatus(tttSelected<0?"옮길 내 말을 선택하세요":"옮길 빈 칸을 선택하세요");
+    renderTicTacToe();return;
+  }
+  if(tttBoardState[index]||tttSelected<0){
+    setTttStatus("먼저 옮길 내 말을 선택하세요");return;
+  }
+  tttBoardState[tttSelected]="";tttBoardState[index]="X";tttSelected=-1;
+  finishTttHumanTurn();
+}
+
+/* Block Stack */
+const OPOONG_STACK_BEST_KEY="opoong_stack_best_v1";
+let opoongStackBest=0;
+const opoongStack={running:false,raf:0,last:0,x:12,w:170,dir:1,speed:185,blocks:[]};
+function loadStackBest(){return Math.max(0,Number(localStorage.getItem(OPOONG_STACK_BEST_KEY)||0));}
+function saveStackBest(value){opoongStackBest=Math.max(opoongStackBest,value);localStorage.setItem(OPOONG_STACK_BEST_KEY,String(opoongStackBest));}
+function setStackStatus(text){const box=document.getElementById("stackStatus");if(box)box.textContent=text;}
+function updateStackHud(){
+  const score=Math.max(0,opoongStack.blocks.length-1);
+  const scoreBox=document.getElementById("stackScore"),bestBox=document.getElementById("stackBest");
+  if(scoreBox)scoreBox.textContent=score+"층";
+  if(bestBox)bestBox.textContent=Math.max(opoongStackBest,score)+"층";
+}
+function stackRoundedRect(ctx,x,y,w,h,r){
+  const radius=Math.min(r,w/2,h/2);
+  ctx.beginPath();ctx.roundRect(x,y,w,h,radius);ctx.fill();
+}
+function drawStackGame(){
+  const canvas=document.getElementById("stackCanvas");if(!canvas)return;
+  const ctx=canvas.getContext("2d"),s=opoongStack;
+  const sky=ctx.createLinearGradient(0,0,0,canvas.height);
+  sky.addColorStop(0,"#d9f2ff");sky.addColorStop(.62,"#eff8ff");sky.addColorStop(1,"#dbeafe");
+  ctx.fillStyle=sky;ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="rgba(255,255,255,.55)";
+  [[55,72,42],[370,110,58],[215,48,34]].forEach(function(cloud){
+    ctx.beginPath();ctx.arc(cloud[0],cloud[1],cloud[2]*.46,0,Math.PI*2);ctx.arc(cloud[0]+cloud[2]*.48,cloud[1]-8,cloud[2]*.35,0,Math.PI*2);ctx.arc(cloud[0]+cloud[2],cloud[1],cloud[2]*.42,0,Math.PI*2);ctx.fill();
+  });
+  const visible=12,from=Math.max(0,s.blocks.length-visible),baseY=474,step=33;
+  s.blocks.slice(from).forEach(function(block,index){
+    const y=baseY-index*step;
+    const hue=(208+(from+index)*17)%360;
+    ctx.fillStyle="hsl("+hue+" 78% 57%)";stackRoundedRect(ctx,block.x,y,block.w,29,8);
+    ctx.fillStyle="rgba(255,255,255,.24)";ctx.fillRect(block.x+7,y+5,Math.max(0,block.w-14),4);
+  });
+  if(s.running){
+    const movingY=baseY-(s.blocks.length-from)*step;
+    const hue=(208+s.blocks.length*17)%360;
+    ctx.fillStyle="hsl("+hue+" 82% 54%)";stackRoundedRect(ctx,s.x,movingY,s.w,29,8);
+    ctx.fillStyle="rgba(255,255,255,.28)";ctx.fillRect(s.x+7,movingY+5,Math.max(0,s.w-14),4);
+  }
+  ctx.fillStyle="rgba(15,23,42,.68)";ctx.font="800 13px system-ui";ctx.textAlign="left";
+  ctx.fillText("정확히 겹칠수록 오래 쌓을 수 있어요",16,24);
+}
+function resetStackGame(){
+  opoongStack.running=false;if(opoongStack.raf)cancelAnimationFrame(opoongStack.raf);
+  opoongStack.raf=0;opoongStack.last=0;opoongStack.x=12;opoongStack.w=170;opoongStack.dir=1;opoongStack.speed=185;
+  opoongStack.blocks=[{x:155,w:170}];
+  const message=document.getElementById("stackMessage"),button=document.getElementById("stackStartButton");
+  if(message){message.classList.remove("hidden");message.innerHTML="<strong>블록 쌓기</strong><span>움직이는 블록이 아래 블록과 겹칠 때 놓으세요.</span>";}
+  if(button)button.textContent="게임 시작";
+  setStackStatus("준비");updateStackHud();drawStackGame();
+}
+function startStackGame(){
+  resetStackGame();
+  const message=document.getElementById("stackMessage"),button=document.getElementById("stackStartButton");
+  if(message)message.classList.add("hidden");if(button)button.textContent="다시 시작";
+  opoongStack.running=true;opoongStack.last=performance.now();setStackStatus("이동 중");
+  opoongStack.raf=requestAnimationFrame(stackGameFrame);
+}
+function endStackGame(){
+  const score=Math.max(0,opoongStack.blocks.length-1);
+  opoongStack.running=false;if(opoongStack.raf)cancelAnimationFrame(opoongStack.raf);
+  if(score>opoongStackBest)saveStackBest(score);
+  updateStackHud();setStackStatus("게임 종료");
+  if(score>0)awardOpoongPoints(Math.max(1,score*2),"블록 쌓기 "+score+"층");
+  const message=document.getElementById("stackMessage");
+  if(message){message.classList.remove("hidden");message.innerHTML="<strong>"+score+"층 완성!</strong><span>게임 시작을 눌러 다시 도전하세요.</span>";}
+}
+function dropStackBlock(){
+  const s=opoongStack;
+  if(!s.running){startStackGame();return;}
+  const last=s.blocks[s.blocks.length-1];
+  const left=Math.max(s.x,last.x),right=Math.min(s.x+s.w,last.x+last.w),overlap=right-left;
+  if(overlap<7){endStackGame();return;}
+  s.blocks.push({x:left,w:overlap});s.x=left;s.w=overlap;s.dir*=-1;s.speed=Math.min(360,185+(s.blocks.length-1)*8);
+  s.x=s.dir>0?10:470-s.w;setStackStatus("이동 중");updateStackHud();drawStackGame();
+}
+function stackGameFrame(now){
+  const s=opoongStack;if(!s.running)return;
+  const dt=Math.min(.034,(now-s.last)/1000||0);s.last=now;s.x+=s.dir*s.speed*dt;
+  if(s.x<=8){s.x=8;s.dir=1;}
+  if(s.x+s.w>=472){s.x=472-s.w;s.dir=-1;}
+  drawStackGame();s.raf=requestAnimationFrame(stackGameFrame);
+}
+function switchMiniGame(game){
+  const jump=document.getElementById("gameJumpPanel"),ttt=document.getElementById("gameTttPanel"),stack=document.getElementById("gameStackPanel");
+  if(!jump||!ttt||!stack)return;
+  const showJump=game==="jump",showTtt=game==="ttt",showStack=game==="stack";
+  jump.hidden=!showJump;ttt.hidden=!showTtt;stack.hidden=!showStack;
+  document.getElementById("miniTabJump").setAttribute("aria-selected",String(showJump));
+  document.getElementById("miniTabTtt").setAttribute("aria-selected",String(showTtt));
+  document.getElementById("miniTabStack").setAttribute("aria-selected",String(showStack));
+  opoongRunner.running=false;if(opoongRunner.raf)cancelAnimationFrame(opoongRunner.raf);
+  clearTimeout(tttComputerTimer);
+  opoongStack.running=false;if(opoongStack.raf)cancelAnimationFrame(opoongStack.raf);
+  if(showTtt)resetTicTacToe();
+  else if(showStack)resetStackGame();
+  else drawOpoongGame();
 }
 function initOpoongGame(){
   opoongBest=loadOpoongBest();
@@ -3332,13 +3522,17 @@ function initOpoongGame(){
   applyOpoongColor();
   const winsBox=document.getElementById("tttWins");
   if(winsBox)winsBox.textContent=loadTttWins()+"승";
-  resetTicTacToe();renderOpoongColorShop();resetOpoongRunner();
+  opoongStackBest=loadStackBest();
+  resetTicTacToe();renderOpoongColorShop();resetOpoongRunner();resetStackGame();
   const canvas=document.getElementById("opoongGameCanvas");
   if(canvas)canvas.addEventListener("pointerdown",function(event){event.preventDefault();opoongGameJump();});
+  const stackCanvas=document.getElementById("stackCanvas");
+  if(stackCanvas)stackCanvas.addEventListener("pointerdown",function(event){event.preventDefault();dropStackBlock();});
   document.addEventListener("keydown",function(event){
-    const view=document.getElementById("view-game"),jump=document.getElementById("gameJumpPanel");
-    if((event.code==="Space"||event.key==="ArrowUp")&&view&&view.classList.contains("active")&&jump&&!jump.hidden){
-      event.preventDefault();opoongGameJump();
+    const view=document.getElementById("view-game"),jump=document.getElementById("gameJumpPanel"),stack=document.getElementById("gameStackPanel");
+    if((event.code==="Space"||event.key==="ArrowUp")&&view&&view.classList.contains("active")){
+      if(jump&&!jump.hidden){event.preventDefault();opoongGameJump();}
+      else if(stack&&!stack.hidden){event.preventDefault();dropStackBlock();}
     }
   });
 }
@@ -3371,6 +3565,8 @@ function go(view){
     opoongRunner.running=false;
     if(opoongRunner.raf) cancelAnimationFrame(opoongRunner.raf);
     clearTimeout(tttComputerTimer);
+    opoongStack.running=false;
+    if(opoongStack.raf) cancelAnimationFrame(opoongStack.raf);
   }
   document.body.classList.toggle("home-view", view === "home");
   $$(".view").forEach(v=>v.classList.remove("active"));
@@ -4702,7 +4898,7 @@ const GLOBAL_SEARCH_STATIC = [
   {title:"급식 조회",description:"오늘 또는 날짜별 급식 확인",type:"메뉴",route:"meal",keywords:"급식 조식 중식 석식 메뉴 밥"},
   {title:"학사일정",description:"학교 행사와 월별 달력",type:"메뉴",route:"schedule",keywords:"일정 시험 행사 방학 개학"},
   {title:"시간표",description:"요일별 수업 시간표",type:"메뉴",route:"timetable",keywords:"시간표 교시 수업 과목"},
-  {title:"미니게임",description:"O.Poong 점프·틱택토·색상 상점",type:"게임",route:"game",keywords:"게임 미니게임 점프 새 별 2단점프 틱택토 포인트 색상"},
+  {title:"미니게임",description:"O.Poong 점프·틱택토·블록 쌓기·색상 상점",type:"게임",route:"game",keywords:"게임 미니게임 점프 새 별 2단점프 틱택토 말 이동 블록 쌓기 포인트 색상"},
   {title:"온웨이에듀",description:"상벌점·외출 관리 시스템",type:"바로가기",route:"onway",keywords:"상점 벌점 외출"},
   {title:"학교 홈페이지",description:"풍산고등학교 공식 사이트",type:"바로가기",route:"school",keywords:"학교 공지 공식"},
   {title:"도서관 조회",description:"풍산고 도서관 자료 검색",type:"바로가기",route:"library",keywords:"책 도서 독서"},
