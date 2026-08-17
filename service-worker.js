@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v28"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v29"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -7,6 +7,7 @@ const APP_SHELL = [
   "./manifest.json",
   "./android/launchericon-512-512.png",
   "./game-hearts.js",
+  "./game-heart-retries.js",
 ];
 
 function withGameHearts(response) {
@@ -15,23 +16,25 @@ function withGameHearts(response) {
   if (!contentType.includes("text/html")) return response;
 
   return (async () => {
-    const html = await response.text();
-    if (html.includes("game-hearts.js")) {
-      return new Response(html, {
-        status: response.status,
-        statusText: response.statusText,
-        headers: response.headers,
-      });
+    let html = await response.text();
+    const tags = [];
+    if (!html.includes("game-hearts.js")) {
+      tags.push('<script src="./game-hearts.js?v=20260817" defer></script>');
+    }
+    if (!html.includes("game-heart-retries.js")) {
+      tags.push('<script src="./game-heart-retries.js?v=20260817" defer></script>');
     }
 
-    const tag = '<script src="./game-hearts.js?v=20260817" defer></script>';
-    const patched = html.includes("</body>")
-      ? html.replace("</body>", `${tag}\n</body>`)
-      : `${html}\n${tag}`;
+    if (tags.length) {
+      const joined = tags.join("\n");
+      html = html.includes("</body>")
+        ? html.replace("</body>", `${joined}\n</body>`)
+        : `${html}\n${joined}`;
+    }
 
     const headers = new Headers(response.headers);
     headers.delete("content-length");
-    return new Response(patched, {
+    return new Response(html, {
       status: response.status,
       statusText: response.statusText,
       headers,
