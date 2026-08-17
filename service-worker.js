@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v29"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v30"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -8,6 +8,7 @@ const APP_SHELL = [
   "./android/launchericon-512-512.png",
   "./game-hearts.js",
   "./game-heart-retries.js",
+  "./notice-override.js",
 ];
 
 function withGameHearts(response) {
@@ -19,10 +20,13 @@ function withGameHearts(response) {
     let html = await response.text();
     const tags = [];
     if (!html.includes("game-hearts.js")) {
-      tags.push('<script src="./game-hearts.js?v=20260817" defer></script>');
+      tags.push('<script src="./game-hearts.js?v=20260817-2" defer></script>');
     }
     if (!html.includes("game-heart-retries.js")) {
       tags.push('<script src="./game-heart-retries.js?v=20260817" defer></script>');
+    }
+    if (!html.includes("notice-override.js")) {
+      tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
     }
 
     if (tags.length) {
@@ -71,8 +75,6 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
 
   // 학사일정 JSON은 항상 네트워크를 먼저 확인한다.
-  // 쿼리 문자열을 무시한 cache-first 정책이 과거의 깨진 JSON을 계속
-  // 반환하지 않도록 경로만으로 된 단일 키에 마지막 정상 응답을 저장한다.
   if (url.pathname.includes("/data/schedule/") && url.pathname.endsWith(".json")) {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
@@ -91,7 +93,7 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 1) HTML(navigate): 온라인이면 최신 HTML을 받고 하트 시스템을 삽입 / 오프라인이면 캐시된 index로
+  // 1) HTML(navigate): 온라인이면 최신 HTML을 받고 확장 스크립트 삽입 / 오프라인이면 캐시된 index로
   if (req.mode === "navigate") {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
@@ -115,20 +117,18 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 2) 정적 파일: 캐시 우선(오프라인 안정) + 온라인이면 뒤에서 갱신
+  // 2) 정적 파일: 캐시 우선 + 온라인이면 뒤에서 갱신
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
 
     const cached = await cache.match(req, { ignoreSearch: true });
     if (cached) {
-      // 뒤에서 갱신(실패해도 무시)
       fetch(req).then((res) => {
         if (res && res.ok) cache.put(req, res.clone());
       }).catch(()=>{});
       return cached;
     }
 
-    // 캐시에 없으면 네트워크 시도, 실패 시 브라우저가 네트워크 실패로 처리하도록 둠
     try {
       const res = await fetch(req);
       if (res && res.ok) cache.put(req, res.clone());
