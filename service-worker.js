@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v27"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v28"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -6,7 +6,38 @@ const APP_SHELL = [
   "./index.html",
   "./manifest.json",
   "./android/launchericon-512-512.png",
+  "./game-hearts.js",
 ];
+
+function withGameHearts(response) {
+  if (!response || !response.ok) return response;
+  const contentType = response.headers.get("content-type") || "";
+  if (!contentType.includes("text/html")) return response;
+
+  return (async () => {
+    const html = await response.text();
+    if (html.includes("game-hearts.js")) {
+      return new Response(html, {
+        status: response.status,
+        statusText: response.statusText,
+        headers: response.headers,
+      });
+    }
+
+    const tag = '<script src="./game-hearts.js?v=20260817" defer></script>';
+    const patched = html.includes("</body>")
+      ? html.replace("</body>", `${tag}\n</body>`)
+      : `${html}\n${tag}`;
+
+    const headers = new Headers(response.headers);
+    headers.delete("content-length");
+    return new Response(patched, {
+      status: response.status,
+      statusText: response.statusText,
+      headers,
+    });
+  })();
+}
 
 self.addEventListener("install", (event) => {
   event.waitUntil((async () => {
@@ -57,24 +88,25 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
-  // 1) HTML(navigate): 온라인이면 무조건 최신(no-store) / 오프라인이면 캐시된 index로
+  // 1) HTML(navigate): 온라인이면 최신 HTML을 받고 하트 시스템을 삽입 / 오프라인이면 캐시된 index로
   if (req.mode === "navigate") {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
 
       try {
         const fresh = await fetch(req, { cache: "no-store" });
-        await cache.put("./index.html", fresh.clone());
-        await cache.put("./", fresh.clone());
-        return fresh;
+        if (fresh.ok) {
+          await cache.put("./index.html", fresh.clone());
+          await cache.put("./", fresh.clone());
+        }
+        return withGameHearts(fresh);
       } catch (_) {
-        // 오프라인 폴백(앱 셸)
-        return (
+        const cached =
           (await cache.match("./index.html", { ignoreSearch: true })) ||
           (await cache.match("./", { ignoreSearch: true })) ||
           (await caches.match("./index.html", { ignoreSearch: true })) ||
-          (await caches.match("./", { ignoreSearch: true }))
-        );
+          (await caches.match("./", { ignoreSearch: true }));
+        return cached ? withGameHearts(cached) : cached;
       }
     })());
     return;
