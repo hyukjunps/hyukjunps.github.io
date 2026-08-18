@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v30"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v31"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -20,7 +20,7 @@ function withGameHearts(response) {
     let html = await response.text();
     const tags = [];
     if (!html.includes("game-hearts.js")) {
-      tags.push('<script src="./game-hearts.js?v=20260817-2" defer></script>');
+      tags.push('<script src="./game-hearts.js?v=20260818-1" defer></script>');
     }
     if (!html.includes("game-heart-retries.js")) {
       tags.push('<script src="./game-heart-retries.js?v=20260817" defer></script>');
