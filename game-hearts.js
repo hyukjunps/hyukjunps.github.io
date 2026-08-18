@@ -2,8 +2,8 @@
   'use strict';
 
   const HEART_KEY = 'opoong_game_hearts_v1';
-  const HEART_MAX = 5;
-  const SCRIPT_VERSION = '2026-08-17-2';
+  const HEART_MAX = 30;
+  const SCRIPT_VERSION = '2026-08-18-1';
   const HEART_AD = {
     unit: 'DAN-ps0PRxwqtGCGkBq2',
     width: 320,
@@ -30,18 +30,26 @@
       localStorage.setItem(HEART_KEY, JSON.stringify({
         hearts: clampHeart(state.hearts),
         refillDay: String(state.refillDay || localDayKey()),
-        version: SCRIPT_VERSION
+        version: SCRIPT_VERSION,
+        max: HEART_MAX
       }));
     }catch(_){ }
   }
 
   function loadHeartState(){
     const today = localDayKey();
-    let state = { hearts: HEART_MAX, refillDay: today, version: SCRIPT_VERSION };
+    let state = { hearts: HEART_MAX, refillDay: today, version: SCRIPT_VERSION, max: HEART_MAX };
 
     try{
       const raw = JSON.parse(localStorage.getItem(HEART_KEY) || '{}');
       if(raw && typeof raw === 'object'){
+        const storedMax = Math.floor(Number(raw.max) || 0);
+        if(storedMax !== HEART_MAX){
+          state.hearts = HEART_MAX;
+          state.refillDay = today;
+          saveHeartState(state);
+          return state;
+        }
         state.hearts = raw.hearts === undefined ? HEART_MAX : clampHeart(raw.hearts);
         state.refillDay = String(raw.refillDay || '');
       }
@@ -166,7 +174,7 @@
       heartWallet.className = 'gameHeartWallet';
       heartWallet.innerHTML = `
         <span class="heartIcon" aria-hidden="true">♥</span>
-        <span class="heartText"><span>게임 하트</span><strong id="gameHeartCount">5 / 5</strong></span>
+        <span class="heartText"><span>게임 하트</span><strong id="gameHeartCount">${HEART_MAX} / ${HEART_MAX}</strong></span>
         <button class="smallbtn ghost gameHeartChargeBtn" type="button" id="gameHeartChargeBtn">충전 안내</button>
       `;
       wallets.appendChild(heartWallet);
@@ -186,7 +194,7 @@
       const hint = document.createElement('div');
       hint.id = 'gameHeartHint';
       hint.className = 'gameHeartHint';
-      hint.textContent = '게임을 시작하거나 다시 플레이할 때 하트 1개를 사용해요. 하트는 매일 5개로 무료 충전됩니다.';
+      hint.textContent = `게임을 시작하거나 다시 플레이할 때 하트 1개를 사용해요. 하트는 매일 ${HEART_MAX}개로 무료 충전됩니다.`;
       hub.parentNode.insertBefore(hint, hub);
     }
 
@@ -205,8 +213,8 @@
             <button class="btn ghost" type="button" id="gameHeartModalClose">닫기</button>
           </div>
           <div class="heartModalBody">
-            <div class="heartBig"><span aria-hidden="true">♥</span><strong id="gameHeartModalCount">5 / 5</strong></div>
-            <p id="gameHeartRefillText">매일 00:00 이후 처음 접속하면 하트가 5개로 충전돼요.</p>
+            <div class="heartBig"><span aria-hidden="true">♥</span><strong id="gameHeartModalCount">${HEART_MAX} / ${HEART_MAX}</strong></div>
+            <p id="gameHeartRefillText">매일 00:00 이후 처음 접속하면 하트가 ${HEART_MAX}개로 충전돼요.</p>
             <p class="heartModalNote" id="gameHeartModalNote">현재 추가 하트 구매나 광고 보상은 제공하지 않아요. 위 광고는 일반 광고이며 하트 지급과 연결되지 않습니다.</p>
           </div>
         </section>
@@ -228,7 +236,7 @@
     const hub = document.getElementById('gameHub');
     if(count) count.textContent = `${state.hearts} / ${HEART_MAX}`;
     if(modalCount) modalCount.textContent = `${state.hearts} / ${HEART_MAX}`;
-    if(refill) refill.textContent = `매일 00:00 이후 처음 확인할 때 5개로 충전돼요. ${nextRefillLabel()}.`;
+    if(refill) refill.textContent = `매일 00:00 이후 처음 확인할 때 ${HEART_MAX}개로 충전돼요. ${nextRefillLabel()}.`;
     if(hub) hub.classList.toggle('heart-empty', state.hearts <= 0);
   }
 
