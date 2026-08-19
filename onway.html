@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#1e40af">
+<title>온웨이 에듀 바로가기 | O.Poong</title>
+<link rel="manifest" href="./onway-manifest.json">
+<link rel="icon" href="./O.poong.png">
+<link rel="apple-touch-icon" href="./O.poong.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="온웨이">
+<style>
+:root{--bg:#f5f7fb;--card:#fff;--text:#0f172a;--muted:#64748b;--line:#e2e8f0;--pri:#1e40af;--pri2:#2563eb;--shadow:0 24px 70px rgba(15,23,42,.12)}
+@media(prefers-color-scheme:dark){:root{--bg:#07111f;--card:#0f172a;--text:#e5e7eb;--muted:#9ca3af;--line:#26364d;--pri:#60a5fa;--pri2:#2563eb;--shadow:0 24px 70px rgba(0,0,0,.42)}}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:20px;background:radial-gradient(700px 360px at 12% -5%,rgba(96,165,250,.25),transparent 60%),var(--bg);font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",sans-serif;color:var(--text)}.card{width:min(100%,520px);padding:28px;border:1px solid var(--line);border-radius:30px;background:var(--card);box-shadow:var(--shadow)}.icon{width:76px;height:76px;border-radius:24px;display:grid;place-items:center;background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff;font-size:31px;font-weight:1000;box-shadow:0 14px 30px rgba(37,99,235,.28)}h1{font-size:30px;letter-spacing:-1px;margin:18px 0 8px}p{margin:0;color:var(--muted);font-weight:750;line-height:1.7}.actions{display:grid;gap:9px;margin-top:22px}.btn{border:1px solid var(--line);border-radius:17px;padding:14px 16px;background:var(--card);color:var(--text);font:inherit;font-weight:950;cursor:pointer;text-decoration:none;text-align:center}.btn.primary{border:0;background:linear-gradient(135deg,var(--pri),var(--pri2));color:#fff}.guide{display:none;margin-top:18px;padding:15px;border:1px solid var(--line);border-radius:18px;color:var(--muted);font-size:13px;font-weight:750;line-height:1.7}.guide.show{display:block}.small{margin-top:16px;font-size:11.5px;color:var(--muted);font-weight:750;line-height:1.6}
+</style>
+</head>
+<body>
+<main class="card">
+  <div class="icon">온</div>
+  <h1>온웨이 에듀 바로가기</h1>
+  <p>홈 화면에 별도 아이콘을 만들어요. 아이콘을 누르면 외부 사이트로 바로 가지 않고 <b>O.Poong의 온웨이에듀 화면</b>이 열립니다.</p>
+  <div class="actions">
+    <button class="btn primary" id="installBtn" type="button">홈 화면에 추가</button>
+    <a class="btn" href="./?page=onway">O.Poong 온웨이에듀 화면 열기</a>
+  </div>
+  <div class="guide" id="iosGuide">iPhone/iPad에서는 Safari의 <b>공유</b> 버튼을 누른 뒤 <b>홈 화면에 추가</b>를 선택해 주세요.</div>
+  <div class="guide" id="manualGuide">설치 버튼이 바로 뜨지 않는 브라우저에서는 브라우저 메뉴에서 <b>앱 설치</b> 또는 <b>홈 화면에 추가</b>를 선택해 주세요.</div>
+  <div class="small">설치된 아이콘의 목적지는 O.Poong 내부의 <b>/?page=onway</b> 화면입니다.</div>
+</main>
+<script>
+const params=new URLSearchParams(location.search);
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+if(params.get('launch')==='1'||standalone){location.replace('./?page=onway&from=onway-shortcut');}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('./service-worker.js').catch(()=>{});}
+let deferredPrompt=null;
+const btn=document.getElementById('installBtn');
+const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferredPrompt=e;btn.disabled=false;btn.textContent='홈 화면에 추가';});
+btn.addEventListener('click',async()=>{
+  if(deferredPrompt){deferredPrompt.prompt();const result=await deferredPrompt.userChoice;deferredPrompt=null;if(result.outcome==='accepted')btn.textContent='추가 완료';return;}
+  if(ios){document.getElementById('iosGuide').classList.add('show');return;}
+  document.getElementById('manualGuide').classList.add('show');
+});
+if(ios) btn.textContent='추가 방법 보기';
+window.addEventListener('appinstalled',()=>{btn.textContent='추가 완료';});
+</script>
+</body>
+</html>
