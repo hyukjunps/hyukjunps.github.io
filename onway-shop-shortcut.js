@@ -1,40 +1,43 @@
 (() => {
-  function addInstallControl() {
+  let attempts = 0;
+  let timer = null;
+
+  function patchOnce() {
     const cards = [...document.querySelectorAll('.gameShopCard')];
     const card = cards.find(c => c.querySelector('h3')?.textContent.trim() === '온웨이에듀 바로가기');
-    if (!card || card.querySelector('[data-onway-install="1"]')) return;
+    if (!card) return false;
 
-    const owned = /보유 중/.test(card.textContent || '') || ![...card.querySelectorAll('button')].some(b => /P로 팩 구매/.test(b.textContent || ''));
+    const p = card.querySelector('p');
+    const desc = '상단 빠른 실행 버튼 + 홈 화면에 별도 온웨이 아이콘 만들기';
+    if (p && p.textContent !== desc) p.textContent = desc;
+
+    if (card.querySelector('[data-onway-install="1"]')) return true;
+
+    const buyButton = [...card.querySelectorAll('button')].find(b => /P로 팩 구매/.test(b.textContent || ''));
+    const owned = !buyButton;
+
     const btn = document.createElement('button');
     btn.type = 'button';
     btn.className = 'smallbtn primary gameShopAction';
     btn.dataset.onwayInstall = '1';
     btn.textContent = '홈 화면 바로가기 만들기';
     btn.disabled = !owned;
-    btn.addEventListener('click', () => {
-      window.location.href = './onway.html';
-    });
-
-    const actions = card.querySelector('.gameShopVariants') || card.querySelector('.gameShopCustom') || card.querySelector('.gameShopAction')?.parentElement || card;
-    if (actions === card) card.appendChild(btn);
-    else actions.appendChild(btn);
+    btn.addEventListener('click', () => { window.location.href = './onway.html'; });
+    card.appendChild(btn);
+    return true;
   }
 
-  function patchDescription() {
-    const cards = [...document.querySelectorAll('.gameShopCard')];
-    const card = cards.find(c => c.querySelector('h3')?.textContent.trim() === '온웨이에듀 바로가기');
-    if (!card) return;
-    const p = card.querySelector('p');
-    if (p) p.textContent = '상단 빠른 실행 버튼 + 홈 화면에 별도 온웨이 아이콘 만들기';
+  function start() {
+    if (patchOnce()) return;
+    timer = setInterval(() => {
+      attempts += 1;
+      if (patchOnce() || attempts >= 20) {
+        clearInterval(timer);
+        timer = null;
+      }
+    }, 500);
   }
 
-  function init() {
-    addInstallControl();
-    patchDescription();
-    const mo = new MutationObserver(() => { addInstallControl(); patchDescription(); });
-    mo.observe(document.body, { childList: true, subtree: true });
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once: true });
-  else init();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start, { once: true });
+  else start();
 })();
