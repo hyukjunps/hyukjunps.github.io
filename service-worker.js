@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v32"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v33"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -37,6 +37,13 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("qr-menu.js")) {
         tags.push('<script src="./qr-menu.js?v=20260819-1" defer></script>');
       }
+    } else {
+      // qrcode@1.5.4의 npm CDN 배포본에는 build/ 번들이 없어 기존 URL이 404가 납니다.
+      // 실제 browser build가 포함된 1.5.1로 고정하고 jsDelivr 실패 시 unpkg로 한 번 더 시도합니다.
+      html = html.replace(
+        '<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>',
+        '<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js" onerror="this.onerror=null;this.src=\'https://unpkg.com/qrcode@1.5.1/build/qrcode.min.js\'"></script>'
+      );
     }
 
     if (tags.length) {
