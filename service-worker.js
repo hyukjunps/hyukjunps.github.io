@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v37"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v38"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -12,8 +12,11 @@ const APP_SHELL = [
   "./notice-override.js",
   "./qr-menu.js",
   "./tools-image.js",
-  "./tools-image-transparency-fix.js",
+  "./tools-image-cleanup.js",
   "./pwa-update.js",
+  "./onway.html",
+  "./onway-manifest.json",
+  "./onway-shop-shortcut.js"
 ];
 
 function withInjectedScripts(response, requestUrl) {
@@ -26,19 +29,21 @@ function withInjectedScripts(response, requestUrl) {
     const tags = [];
     const url = new URL(requestUrl || self.location.href);
     const isToolsPage = url.pathname.endsWith("/tools.html");
+    const isOnwayInstaller = url.pathname.endsWith("/onway.html");
 
-    if (!html.includes("pwa-update.js")) {
+    if (!html.includes("pwa-update.js") && !isOnwayInstaller) {
       tags.push('<script src="./pwa-update.js?v=20260819-1" defer></script>');
     }
 
-    if (!isToolsPage) {
+    if (!isToolsPage && !isOnwayInstaller) {
       if (!html.includes("game-hearts.js")) tags.push('<script src="./game-hearts.js?v=20260818-1" defer></script>');
       if (!html.includes("game-heart-retries.js")) tags.push('<script src="./game-heart-retries.js?v=20260817" defer></script>');
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
-      if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-4" defer></script>');
-    } else {
+      if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-5" defer></script>');
+      if (!html.includes("onway-shop-shortcut.js")) tags.push('<script src="./onway-shop-shortcut.js?v=20260819-1" defer></script>');
+    } else if (isToolsPage) {
       if (!html.includes("tools-image.js")) tags.push('<script src="./tools-image.js?v=20260819-1" defer></script>');
-      if (!html.includes("tools-image-transparency-fix.js")) tags.push('<script src="./tools-image-transparency-fix.js?v=20260819-1" defer></script>');
+      if (!html.includes("tools-image-cleanup.js")) tags.push('<script src="./tools-image-cleanup.js?v=20260819-1" defer></script>');
     }
 
     if (tags.length) {
@@ -86,16 +91,17 @@ self.addEventListener("fetch", (event) => {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
       const isToolsPage = url.pathname.endsWith("/tools.html");
-      const cacheKey = isToolsPage ? "./tools.html" : "./index.html";
+      const isOnwayInstaller = url.pathname.endsWith("/onway.html");
+      const cacheKey = isToolsPage ? "./tools.html" : isOnwayInstaller ? "./onway.html" : "./index.html";
       try {
         const fresh = await fetch(req, { cache: "no-store" });
         if (fresh.ok) {
           await cache.put(cacheKey, fresh.clone());
-          if (!isToolsPage) await cache.put("./", fresh.clone());
+          if (!isToolsPage && !isOnwayInstaller) await cache.put("./", fresh.clone());
         }
         return withInjectedScripts(fresh, req.url);
       } catch (_) {
-        const cached = (await cache.match(cacheKey, { ignoreSearch: true })) || (!isToolsPage ? await cache.match("./", { ignoreSearch: true }) : null) || (await caches.match(cacheKey, { ignoreSearch: true }));
+        const cached = (await cache.match(cacheKey, { ignoreSearch: true })) || (!isToolsPage && !isOnwayInstaller ? await cache.match("./", { ignoreSearch: true }) : null) || (await caches.match(cacheKey, { ignoreSearch: true }));
         return cached ? withInjectedScripts(cached, req.url) : cached;
       }
     })());
@@ -105,9 +111,12 @@ self.addEventListener("fetch", (event) => {
   const freshPaths = new Set([
     "/qr-menu.js",
     "/tools-image.js",
-    "/tools-image-transparency-fix.js",
+    "/tools-image-cleanup.js",
     "/pwa-update.js",
-    "/manifest.json"
+    "/manifest.json",
+    "/onway.html",
+    "/onway-manifest.json",
+    "/onway-shop-shortcut.js"
   ]);
   if (freshPaths.has(url.pathname)) {
     event.respondWith(networkFirst(req, url.pathname));
