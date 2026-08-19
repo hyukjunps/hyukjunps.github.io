@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<meta name="theme-color" content="#f5f7fb" />
+<title>QR 만들기 | O.Poong</title>
+<link rel="icon" href="./O.poong.png" />
+<style>
+:root{
+  --bg:#f5f7fb;--bg2:#edf4ff;--card:#fff;--card2:#f8fbff;--text:#0f172a;--muted:#64748b;
+  --line:#e2e8f0;--pri:#1e40af;--pri2:#2563eb;--pri3:#60a5fa;--ok:#059669;--warn:#b91c1c;
+  --shadow:0 22px 60px rgba(15,23,42,.10);--shadow2:0 12px 28px rgba(15,23,42,.08);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#07111f;--bg2:#0b1730;--card:#0f172a;--card2:#111c31;--text:#e5e7eb;--muted:#9ca3af;
+  --line:#26364d;--pri:#60a5fa;--pri2:#2563eb;--pri3:#93c5fd;--ok:#10b981;--warn:#f87171;
+  --shadow:0 24px 70px rgba(0,0,0,.42);--shadow2:0 14px 34px rgba(0,0,0,.28);
+}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;min-height:100vh;color:var(--text);background:radial-gradient(900px 420px at 8% -8%,color-mix(in srgb,var(--pri3) 30%,transparent),transparent 60%),linear-gradient(180deg,var(--bg2),var(--bg));font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans KR",Arial,sans-serif;word-break:keep-all}button,input,textarea{font:inherit}button{cursor:pointer}.wrap{max-width:980px;margin:0 auto;padding:18px 14px 42px}.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border:1px solid var(--line);border-radius:28px;background:color-mix(in srgb,var(--card) 91%,transparent);backdrop-filter:blur(18px);box-shadow:var(--shadow2);position:sticky;top:12px;z-index:20}.brand{display:flex;align-items:center;gap:11px;min-width:0}.logo{width:48px;height:48px;border-radius:17px;object-fit:cover;border:1px solid var(--line)}.brandText{min-width:0}.brandText b{display:block;font-size:17px}.brandText span{display:block;margin-top:2px;color:var(--muted);font-size:12px;font-weight:800}.btn{border:1px solid var(--line);border-radius:16px;padding:11px 14px;background:var(--card);color:var(--text);font-weight:900;display:inline-flex;align-items:center;justify-content:center;gap:7px;text-decoration:none;transition:.16s ease}.btn:hover{transform:translateY(-1px)}.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,var(--pri),var(--pri2));box-shadow:0 12px 24px color-mix(in srgb,var(--pri) 25%,transparent)}.btn.ghost{background:color-mix(in srgb,var(--card) 86%,transparent)}.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}.hero{margin:18px 0 14px;padding:24px;border:1px solid var(--line);border-radius:28px;background:var(--card);box-shadow:var(--shadow)}.eyebrow{display:inline-flex;padding:8px 11px;border-radius:999px;background:color-mix(in srgb,var(--pri) 9%,var(--card));color:var(--pri);font-size:12px;font-weight:950}.hero h1{font-size:clamp(30px,6vw,48px);letter-spacing:-1.8px;margin:13px 0 8px}.hero p{margin:0;color:var(--muted);font-weight:750;line-height:1.7}.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(300px,.8fr);gap:14px}.card{border:1px solid var(--line);border-radius:26px;background:var(--card);box-shadow:var(--shadow2);padding:18px}.card h2{font-size:18px;margin:0 0 6px}.sub{color:var(--muted);font-size:13px;font-weight:750;line-height:1.6}.tabs{display:flex;gap:7px;margin:16px 0 12px}.tab{flex:1;border:1px solid var(--line);border-radius:14px;padding:10px;background:var(--card2);color:var(--muted);font-weight:900}.tab.active{background:color-mix(in srgb,var(--pri) 11%,var(--card));color:var(--pri);border-color:color-mix(in srgb,var(--pri) 35%,var(--line))}.fieldLabel{display:block;margin:12px 0 7px;font-size:13px;font-weight:900}.input{width:100%;border:1px solid var(--line);border-radius:17px;padding:14px 15px;background:var(--card2);color:var(--text);outline:none;resize:vertical;min-height:54px}.input:focus{border-color:var(--pri3);box-shadow:0 0 0 4px color-mix(in srgb,var(--pri3) 18%,transparent)}textarea.input{min-height:120px;line-height:1.55}.helper{display:flex;justify-content:space-between;gap:10px;margin-top:7px;color:var(--muted);font-size:11.5px;font-weight:750}.clipCard{margin-top:14px;border:1px solid color-mix(in srgb,var(--pri) 22%,var(--line));border-radius:19px;padding:13px;background:linear-gradient(135deg,color-mix(in srgb,var(--pri) 8%,var(--card)),var(--card))}.clipTop{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.clipTop b{font-size:14px}.clipTop span{display:block;margin-top:4px;color:var(--muted);font-size:12px;line-height:1.5;font-weight:750}.switchStatus{flex:0 0 auto;padding:6px 9px;border-radius:999px;font-size:11px;font-weight:950;background:var(--card2);color:var(--muted);border:1px solid var(--line)}.switchStatus.on{color:var(--ok);border-color:color-mix(in srgb,var(--ok) 35%,var(--line));background:color-mix(in srgb,var(--ok) 8%,var(--card))}.clipActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:11px}.previewCard{display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:465px;position:relative;overflow:hidden}.qrShell{width:min(100%,360px);aspect-ratio:1;border-radius:24px;background:#fff;padding:18px;display:grid;place-items:center;border:1px solid #e5e7eb;box-shadow:0 18px 50px rgba(15,23,42,.14)}#qrCanvas{width:100%!important;height:100%!important;display:block}.placeholder{width:100%;height:100%;border:2px dashed #dbe3ef;border-radius:18px;display:grid;place-items:center;text-align:center;color:#718096;font-size:13px;font-weight:850;line-height:1.6;padding:26px}.previewTitle{margin-top:14px;font-size:14px;font-weight:950;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.previewActions{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%;margin-top:15px}.privacy{margin-top:14px;padding:13px 14px;border-radius:18px;background:var(--card2);border:1px solid var(--line);color:var(--muted);font-size:12px;line-height:1.65;font-weight:750}.privacy b{color:var(--text)}.status{margin-top:10px;min-height:20px;font-size:12px;font-weight:850;color:var(--muted)}.status.ok{color:var(--ok)}.status.warn{color:var(--warn)}.overlay{position:fixed;inset:0;background:rgba(2,6,23,.58);backdrop-filter:blur(8px);display:grid;place-items:center;padding:18px;z-index:100}.overlay[hidden]{display:none}.modal{width:min(100%,460px);padding:21px;border-radius:26px;background:var(--card);border:1px solid var(--line);box-shadow:0 30px 90px rgba(0,0,0,.35)}.modalIcon{width:48px;height:48px;border-radius:17px;display:grid;place-items:center;background:color-mix(in srgb,var(--pri) 11%,var(--card));color:var(--pri);font-size:22px;font-weight:1000}.modal h3{font-size:21px;margin:14px 0 8px}.modal p{margin:0;color:var(--muted);line-height:1.7;font-weight:750;font-size:13.5px}.modalActions{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-top:18px}.toast{position:fixed;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translate(-50%,20px);opacity:0;pointer-events:none;z-index:120;background:#0f172a;color:#fff;padding:11px 15px;border-radius:999px;font-size:12.5px;font-weight:900;box-shadow:0 14px 40px rgba(0,0,0,.25);transition:.2s ease}.toast.show{opacity:1;transform:translate(-50%,0)}.presenting{position:fixed!important;inset:0!important;z-index:200!important;border-radius:0!important;background:#fff!important;min-height:100vh!important;padding:24px!important}.presenting .previewTitle{color:#0f172a;font-size:clamp(18px,4vw,34px);margin-top:20px}.presenting .previewActions{display:none}.presenting .qrShell{width:min(70vh,80vw);max-width:none}.presentExit{display:none;position:absolute;top:20px;right:20px}.presenting .presentExit{display:inline-flex}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.topbar{border-radius:22px}.brandText span{display:none}.hero{padding:20px}.previewCard{min-height:auto}.previewActions{grid-template-columns:1fr 1fr}.previewActions .wide{grid-column:1/-1}.modalActions{grid-template-columns:1fr}.qrShell{width:min(100%,330px)}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="topbar">
+    <div class="brand"><img class="logo" src="./O.poong.png" alt="O.Poong"><div class="brandText"><b>O.Poong</b><span>풍산고 생활, 한 화면에서.</span></div></div>
+    <a class="btn ghost" href="./">← 홈으로</a>
+  </header>
+
+  <section class="hero">
+    <span class="eyebrow">O.Poong Tools</span>
+    <h1>QR 만들기</h1>
+    <p>링크나 텍스트를 입력하면 바로 QR 코드로 만들 수 있어요. 클립보드는 사용자가 동의하고 직접 불러올 때만 확인합니다.</p>
+  </section>
+
+  <main class="grid">
+    <section class="card">
+      <h2>내용 입력</h2>
+      <div class="sub">QR에 넣을 내용을 선택하고 입력하세요.</div>
+      <div class="tabs" role="tablist">
+        <button class="tab active" id="tabLink" type="button" onclick="setMode('link')">링크</button>
+        <button class="tab" id="tabText" type="button" onclick="setMode('text')">텍스트</button>
+      </div>
+      <label class="fieldLabel" id="inputLabel" for="qrInput">링크</label>
+      <textarea id="qrInput" class="input" inputmode="url" autocomplete="off" placeholder="https://example.com"></textarea>
+      <div class="helper"><span id="inputHelp">웹 주소를 붙여넣어 보세요.</span><span id="charCount">0자</span></div>
+
+      <div class="clipCard">
+        <div class="clipTop">
+          <div><b>클립보드 링크 가져오기</b><span id="clipDesc">동의 후, 복사한 링크를 버튼 한 번으로 가져올 수 있어요.</span></div>
+          <span id="clipStatus" class="switchStatus">사용 전</span>
+        </div>
+        <div class="clipActions">
+          <button class="btn primary" id="clipReadBtn" type="button" onclick="handleClipboardButton()">동의하고 사용</button>
+          <button class="btn ghost" id="clipOffBtn" type="button" onclick="disableClipboardConsent()" hidden>사용 안 함</button>
+        </div>
+      </div>
+
+      <div id="qrStatus" class="status" aria-live="polite">내용을 입력하면 QR이 자동으로 생성돼요.</div>
+      <div class="privacy"><b>개인정보 안내</b><br>클립보드는 버튼을 누른 순간에만 브라우저에서 읽습니다. QR에 입력한 내용은 QR 생성 과정에서 서버로 전송하지 않으며, 클립보드 사용 동의 여부만 이 기기의 브라우저 저장소에 보관합니다.</div>
+    </section>
+
+    <section class="card previewCard" id="previewCard">
+      <button class="btn presentExit" type="button" onclick="exitPresentation()">나가기</button>
+      <div class="qrShell" id="qrShell">
+        <div class="placeholder" id="placeholder">링크나 텍스트를 입력하면<br>여기에 QR 코드가 나타나요.</div>
+        <canvas id="qrCanvas" hidden></canvas>
+      </div>
+      <div class="previewTitle" id="previewTitle">QR 미리보기</div>
+      <div class="previewActions">
+        <button class="btn primary" id="downloadBtn" type="button" onclick="downloadQR()" disabled>PNG 저장</button>
+        <button class="btn" id="shareBtn" type="button" onclick="shareQR()" disabled>공유</button>
+        <button class="btn wide" id="presentBtn" type="button" onclick="presentationMode()" disabled>발표 모드</button>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div class="overlay" id="consentOverlay" hidden role="dialog" aria-modal="true" aria-labelledby="consentTitle">
+  <div class="modal">
+    <div class="modalIcon">▦</div>
+    <h3 id="consentTitle">클립보드의 링크를 빠르게 가져올까요?</h3>
+    <p>O.Poong이 클립보드에 복사된 링크를 확인해 QR 코드로 바로 만들 수 있어요. 클립보드 내용은 QR 입력에만 사용하고 서버로 전송하지 않아요.</p>
+    <div class="modalActions">
+      <button class="btn primary" type="button" onclick="agreeClipboard()">동의하고 사용</button>
+      <button class="btn" type="button" onclick="dismissClipboardConsent()">나중에</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script>
+const CONSENT_KEY='opoong_qr_clipboard_consent_v1';
+let mode='link';
+let renderTimer=null;
+const input=document.getElementById('qrInput');
+const canvas=document.getElementById('qrCanvas');
+const placeholder=document.getElementById('placeholder');
+const statusEl=document.getElementById('qrStatus');
+
+function toast(message){
+  const el=document.getElementById('toast');
+  el.textContent=message;el.classList.add('show');
+  clearTimeout(toast._t);toast._t=setTimeout(()=>el.classList.remove('show'),2200);
+}
+function setStatus(text,type=''){
+  statusEl.textContent=text;statusEl.className='status'+(type?' '+type:'');
+}
+function setMode(next){
+  mode=next;
+  document.getElementById('tabLink').classList.toggle('active',next==='link');
+  document.getElementById('tabText').classList.toggle('active',next==='text');
+  document.getElementById('inputLabel').textContent=next==='link'?'링크':'텍스트';
+  document.getElementById('inputHelp').textContent=next==='link'?'웹 주소를 붙여넣어 보세요.':'문장, 연락처 안내 등 원하는 텍스트를 입력하세요.';
+  input.placeholder=next==='link'?'https://example.com':'QR에 넣을 텍스트를 입력하세요.';
+  input.inputMode=next==='link'?'url':'text';
+  scheduleRender();
+}
+function looksLikeUrl(value){
+  const v=value.trim();
+  if(!v) return false;
+  try{const u=new URL(v);return ['http:','https:'].includes(u.protocol);}catch(e){return /^(www\.)?[a-z0-9-]+(\.[a-z0-9-]+)+([/?#].*)?$/i.test(v);}
+}
+function normalizedValue(){
+  const raw=input.value.trim();
+  if(mode==='link' && raw && !/^https?:\/\//i.test(raw) && looksLikeUrl(raw)) return 'https://'+raw;
+  return raw;
+}
+function scheduleRender(){
+  document.getElementById('charCount').textContent=input.value.length+'자';
+  clearTimeout(renderTimer);renderTimer=setTimeout(renderQR,120);
+}
+async function renderQR(){
+  const value=normalizedValue();
+  if(!value){
+    canvas.hidden=true;placeholder.hidden=false;
+    document.getElementById('previewTitle').textContent='QR 미리보기';
+    setButtons(false);setStatus('내용을 입력하면 QR이 자동으로 생성돼요.');return;
+  }
+  if(mode==='link' && !looksLikeUrl(value)){
+    setStatus('링크 형식을 한 번 확인해 주세요. 그래도 QR은 생성할 수 있어요.','warn');
+  }else setStatus('QR 코드가 준비됐어요.','ok');
+  if(typeof QRCode==='undefined'){
+    setStatus('QR 생성 모듈을 불러오지 못했어요. 네트워크 연결을 확인해 주세요.','warn');return;
+  }
+  try{
+    await QRCode.toCanvas(canvas,value,{width:640,margin:3,errorCorrectionLevel:'M',color:{dark:'#111827',light:'#ffffff'}});
+    placeholder.hidden=true;canvas.hidden=false;setButtons(true);
+    document.getElementById('previewTitle').textContent=mode==='link'?compactLabel(value):'텍스트 QR';
+  }catch(err){console.error(err);setStatus('QR 생성 중 오류가 발생했어요.','warn');setButtons(false);}
+}
+function compactLabel(value){
+  try{const u=new URL(value);return u.hostname.replace(/^www\./,'');}catch(e){return '링크 QR';}
+}
+function setButtons(enabled){['downloadBtn','shareBtn','presentBtn'].forEach(id=>document.getElementById(id).disabled=!enabled);}
+
+function consentState(){return localStorage.getItem(CONSENT_KEY)||'unset';}
+function updateClipboardUI(){
+  const state=consentState();
+  const status=document.getElementById('clipStatus');
+  const btn=document.getElementById('clipReadBtn');
+  const off=document.getElementById('clipOffBtn');
+  if(state==='yes'){
+    status.textContent='사용 중';status.classList.add('on');btn.textContent='클립보드 링크 확인';off.hidden=false;
+    document.getElementById('clipDesc').textContent='버튼을 누른 순간에만 클립보드의 링크를 확인해요.';
+  }else{
+    status.textContent='사용 전';status.classList.remove('on');btn.textContent='동의하고 사용';off.hidden=true;
+    document.getElementById('clipDesc').textContent='동의 후, 복사한 링크를 버튼 한 번으로 가져올 수 있어요.';
+  }
+}
+function showConsent(){document.getElementById('consentOverlay').hidden=false;}
+function hideConsent(){document.getElementById('consentOverlay').hidden=true;}
+function handleClipboardButton(){
+  if(consentState()==='yes') readClipboardLink(); else showConsent();
+}
+async function agreeClipboard(){
+  localStorage.setItem(CONSENT_KEY,'yes');hideConsent();updateClipboardUI();
+  await readClipboardLink();
+}
+function dismissClipboardConsent(){
+  localStorage.setItem(CONSENT_KEY,'dismissed');hideConsent();updateClipboardUI();toast('나중에 직접 켤 수 있어요.');
+}
+function disableClipboardConsent(){
+  localStorage.setItem(CONSENT_KEY,'dismissed');updateClipboardUI();toast('클립보드 링크 감지를 껐어요.');
+}
+async function readClipboardLink(){
+  if(!navigator.clipboard || !navigator.clipboard.readText){toast('이 브라우저에서는 클립보드 읽기를 지원하지 않아요.');return;}
+  try{
+    const text=(await navigator.clipboard.readText()).trim();
+    if(!text){toast('클립보드가 비어 있어요.');return;}
+    if(!looksLikeUrl(text)){toast('클립보드에서 링크를 찾지 못했어요.');return;}
+    setMode('link');input.value=text;input.focus();scheduleRender();toast('클립보드에서 링크를 발견했어요.');
+  }catch(err){
+    console.warn(err);toast('브라우저에서 클립보드 접근이 허용되지 않았어요.');
+  }
+}
+function downloadQR(){
+  if(canvas.hidden) return;
+  const a=document.createElement('a');a.download='O.Poong-QR.png';a.href=canvas.toDataURL('image/png');a.click();toast('QR 이미지를 저장했어요.');
+}
+async function shareQR(){
+  if(canvas.hidden) return;
+  try{
+    const blob=await new Promise(resolve=>canvas.toBlob(resolve,'image/png'));
+    const file=new File([blob],'O.Poong-QR.png',{type:'image/png'});
+    if(navigator.share && navigator.canShare && navigator.canShare({files:[file]})){
+      await navigator.share({title:'O.Poong QR',files:[file]});return;
+    }
+    if(navigator.share){await navigator.share({title:'O.Poong QR',text:normalizedValue()});return;}
+    toast('이 브라우저에서는 공유 기능을 지원하지 않아요.');
+  }catch(err){if(err && err.name!=='AbortError') toast('공유하지 못했어요.');}
+}
+async function presentationMode(){
+  const card=document.getElementById('previewCard');card.classList.add('presenting');
+  try{if(card.requestFullscreen) await card.requestFullscreen();}catch(e){}
+}
+function exitPresentation(){
+  document.getElementById('previewCard').classList.remove('presenting');
+  if(document.fullscreenElement && document.exitFullscreen) document.exitFullscreen().catch(()=>{});
+}
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement) document.getElementById('previewCard').classList.remove('presenting');});
+input.addEventListener('input',scheduleRender);
+document.addEventListener('DOMContentLoaded',()=>{
+  updateClipboardUI();
+  if(consentState()==='unset') setTimeout(showConsent,350);
+  scheduleRender();
+});
+</script>
+</body>
+</html>
