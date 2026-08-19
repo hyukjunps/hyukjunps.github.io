@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v35"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v36"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -11,6 +11,8 @@ const APP_SHELL = [
   "./game-heart-retries.js",
   "./notice-override.js",
   "./qr-menu.js",
+  "./tools-image.js",
+  "./pwa-update.js",
 ];
 
 function withInjectedScripts(response, requestUrl) {
@@ -24,11 +26,17 @@ function withInjectedScripts(response, requestUrl) {
     const url = new URL(requestUrl || self.location.href);
     const isToolsPage = url.pathname.endsWith("/tools.html");
 
+    if (!html.includes("pwa-update.js")) {
+      tags.push('<script src="./pwa-update.js?v=20260819-1" defer></script>');
+    }
+
     if (!isToolsPage) {
       if (!html.includes("game-hearts.js")) tags.push('<script src="./game-hearts.js?v=20260818-1" defer></script>');
       if (!html.includes("game-heart-retries.js")) tags.push('<script src="./game-heart-retries.js?v=20260817" defer></script>');
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
-      if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-3" defer></script>');
+      if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-4" defer></script>');
+    } else {
+      if (!html.includes("tools-image.js")) tags.push('<script src="./tools-image.js?v=20260819-1" defer></script>');
     }
 
     if (tags.length) {
@@ -68,19 +76,7 @@ self.addEventListener("fetch", (event) => {
   if (url.origin !== self.location.origin) return;
 
   if (url.pathname.includes("/data/schedule/") && url.pathname.endsWith(".json")) {
-    event.respondWith((async () => {
-      const cache = await caches.open(CACHE_NAME);
-      const cacheKey = new Request(`${url.origin}${url.pathname}`);
-      try {
-        const fresh = await fetch(req, { cache: "no-store" });
-        if (fresh.ok) await cache.put(cacheKey, fresh.clone());
-        return fresh;
-      } catch (error) {
-        const cached = await cache.match(cacheKey);
-        if (cached) return cached;
-        throw error;
-      }
-    })());
+    event.respondWith(networkFirst(req, `${url.origin}${url.pathname}`));
     return;
   }
 
@@ -104,9 +100,20 @@ self.addEventListener("fetch", (event) => {
     return;
   }
 
+  const freshPaths = new Set([
+    "/qr-menu.js",
+    "/tools-image.js",
+    "/pwa-update.js",
+    "/manifest.json"
+  ]);
+  if (freshPaths.has(url.pathname)) {
+    event.respondWith(networkFirst(req, url.pathname));
+    return;
+  }
+
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
-    const cached = await cache.match(req, { ignoreSearch: true });
+    const cached = await cache.match(req);
     if (cached) {
       fetch(req).then((res) => { if (res && res.ok) cache.put(req, res.clone()); }).catch(()=>{});
       return cached;
@@ -116,3 +123,16 @@ self.addEventListener("fetch", (event) => {
     return res;
   })());
 });
+
+async function networkFirst(req, cacheKey) {
+  const cache = await caches.open(CACHE_NAME);
+  try {
+    const fresh = await fetch(req, { cache: "no-store" });
+    if (fresh && fresh.ok) await cache.put(cacheKey, fresh.clone());
+    return fresh;
+  } catch (error) {
+    const cached = await cache.match(cacheKey, { ignoreSearch: true }) || await cache.match(req, { ignoreSearch: true });
+    if (cached) return cached;
+    throw error;
+  }
+}
