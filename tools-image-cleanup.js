@@ -15,7 +15,8 @@
     if (panel) panel.remove();
 
     const imageToolTab = document.querySelector('[data-tool="image"] span');
-    if (imageToolTab) imageToolTab.textContent = '필터·자르기·그리기·모자이크';
+    const label = '필터·자르기·그리기·모자이크';
+    if (imageToolTab && imageToolTab.textContent !== label) imageToolTab.textContent = label;
 
     const drop = document.getElementById('imageDrop');
     if (drop) {
@@ -24,10 +25,16 @@
     }
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', cleanup, { once:true });
-  else cleanup();
+  function init() {
+    cleanup();
+    let tries = 0;
+    const timer = setInterval(() => {
+      tries += 1;
+      cleanup();
+      if (document.getElementById('imageDrop') || tries >= 20) clearInterval(timer);
+    }, 250);
+  }
 
-  const mo = new MutationObserver(cleanup);
-  mo.observe(document.documentElement, { childList:true, subtree:true });
-  setTimeout(() => mo.disconnect(), 12000);
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init, { once:true });
+  else init();
 })();
