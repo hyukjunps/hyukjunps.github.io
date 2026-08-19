@@ -1,10 +1,11 @@
-const CACHE_VERSION = "v33"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v34"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
   "./",
   "./index.html",
   "./qr.html",
+  "./random.html",
   "./manifest.json",
   "./android/launchericon-512-512.png",
   "./game-hearts.js",
@@ -22,9 +23,9 @@ function withInjectedScripts(response, requestUrl) {
     let html = await response.text();
     const tags = [];
     const url = new URL(requestUrl || self.location.href);
-    const isMainApp = !url.pathname.endsWith("/qr.html");
+    const isToolPage = url.pathname.endsWith("/qr.html") || url.pathname.endsWith("/random.html");
 
-    if (isMainApp) {
+    if (!isToolPage) {
       if (!html.includes("game-hearts.js")) {
         tags.push('<script src="./game-hearts.js?v=20260818-1" defer></script>');
       }
@@ -35,11 +36,9 @@ function withInjectedScripts(response, requestUrl) {
         tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
       }
       if (!html.includes("qr-menu.js")) {
-        tags.push('<script src="./qr-menu.js?v=20260819-1" defer></script>');
+        tags.push('<script src="./qr-menu.js?v=20260819-2" defer></script>');
       }
-    } else {
-      // qrcode@1.5.4의 npm CDN 배포본에는 build/ 번들이 없어 기존 URL이 404가 납니다.
-      // 실제 browser build가 포함된 1.5.1로 고정하고 jsDelivr 실패 시 unpkg로 한 번 더 시도합니다.
+    } else if (url.pathname.endsWith("/qr.html")) {
       html = html.replace(
         '<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>',
         '<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js" onerror="this.onerror=null;this.src=\'https://unpkg.com/qrcode@1.5.1/build/qrcode.min.js\'"></script>'
@@ -93,7 +92,6 @@ self.addEventListener("fetch", (event) => {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
       const cacheKey = new Request(`${url.origin}${url.pathname}`);
-
       try {
         const fresh = await fetch(req, { cache: "no-store" });
         if (fresh.ok) await cache.put(cacheKey, fresh.clone());
@@ -111,19 +109,19 @@ self.addEventListener("fetch", (event) => {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
       const isQrPage = url.pathname.endsWith("/qr.html");
-      const cacheKey = isQrPage ? "./qr.html" : "./index.html";
-
+      const isRandomPage = url.pathname.endsWith("/random.html");
+      const cacheKey = isQrPage ? "./qr.html" : isRandomPage ? "./random.html" : "./index.html";
       try {
         const fresh = await fetch(req, { cache: "no-store" });
         if (fresh.ok) {
           await cache.put(cacheKey, fresh.clone());
-          if (!isQrPage) await cache.put("./", fresh.clone());
+          if (!isQrPage && !isRandomPage) await cache.put("./", fresh.clone());
         }
         return withInjectedScripts(fresh, req.url);
       } catch (_) {
         const cached =
           (await cache.match(cacheKey, { ignoreSearch: true })) ||
-          (!isQrPage ? (await cache.match("./", { ignoreSearch: true })) : null) ||
+          (!isQrPage && !isRandomPage ? (await cache.match("./", { ignoreSearch: true })) : null) ||
           (await caches.match(cacheKey, { ignoreSearch: true }));
         return cached ? withInjectedScripts(cached, req.url) : cached;
       }
@@ -133,7 +131,6 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
-
     const cached = await cache.match(req, { ignoreSearch: true });
     if (cached) {
       fetch(req).then((res) => {
@@ -141,7 +138,6 @@ self.addEventListener("fetch", (event) => {
       }).catch(()=>{});
       return cached;
     }
-
     try {
       const res = await fetch(req);
       if (res && res.ok) cache.put(req, res.clone());
