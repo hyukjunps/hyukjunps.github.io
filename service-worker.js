@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v39"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v40";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -32,7 +32,7 @@ function withInjectedScripts(response, requestUrl) {
     const isOnwayInstaller = url.pathname.endsWith("/onway.html");
 
     if (!html.includes("pwa-update.js") && !isOnwayInstaller) {
-      tags.push('<script src="./pwa-update.js?v=20260819-2" defer></script>');
+      tags.push('<script src="./pwa-update.js?v=20260819-3" defer></script>');
     }
 
     if (!isToolsPage && !isOnwayInstaller) {
@@ -40,10 +40,10 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("game-heart-retries.js")) tags.push('<script src="./game-heart-retries.js?v=20260817" defer></script>');
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
       if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-5" defer></script>');
-      if (!html.includes("onway-shop-shortcut.js")) tags.push('<script src="./onway-shop-shortcut.js?v=20260819-2" defer></script>');
+      if (!html.includes("onway-shop-shortcut.js")) tags.push('<script src="./onway-shop-shortcut.js?v=20260819-3" defer></script>');
     } else if (isToolsPage) {
       if (!html.includes("tools-image.js")) tags.push('<script src="./tools-image.js?v=20260819-1" defer></script>');
-      if (!html.includes("tools-image-cleanup.js")) tags.push('<script src="./tools-image-cleanup.js?v=20260819-1" defer></script>');
+      if (!html.includes("tools-image-cleanup.js")) tags.push('<script src="./tools-image-cleanup.js?v=20260819-2" defer></script>');
     }
 
     if (tags.length) {
@@ -53,7 +53,7 @@ function withInjectedScripts(response, requestUrl) {
 
     const headers = new Headers(response.headers);
     headers.delete("content-length");
-    return new Response(html, {status: response.status,statusText: response.statusText,headers});
+    return new Response(html, { status: response.status, statusText: response.statusText, headers });
   })();
 }
 
@@ -76,7 +76,7 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("message", (event) => {
-  if (event.data && event.data.type === "SKIP_WAITING") self.skipWaiting();
+  if (event.data?.type === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("fetch", (event) => {
@@ -103,8 +103,8 @@ self.addEventListener("fetch", (event) => {
         }
         return withInjectedScripts(fresh, req.url);
       } catch (_) {
-        const cached = (await cache.match(cacheKey, { ignoreSearch: true })) || (!isToolsPage && !isOnwayInstaller ? await cache.match("./", { ignoreSearch: true }) : null) || (await caches.match(cacheKey, { ignoreSearch: true }));
-        return cached ? withInjectedScripts(cached, req.url) : cached;
+        const cached = await cache.match(cacheKey, { ignoreSearch: true }) || (!isToolsPage && !isOnwayInstaller ? await cache.match("./", { ignoreSearch: true }) : null);
+        return cached ? withInjectedScripts(cached, req.url) : new Response("Offline", { status: 503 });
       }
     })());
     return;
@@ -129,11 +129,11 @@ self.addEventListener("fetch", (event) => {
     const cache = await caches.open(CACHE_NAME);
     const cached = await cache.match(req);
     if (cached) {
-      fetch(req, { cache: "no-store" }).then((res) => { if (res && res.ok) cache.put(req, res.clone()); }).catch(()=>{});
+      fetch(req, { cache: "no-store" }).then((res) => { if (res?.ok) cache.put(req, res.clone()); }).catch(() => {});
       return cached;
     }
     const res = await fetch(req, { cache: "no-store" });
-    if (res && res.ok) cache.put(req, res.clone());
+    if (res?.ok) cache.put(req, res.clone());
     return res;
   })());
 });
@@ -142,7 +142,7 @@ async function networkFirst(req, cacheKey) {
   const cache = await caches.open(CACHE_NAME);
   try {
     const fresh = await fetch(req, { cache: "no-store" });
-    if (fresh && fresh.ok) await cache.put(cacheKey, fresh.clone());
+    if (fresh?.ok) await cache.put(cacheKey, fresh.clone());
     return fresh;
   } catch (error) {
     const cached = await cache.match(cacheKey, { ignoreSearch: true }) || await cache.match(req, { ignoreSearch: true });
