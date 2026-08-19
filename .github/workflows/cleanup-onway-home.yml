@@ -1,0 +1,86 @@
+name: Remove Onway home shortcut experiment
+
+on:
+  push:
+    paths:
+      - '.github/workflows/cleanup-onway-home.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - name: Remove shortcut experiment only
+        shell: bash
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          original = text
+
+          # Remove CSS that existed only for the shop-created top shortcut.
+          text = re.sub(r'\.shopQuickOnway\{[^\n]*\}\n\.shopQuickOnway\[hidden\]\{[^\n]*\}\n', '', text)
+          text = text.replace('.shopQuickOnway{width:42px;min-width:42px;padding:9px!important;font-size:0}.shopQuickOnway:before{content:"온";font-size:12px}', '')
+
+          # Remove the top shortcut button itself.
+          text = re.sub(r'^\s*<button id="onwayShopShortcut"[^\n]*</button>\n', '', text, flags=re.M)
+
+          # Remove the Point Shop product that created the shortcut.
+          text = re.sub(r'^\s*\{id:"onway",icon:"↗️",name:"온웨이에듀 바로가기",price:500,desc:"상단에 온웨이에듀 빠른 실행 버튼 생성",special:"onway"\},\n', '', text, flags=re.M)
+
+          # Remove runtime show/hide and the special shop action for that product.
+          text = re.sub(r'^\s*const quick=document\.getElementById\("onwayShopShortcut"\);if\(quick\)quick\.hidden=!shopOwns\("onway"\);\n', '', text, flags=re.M)
+          text = re.sub(r'^\s*else if\(special==="onway"\)controls\+=.*?;\n', '', text, flags=re.M)
+
+          # Generic shop-data cleanup: removed product IDs are purged from localStorage
+          # without keeping any Onway-specific migration code behind.
+          old = '''function loadOpoongShop(){
+            try{
+              const raw=JSON.parse(localStorage.getItem(OPOONG_SHOP_KEY)||"{}");
+              return {owned:Array.from(new Set(Array.isArray(raw.owned)?raw.owned:[])),equipped:raw.equipped&&typeof raw.equipped==="object"?raw.equipped:{},customColor:/^#[0-9a-f]{6}$/i.test(raw.customColor||"")?raw.customColor:"#1e40af"};
+            }catch(e){return{owned:[],equipped:{},customColor:"#1e40af"};}
+          }'''
+          new = '''function loadOpoongShop(){
+            try{
+              const raw=JSON.parse(localStorage.getItem(OPOONG_SHOP_KEY)||"{}");
+              const validIds=new Set(OPOONG_SHOP_ITEMS.map(item=>item.id));
+              const owned=Array.from(new Set(Array.isArray(raw.owned)?raw.owned:[])).filter(id=>validIds.has(id));
+              const equippedRaw=raw.equipped&&typeof raw.equipped==="object"?raw.equipped:{};
+              const equipped=Object.fromEntries(Object.entries(equippedRaw).filter(([id])=>validIds.has(id)));
+              const customColor=/^#[0-9a-f]{6}$/i.test(raw.customColor||"")?raw.customColor:"#1e40af";
+              const clean={owned,equipped,customColor};
+              if(JSON.stringify(raw)!==JSON.stringify(clean)) localStorage.setItem(OPOONG_SHOP_KEY,JSON.stringify(clean));
+              return clean;
+            }catch(e){return{owned:[],equipped:{},customColor:"#1e40af"};}
+          }'''
+          if old not in text:
+              raise SystemExit('Expected loadOpoongShop block not found; refusing partial cleanup')
+          text = text.replace(old, new)
+
+          forbidden = ['onwayShopShortcut', 'shopQuickOnway', '온웨이에듀 바로가기', 'special:"onway"', 'shopOwns("onway")']
+          leftovers = [token for token in forbidden if token in text]
+          if leftovers:
+              raise SystemExit('Shortcut leftovers remain: ' + ', '.join(leftovers))
+          if text == original:
+              raise SystemExit('No changes made')
+
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Commit cleanup and remove temporary workflow
+        shell: bash
+        run: |
+          rm -f .github/workflows/cleanup-onway-home.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html .github/workflows/cleanup-onway-home.yml
+          git commit -m "remove Onway home shortcut experiment"
+          git push origin HEAD:main
