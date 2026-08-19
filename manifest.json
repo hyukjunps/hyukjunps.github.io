@@ -11,10 +11,10 @@
   "theme_color": "#ffffff",
   "shortcuts": [
     {
-      "name": "QR 만들기",
-      "short_name": "QR 만들기",
-      "description": "링크와 텍스트를 QR 코드로 만들기",
-      "url": "/qr.html",
+      "name": "O.Poong Tools",
+      "short_name": "Tools",
+      "description": "QR 만들기와 랜덤 뽑기",
+      "url": "/tools.html",
       "icons": [
         {
           "src": "android/launchericon-192-192.png",
@@ -24,109 +24,31 @@
     }
   ],
   "icons": [
-    {
-      "src": "windows/SmallTile.scale-100.png",
-      "sizes": "71x71"
-    },
-    {
-      "src": "windows/SmallTile.scale-125.png",
-      "sizes": "89x89"
-    },
-    {
-      "src": "windows/SmallTile.scale-150.png",
-      "sizes": "107x107"
-    },
-    {
-      "src": "windows/SmallTile.scale-200.png",
-      "sizes": "142x142"
-    },
-    {
-      "src": "windows/SmallTile.scale-400.png",
-      "sizes": "284x284"
-    },
-    {
-      "src": "windows/Square150x150Logo.scale-100.png",
-      "sizes": "150x150"
-    },
-    {
-      "src": "windows/Square150x150Logo.scale-125.png",
-      "sizes": "188x188"
-    },
-    {
-      "src": "windows/Square150x150Logo.scale-150.png",
-      "sizes": "225x225"
-    },
-    {
-      "src": "windows/Square150x150Logo.scale-200.png",
-      "sizes": "300x300"
-    },
-    {
-      "src": "windows/Square150x150Logo.scale-400.png",
-      "sizes": "600x600"
-    },
-    {
-      "src": "windows/LargeTile.scale-100.png",
-      "sizes": "310x310"
-    },
-    {
-      "src": "windows/LargeTile.scale-125.png",
-      "sizes": "388x388"
-    },
-    {
-      "src": "windows/LargeTile.scale-150.png",
-      "sizes": "465x465"
-    },
-    {
-      "src": "windows/LargeTile.scale-200.png",
-      "sizes": "620x620"
-    },
-    {
-      "src": "windows/LargeTile.scale-400.png",
-      "sizes": "1240x1240"
-    },
-    {
-      "src": "windows/SplashScreen.scale-100.png",
-      "sizes": "620x300"
-    },
-    {
-      "src": "windows/SplashScreen.scale-125.png",
-      "sizes": "775x375"
-    },
-    {
-      "src": "windows/SplashScreen.scale-150.png",
-      "sizes": "930x450"
-    },
-    {
-      "src": "windows/SplashScreen.scale-200.png",
-      "sizes": "1240x600"
-    },
-    {
-      "src": "windows/SplashScreen.scale-400.png",
-      "sizes": "2480x1200"
-    },
-    {
-      "src": "android/launchericon-512-512.png",
-      "sizes": "512x512"
-    },
-    {
-      "src": "android/launchericon-192-192.png",
-      "sizes": "192x192"
-    },
-    {
-      "src": "android/launchericon-144-144.png",
-      "sizes": "144x144"
-    },
-    {
-      "src": "android/launchericon-96-96.png",
-      "sizes": "96x96"
-    },
-    {
-      "src": "android/launchericon-72-72.png",
-      "sizes": "72x72"
-    },
-    {
-      "src": "android/launchericon-48-48.png",
-      "sizes": "48x48"
-    }
+    {"src":"windows/SmallTile.scale-100.png","sizes":"71x71"},
+    {"src":"windows/SmallTile.scale-125.png","sizes":"89x89"},
+    {"src":"windows/SmallTile.scale-150.png","sizes":"107x107"},
+    {"src":"windows/SmallTile.scale-200.png","sizes":"142x142"},
+    {"src":"windows/SmallTile.scale-400.png","sizes":"284x284"},
+    {"src":"windows/Square150x150Logo.scale-100.png","sizes":"150x150"},
+    {"src":"windows/Square150x150Logo.scale-125.png","sizes":"188x188"},
+    {"src":"windows/Square150x150Logo.scale-150.png","sizes":"225x225"},
+    {"src":"windows/Square150x150Logo.scale-200.png","sizes":"300x300"},
+    {"src":"windows/Square150x150Logo.scale-400.png","sizes":"600x600"},
+    {"src":"windows/LargeTile.scale-100.png","sizes":"310x310"},
+    {"src":"windows/LargeTile.scale-125.png","sizes":"388x388"},
+    {"src":"windows/LargeTile.scale-150.png","sizes":"465x465"},
+    {"src":"windows/LargeTile.scale-200.png","sizes":"620x620"},
+    {"src":"windows/LargeTile.scale-400.png","sizes":"1240x1240"},
+    {"src":"windows/SplashScreen.scale-100.png","sizes":"620x300"},
+    {"src":"windows/SplashScreen.scale-125.png","sizes":"775x375"},
+    {"src":"windows/SplashScreen.scale-150.png","sizes":"930x450"},
+    {"src":"windows/SplashScreen.scale-200.png","sizes":"1240x600"},
+    {"src":"windows/SplashScreen.scale-400.png","sizes":"2480x1200"},
+    {"src":"android/launchericon-512-512.png","sizes":"512x512"},
+    {"src":"android/launchericon-192-192.png","sizes":"192x192"},
+    {"src":"android/launchericon-144-144.png","sizes":"144x144"},
+    {"src":"android/launchericon-96-96.png","sizes":"96x96"},
+    {"src":"android/launchericon-72-72.png","sizes":"72x72"},
+    {"src":"android/launchericon-48-48.png","sizes":"48x48"}
   ]
 }
