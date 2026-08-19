@@ -3,7 +3,7 @@
   "name": "온웨이 에듀",
   "short_name": "온웨이",
   "description": "O.Poong 온웨이 에듀 바로가기",
-  "start_url": "/onway.html?launch=1",
+  "start_url": "/?page=onway&from=onway-shortcut",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
