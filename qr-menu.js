@@ -1,95 +1,95 @@
 (() => {
-  const TOOLS = [
-    {
-      key: "qr",
-      url: "./qr.html",
-      title: "QR 만들기",
-      hint: "링크·텍스트",
-      icon: "QR",
-      action: "qr-maker",
-      description: "링크·텍스트를 QR 코드로 만들기",
-      keywords: "qr 큐알 큐알코드 qr코드 링크 공유 생성 만들기 클립보드"
-    },
-    {
-      key: "random",
-      url: "./random.html",
-      title: "랜덤 뽑기",
-      hint: "자리·모둠·제비",
-      icon: "🎲",
-      action: "random-draw",
-      description: "자리·모둠·제비·번호·꽝 랜덤 뽑기",
-      keywords: "랜덤 뽑기 자리 자리뽑기 모둠 모둠뽑기 제비 제비뽑기 번호 번호뽑기 꽝 꽝뽑기 추첨 룰렛"
-    }
-  ];
+  const TOOL_URL = "./tools.html";
 
-  function addToolMenuItems() {
+  function addToolsMenuItem() {
     const nav = document.querySelector(".navGrid");
-    if (!nav) return;
+    if (!nav || nav.querySelector('[data-opoong-tools="1"]')) return;
 
-    let anchor = nav.querySelector('[data-view="game"]');
-    TOOLS.forEach(tool => {
-      if (nav.querySelector(`[data-opoong-tool="${tool.key}"]`)) {
-        anchor = nav.querySelector(`[data-opoong-tool="${tool.key}"]`);
-        return;
-      }
-      const link = document.createElement("a");
-      link.className = "navBtn";
-      link.href = tool.url;
-      link.dataset.opoongTool = tool.key;
-      link.setAttribute("aria-label", tool.title);
-      link.innerHTML = `<span class="left"><span class="icon">${tool.icon}</span><span><span class="title">${tool.title}</span><br><span class="hint">${tool.hint}</span></span></span><span>›</span>`;
-      if (anchor) anchor.insertAdjacentElement("afterend", link);
-      else nav.appendChild(link);
-      anchor = link;
-    });
+    nav.querySelectorAll('[data-opoong-tool]').forEach(el => el.remove());
+    nav.querySelectorAll('[data-opoong-qr-menu]').forEach(el => el.remove());
+
+    const link = document.createElement("a");
+    link.className = "navBtn";
+    link.href = TOOL_URL;
+    link.dataset.opoongTools = "1";
+    link.setAttribute("aria-label", "O.Poong Tools");
+    link.innerHTML = '<span class="left"><span class="icon">🧰</span><span><span class="title">O.Poong Tools</span><br><span class="hint">QR·랜덤 뽑기</span></span></span><span>›</span>';
+
+    const game = nav.querySelector('[data-view="game"]');
+    if (game) game.insertAdjacentElement("afterend", link);
+    else nav.appendChild(link);
   }
 
-  function addToolsToSearch() {
+  function addSearchEntries() {
     try {
       if (typeof GLOBAL_SEARCH_STATIC === "undefined" || !Array.isArray(GLOBAL_SEARCH_STATIC)) return;
-      TOOLS.forEach(tool => {
-        if (GLOBAL_SEARCH_STATIC.some(item => item && item.action === tool.action)) return;
-        GLOBAL_SEARCH_STATIC.push({
-          title: tool.title,
-          description: tool.description,
-          type: "도구",
-          route: "home",
-          action: tool.action,
-          keywords: tool.keywords
-        });
+      const actions = new Set(["qr-maker", "random-draw", "opoong-tools"]);
+      for (let i = GLOBAL_SEARCH_STATIC.length - 1; i >= 0; i--) {
+        if (GLOBAL_SEARCH_STATIC[i] && actions.has(GLOBAL_SEARCH_STATIC[i].action)) GLOBAL_SEARCH_STATIC.splice(i, 1);
+      }
+      GLOBAL_SEARCH_STATIC.push({
+        title: "O.Poong Tools",
+        description: "QR 만들기와 랜덤 뽑기 도구 모음",
+        type: "도구",
+        route: "home",
+        action: "opoong-tools",
+        keywords: "tools 툴 도구 qr 큐알 랜덤 뽑기 자리 모둠 제비 번호 꽝"
+      });
+      GLOBAL_SEARCH_STATIC.push({
+        title: "QR 만들기",
+        description: "O.Poong Tools에서 QR 코드 만들기",
+        type: "도구",
+        route: "home",
+        action: "qr-maker",
+        keywords: "qr 큐알 qr코드 링크 텍스트 클립보드"
+      });
+      GLOBAL_SEARCH_STATIC.push({
+        title: "랜덤 뽑기",
+        description: "O.Poong Tools에서 자리·모둠·제비·번호·꽝 뽑기",
+        type: "도구",
+        route: "home",
+        action: "random-draw",
+        keywords: "랜덤 뽑기 자리 모둠 제비 번호 꽝 추첨"
       });
     } catch (error) {
-      console.warn("O.Poong tool search entries:", error);
+      console.warn("O.Poong tools search:", error);
     }
   }
 
   function patchSearchOpen() {
-    if (window.__opoongToolSearchPatched) return;
-    if (typeof window.openGlobalSearchResult !== "function") return;
-
+    if (window.__opoongToolsSearchPatched || typeof window.openGlobalSearchResult !== "function") return;
     const original = window.openGlobalSearchResult;
     window.openGlobalSearchResult = function(index) {
       try {
         if (typeof globalSearchVisibleResults !== "undefined") {
           const item = globalSearchVisibleResults[index];
-          const tool = TOOLS.find(x => item && item.action === x.action);
-          if (tool) {
+          if (item?.action === "opoong-tools") {
             if (typeof window.closeGlobalSearch === "function") window.closeGlobalSearch();
-            window.location.href = tool.url;
+            window.location.href = TOOL_URL;
+            return;
+          }
+          if (item?.action === "qr-maker") {
+            if (typeof window.closeGlobalSearch === "function") window.closeGlobalSearch();
+            window.location.href = TOOL_URL + "?tool=qr";
+            return;
+          }
+          if (item?.action === "random-draw") {
+            if (typeof window.closeGlobalSearch === "function") window.closeGlobalSearch();
+            window.location.href = TOOL_URL + "?tool=random";
             return;
           }
         }
       } catch (error) {
-        console.warn("O.Poong tool search open:", error);
+        console.warn("O.Poong tools search open:", error);
       }
       return original.apply(this, arguments);
     };
-    window.__opoongToolSearchPatched = true;
+    window.__opoongToolsSearchPatched = true;
   }
 
   function init() {
-    addToolMenuItems();
-    addToolsToSearch();
+    addToolsMenuItem();
+    addSearchEntries();
     patchSearchOpen();
   }
 
