@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v41";
+const CACHE_VERSION = "v42";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -13,10 +13,7 @@ const APP_SHELL = [
   "./qr-menu.js",
   "./tools-image.js",
   "./tools-image-cleanup.js",
-  "./pwa-update.js",
-  "./onway.html",
-  "./onway-manifest.json",
-  "./onway-shop-shortcut.js"
+  "./pwa-update.js"
 ];
 
 function withInjectedScripts(response, requestUrl) {
@@ -29,19 +26,17 @@ function withInjectedScripts(response, requestUrl) {
     const tags = [];
     const url = new URL(requestUrl || self.location.href);
     const isToolsPage = url.pathname.endsWith("/tools.html");
-    const isOnwayInstaller = url.pathname.endsWith("/onway.html");
 
-    if (!html.includes("pwa-update.js") && !isOnwayInstaller) {
+    if (!html.includes("pwa-update.js")) {
       tags.push('<script src="./pwa-update.js?v=20260819-4" defer></script>');
     }
 
-    if (!isToolsPage && !isOnwayInstaller) {
+    if (!isToolsPage) {
       if (!html.includes("game-hearts.js")) tags.push('<script src="./game-hearts.js?v=20260818-1" defer></script>');
       if (!html.includes("game-heart-retries.js")) tags.push('<script src="./game-heart-retries.js?v=20260817" defer></script>');
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
       if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-5" defer></script>');
-      if (!html.includes("onway-shop-shortcut.js")) tags.push('<script src="./onway-shop-shortcut.js?v=20260819-4" defer></script>');
-    } else if (isToolsPage) {
+    } else {
       if (!html.includes("tools-image.js")) tags.push('<script src="./tools-image.js?v=20260819-1" defer></script>');
       if (!html.includes("tools-image-cleanup.js")) tags.push('<script src="./tools-image-cleanup.js?v=20260819-2" defer></script>');
     }
@@ -93,17 +88,16 @@ self.addEventListener("fetch", (event) => {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
       const isToolsPage = url.pathname.endsWith("/tools.html");
-      const isOnwayInstaller = url.pathname.endsWith("/onway.html");
-      const cacheKey = isToolsPage ? "./tools.html" : isOnwayInstaller ? "./onway.html" : "./index.html";
+      const cacheKey = isToolsPage ? "./tools.html" : "./index.html";
       try {
         const fresh = await fetch(req, { cache: "no-store" });
         if (fresh.ok) {
           await cache.put(cacheKey, fresh.clone());
-          if (!isToolsPage && !isOnwayInstaller) await cache.put("./", fresh.clone());
+          if (!isToolsPage) await cache.put("./", fresh.clone());
         }
         return withInjectedScripts(fresh, req.url);
       } catch (_) {
-        const cached = await cache.match(cacheKey, { ignoreSearch: true }) || (!isToolsPage && !isOnwayInstaller ? await cache.match("./", { ignoreSearch: true }) : null);
+        const cached = await cache.match(cacheKey, { ignoreSearch: true }) || (!isToolsPage ? await cache.match("./", { ignoreSearch: true }) : null);
         return cached ? withInjectedScripts(cached, req.url) : new Response("Offline", { status: 503 });
       }
     })());
@@ -115,10 +109,7 @@ self.addEventListener("fetch", (event) => {
     "/tools-image.js",
     "/tools-image-cleanup.js",
     "/pwa-update.js",
-    "/manifest.json",
-    "/onway.html",
-    "/onway-manifest.json",
-    "/onway-shop-shortcut.js"
+    "/manifest.json"
   ]);
   if (freshPaths.has(url.pathname)) {
     event.respondWith(networkFirst(req, url.pathname));
