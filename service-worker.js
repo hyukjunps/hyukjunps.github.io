@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v40";
+const CACHE_VERSION = "v41";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -32,7 +32,7 @@ function withInjectedScripts(response, requestUrl) {
     const isOnwayInstaller = url.pathname.endsWith("/onway.html");
 
     if (!html.includes("pwa-update.js") && !isOnwayInstaller) {
-      tags.push('<script src="./pwa-update.js?v=20260819-3" defer></script>');
+      tags.push('<script src="./pwa-update.js?v=20260819-4" defer></script>');
     }
 
     if (!isToolsPage && !isOnwayInstaller) {
@@ -40,7 +40,7 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("game-heart-retries.js")) tags.push('<script src="./game-heart-retries.js?v=20260817" defer></script>');
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
       if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-5" defer></script>');
-      if (!html.includes("onway-shop-shortcut.js")) tags.push('<script src="./onway-shop-shortcut.js?v=20260819-3" defer></script>');
+      if (!html.includes("onway-shop-shortcut.js")) tags.push('<script src="./onway-shop-shortcut.js?v=20260819-4" defer></script>');
     } else if (isToolsPage) {
       if (!html.includes("tools-image.js")) tags.push('<script src="./tools-image.js?v=20260819-1" defer></script>');
       if (!html.includes("tools-image-cleanup.js")) tags.push('<script src="./tools-image-cleanup.js?v=20260819-2" defer></script>');
