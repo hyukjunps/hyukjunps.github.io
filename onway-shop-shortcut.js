@@ -22,7 +22,11 @@
     btn.dataset.onwayInstall = '1';
     btn.textContent = '홈 화면 바로가기 만들기';
     btn.disabled = !owned;
-    btn.addEventListener('click', () => { window.location.href = './onway.html'; });
+    btn.addEventListener('click', () => {
+      const url = new URL('./onway.html', window.location.href).href;
+      const opened = window.open(url, '_blank', 'noopener,noreferrer');
+      if (!opened) window.location.href = url;
+    });
     card.appendChild(btn);
     return true;
   }
