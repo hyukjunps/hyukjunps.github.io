@@ -3,12 +3,26 @@
   "dir": "ltr",
   "display": "standalone",
   "name": "O.Poong",
-  "description": "풍산고 생활, 한 화면에서.", 
+  "description": "풍산고 생활, 한 화면에서.",
   "orientation": "any",
   "scope": "/",
   "short_name": "O.Poong",
   "start_url": "https://hyukjunps.github.io/",
   "theme_color": "#ffffff",
+  "shortcuts": [
+    {
+      "name": "QR 만들기",
+      "short_name": "QR 만들기",
+      "description": "링크와 텍스트를 QR 코드로 만들기",
+      "url": "/qr.html",
+      "icons": [
+        {
+          "src": "android/launchericon-192-192.png",
+          "sizes": "192x192"
+        }
+      ]
+    }
+  ],
   "icons": [
     {
       "src": "windows/SmallTile.scale-100.png",
