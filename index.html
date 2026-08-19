@@ -2095,8 +2095,6 @@ body.full-notice-locked{overflow:hidden}
 .gameShopVariants{display:flex;gap:6px;flex-wrap:wrap}.gameShopVariants button{padding:7px 9px;border-radius:999px;font-size:10.5px}
 .gameShopAction{width:100%;min-height:40px}
 .gameShopCustom{display:flex;align-items:center;gap:8px}.gameShopCustom input[type=color]{width:48px;height:40px;padding:3px;border:1px solid var(--line);border-radius:12px;background:var(--card)}
-.shopQuickOnway{border-color:color-mix(in srgb,var(--ok) 42%,var(--line))!important;background:color-mix(in srgb,var(--ok) 11%,var(--card))!important}
-.shopQuickOnway[hidden]{display:none!important}
 .focusCelebration{position:fixed;z-index:40000;inset:0;pointer-events:none;overflow:hidden}
 .focusCelebration i{position:absolute;left:50%;top:50%;font-style:normal;font-size:clamp(24px,5vw,54px);animation:shopCelebrate 1.8s cubic-bezier(.2,.8,.2,1) forwards}
 @keyframes shopCelebrate{0%{opacity:0;transform:translate(-50%,-50%) scale(.4)}18%{opacity:1}100%{opacity:0;transform:translate(var(--fx),var(--fy)) rotate(var(--fr)) scale(1.25)}}
@@ -2120,7 +2118,7 @@ html[data-shop-season="spring"]{--bg:#fff1f7;--bg2:#fdf2f8;--pri:#be185d;--pri2:
 html[data-shop-season="summer"]{--bg:#ecfeff;--bg2:#e0f2fe;--pri:#0369a1;--pri2:#0284c7;--pri3:#38bdf8;--line2:#bae6fd}
 html[data-shop-season="exam"]{--bg:#fffbeb;--bg2:#fef3c7;--pri:#b45309;--pri2:#d97706;--pri3:#f59e0b;--line2:#fde68a}
 html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pri2:#15803d;--pri3:#ef4444;--line2:#bbf7d0}
-@media(max-width:620px){.gameShopItems{grid-template-columns:1fr}.gameShopCard{padding:13px}.shopQuickOnway{width:42px;min-width:42px;padding:9px!important;font-size:0}.shopQuickOnway:before{content:"온";font-size:12px}}
+@media(max-width:620px){.gameShopItems{grid-template-columns:1fr}.gameShopCard{padding:13px}}
 
 
 /* hidden developer point mode */
@@ -2177,7 +2175,6 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pr
     <div class="actions">
       <button id="globalSearchButton" class="btn ghost topSearchBtn" type="button" onclick="openGlobalSearch()" aria-label="통합 검색"><span aria-hidden="true">⌕</span><span class="topSearchLabel">검색</span></button>
       <div id="userBadge" class="userBadge">사용자</div>
-      <button id="onwayShopShortcut" class="btn shopQuickOnway" type="button" onclick="openOnway()" hidden>온웨이에듀</button>
       <button id="btnInstallTop" class="btn ok" type="button">앱 설치</button>
       <button id="btnLight" class="btn ghost" type="button">라이트</button>
       <button id="btnDark" class="btn ghost" type="button">다크</button>
@@ -3304,14 +3301,20 @@ const OPOONG_SHOP_PRODUCTS=[
   {id:"timetable",icon:"📘",name:"시간표 스킨",price:350,desc:"공책·다크블루·파스텔 스타일",variants:[["notebook","공책"],["navy","다크블루"],["pastel","파스텔"]]},
   {id:"nowbar",icon:"⌛",name:"나우바 디자인",price:400,desc:"삼성 스타일·미니멀·네온",variants:[["samsung","삼성"],["minimal","미니멀"],["neon","네온"]]},
   {id:"focus",icon:"🌙",name:"집중화면 테마",price:500,desc:"도서관·밤하늘·바다·숲",variants:[["library","도서관"],["night","밤하늘"],["ocean","바다"],["forest","숲"]]},
-  {id:"onway",icon:"↗️",name:"온웨이에듀 바로가기",price:500,desc:"상단에 온웨이에듀 빠른 실행 버튼 생성",special:"onway"},
   {id:"custom",icon:"🎨",name:"자유 색상 선택권",price:1000,desc:"원하는 색으로 O.Poong 테마 제작",special:"custom"},
   {id:"season",icon:"🎁",name:"계절 한정 세트",price:1200,desc:"봄·여름·시험기간·크리스마스 세트",variants:[["spring","봄"],["summer","여름"],["exam","시험기간"],["christmas","크리스마스"]]}
 ];
 function loadOpoongShop(){
   try{
     const raw=JSON.parse(localStorage.getItem(OPOONG_SHOP_KEY)||"{}");
-    return {owned:Array.from(new Set(Array.isArray(raw.owned)?raw.owned:[])),equipped:raw.equipped&&typeof raw.equipped==="object"?raw.equipped:{},customColor:/^#[0-9a-f]{6}$/i.test(raw.customColor||"")?raw.customColor:"#1e40af"};
+    const validIds=new Set(OPOONG_SHOP_ITEMS.map(item=>item.id));
+    const owned=Array.from(new Set(Array.isArray(raw.owned)?raw.owned:[])).filter(id=>validIds.has(id));
+    const equippedRaw=raw.equipped&&typeof raw.equipped==="object"?raw.equipped:{};
+    const equipped=Object.fromEntries(Object.entries(equippedRaw).filter(([id])=>validIds.has(id)));
+    const customColor=/^#[0-9a-f]{6}$/i.test(raw.customColor||"")?raw.customColor:"#1e40af";
+    const clean={owned,equipped,customColor};
+    if(JSON.stringify(raw)!==JSON.stringify(clean)) localStorage.setItem(OPOONG_SHOP_KEY,JSON.stringify(clean));
+    return clean;
   }catch(e){return{owned:[],equipped:{},customColor:"#1e40af"};}
 }
 let opoongShop=loadOpoongShop();
@@ -3331,7 +3334,6 @@ function applyOpoongShop(){
     document.documentElement.style.removeProperty("--pri");
     document.documentElement.style.removeProperty("--pri2");
   }
-  const quick=document.getElementById("onwayShopShortcut");if(quick)quick.hidden=!shopOwns("onway");
 }
 function shopSpend(price,label){
   opoongRewards=loadOpoongRewards();
@@ -3387,7 +3389,6 @@ function renderOpoongShopCatalog(){
     if(special==="rename")controls+='<button class="smallbtn primary gameShopAction" type="button" onclick="purchaseOpoongNameChange()">300 P로 이름 변경</button>';
     else if(special==="custom"&&owned)controls+='<div class="gameShopCustom"><input id="opoongCustomColor" type="color" value="'+opoongShop.customColor+'" aria-label="O.Poong 자유 색상"><button class="smallbtn primary gameShopAction" type="button" onclick="setOpoongCustomColor(document.getElementById(\'opoongCustomColor\').value)">색상 적용</button></div><button class="smallbtn ghost gameShopAction" type="button" '+(!opoongShop.equipped.custom?'disabled':'')+' onclick="disableOpoongShopTheme(\'custom\')">자유 색상 사용 안 함</button>';
     else if(!owned)controls+='<button class="smallbtn primary gameShopAction" type="button" onclick="buyOpoongShopProduct(\''+item.id+'\')">'+item.price.toLocaleString("ko-KR")+' P로 팩 구매</button>';
-    else if(special==="onway")controls+='<button class="smallbtn ghost gameShopAction" type="button" onclick="openOnway()">바로가기 사용</button>';
     return'<article class="gameShopCard '+(owned?"owned":"")+'"><div class="gameShopCardTop"><span class="gameShopIcon">'+item.icon+'</span><span class="gameShopPrice">'+(special==="rename"?item.price+" P / 1회":owned?"보유 중":item.price.toLocaleString("ko-KR")+" P")+'</span></div><div><h3>'+item.name+'</h3><p>'+item.desc+'</p></div>'+controls+'</article>';
   }).join("");
 }
