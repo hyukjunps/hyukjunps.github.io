@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v36"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v37"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -12,6 +12,7 @@ const APP_SHELL = [
   "./notice-override.js",
   "./qr-menu.js",
   "./tools-image.js",
+  "./tools-image-transparency-fix.js",
   "./pwa-update.js",
 ];
 
@@ -37,6 +38,7 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-4" defer></script>');
     } else {
       if (!html.includes("tools-image.js")) tags.push('<script src="./tools-image.js?v=20260819-1" defer></script>');
+      if (!html.includes("tools-image-transparency-fix.js")) tags.push('<script src="./tools-image-transparency-fix.js?v=20260819-1" defer></script>');
     }
 
     if (tags.length) {
@@ -103,6 +105,7 @@ self.addEventListener("fetch", (event) => {
   const freshPaths = new Set([
     "/qr-menu.js",
     "/tools-image.js",
+    "/tools-image-transparency-fix.js",
     "/pwa-update.js",
     "/manifest.json"
   ]);
