@@ -1,11 +1,10 @@
-const CACHE_VERSION = "v34"; // 수정할 때마다 올리기
+const CACHE_VERSION = "v35"; // 수정할 때마다 올리기
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
   "./",
   "./index.html",
-  "./qr.html",
-  "./random.html",
+  "./tools.html",
   "./manifest.json",
   "./android/launchericon-512-512.png",
   "./game-hearts.js",
@@ -23,42 +22,23 @@ function withInjectedScripts(response, requestUrl) {
     let html = await response.text();
     const tags = [];
     const url = new URL(requestUrl || self.location.href);
-    const isToolPage = url.pathname.endsWith("/qr.html") || url.pathname.endsWith("/random.html");
+    const isToolsPage = url.pathname.endsWith("/tools.html");
 
-    if (!isToolPage) {
-      if (!html.includes("game-hearts.js")) {
-        tags.push('<script src="./game-hearts.js?v=20260818-1" defer></script>');
-      }
-      if (!html.includes("game-heart-retries.js")) {
-        tags.push('<script src="./game-heart-retries.js?v=20260817" defer></script>');
-      }
-      if (!html.includes("notice-override.js")) {
-        tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
-      }
-      if (!html.includes("qr-menu.js")) {
-        tags.push('<script src="./qr-menu.js?v=20260819-2" defer></script>');
-      }
-    } else if (url.pathname.endsWith("/qr.html")) {
-      html = html.replace(
-        '<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>',
-        '<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.1/build/qrcode.min.js" onerror="this.onerror=null;this.src=\'https://unpkg.com/qrcode@1.5.1/build/qrcode.min.js\'"></script>'
-      );
+    if (!isToolsPage) {
+      if (!html.includes("game-hearts.js")) tags.push('<script src="./game-hearts.js?v=20260818-1" defer></script>');
+      if (!html.includes("game-heart-retries.js")) tags.push('<script src="./game-heart-retries.js?v=20260817" defer></script>');
+      if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
+      if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-3" defer></script>');
     }
 
     if (tags.length) {
       const joined = tags.join("\n");
-      html = html.includes("</body>")
-        ? html.replace("</body>", `${joined}\n</body>`)
-        : `${html}\n${joined}`;
+      html = html.includes("</body>") ? html.replace("</body>", `${joined}\n</body>`) : `${html}\n${joined}`;
     }
 
     const headers = new Headers(response.headers);
     headers.delete("content-length");
-    return new Response(html, {
-      status: response.status,
-      statusText: response.statusText,
-      headers,
-    });
+    return new Response(html, {status: response.status,statusText: response.statusText,headers});
   })();
 }
 
@@ -85,7 +65,6 @@ self.addEventListener("message", (event) => {
 self.addEventListener("fetch", (event) => {
   const req = event.request;
   const url = new URL(req.url);
-
   if (url.origin !== self.location.origin) return;
 
   if (url.pathname.includes("/data/schedule/") && url.pathname.endsWith(".json")) {
@@ -108,21 +87,17 @@ self.addEventListener("fetch", (event) => {
   if (req.mode === "navigate") {
     event.respondWith((async () => {
       const cache = await caches.open(CACHE_NAME);
-      const isQrPage = url.pathname.endsWith("/qr.html");
-      const isRandomPage = url.pathname.endsWith("/random.html");
-      const cacheKey = isQrPage ? "./qr.html" : isRandomPage ? "./random.html" : "./index.html";
+      const isToolsPage = url.pathname.endsWith("/tools.html");
+      const cacheKey = isToolsPage ? "./tools.html" : "./index.html";
       try {
         const fresh = await fetch(req, { cache: "no-store" });
         if (fresh.ok) {
           await cache.put(cacheKey, fresh.clone());
-          if (!isQrPage && !isRandomPage) await cache.put("./", fresh.clone());
+          if (!isToolsPage) await cache.put("./", fresh.clone());
         }
         return withInjectedScripts(fresh, req.url);
       } catch (_) {
-        const cached =
-          (await cache.match(cacheKey, { ignoreSearch: true })) ||
-          (!isQrPage && !isRandomPage ? (await cache.match("./", { ignoreSearch: true })) : null) ||
-          (await caches.match(cacheKey, { ignoreSearch: true }));
+        const cached = (await cache.match(cacheKey, { ignoreSearch: true })) || (!isToolsPage ? await cache.match("./", { ignoreSearch: true }) : null) || (await caches.match(cacheKey, { ignoreSearch: true }));
         return cached ? withInjectedScripts(cached, req.url) : cached;
       }
     })());
@@ -133,17 +108,11 @@ self.addEventListener("fetch", (event) => {
     const cache = await caches.open(CACHE_NAME);
     const cached = await cache.match(req, { ignoreSearch: true });
     if (cached) {
-      fetch(req).then((res) => {
-        if (res && res.ok) cache.put(req, res.clone());
-      }).catch(()=>{});
+      fetch(req).then((res) => { if (res && res.ok) cache.put(req, res.clone()); }).catch(()=>{});
       return cached;
     }
-    try {
-      const res = await fetch(req);
-      if (res && res.ok) cache.put(req, res.clone());
-      return res;
-    } catch (_) {
-      throw _;
-    }
+    const res = await fetch(req);
+    if (res && res.ok) cache.put(req, res.clone());
+    return res;
   })());
 });
