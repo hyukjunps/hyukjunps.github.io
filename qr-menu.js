@@ -13,7 +13,7 @@
     link.href = TOOL_URL;
     link.dataset.opoongTools = "1";
     link.setAttribute("aria-label", "O.Poong Tools");
-    link.innerHTML = '<span class="left"><span class="icon">🧰</span><span><span class="title">O.Poong Tools</span><br><span class="hint">QR·랜덤 뽑기</span></span></span><span>›</span>';
+    link.innerHTML = '<span class="left"><span class="icon">🧰</span><span><span class="title">O.Poong Tools</span><br><span class="hint">QR·랜덤·이미지 편집</span></span></span><span>›</span>';
 
     const game = nav.querySelector('[data-view="game"]');
     if (game) game.insertAdjacentElement("afterend", link);
@@ -23,17 +23,17 @@
   function addSearchEntries() {
     try {
       if (typeof GLOBAL_SEARCH_STATIC === "undefined" || !Array.isArray(GLOBAL_SEARCH_STATIC)) return;
-      const actions = new Set(["qr-maker", "random-draw", "opoong-tools"]);
+      const actions = new Set(["qr-maker", "random-draw", "image-editor", "opoong-tools"]);
       for (let i = GLOBAL_SEARCH_STATIC.length - 1; i >= 0; i--) {
         if (GLOBAL_SEARCH_STATIC[i] && actions.has(GLOBAL_SEARCH_STATIC[i].action)) GLOBAL_SEARCH_STATIC.splice(i, 1);
       }
       GLOBAL_SEARCH_STATIC.push({
         title: "O.Poong Tools",
-        description: "QR 만들기와 랜덤 뽑기 도구 모음",
+        description: "QR·랜덤 뽑기·이미지 편집 도구 모음",
         type: "도구",
         route: "home",
         action: "opoong-tools",
-        keywords: "tools 툴 도구 qr 큐알 랜덤 뽑기 자리 모둠 제비 번호 꽝"
+        keywords: "tools 툴 도구 qr 큐알 랜덤 뽑기 자리 모둠 제비 번호 꽝 이미지 편집 사진 필터 자르기 그리기 모자이크 배경제거"
       });
       GLOBAL_SEARCH_STATIC.push({
         title: "QR 만들기",
@@ -50,6 +50,14 @@
         route: "home",
         action: "random-draw",
         keywords: "랜덤 뽑기 자리 모둠 제비 번호 꽝 추첨"
+      });
+      GLOBAL_SEARCH_STATIC.push({
+        title: "이미지 편집",
+        description: "필터·자르기·그리기·모자이크·배경 제거",
+        type: "도구",
+        route: "home",
+        action: "image-editor",
+        keywords: "이미지 사진 편집 필터 자르기 크롭 그리기 펜 모자이크 블러 배경제거 배경 제거"
       });
     } catch (error) {
       console.warn("O.Poong tools search:", error);
@@ -76,6 +84,11 @@
           if (item?.action === "random-draw") {
             if (typeof window.closeGlobalSearch === "function") window.closeGlobalSearch();
             window.location.href = TOOL_URL + "?tool=random";
+            return;
+          }
+          if (item?.action === "image-editor") {
+            if (typeof window.closeGlobalSearch === "function") window.closeGlobalSearch();
+            window.location.href = TOOL_URL + "?tool=image";
             return;
           }
         }
