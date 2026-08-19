@@ -33,7 +33,7 @@
         type: "도구",
         route: "home",
         action: "opoong-tools",
-        keywords: "tools 툴 도구 qr 큐알 랜덤 뽑기 자리 모둠 제비 번호 꽝 이미지 편집 사진 필터 자르기 그리기 모자이크 배경제거"
+        keywords: "tools 툴 도구 qr 큐알 랜덤 뽑기 자리 모둠 제비 번호 꽝 이미지 편집 사진 필터 자르기 그리기 모자이크"
       });
       GLOBAL_SEARCH_STATIC.push({
         title: "QR 만들기",
@@ -53,11 +53,11 @@
       });
       GLOBAL_SEARCH_STATIC.push({
         title: "이미지 편집",
-        description: "필터·자르기·그리기·모자이크·배경 제거",
+        description: "필터·자르기·그리기·모자이크",
         type: "도구",
         route: "home",
         action: "image-editor",
-        keywords: "이미지 사진 편집 필터 자르기 크롭 그리기 펜 모자이크 블러 배경제거 배경 제거"
+        keywords: "이미지 사진 편집 필터 자르기 크롭 그리기 펜 모자이크 블러"
       });
     } catch (error) {
       console.warn("O.Poong tools search:", error);
