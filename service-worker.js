@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v46";
+const CACHE_VERSION = "v47";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -9,6 +9,7 @@ const APP_SHELL = [
   "./android/launchericon-512-512.png",
   "./game-hearts.js",
   "./game-heart-retries.js",
+  "./game-heart-purchase.js",
   "./game-extra.js",
   "./stack-tuning.js",
   "./notice-override.js",
@@ -37,6 +38,7 @@ function withInjectedScripts(response, requestUrl) {
     if (!isToolsPage) {
       if (!html.includes("game-hearts.js")) tags.push('<script src="./game-hearts.js?v=20260820-1" defer></script>');
       if (!html.includes("game-heart-retries.js")) tags.push('<script src="./game-heart-retries.js?v=20260817" defer></script>');
+      if (!html.includes("game-heart-purchase.js")) tags.push('<script src="./game-heart-purchase.js?v=20260820-1" defer></script>');
       if (!html.includes("game-extra.js")) tags.push('<script src="./game-extra.js?v=20260819-1" defer></script>');
       if (!html.includes("stack-tuning.js")) tags.push('<script src="./stack-tuning.js?v=20260820-2" defer></script>');
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
@@ -111,6 +113,9 @@ self.addEventListener("fetch", (event) => {
   }
 
   const freshPaths = new Set([
+    "/game-hearts.js",
+    "/game-heart-retries.js",
+    "/game-heart-purchase.js",
     "/game-extra.js",
     "/stack-tuning.js",
     "/qr-menu.js",
