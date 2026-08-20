@@ -1,11 +1,11 @@
 (() => {
   'use strict';
 
-  const RESET_EVERY = 10;
-  const RESET_WIDTH = 170;
-  const MIN_SPEED = 150;
-  const MAX_SPEED = 360;
-  const MIN_SPEED_GAP = 28;
+  const RESET_EVERY = 25;
+  const RESET_WIDTH = 160;
+  const MIN_SPEED = 175;
+  const MAX_SPEED = 400;
+  const MIN_SPEED_GAP = 35;
 
   function nextStackSpeed(previous) {
     let speed = previous;
