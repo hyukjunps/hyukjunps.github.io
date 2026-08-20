@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v45";
+const CACHE_VERSION = "v46";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -13,6 +13,7 @@ const APP_SHELL = [
   "./stack-tuning.js",
   "./notice-override.js",
   "./qr-menu.js",
+  "./hwp-beta.js",
   "./tools-image.js",
   "./tools-image-cleanup.js",
   "./pwa-update.js"
@@ -40,6 +41,7 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("stack-tuning.js")) tags.push('<script src="./stack-tuning.js?v=20260820-2" defer></script>');
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
       if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-5" defer></script>');
+      if (!html.includes("hwp-beta.js")) tags.push('<script src="./hwp-beta.js?v=20260820-1" defer></script>');
     } else {
       if (!html.includes("tools-image.js")) tags.push('<script src="./tools-image.js?v=20260819-1" defer></script>');
       if (!html.includes("tools-image-cleanup.js")) tags.push('<script src="./tools-image-cleanup.js?v=20260819-2" defer></script>');
@@ -112,6 +114,7 @@ self.addEventListener("fetch", (event) => {
     "/game-extra.js",
     "/stack-tuning.js",
     "/qr-menu.js",
+    "/hwp-beta.js",
     "/tools-image.js",
     "/tools-image-cleanup.js",
     "/pwa-update.js",
