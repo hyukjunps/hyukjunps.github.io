@@ -2,8 +2,8 @@
   'use strict';
 
   const HEART_KEY = 'opoong_game_hearts_v1';
-  const HEART_MAX = 30;
-  const SCRIPT_VERSION = '2026-08-18-1';
+  const HEART_MAX = 50;
+  const SCRIPT_VERSION = '2026-08-20-1';
   const HEART_AD = {
     unit: 'DAN-ps0PRxwqtGCGkBq2',
     width: 320,
