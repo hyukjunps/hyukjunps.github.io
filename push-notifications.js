@@ -2,6 +2,11 @@
   const WORKER_URL = "https://opoong-push.yyhhjj1068-c2c.workers.dev";
   const VAPID_PUBLIC_KEY = "BMqh_J8rA6Z4-njgff7OoygUeJM13dm7QndVqO-ET663RPftcEjI9MQWN2CkpqdgG4wWdz5xGoy3YiIUcKLmVP8";
 
+  function isInstalledPwa() {
+    return window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true;
+  }
+
   function toUint8Array(value) {
     const padding = "=".repeat((4 - value.length % 4) % 4);
     const base64 = (value + padding).replace(/-/g, "+").replace(/_/g, "/");
@@ -35,6 +40,7 @@
   }
 
   async function subscribe() {
+    if (!isInstalledPwa()) throw new Error("O.Poong 앱을 설치한 뒤 앱에서 알림을 켜 주세요.");
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
       throw new Error("이 브라우저는 웹 푸시 알림을 지원하지 않아요.");
     }
@@ -60,12 +66,14 @@
     }
     const registration = await navigator.serviceWorker.getRegistration();
     const subscription = await registration?.pushManager.getSubscription();
+    if (subscription) await saveSubscription(subscription);
     button.textContent = subscription ? "🔕 아침 알림 끄기" : "🔔 아침 알림 켜기";
     button.dataset.subscribed = subscription ? "true" : "false";
     button.style.background = subscription ? "#475569" : "#2563eb";
   }
 
   function mountButton() {
+    if (!isInstalledPwa()) return;
     if (document.getElementById("opoongPushButton")) return;
     const button = document.createElement("button");
     button.id = "opoongPushButton";
