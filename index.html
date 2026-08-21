@@ -2273,6 +2273,7 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pr
         </div>
         <div class="adfitWrap adfitDesktop" id="ad-home" aria-label="광고"></div>
         <div class="adfitWrap adfitMobile homeTopMobile" id="ad-home-mobile" aria-label="광고"></div>
+        <div class="adfitWrap adfitMobile homeTopMobile" id="ad-home-mobile-extra" aria-label="추가 광고"></div>
       </section>
 
       <section class="section view" id="view-weather">
@@ -2349,6 +2350,7 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pr
         <div id="meals" style="margin-top:14px"></div>
         <div id="mealMonthTable" style="display:none"></div>
         <div class="adfitWrap adfitMobile" id="ad-meal" aria-label="광고"></div>
+        <div class="adfitWrap adfitMobile" id="ad-meal-extra" aria-label="추가 광고"></div>
 
         <div id="shareText"></div>
       </section>
@@ -2568,6 +2570,7 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pr
           링크 찾기 힘드셨죠? 제가 찾아드렸어요!
         </div>
         <div class="adfitWrap adfitMobile" id="ad-onway" aria-label="광고"></div>
+        <div class="adfitWrap adfitMobile" id="ad-onway-extra" aria-label="추가 광고"></div>
 
         <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
           <button class="bigBtn" type="button" onclick="openOnway()">온웨이에듀 열기</button>
@@ -4210,9 +4213,12 @@ function go(view){
    화면이 열린 뒤 광고 영역을 새로 만들고 ba.min.js를 다시 실행합니다. */
 const KAKAO_ADS = {
   homeDesktop: { unit: "DAN-QDvR0fxl5ri9KE4D", width: 728, height: 90, container: "ad-home" },
-  homeMobile: { unit: "DAN-rJlK5gWdIDLwSy9f", width: 320, height: 100, container: "ad-home-mobile" },
-  meal: { unit: "DAN-mrfQcLgptQsCE1ci", width: 320, height: 50, container: "ad-meal" },
-  onway: { unit: "DAN-YjOdZeyzOy7YEylv", width: 320, height: 100, container: "ad-onway" }
+  homeMobile: { unit: "DAN-ps0PRxwqtGCGkBq2", width: 320, height: 50, container: "ad-home-mobile" },
+  meal: { unit: "DAN-ldKVhVTYzKi5pUti", width: 320, height: 50, container: "ad-meal" },
+  onway: { unit: "DAN-vszyC76aKoBwX0tg", width: 320, height: 50, container: "ad-onway" },
+  homeMobileExtra: { unit: "DAN-rJlK5gWdIDLwSy9f", width: 320, height: 100, container: "ad-home-mobile-extra" },
+  mealExtra: { unit: "DAN-mrfQcLgptQsCE1ci", width: 320, height: 50, container: "ad-meal-extra" },
+  onwayExtra: { unit: "DAN-YjOdZeyzOy7YEylv", width: 320, height: 100, container: "ad-onway-extra" }
 };
 
 function mountKakaoAd(ad){
@@ -4237,7 +4243,7 @@ function mountKakaoAd(ad){
 }
 
 function clearKakaoAdBoxes(){
-  ["ad-home","ad-home-mobile","ad-meal","ad-onway"].forEach(id=>{
+  ["ad-home","ad-home-mobile","ad-meal","ad-onway","ad-home-mobile-extra","ad-meal-extra","ad-onway-extra"].forEach(id=>{
     const box = document.getElementById(id);
     if(box) box.innerHTML = "";
   });
@@ -4250,10 +4256,21 @@ function loadKakaoAdsForView(view){
   window.setTimeout(()=>{
     if(view === "home"){
       const isMobile = window.matchMedia("(max-width:760px)").matches;
-      mountKakaoAd(isMobile ? KAKAO_ADS.homeMobile : KAKAO_ADS.homeDesktop);
+      if(isMobile){
+        mountKakaoAd(KAKAO_ADS.homeMobile);
+        mountKakaoAd(KAKAO_ADS.homeMobileExtra);
+      }else{
+        mountKakaoAd(KAKAO_ADS.homeDesktop);
+      }
     }
-    if(view === "meal") mountKakaoAd(KAKAO_ADS.meal);
-    if(view === "onway") mountKakaoAd(KAKAO_ADS.onway);
+    if(view === "meal"){
+      mountKakaoAd(KAKAO_ADS.meal);
+      mountKakaoAd(KAKAO_ADS.mealExtra);
+    }
+    if(view === "onway"){
+      mountKakaoAd(KAKAO_ADS.onway);
+      mountKakaoAd(KAKAO_ADS.onwayExtra);
+    }
   }, 180);
 }
 
