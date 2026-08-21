@@ -23,6 +23,17 @@
     if (!response.ok) throw new Error("구독 저장 실패 (" + response.status + ")");
   }
 
+  async function removeSubscription(subscription) {
+    const response = await fetch(WORKER_URL + "/unsubscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ endpoint: subscription.endpoint })
+    });
+    if (!response.ok) throw new Error("구독 해제 실패 (" + response.status + ")");
+    const removed = await subscription.unsubscribe();
+    if (!removed) throw new Error("브라우저 구독을 해제하지 못했어요.");
+  }
+
   async function subscribe() {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) {
       throw new Error("이 브라우저는 웹 푸시 알림을 지원하지 않아요.");
@@ -49,8 +60,9 @@
     }
     const registration = await navigator.serviceWorker.getRegistration();
     const subscription = await registration?.pushManager.getSubscription();
-    button.textContent = subscription ? "🔔 아침 알림 켜짐" : "🔔 아침 알림 켜기";
+    button.textContent = subscription ? "🔕 아침 알림 끄기" : "🔔 아침 알림 켜기";
     button.dataset.subscribed = subscription ? "true" : "false";
+    button.style.background = subscription ? "#475569" : "#2563eb";
   }
 
   function mountButton() {
@@ -58,7 +70,7 @@
     const button = document.createElement("button");
     button.id = "opoongPushButton";
     button.type = "button";
-    button.setAttribute("aria-label", "매일 오전 7시 아침 알림 켜기");
+    button.setAttribute("aria-label", "매일 오전 8시 아침 알림 켜기 또는 끄기");
     Object.assign(button.style, {
       position: "fixed",
       right: "16px",
@@ -75,19 +87,28 @@
     });
     button.textContent = "🔔 아침 알림 켜기";
     button.addEventListener("click", async () => {
-      if (button.dataset.subscribed === "true") {
-        alert("아침 알림이 이미 켜져 있어요. 매일 오전 7시에 전송됩니다.");
-        return;
-      }
       button.disabled = true;
-      button.textContent = "설정 중…";
       try {
-        await subscribe();
-        button.dataset.subscribed = "true";
-        button.textContent = "🔔 아침 알림 켜짐";
-        alert("아침 알림을 켰어요. 매일 오전 7시에 받을 수 있습니다.");
+        if (button.dataset.subscribed === "true") {
+          if (!confirm("매일 오전 8시 아침 알림을 끌까요?")) return;
+          button.textContent = "해제 중…";
+          const registration = await navigator.serviceWorker.getRegistration();
+          const subscription = await registration?.pushManager.getSubscription();
+          if (subscription) await removeSubscription(subscription);
+          button.dataset.subscribed = "false";
+          button.textContent = "🔔 아침 알림 켜기";
+          button.style.background = "#2563eb";
+          alert("아침 알림을 껐어요.");
+        } else {
+          button.textContent = "설정 중…";
+          await subscribe();
+          button.dataset.subscribed = "true";
+          button.textContent = "🔕 아침 알림 끄기";
+          button.style.background = "#475569";
+          alert("아침 알림을 켰어요. 매일 오전 8시에 받을 수 있습니다.");
+        }
       } catch (error) {
-        button.textContent = "🔔 아침 알림 켜기";
+        await updateButton(button).catch(() => {});
         alert(error.message || "알림 설정 중 오류가 발생했어요.");
       } finally {
         button.disabled = false;
