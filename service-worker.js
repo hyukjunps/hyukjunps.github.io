@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v52";
+const CACHE_VERSION = "v53";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -47,7 +47,7 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-5" defer></script>');
       if (!html.includes("hwp-beta.js")) tags.push('<script src="./hwp-beta.js?v=20260820-1" defer></script>');
       if (!html.includes("point-shop-fix.js")) tags.push('<script src="./point-shop-fix.js?v=20260820-1" defer></script>');
-      if (!html.includes("push-notifications.js")) tags.push('<script src="./push-notifications.js?v=20260821-1" defer></script>');
+      if (!html.includes("push-notifications.js")) tags.push('<script src="./push-notifications.js?v=20260821-2" defer></script>');
     } else {
       if (!html.includes("tools-image.js")) tags.push('<script src="./tools-image.js?v=20260819-1" defer></script>');
       if (!html.includes("tools-image-cleanup.js")) tags.push('<script src="./tools-image-cleanup.js?v=20260819-2" defer></script>');
