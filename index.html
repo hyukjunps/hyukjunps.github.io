@@ -1788,6 +1788,31 @@ html[data-opoong-color="pink"]{--pri:#be185d;--pri2:#db2777;--pri3:#f9a8d4;--lin
 .gameSectionHeader{align-items:center}
 .gameWallet{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid color-mix(in srgb,var(--pri) 30%,var(--line));border-radius:999px;background:color-mix(in srgb,var(--pri) 9%,var(--card))}
 .gameWallet span{color:var(--muted);font-size:11px;font-weight:900}.gameWallet strong{color:var(--pri);font-size:18px}
+.gameOverAdBack{
+  position:fixed;inset:0;z-index:1200;display:grid;place-items:center;padding:16px;
+  background:rgba(2,6,23,.72);backdrop-filter:blur(8px);
+}
+.gameOverAdBack[hidden]{display:none!important}
+.gameOverAdModal{
+  width:min(390px,100%);padding:16px;border:1px solid var(--line);border-radius:26px;
+  background:var(--card);box-shadow:0 28px 80px rgba(0,0,0,.38);
+}
+.gameOverAdHead{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.gameOverAdHead strong{font-size:14px}
+.gameOverAdClose{
+  width:42px;height:42px;border:1px solid var(--line);border-radius:15px;
+  background:var(--card2);color:var(--text);font-size:25px;line-height:1;
+}
+.gameOverAdText{margin:10px 0 14px;color:var(--muted);font-size:13px;font-weight:800;line-height:1.6}
+.gameOverAdSlot{
+  min-height:116px;display:grid;place-items:center;overflow:hidden;
+  border:1px solid var(--line);border-radius:20px;background:var(--card2);
+}
+.gameOverRestart{text-align:center;padding:12px 4px 4px}
+.gameOverRestart h3{margin:0;font-size:24px}
+.gameOverRestart p{margin:9px 0 17px;color:var(--muted);font-weight:800}
+.gameOverRestartActions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
+
 .gameLibrary{max-width:920px;margin:0 auto}.gameLibrary[hidden],.miniGamePanel[hidden],.miniGameTopbar[hidden],.gameColorShop[hidden]{display:none!important}
 .gameLibraryLead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:2px 2px 13px}.gameLibraryLead b{font-size:18px}.gameLibraryLead span{color:var(--muted);font-size:11.5px;font-weight:850}
 .gameCardGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.gameCard{min-width:0;padding:8px;border:1px solid var(--line);border-radius:22px;background:color-mix(in srgb,var(--card) 96%,transparent);color:var(--text);text-align:left;box-shadow:var(--shadow2);transition:.18s;cursor:pointer}.gameCard:hover{border-color:color-mix(in srgb,var(--pri) 45%,var(--line));transform:translateY(-3px)}.gameCard:active{transform:scale(.98)}
@@ -2803,6 +2828,27 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pr
  </section>
 </div>
 
+<div id="gameOverAdBack" class="gameOverAdBack" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="gameOverAdTitle">
+  <div class="gameOverAdModal">
+    <section id="gameOverAdStage">
+      <div class="gameOverAdHead">
+        <strong id="gameOverAdTitle">게임 종료 · 광고</strong>
+        <button class="gameOverAdClose" type="button" aria-label="광고 닫기" onclick="closeGameOverAd()">×</button>
+      </div>
+      <p class="gameOverAdText">광고를 닫으면 같은 게임에 다시 도전할 수 있어요.</p>
+      <div id="gameOverAdSlot" class="gameOverAdSlot" aria-label="게임 종료 후 광고"></div>
+    </section>
+    <section id="gameOverRestartStage" class="gameOverRestart" hidden>
+      <h3>한 판 더?</h3>
+      <p>게임을 바로 다시 시작하거나 목록으로 돌아갈 수 있어요.</p>
+      <div class="gameOverRestartActions">
+        <button class="bigBtn" type="button" onclick="restartGameAfterAd()">게임 다시 시작</button>
+        <button class="btn ghost" type="button" onclick="closeGameRestartPrompt();showMiniGameHub()">게임 목록</button>
+      </div>
+    </section>
+  </div>
+</div>
+
 <script>
 /* =========================
    수정하기 쉬운 설정 영역
@@ -3537,6 +3583,7 @@ function endOpoongGame(){
   }
   const button=document.getElementById("gameStartButton");if(button)button.textContent="다시 하기";
   drawOpoongGame();
+  showGameOverAd("jump");
 }
 function opoongGameFrame(timestamp){
   const s=opoongRunner;
@@ -3645,6 +3692,7 @@ function finishTicTacToe(text,line,result){
   }
   awardOpoongPoints(reward,"틱택토 "+text);
   renderTicTacToe(line);
+  showGameOverAd("ttt");
 }
 function chooseTttComputerPlacement(){
   const empty=tttBoardState.map(function(value,index){return value?"":index;}).filter(function(value){return value!=="";});
@@ -3810,6 +3858,7 @@ function endStackGame(){
   if(score>0)awardOpoongPoints(Math.max(1,score*2),"블록 쌓기 "+score+"층");
   const message=document.getElementById("stackMessage");
   if(message){message.classList.remove("hidden");message.innerHTML="<strong>"+score+"층 완성!</strong><span>게임 시작을 눌러 다시 도전하세요.</span>";}
+  showGameOverAd("stack");
 }
 function dropStackBlock(){
   const s=opoongStack;
@@ -3885,6 +3934,7 @@ function selectWaterTube(index){
     const best=loadWaterBest();
     if(!best[waterLevelIndex]||waterMoves<best[waterLevelIndex]){best[waterLevelIndex]=waterMoves;saveWaterBest(best);}
     if(!waterRewarded){waterRewarded=true;awardOpoongPoints(40+waterLevelIndex*5,"워터 소트 완성");}
+    showGameOverAd("water");
   }else setWaterStatus("좋아요. 다음 시험관을 선택하세요.");
   renderWaterSort();
 }
@@ -3900,10 +3950,10 @@ const OPOONG_MAZE_BEST_KEY="opoong_maze_best_v1",MAZE_SIZE=21,MAZE_LIMIT=90;
 let mazeGrid=[],mazePlayer={r:1,c:1},mazeMoves=0,mazeSolved=false,mazeFailed=false,mazeStarted=false,mazeSwipeStart=null,mazeSeconds=MAZE_LIMIT,mazeTimer=0;
 function loadMazeBest(){return Math.max(0,Number(localStorage.getItem(OPOONG_MAZE_BEST_KEY)||0));}
 function carveMaze(r,c){mazeGrid[r][c]=0;[[-2,0],[2,0],[0,-2],[0,2]].sort(function(){return Math.random()-.5;}).forEach(function(d){const nr=r+d[0],nc=c+d[1];if(nr>0&&nr<MAZE_SIZE-1&&nc>0&&nc<MAZE_SIZE-1&&mazeGrid[nr][nc]){mazeGrid[r+d[0]/2][c+d[1]/2]=0;carveMaze(nr,nc);}});}
-function startMazeTimer(){if(mazeStarted||mazeSolved||mazeFailed)return;mazeStarted=true;mazeTimer=setInterval(function(){if(mazeSolved||mazeFailed){clearInterval(mazeTimer);return;}mazeSeconds--;if(mazeSeconds<=0){mazeSeconds=0;mazeFailed=true;clearInterval(mazeTimer);}renderMaze();},1000);}
+function startMazeTimer(){if(mazeStarted||mazeSolved||mazeFailed)return;mazeStarted=true;mazeTimer=setInterval(function(){if(mazeSolved||mazeFailed){clearInterval(mazeTimer);return;}mazeSeconds--;if(mazeSeconds<=0){mazeSeconds=0;mazeFailed=true;clearInterval(mazeTimer);showGameOverAd("maze");}renderMaze();},1000);}
 function newMazeGame(){clearInterval(mazeTimer);mazeGrid=Array.from({length:MAZE_SIZE},function(){return Array(MAZE_SIZE).fill(1);});carveMaze(1,1);mazeGrid[MAZE_SIZE-2][MAZE_SIZE-2]=0;mazePlayer={r:1,c:1};mazeMoves=0;mazeSolved=false;mazeFailed=false;mazeStarted=false;mazeSeconds=MAZE_LIMIT;mazeTimer=0;renderMaze();}
 function renderMaze(){const b=document.getElementById("mazeBoard");if(!b)return;const goal=MAZE_SIZE-2;b.style.setProperty("--maze-size",MAZE_SIZE);b.innerHTML=mazeGrid.flatMap(function(row,r){return row.map(function(cell,c){const visible=Math.abs(r-mazePlayer.r)+Math.abs(c-mazePlayer.c)<=4;let k="mazeCell"+(cell?" wall":"")+(r===goal&&c===goal?" goal":"")+(r===mazePlayer.r&&c===mazePlayer.c?" player":"")+(!visible&&!(r===goal&&c===goal)?" fog":"");return'<i class="'+k+'"></i>';});}).join("");const best=loadMazeBest();document.getElementById("mazeMoves").textContent=mazeMoves+"회";document.getElementById("mazeBest").textContent=best?best+"회":"-";document.getElementById("mazeTime").textContent=mazeSeconds+"초";document.getElementById("mazeStatus").textContent=mazeSolved?"탈출 성공!":mazeFailed?"시간 초과 · 새 미로에 도전하세요.":mazeStarted?"21×21 고난도 · 출구는 오른쪽 아래예요.":"첫 이동부터 90초가 시작돼요.";}
-function moveMaze(dr,dc){if(mazeSolved||mazeFailed||!mazeGrid.length)return;const r=mazePlayer.r+dr,c=mazePlayer.c+dc;if(!mazeGrid[r]||mazeGrid[r][c]!==0)return;mazePlayer={r:r,c:c};mazeMoves++;startMazeTimer();const goal=MAZE_SIZE-2;if(r===goal&&c===goal){mazeSolved=true;clearInterval(mazeTimer);const best=loadMazeBest();if(!best||mazeMoves<best)localStorage.setItem(OPOONG_MAZE_BEST_KEY,String(mazeMoves));awardOpoongPoints(16,"고난도 미로 탈출 성공");}renderMaze();renderGameLibraryStats();}
+function moveMaze(dr,dc){if(mazeSolved||mazeFailed||!mazeGrid.length)return;const r=mazePlayer.r+dr,c=mazePlayer.c+dc;if(!mazeGrid[r]||mazeGrid[r][c]!==0)return;mazePlayer={r:r,c:c};mazeMoves++;startMazeTimer();const goal=MAZE_SIZE-2;if(r===goal&&c===goal){mazeSolved=true;clearInterval(mazeTimer);const best=loadMazeBest();if(!best||mazeMoves<best)localStorage.setItem(OPOONG_MAZE_BEST_KEY,String(mazeMoves));awardOpoongPoints(16,"고난도 미로 탈출 성공");showGameOverAd("maze");}renderMaze();renderGameLibraryStats();}
 function mazeSwipeDown(e){mazeSwipeStart={x:e.clientX,y:e.clientY};}
 function mazeSwipeUp(e){if(!mazeSwipeStart)return;const x=e.clientX-mazeSwipeStart.x,y=e.clientY-mazeSwipeStart.y;mazeSwipeStart=null;if(Math.max(Math.abs(x),Math.abs(y))<18)return;if(Math.abs(x)>Math.abs(y))moveMaze(0,x>0?1:-1);else moveMaze(y>0?1:-1,0);}
 
@@ -3914,7 +3964,7 @@ function placeSnakeFood(){const free=[];for(let y=0;y<14;y++)for(let x=0;x<20;x+
 function resetSnakeGame(){clearInterval(snakeTimer);snakeTimer=0;snakeRunning=false;snakeOver=false;snakeBody=[{x:6,y:7},{x:5,y:7},{x:4,y:7}];snakeDirection={x:1,y:0};snakeNextDirection={x:1,y:0};snakeScore=0;placeSnakeFood();drawSnakeGame();}
 function startSnakeGame(){if(snakeOver||!snakeBody.length)resetSnakeGame();if(snakeRunning)return;snakeRunning=true;snakeTimer=setInterval(snakeStep,125);drawSnakeGame();}
 function setSnakeDirection(dr,dc){const n={x:dc,y:dr};if(n.x===-snakeDirection.x&&n.y===-snakeDirection.y)return;snakeNextDirection=n;if(!snakeRunning)startSnakeGame();}
-function snakeStep(){snakeDirection=snakeNextDirection;const h={x:snakeBody[0].x+snakeDirection.x,y:snakeBody[0].y+snakeDirection.y};if(h.x<0||h.x>=20||h.y<0||h.y>=14||snakeBody.some(function(p){return p.x===h.x&&p.y===h.y;})){snakeRunning=false;snakeOver=true;clearInterval(snakeTimer);snakeTimer=0;if(snakeScore>loadSnakeBest())localStorage.setItem(OPOONG_SNAKE_BEST_KEY,String(snakeScore));if(snakeScore)awardOpoongPoints(Math.max(2,Math.floor(snakeScore/2)),"스네이크");drawSnakeGame();renderGameLibraryStats();return;}snakeBody.unshift(h);if(h.x===snakeFood.x&&h.y===snakeFood.y){snakeScore++;placeSnakeFood();}else snakeBody.pop();drawSnakeGame();}
+function snakeStep(){snakeDirection=snakeNextDirection;const h={x:snakeBody[0].x+snakeDirection.x,y:snakeBody[0].y+snakeDirection.y};if(h.x<0||h.x>=20||h.y<0||h.y>=14||snakeBody.some(function(p){return p.x===h.x&&p.y===h.y;})){snakeRunning=false;snakeOver=true;clearInterval(snakeTimer);snakeTimer=0;if(snakeScore>loadSnakeBest())localStorage.setItem(OPOONG_SNAKE_BEST_KEY,String(snakeScore));if(snakeScore)awardOpoongPoints(Math.max(2,Math.floor(snakeScore/2)),"스네이크");drawSnakeGame();renderGameLibraryStats();showGameOverAd("snake");return;}snakeBody.unshift(h);if(h.x===snakeFood.x&&h.y===snakeFood.y){snakeScore++;placeSnakeFood();}else snakeBody.pop();drawSnakeGame();}
 function drawSnakeGame(){const c=document.getElementById("snakeCanvas");if(!c)return;const g=c.getContext("2d"),w=c.width/20,h=c.height/14,palette=getOpoongSnakePalette();g.fillStyle=palette.bg;g.fillRect(0,0,c.width,c.height);g.fillStyle=palette.food;g.beginPath();g.arc((snakeFood.x+.5)*w,(snakeFood.y+.5)*h,Math.min(w,h)*.32,0,Math.PI*2);g.fill();snakeBody.forEach(function(p,i){g.fillStyle=i?(palette.body==="rainbow"?["#f43f5e","#f59e0b","#22c55e","#38bdf8","#a855f7"][i%5]:palette.body):palette.head;g.fillRect(p.x*w+3,p.y*h+3,w-6,h-6);});document.getElementById("snakeScore").textContent=snakeScore+"점";document.getElementById("snakeBest").textContent=Math.max(loadSnakeBest(),snakeScore)+"점";document.getElementById("snakeStatus").textContent=snakeOver?"게임 종료":snakeRunning?"진행 중":"준비";document.getElementById("snakeStartBtn").textContent=snakeRunning?"진행 중":"게임 시작";}
 function snakeSwipeDown(e){snakeSwipeStart={x:e.clientX,y:e.clientY};}
 function snakeSwipeUp(e){if(!snakeSwipeStart)return;const x=e.clientX-snakeSwipeStart.x,y=e.clientY-snakeSwipeStart.y;snakeSwipeStart=null;if(Math.max(Math.abs(x),Math.abs(y))<18)return;if(Math.abs(x)>Math.abs(y))setSnakeDirection(0,x>0?1:-1);else setSnakeDirection(y>0?1:-1,0);}
@@ -3926,10 +3976,10 @@ function mineNeighbors(i){const r=Math.floor(i/9),c=i%9,a=[];for(let y=-1;y<=1;y
 function calculateMineNumbers(){mineCells.forEach(function(c,i){c.number=c.mine?0:mineNeighbors(i).filter(function(n){return mineCells[n].mine;}).length;});}
 function newMinesGame(){clearInterval(mineTimer);mineTimer=0;mineElapsed=0;mineStartedAt=0;mineEnded=false;mineFirstMove=true;mineFlagMode=false;mineCells=Array.from({length:81},function(){return{mine:false,open:false,flag:false,number:0};});Array.from({length:81},function(_,i){return i;}).sort(function(){return Math.random()-.5;}).slice(0,10).forEach(function(i){mineCells[i].mine=true;});calculateMineNumbers();const st=document.getElementById("mineStatus");if(st)st.textContent="첫 칸은 안전해요.";renderMines();}
 function startMineTimer(){if(mineStartedAt)return;mineStartedAt=Date.now();mineTimer=setInterval(function(){mineElapsed=Math.floor((Date.now()-mineStartedAt)/1000);renderMineHud();},1000);}
-function openMineCell(i){if(mineEnded)return;if(mineFlagMode){toggleMineFlag(i);return;}let c=mineCells[i];if(!c||c.flag||c.open)return;if(mineFirstMove){if(c.mine){const t=mineCells.findIndex(function(v,n){return n!==i&&!v.mine;});c.mine=false;mineCells[t].mine=true;calculateMineNumbers();c=mineCells[i];}mineFirstMove=false;startMineTimer();}if(c.mine){c.open=true;mineEnded=true;clearInterval(mineTimer);mineCells.forEach(function(v){if(v.mine)v.open=true;});document.getElementById("mineStatus").textContent="지뢰를 찾았어요.";renderMines();return;}const q=[i],seen=new Set();while(q.length){const n=q.shift(),v=mineCells[n];if(seen.has(n)||!v||v.flag||v.open||v.mine)continue;seen.add(n);v.open=true;if(!v.number)mineNeighbors(n).forEach(function(k){q.push(k);});}checkMineWin();renderMines();}
+function openMineCell(i){if(mineEnded)return;if(mineFlagMode){toggleMineFlag(i);return;}let c=mineCells[i];if(!c||c.flag||c.open)return;if(mineFirstMove){if(c.mine){const t=mineCells.findIndex(function(v,n){return n!==i&&!v.mine;});c.mine=false;mineCells[t].mine=true;calculateMineNumbers();c=mineCells[i];}mineFirstMove=false;startMineTimer();}if(c.mine){c.open=true;mineEnded=true;clearInterval(mineTimer);mineCells.forEach(function(v){if(v.mine)v.open=true;});document.getElementById("mineStatus").textContent="지뢰를 찾았어요.";renderMines();showGameOverAd("mine");return;}const q=[i],seen=new Set();while(q.length){const n=q.shift(),v=mineCells[n];if(seen.has(n)||!v||v.flag||v.open||v.mine)continue;seen.add(n);v.open=true;if(!v.number)mineNeighbors(n).forEach(function(k){q.push(k);});}checkMineWin();renderMines();}
 function toggleMineFlag(i){if(mineEnded)return;const c=mineCells[i];if(c&&!c.open)c.flag=!c.flag;renderMines();}
 function toggleMineFlagMode(){mineFlagMode=!mineFlagMode;renderMines();}
-function checkMineWin(){if(!mineCells.length||!mineCells.every(function(c){return c.mine||c.open;}))return;mineEnded=true;clearInterval(mineTimer);mineTimer=0;mineElapsed=mineStartedAt?Math.floor((Date.now()-mineStartedAt)/1000):0;if(!loadMineBest()||mineElapsed<loadMineBest())localStorage.setItem(OPOONG_MINE_BEST_KEY,String(mineElapsed));awardOpoongPoints(10,"지뢰찾기 성공");document.getElementById("mineStatus").textContent="모든 안전한 칸을 찾았어요!";renderGameLibraryStats();}
+function checkMineWin(){if(!mineCells.length||!mineCells.every(function(c){return c.mine||c.open;}))return;mineEnded=true;clearInterval(mineTimer);mineTimer=0;mineElapsed=mineStartedAt?Math.floor((Date.now()-mineStartedAt)/1000):0;if(!loadMineBest()||mineElapsed<loadMineBest())localStorage.setItem(OPOONG_MINE_BEST_KEY,String(mineElapsed));awardOpoongPoints(10,"지뢰찾기 성공");document.getElementById("mineStatus").textContent="모든 안전한 칸을 찾았어요!";renderGameLibraryStats();showGameOverAd("mine");}
 function renderMineHud(){const f=mineCells.filter(function(c){return c.flag;}).length;document.getElementById("mineRemaining").textContent=Math.max(0,10-f)+"개";document.getElementById("mineTime").textContent=mineElapsed+"초";document.getElementById("mineBest").textContent=loadMineBest()?loadMineBest()+"초":"-";const b=document.getElementById("mineFlagMode");b.setAttribute("aria-pressed",String(mineFlagMode));b.textContent=mineFlagMode?"🚩 깃발 모드 켜짐":"🚩 깃발 모드 끄기";}
 function renderMines(){const b=document.getElementById("mineBoard");if(!b)return;const symbols=getOpoongMineSymbols();b.innerHTML=mineCells.map(function(c,i){let t="",k="mineCell";if(c.open){k+=" open";if(c.mine){k+=" mine";t=symbols.mine;}else if(c.number){k+=" n"+c.number;t=c.number;}}else if(c.flag){k+=" flag";t=symbols.flag;}return'<button class="'+k+'" onclick="openMineCell('+i+')" oncontextmenu="event.preventDefault();toggleMineFlag('+i+')">'+t+'</button>';}).join("");renderMineHud();}
 
@@ -4210,9 +4260,9 @@ function go(view){
    화면이 열린 뒤 광고 영역을 새로 만들고 ba.min.js를 다시 실행합니다. */
 const KAKAO_ADS = {
   homeDesktop: { unit: "DAN-QDvR0fxl5ri9KE4D", width: 728, height: 90, container: "ad-home" },
-  homeMobile: { unit: "DAN-rJlK5gWdIDLwSy9f", width: 320, height: 100, container: "ad-home-mobile" },
-  meal: { unit: "DAN-mrfQcLgptQsCE1ci", width: 320, height: 50, container: "ad-meal" },
-  onway: { unit: "DAN-YjOdZeyzOy7YEylv", width: 320, height: 100, container: "ad-onway" }
+  homeMobile: { unit: "DAN-ps0PRxwqtGCGkBq2", width: 320, height: 50, container: "ad-home-mobile" },
+  meal: { unit: "DAN-ldKVhVTYzKi5pUti", width: 320, height: 50, container: "ad-meal" },
+  onway: { unit: "DAN-vszyC76aKoBwX0tg", width: 320, height: 50, container: "ad-onway" }
 };
 
 function mountKakaoAd(ad){
@@ -4255,6 +4305,60 @@ function loadKakaoAdsForView(view){
     if(view === "meal") mountKakaoAd(KAKAO_ADS.meal);
     if(view === "onway") mountKakaoAd(KAKAO_ADS.onway);
   }, 180);
+}
+
+const GAME_OVER_ADS = [
+  { unit: "DAN-rJlK5gWdIDLwSy9f", width: 320, height: 100 },
+  { unit: "DAN-mrfQcLgptQsCE1ci", width: 320, height: 50 },
+  { unit: "DAN-YjOdZeyzOy7YEylv", width: 320, height: 100 }
+];
+let gameOverAdGame="";
+function showGameOverAd(game){
+  if(!GAME_OVER_ADS.length)return;
+  gameOverAdGame=game;
+  const back=document.getElementById("gameOverAdBack");
+  const adStage=document.getElementById("gameOverAdStage");
+  const restartStage=document.getElementById("gameOverRestartStage");
+  const slot=document.getElementById("gameOverAdSlot");
+  if(!back||!adStage||!restartStage||!slot)return;
+  let index=0;
+  try{index=Math.max(0,Number(sessionStorage.getItem("opoong_game_ad_index")||0))%GAME_OVER_ADS.length;}catch(e){}
+  const ad=GAME_OVER_ADS[index];
+  try{sessionStorage.setItem("opoong_game_ad_index",String((index+1)%GAME_OVER_ADS.length));}catch(e){}
+  slot.innerHTML='<ins class="kakao_ad_area" style="display:none;" data-ad-unit="'+ad.unit+'" data-ad-width="'+ad.width+'" data-ad-height="'+ad.height+'"></ins>';
+  adStage.hidden=false;restartStage.hidden=true;back.hidden=false;back.setAttribute("aria-hidden","false");
+  const script=document.createElement("script");
+  script.type="text/javascript";script.async=true;
+  script.src="https://t1.kakaocdn.net/kas/static/ba.min.js?"+Date.now();
+  script.onload=script.onerror=function(){script.remove();};
+  document.body.appendChild(script);
+  const closeButton=back.querySelector(".gameOverAdClose");
+  if(closeButton)setTimeout(function(){closeButton.focus({preventScroll:true});},0);
+}
+function closeGameOverAd(){
+  const adStage=document.getElementById("gameOverAdStage");
+  const restartStage=document.getElementById("gameOverRestartStage");
+  const slot=document.getElementById("gameOverAdSlot");
+  if(slot)slot.innerHTML="";
+  if(adStage)adStage.hidden=true;
+  if(restartStage){restartStage.hidden=false;const button=restartStage.querySelector("button");if(button)setTimeout(function(){button.focus({preventScroll:true});},0);}
+}
+function closeGameRestartPrompt(){
+  const back=document.getElementById("gameOverAdBack");
+  const slot=document.getElementById("gameOverAdSlot");
+  if(slot)slot.innerHTML="";
+  if(back){back.hidden=true;back.setAttribute("aria-hidden","true");}
+}
+function restartGameAfterAd(){
+  const game=gameOverAdGame;
+  closeGameRestartPrompt();
+  if(game==="jump")startOpoongGame();
+  else if(game==="ttt")resetTicTacToe();
+  else if(game==="stack")startStackGame();
+  else if(game==="water")resetWaterPuzzle();
+  else if(game==="maze")newMazeGame();
+  else if(game==="snake"){resetSnakeGame();startSnakeGame();}
+  else if(game==="mine")newMinesGame();
 }
 
 function applyTheme(theme){
