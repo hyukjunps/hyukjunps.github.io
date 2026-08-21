@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v51";
+const CACHE_VERSION = "v52";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -18,7 +18,8 @@ const APP_SHELL = [
   "./point-shop-fix.js",
   "./tools-image.js",
   "./tools-image-cleanup.js",
-  "./pwa-update.js"
+  "./pwa-update.js",
+  "./push-notifications.js"
 ];
 
 function withInjectedScripts(response, requestUrl) {
@@ -46,6 +47,7 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-5" defer></script>');
       if (!html.includes("hwp-beta.js")) tags.push('<script src="./hwp-beta.js?v=20260820-1" defer></script>');
       if (!html.includes("point-shop-fix.js")) tags.push('<script src="./point-shop-fix.js?v=20260820-1" defer></script>');
+      if (!html.includes("push-notifications.js")) tags.push('<script src="./push-notifications.js?v=20260821-1" defer></script>');
     } else {
       if (!html.includes("tools-image.js")) tags.push('<script src="./tools-image.js?v=20260819-1" defer></script>');
       if (!html.includes("tools-image-cleanup.js")) tags.push('<script src="./tools-image-cleanup.js?v=20260819-2" defer></script>');
@@ -126,6 +128,7 @@ self.addEventListener("fetch", (event) => {
     "/tools-image.js",
     "/tools-image-cleanup.js",
     "/pwa-update.js",
+    "/push-notifications.js",
     "/manifest.json"
   ]);
   if (freshPaths.has(url.pathname)) {
@@ -158,3 +161,36 @@ async function networkFirst(req, cacheKey) {
     throw error;
   }
 }
+
+
+self.addEventListener("push", (event) => {
+  let data = {};
+  try {
+    data = event.data ? event.data.json() : {};
+  } catch (_) {
+    data = { body: event.data ? event.data.text() : "" };
+  }
+  const title = data.title || "O.Poong 아침 알림";
+  const options = {
+    body: data.body || "오늘의 급식과 학교생활 정보를 확인해 보세요.",
+    icon: data.icon || "./android/launchericon-192-192.png",
+    badge: data.badge || "./android/launchericon-192-192.png",
+    data: { url: data.url || "./" }
+  };
+  event.waitUntil(self.registration.showNotification(title, options));
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const target = new URL(event.notification.data?.url || "./", self.location.origin).href;
+  event.waitUntil((async () => {
+    const windows = await self.clients.matchAll({ type: "window", includeUncontrolled: true });
+    for (const client of windows) {
+      if ("focus" in client) {
+        if ("navigate" in client) await client.navigate(target);
+        return client.focus();
+      }
+    }
+    return self.clients.openWindow(target);
+  })());
+});
