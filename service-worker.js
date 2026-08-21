@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v49";
+const CACHE_VERSION = "v50";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -31,46 +31,6 @@ function withInjectedScripts(response, requestUrl) {
     const tags = [];
     const url = new URL(requestUrl || self.location.href);
     const isToolsPage = url.pathname.endsWith("/tools.html");
-
-    if (!isToolsPage) {
-      const adUnits = [
-        {
-          placeholder: '<div class="adfitWrap adfitMobile homeTopMobile" id="ad-home-mobile" aria-label="광고"></div>',
-          markup: `<div class="adfitWrap adfitMobile homeTopMobile" id="ad-home-mobile" aria-label="광고">
-            <ins class="kakao_ad_area" style="display:none;"
-              data-ad-unit="DAN-rJlK5gWdIDLwSy9f"
-              data-ad-width="320"
-              data-ad-height="100"></ins>
-          </div>`
-        },
-        {
-          placeholder: '<div class="adfitWrap adfitMobile" id="ad-meal" aria-label="광고"></div>',
-          markup: `<div class="adfitWrap adfitMobile" id="ad-meal" aria-label="광고">
-          <ins class="kakao_ad_area" style="display:none;"
-            data-ad-unit="DAN-mrfQcLgptQsCE1ci"
-            data-ad-width="320"
-            data-ad-height="50"></ins>
-        </div>`
-        },
-        {
-          placeholder: '<div class="adfitWrap adfitMobile" id="ad-onway" aria-label="광고"></div>',
-          markup: `<div class="adfitWrap adfitMobile" id="ad-onway" aria-label="광고">
-          <ins class="kakao_ad_area" style="display:none;"
-            data-ad-unit="DAN-YjOdZeyzOy7YEylv"
-            data-ad-width="320"
-            data-ad-height="100"></ins>
-        </div>`
-        }
-      ];
-
-      for (const ad of adUnits) {
-        if (html.includes(ad.placeholder)) html = html.replace(ad.placeholder, ad.markup);
-      }
-
-      if (html.includes("kakao_ad_area") && !html.includes("t1.kakaocdn.net/kas/static/ba.min.js")) {
-        tags.push('<script type="text/javascript" src="//t1.kakaocdn.net/kas/static/ba.min.js" async></script>');
-      }
-    }
 
     if (!html.includes("pwa-update.js")) {
       tags.push('<script src="./pwa-update.js?v=20260819-4" defer></script>');
