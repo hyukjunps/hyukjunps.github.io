@@ -3,7 +3,7 @@ name: O.Poong Kakao ad patch
 on:
   push:
     branches:
-      - feat/kakao-ads-20260821
+      - main
     paths:
       - .github/workflows/opoong-kakao-ad-patch.yml
 
@@ -16,7 +16,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: feat/kakao-ads-20260821
+          ref: main
       - name: Add Kakao AdFit units
         shell: python
         run: |
@@ -59,15 +59,12 @@ jobs:
               text = text.replace(anchor, loader + anchor, 1)
 
           path.write_text(text, encoding="utf-8")
-      - name: Commit patched index
+      - name: Commit patched index and remove one-shot workflow
         shell: bash
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- index.html
-          if git diff --cached --quiet; then
-            echo "No changes to commit"
-            exit 0
-          fi
+          rm -f .github/workflows/opoong-kakao-ad-patch.yml
+          git add -- index.html .github/workflows/opoong-kakao-ad-patch.yml
           git commit -m "Add Kakao AdFit placements"
-          git push origin HEAD:feat/kakao-ads-20260821
+          git push origin HEAD:main
