@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v62";
+const CACHE_VERSION = "v63";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -14,9 +14,13 @@ const APP_SHELL = [
   "./opoong-run.js",
   "./opoong-ramen.js",
   "./opoong-village.js",
+  "./opoong-village-airport.js",
   "./opoong-ghost.js",
   "./game-result-share.js",
   "./opoong-ghost-share.js",
+  "./opoong-game-pack.js",
+  "./opoong-progression.js",
+  "./game-count.js",
   "./stack-tuning.js",
   "./notice-override.js",
   "./qr-menu.js",
@@ -24,6 +28,7 @@ const APP_SHELL = [
   "./point-shop-fix.js",
   "./tools-image.js",
   "./tools-image-cleanup.js",
+  "./tools-image-compress.js",
   "./pwa-update.js"
 ];
 
@@ -39,7 +44,7 @@ function withInjectedScripts(response, requestUrl) {
     const isToolsPage = url.pathname.endsWith("/tools.html");
 
     if (!html.includes("pwa-update.js")) {
-      tags.push('<script src="./pwa-update.js?v=20260819-4" defer></script>');
+      tags.push('<script src="./pwa-update.js?v=20260822-1" defer></script>');
     }
 
     if (!isToolsPage) {
@@ -50,9 +55,13 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("opoong-run.js")) tags.push('<script src="./opoong-run.js?v=20260822-2" defer></script>');
       if (!html.includes("opoong-ramen.js")) tags.push('<script src="./opoong-ramen.js?v=20260822-2" defer></script>');
       if (!html.includes("opoong-village.js")) tags.push('<script src="./opoong-village.js?v=20260822-3" defer></script>');
+      if (!html.includes("opoong-village-airport.js")) tags.push('<script src="./opoong-village-airport.js?v=20260822-1" defer></script>');
       if (!html.includes("opoong-ghost.js")) tags.push('<script src="./opoong-ghost.js?v=20260822-1" defer></script>');
       if (!html.includes("game-result-share.js")) tags.push('<script src="./game-result-share.js?v=20260822-2" defer></script>');
       if (!html.includes("opoong-ghost-share.js")) tags.push('<script src="./opoong-ghost-share.js?v=20260822-1" defer></script>');
+      if (!html.includes("opoong-game-pack.js")) tags.push('<script src="./opoong-game-pack.js?v=20260822-1" defer></script>');
+      if (!html.includes("opoong-progression.js")) tags.push('<script src="./opoong-progression.js?v=20260822-1" defer></script>');
+      if (!html.includes("game-count.js")) tags.push('<script src="./game-count.js?v=20260822-1" defer></script>');
       if (!html.includes("stack-tuning.js")) tags.push('<script src="./stack-tuning.js?v=20260820-2" defer></script>');
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
       if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-5" defer></script>');
@@ -61,6 +70,7 @@ function withInjectedScripts(response, requestUrl) {
     } else {
       if (!html.includes("tools-image.js")) tags.push('<script src="./tools-image.js?v=20260819-1" defer></script>');
       if (!html.includes("tools-image-cleanup.js")) tags.push('<script src="./tools-image-cleanup.js?v=20260819-2" defer></script>');
+      if (!html.includes("tools-image-compress.js")) tags.push('<script src="./tools-image-compress.js?v=20260822-1" defer></script>');
     }
 
     if (tags.length) {
@@ -134,15 +144,20 @@ self.addEventListener("fetch", (event) => {
     "/opoong-run.js",
     "/opoong-ramen.js",
     "/opoong-village.js",
+    "/opoong-village-airport.js",
     "/opoong-ghost.js",
     "/game-result-share.js",
     "/opoong-ghost-share.js",
+    "/opoong-game-pack.js",
+    "/opoong-progression.js",
+    "/game-count.js",
     "/stack-tuning.js",
     "/qr-menu.js",
     "/hwp-beta.js",
     "/point-shop-fix.js",
     "/tools-image.js",
     "/tools-image-cleanup.js",
+    "/tools-image-compress.js",
     "/pwa-update.js",
     "/manifest.json"
   ]);
