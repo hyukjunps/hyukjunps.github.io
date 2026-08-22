@@ -1,8 +1,15 @@
 const PROJECT_ID = "opoong-9e2f1";
 const ALLOWED_ORIGIN = "https://hyukjunps.github.io";
+const APP_URL = "https://hyukjunps.github.io/";
+const SCHEDULE_BASE_URL = "https://raw.githubusercontent.com/hyukjunps/hyukjunps.github.io/main/data/schedule";
 const FCM_SCOPE = "https://www.googleapis.com/auth/firebase.messaging";
 const TOKEN_URL = "https://oauth2.googleapis.com/token";
 const FCM_URL = `https://fcm.googleapis.com/v1/projects/${PROJECT_ID}/messages:send`;
+
+// O.Poong에서 급식 조회에 사용하는 NEIS 설정과 동일합니다.
+const NEIS_API_KEY = "c5eac2fb880e4aa185e7957a756dd126";
+const ATPT_OFCDC_SC_CODE = "R10";
+const SD_SCHUL_CODE = "8750475";
 
 const enc = new TextEncoder();
 
@@ -107,7 +114,7 @@ async function getAccessToken(env) {
   return data.access_token;
 }
 
-async function sendFcm(accessToken, token, { title, body, url }) {
+async function sendFcm(accessToken, token, { title, body, url, tag }) {
   const response = await fetch(FCM_URL, {
     method: "POST",
     headers: {
@@ -118,9 +125,10 @@ async function sendFcm(accessToken, token, { title, body, url }) {
       message: {
         token,
         data: {
-          title: String(title || "O.Poong 아침 알림"),
-          body: String(body || "오늘의 급식과 학교생활 정보를 확인해 보세요."),
-          url: String(url || "https://hyukjunps.github.io/")
+          title: String(title || "O.Poong 알림"),
+          body: String(body || "새 알림이 도착했어요."),
+          url: String(url || APP_URL),
+          tag: String(tag || `opoong-${Date.now()}`)
         },
         webpush: {
           headers: {
@@ -155,31 +163,161 @@ async function listTokens(env) {
   return tokens;
 }
 
-async function sendMorningNotifications(env) {
+function getKstDateParts(date = new Date()) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit"
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map(p => [p.type, p.value]));
+  const year = values.year;
+  const month = values.month;
+  const day = values.day;
+  return {
+    dateKey: `${year}-${month}-${day}`,
+    ym: `${year}${month}`,
+    ymd: `${year}${month}${day}`
+  };
+}
+
+function decodeBasicEntities(text) {
+  return String(text || "")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&#39;/gi, "'")
+    .replace(/&quot;/gi, '"');
+}
+
+function mealMenuText(raw) {
+  return decodeBasicEntities(raw)
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, "")
+    .split("\n")
+    .map(line => line.trim())
+    .filter(Boolean)
+    .join("\n");
+}
+
+async function fetchTodaySchedule(today) {
+  const response = await fetch(`${SCHEDULE_BASE_URL}/${today.ym}.json?d=${today.ymd}`, {
+    headers: { "Accept": "application/json" }
+  });
+  if (!response.ok) throw new Error(`schedule HTTP ${response.status}`);
+  const data = await response.json();
+  const events = Array.isArray(data?.byDate?.[today.dateKey]) ? data.byDate[today.dateKey] : [];
+  const titles = events.map(event => String(event?.title || "").trim()).filter(Boolean);
+  return titles.length ? titles.join("\n") : "오늘 등록된 학사일정이 없습니다.";
+}
+
+async function fetchTodayMeals(today) {
+  const params = new URLSearchParams({
+    KEY: NEIS_API_KEY,
+    Type: "json",
+    pIndex: "1",
+    pSize: "100",
+    ATPT_OFCDC_SC_CODE,
+    SD_SCHUL_CODE,
+    MLSV_YMD: today.ymd
+  });
+  const response = await fetch(`https://open.neis.go.kr/hub/mealServiceDietInfo?${params.toString()}`);
+  if (!response.ok) throw new Error(`NEIS HTTP ${response.status}`);
+  const data = await response.json();
+  return Array.isArray(data?.mealServiceDietInfo?.[1]?.row) ? data.mealServiceDietInfo[1].row : [];
+}
+
+function findMeal(rows, code, name) {
+  return rows.find(row => String(row?.MMEAL_SC_CODE || "") === String(code))
+    || rows.find(row => String(row?.MMEAL_SC_NM || "").includes(name));
+}
+
+async function buildTodayNotifications() {
+  const today = getKstDateParts();
+
+  let scheduleBody;
+  try {
+    scheduleBody = await fetchTodaySchedule(today);
+  } catch (error) {
+    console.error("[DATA] schedule fetch failed", error);
+    scheduleBody = "학사일정을 불러오지 못했습니다.";
+  }
+
+  let mealRows = [];
+  try {
+    mealRows = await fetchTodayMeals(today);
+  } catch (error) {
+    console.error("[DATA] meal fetch failed", error);
+  }
+
+  const lunch = findMeal(mealRows, "2", "중식");
+  const dinner = findMeal(mealRows, "3", "석식");
+  const lunchBody = lunch ? mealMenuText(lunch.DDISH_NM) : "오늘 점심 급식 정보가 없습니다.";
+  const dinnerBody = dinner ? mealMenuText(dinner.DDISH_NM) : "오늘 저녁 급식 정보가 없습니다.";
+
+  return [
+    {
+      title: "오늘의 학사일정",
+      body: scheduleBody,
+      url: `${APP_URL}?page=schedule`,
+      tag: `opoong-schedule-${today.ymd}`
+    },
+    {
+      title: "오늘의 점심",
+      body: lunchBody || "오늘 점심 급식 정보가 없습니다.",
+      url: `${APP_URL}?page=meal`,
+      tag: `opoong-lunch-${today.ymd}`
+    },
+    {
+      title: "오늘의 저녁",
+      body: dinnerBody || "오늘 저녁 급식 정보가 없습니다.",
+      url: `${APP_URL}?page=meal`,
+      tag: `opoong-dinner-${today.ymd}`
+    }
+  ];
+}
+
+async function sendSetToToken(accessToken, token, notifications) {
+  const results = [];
+  for (const notification of notifications) {
+    const result = await sendFcm(accessToken, token, notification);
+    results.push({ notification, result });
+    if (isDeadToken(result)) break;
+  }
+  return results;
+}
+
+async function sendDailyNotifications(env) {
   const records = await listTokens(env);
   if (!records.length) {
     console.log("[FCM] no registered tokens");
-    return { total: 0, sent: 0, failed: 0 };
+    return { tokens: 0, messagesSent: 0, failed: 0 };
   }
 
-  const accessToken = await getAccessToken(env);
-  let sent = 0;
+  const [accessToken, notifications] = await Promise.all([
+    getAccessToken(env),
+    buildTodayNotifications()
+  ]);
+
+  let messagesSent = 0;
   let failed = 0;
 
   for (const record of records) {
     try {
-      const result = await sendFcm(accessToken, record.token, {
-        title: "O.Poong 아침 알림",
-        body: "오늘의 급식과 학교생활 정보를 확인해 보세요.",
-        url: "https://hyukjunps.github.io/"
-      });
-      if (result.ok) {
-        sent += 1;
-        console.log(`[FCM] sent ${record.key} status=${result.status}`);
-      } else {
-        failed += 1;
-        console.error(`[FCM] failed ${record.key} status=${result.status} ${result.text}`);
-        if (isDeadToken(result)) await env.FCM_TOKENS.delete(record.key);
+      const results = await sendSetToToken(accessToken, record.token, notifications);
+      for (const { notification, result } of results) {
+        if (result.ok) {
+          messagesSent += 1;
+          console.log(`[FCM] sent ${notification.tag} to ${record.key} status=${result.status}`);
+        } else {
+          failed += 1;
+          console.error(`[FCM] failed ${notification.tag} to ${record.key} status=${result.status} ${result.text}`);
+          if (isDeadToken(result)) {
+            await env.FCM_TOKENS.delete(record.key);
+            break;
+          }
+        }
       }
     } catch (error) {
       failed += 1;
@@ -187,8 +325,8 @@ async function sendMorningNotifications(env) {
     }
   }
 
-  console.log(`[FCM] morning done total=${records.length} sent=${sent} failed=${failed}`);
-  return { total: records.length, sent, failed };
+  console.log(`[FCM] 08:00 set done tokens=${records.length} sent=${messagesSent} failed=${failed}`);
+  return { tokens: records.length, messagesSent, failed };
 }
 
 export default {
@@ -207,7 +345,9 @@ export default {
         service: "opoong-fcm",
         projectId: PROJECT_ID,
         kv: Boolean(env.FCM_TOKENS),
-        firebaseSecret: Boolean(env.FIREBASE_SERVICE_ACCOUNT_JSON)
+        firebaseSecret: Boolean(env.FIREBASE_SERVICE_ACCOUNT_JSON),
+        dailyNotifications: ["schedule", "lunch", "dinner"],
+        schedule: "08:00 Asia/Seoul"
       }, 200, origin);
     }
 
@@ -245,14 +385,25 @@ export default {
 
     if (url.pathname === "/fcm/test") {
       try {
-        const accessToken = await getAccessToken(env);
-        const result = await sendFcm(accessToken, token, {
-          title: "O.Poong FCM 테스트",
-          body: "FCM 서버 전송까지 정상적으로 연결되었습니다.",
-          url: "https://hyukjunps.github.io/"
-        });
-        if (!result.ok) return json({ ok: false, status: result.status, error: result.text }, 502, origin);
-        return json({ ok: true, status: result.status }, 200, origin);
+        const [accessToken, notifications] = await Promise.all([
+          getAccessToken(env),
+          buildTodayNotifications()
+        ]);
+        const results = await sendSetToToken(accessToken, token, notifications);
+        const failedResult = results.find(({ result }) => !result.ok);
+        if (failedResult) {
+          return json({
+            ok: false,
+            status: failedResult.result.status,
+            error: failedResult.result.text,
+            sent: results.filter(({ result }) => result.ok).length
+          }, 502, origin);
+        }
+        return json({
+          ok: true,
+          sent: results.length,
+          titles: notifications.map(item => item.title)
+        }, 200, origin);
       } catch (error) {
         return json({ ok: false, error: String(error?.message || error) }, 500, origin);
       }
@@ -262,6 +413,6 @@ export default {
   },
 
   async scheduled(_event, env, ctx) {
-    ctx.waitUntil(sendMorningNotifications(env));
+    ctx.waitUntil(sendDailyNotifications(env));
   }
 };
