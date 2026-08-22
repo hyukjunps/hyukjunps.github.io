@@ -143,7 +143,7 @@
   window.addEventListener('pageshow', init);
 })();
 
-/* ===== O.Poong one-time nickname reward + unified bonus-heart gate ===== */
+/* ===== O.Poong one-time nickname reward + single-charge heart router ===== */
 (function(){
   'use strict';
 
@@ -175,10 +175,8 @@
   }
 
   function saveBaseHeartState(raw){
-    try{
-      localStorage.setItem(HEART_KEY, JSON.stringify(raw));
-      return true;
-    }catch(_){return false;}
+    try{localStorage.setItem(HEART_KEY, JSON.stringify(raw));return true;}
+    catch(_){return false;}
   }
 
   function showRewardToast(){
@@ -211,7 +209,6 @@
       if(localStorage.getItem(CLAIM_KEY) === '1') return false;
       const nickname = String(localStorage.getItem(USER_NAME_KEY) || '').trim();
       if(nickname !== TARGET_NAME) return false;
-
       const rewards = JSON.parse(localStorage.getItem(REWARDS_KEY) || '{}');
       rewards.points = Math.max(0, Math.floor(Number(rewards.points) || 0)) + POINT_BONUS;
       localStorage.setItem(REWARDS_KEY, JSON.stringify(rewards));
@@ -223,37 +220,26 @@
     }catch(_){return false;}
   }
 
-  function deepestOriginal(fn){
-    let current = fn;
-    const seen = new Set();
-    while(typeof current === 'function' && typeof current.__original === 'function' && !seen.has(current)){
-      seen.add(current);
-      current = current.__original;
-    }
-    return current;
-  }
-
-  function installUnifiedHeartGate(){
+  function installHeartRouter(){
     const api = window.OPOONG_GAME_HEARTS;
     if(!api || typeof api.get !== 'function' || typeof window.openMiniGame !== 'function') return false;
-    if(api.__opoongUnifiedBonusGate) return true;
+    if(api.__opoongSingleChargeRouter) return true;
 
     const baseGet = api.get.bind(api);
     const baseRender = typeof api.render === 'function' ? api.render.bind(api) : null;
-    const baseOpenMiniGame = deepestOriginal(window.openMiniGame);
-    if(typeof baseOpenMiniGame !== 'function') return false;
+    const routedOpenMiniGame = window.openMiniGame;
 
-    function normalizedBaseCount(){
+    function baseCount(){
       return Math.max(0, Math.floor(Number(baseGet()) || 0));
     }
 
     function totalHearts(){
-      return normalizedBaseCount() + loadBonusHearts();
+      return baseCount() + loadBonusHearts();
     }
 
     function renderTotal(){
       if(baseRender) baseRender();
-      const base = normalizedBaseCount();
+      const base = baseCount();
       const bonus = loadBonusHearts();
       const total = base + bonus;
       const count = document.getElementById('gameHeartCount');
@@ -265,8 +251,7 @@
     }
 
     function spendAnyHeart(){
-      // Calling baseGet first keeps the original daily refill behavior intact.
-      const base = normalizedBaseCount();
+      const base = baseCount();
       if(base > 0){
         const raw = readBaseHeartState();
         raw.hearts = Math.max(0, base - 1);
@@ -274,7 +259,6 @@
         renderTotal();
         return true;
       }
-
       const bonus = loadBonusHearts();
       if(bonus > 0){
         saveBonusHearts(bonus - 1);
@@ -288,19 +272,53 @@
     api.spend = spendAnyHeart;
     api.getBonus = loadBonusHearts;
     api.render = renderTotal;
-    api.__opoongUnifiedBonusGate = true;
+    api.__opoongSingleChargeRouter = true;
 
     const unifiedOpen = function(){
-      if(totalHearts() <= 0){
+      const baseBefore = baseCount();
+      const bonusBefore = loadBonusHearts();
+      if(baseBefore <= 0 && bonusBefore <= 0){
         if(typeof api.openCharge === 'function') api.openCharge('하트가 없어요. 다음 무료 충전을 기다리거나 하트를 충전해 주세요.');
         return;
       }
-      if(!spendAnyHeart()) return;
-      return baseOpenMiniGame.apply(this, arguments);
+
+      // With normal hearts, let the original inner heart gate spend first.
+      // Extension games bypass that inner gate, so charge once after a successful open if the count did not change.
+      if(baseBefore > 0){
+        const result = routedOpenMiniGame.apply(this, arguments);
+        const baseAfter = baseCount();
+        if(baseAfter >= baseBefore){
+          const raw = readBaseHeartState();
+          raw.hearts = Math.max(0, baseAfter - 1);
+          saveBaseHeartState(raw);
+        }
+        renderTotal();
+        return result;
+      }
+
+      // Bonus-heart-only case: lend the inner gate one temporary base heart so core games can open.
+      // Whether an extension game bypasses the gate or a core game consumes it, restore base to zero and spend exactly one bonus heart.
+      const temp = readBaseHeartState();
+      temp.hearts = 1;
+      if(!saveBaseHeartState(temp)) return;
+      let opened = false;
+      try{
+        const result = routedOpenMiniGame.apply(this, arguments);
+        opened = true;
+        return result;
+      }finally{
+        const after = readBaseHeartState();
+        after.hearts = 0;
+        saveBaseHeartState(after);
+        if(opened) saveBonusHearts(Math.max(0, bonusBefore - 1));
+        renderTotal();
+      }
     };
+
+    // Preserve the marker so game-hearts.js never installs a second gate around this router.
     unifiedOpen.__opoongHeartGate = true;
-    unifiedOpen.__opoongUnifiedHeartGate = true;
-    unifiedOpen.__original = baseOpenMiniGame;
+    unifiedOpen.__opoongSingleChargeRouter = true;
+    unifiedOpen.__original = routedOpenMiniGame;
     window.openMiniGame = unifiedOpen;
 
     renderTotal();
@@ -309,13 +327,12 @@
 
   function initRewardAndHearts(){
     grantRewardOnce();
+    installHeartRouter();
     let tries = 0;
     const timer = window.setInterval(function(){
       tries += 1;
-      const ready = installUnifiedHeartGate();
-      if(ready || tries >= 40) window.clearInterval(timer);
+      if(installHeartRouter() || tries >= 40) window.clearInterval(timer);
     },250);
-    installUnifiedHeartGate();
   }
 
   if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initRewardAndHearts, {once:true});
@@ -323,7 +340,7 @@
 
   window.addEventListener('pageshow', function(){
     grantRewardOnce();
-    installUnifiedHeartGate();
+    installHeartRouter();
     try{window.OPOONG_GAME_HEARTS?.render?.();}catch(_){ }
   });
 
