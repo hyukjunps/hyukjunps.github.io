@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v63";
+const CACHE_VERSION = "v64";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -54,7 +54,7 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("game-extra.js")) tags.push('<script src="./game-extra.js?v=20260822-2" defer></script>');
       if (!html.includes("opoong-run.js")) tags.push('<script src="./opoong-run.js?v=20260822-2" defer></script>');
       if (!html.includes("opoong-ramen.js")) tags.push('<script src="./opoong-ramen.js?v=20260822-2" defer></script>');
-      if (!html.includes("opoong-village.js")) tags.push('<script src="./opoong-village.js?v=20260822-3" defer></script>');
+      if (!html.includes("opoong-village.js")) tags.push('<script src="./opoong-village.js?v=20260822-4" defer></script>');
       if (!html.includes("opoong-village-airport.js")) tags.push('<script src="./opoong-village-airport.js?v=20260822-1" defer></script>');
       if (!html.includes("opoong-ghost.js")) tags.push('<script src="./opoong-ghost.js?v=20260822-1" defer></script>');
       if (!html.includes("game-result-share.js")) tags.push('<script src="./game-result-share.js?v=20260822-2" defer></script>');
