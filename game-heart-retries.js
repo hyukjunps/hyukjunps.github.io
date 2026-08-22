@@ -2,6 +2,7 @@
   'use strict';
 
   const HEART_KEY = 'opoong_game_hearts_v1';
+  const BONUS_HEART_KEY = 'opoong_bonus_hearts_seoyul_v1';
 
   function heartApi(){
     return window.OPOONG_GAME_HEARTS || null;
@@ -12,22 +13,42 @@
     return api && typeof api.get === 'function' ? Math.max(0, Number(api.get()) || 0) : 0;
   }
 
+  function openEmptyHeartNotice(api){
+    if(api && typeof api.openCharge === 'function'){
+      api.openCharge('하트가 없어요. 다시 플레이하려면 하트를 충전해 주세요.');
+    }
+  }
+
   function spendReplayHeart(){
     const api = heartApi();
     if(!api) return true;
 
+    if(typeof api.spend === 'function'){
+      const spent = Boolean(api.spend());
+      if(!spent) openEmptyHeartNotice(api);
+      return spent;
+    }
+
     const hearts = currentHearts();
     if(hearts <= 0){
-      if(typeof api.openCharge === 'function'){
-        api.openCharge('하트가 없어요. 다시 플레이하려면 하트를 충전해 주세요.');
-      }
+      openEmptyHeartNotice(api);
       return false;
     }
 
     try{
       const raw = JSON.parse(localStorage.getItem(HEART_KEY) || '{}');
-      raw.hearts = Math.max(0, hearts - 1);
-      localStorage.setItem(HEART_KEY, JSON.stringify(raw));
+      const base = Math.max(0, Math.floor(Number(raw.hearts) || 0));
+      if(base > 0){
+        raw.hearts = base - 1;
+        localStorage.setItem(HEART_KEY, JSON.stringify(raw));
+      }else{
+        const bonus = Math.max(0, Math.floor(Number(localStorage.getItem(BONUS_HEART_KEY)) || 0));
+        if(bonus <= 0){
+          openEmptyHeartNotice(api);
+          return false;
+        }
+        localStorage.setItem(BONUS_HEART_KEY, String(bonus - 1));
+      }
     }catch(_){
       return false;
     }
