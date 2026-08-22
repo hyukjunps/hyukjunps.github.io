@@ -49,15 +49,28 @@ function pemToBytes(pem) {
   return Uint8Array.from(binary, c => c.charCodeAt(0));
 }
 
-async function signJwt(env) {
-  if (!env.FIREBASE_CLIENT_EMAIL || !env.FIREBASE_PRIVATE_KEY) {
-    throw new Error("Firebase service-account secrets are missing");
+function getServiceAccount(env) {
+  if (!env.FIREBASE_SERVICE_ACCOUNT_JSON) {
+    throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON secret is missing");
   }
+  let account;
+  try {
+    account = JSON.parse(env.FIREBASE_SERVICE_ACCOUNT_JSON);
+  } catch (_) {
+    throw new Error("FIREBASE_SERVICE_ACCOUNT_JSON is not valid JSON");
+  }
+  if (!account?.client_email || !account?.private_key) {
+    throw new Error("Firebase service account JSON is missing client_email/private_key");
+  }
+  return account;
+}
 
+async function signJwt(env) {
+  const account = getServiceAccount(env);
   const now = Math.floor(Date.now() / 1000);
   const header = base64Url(enc.encode(JSON.stringify({ alg: "RS256", typ: "JWT" })));
   const payload = base64Url(enc.encode(JSON.stringify({
-    iss: env.FIREBASE_CLIENT_EMAIL,
+    iss: account.client_email,
     scope: FCM_SCOPE,
     aud: TOKEN_URL,
     iat: now,
@@ -67,7 +80,7 @@ async function signJwt(env) {
 
   const key = await crypto.subtle.importKey(
     "pkcs8",
-    pemToBytes(env.FIREBASE_PRIVATE_KEY),
+    pemToBytes(account.private_key),
     { name: "RSASSA-PKCS1-v1_5", hash: "SHA-256" },
     false,
     ["sign"]
@@ -128,6 +141,7 @@ function isDeadToken(result) {
 }
 
 async function listTokens(env) {
+  if (!env.FCM_TOKENS) throw new Error("FCM_TOKENS KV binding is missing");
   const tokens = [];
   let cursor;
   do {
@@ -186,8 +200,15 @@ export default {
     if (!isAllowedRequest(request)) return json({ ok: false, error: "origin_not_allowed" }, 403, origin);
 
     const url = new URL(request.url);
+
     if (request.method === "GET" && url.pathname === "/health") {
-      return json({ ok: true, service: "opoong-fcm", projectId: PROJECT_ID }, 200, origin);
+      return json({
+        ok: true,
+        service: "opoong-fcm",
+        projectId: PROJECT_ID,
+        kv: Boolean(env.FCM_TOKENS),
+        firebaseSecret: Boolean(env.FIREBASE_SERVICE_ACCOUNT_JSON)
+      }, 200, origin);
     }
 
     if (request.method !== "POST") return json({ ok: false, error: "not_found" }, 404, origin);
@@ -204,6 +225,7 @@ export default {
       return json({ ok: false, error: "invalid_fcm_token" }, 400, origin);
     }
 
+    if (!env.FCM_TOKENS) return json({ ok: false, error: "FCM_TOKENS KV binding is missing" }, 500, origin);
     const key = await tokenKey(token);
 
     if (url.pathname === "/fcm/subscribe") {
@@ -222,14 +244,18 @@ export default {
     }
 
     if (url.pathname === "/fcm/test") {
-      const accessToken = await getAccessToken(env);
-      const result = await sendFcm(accessToken, token, {
-        title: "O.Poong FCM 테스트",
-        body: "FCM 서버 전송까지 정상적으로 연결되었습니다.",
-        url: "https://hyukjunps.github.io/"
-      });
-      if (!result.ok) return json({ ok: false, status: result.status, error: result.text }, 502, origin);
-      return json({ ok: true, status: result.status }, 200, origin);
+      try {
+        const accessToken = await getAccessToken(env);
+        const result = await sendFcm(accessToken, token, {
+          title: "O.Poong FCM 테스트",
+          body: "FCM 서버 전송까지 정상적으로 연결되었습니다.",
+          url: "https://hyukjunps.github.io/"
+        });
+        if (!result.ok) return json({ ok: false, status: result.status, error: result.text }, 502, origin);
+        return json({ ok: true, status: result.status }, 200, origin);
+      } catch (error) {
+        return json({ ok: false, error: String(error?.message || error) }, 500, origin);
+      }
     }
 
     return json({ ok: false, error: "not_found" }, 404, origin);
