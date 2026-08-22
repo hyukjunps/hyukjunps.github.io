@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v65";
+const CACHE_VERSION = "v66";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -21,6 +21,8 @@ const APP_SHELL = [
   "./opoong-game-pack.js",
   "./opoong-progression.js",
   "./game-count.js",
+  "./opoong-classics.js",
+  "./game-heart-router.js",
   "./stack-tuning.js",
   "./notice-override.js",
   "./qr-menu.js",
@@ -63,12 +65,14 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("opoong-game-pack.js")) tags.push('<script src="./opoong-game-pack.js?v=20260822-1" defer></script>');
       if (!html.includes("opoong-progression.js")) tags.push('<script src="./opoong-progression.js?v=20260822-1" defer></script>');
       if (!html.includes("game-count.js")) tags.push('<script src="./game-count.js?v=20260822-1" defer></script>');
+      if (!html.includes("opoong-classics.js")) tags.push('<script src="./opoong-classics.js?v=20260822-1" defer></script>');
+      if (!html.includes("game-heart-router.js")) tags.push('<script src="./game-heart-router.js?v=20260822-1" defer></script>');
       if (!html.includes("stack-tuning.js")) tags.push('<script src="./stack-tuning.js?v=20260820-2" defer></script>');
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
       if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-5" defer></script>');
       if (!html.includes("hwp-beta.js")) tags.push('<script src="./hwp-beta.js?v=20260820-1" defer></script>');
       if (!html.includes("point-shop-fix.js")) tags.push('<script src="./point-shop-fix.js?v=20260820-1" defer></script>');
-      if (!html.includes("memo-classroom.js")) tags.push('<script src="./memo-classroom.js?v=20260822-1" defer></script>');
+      if (!html.includes("memo-classroom.js")) tags.push('<script src="./memo-classroom.js?v=20260822-2" defer></script>');
     } else {
       if (!html.includes("tools-image.js")) tags.push('<script src="./tools-image.js?v=20260819-1" defer></script>');
       if (!html.includes("tools-image-cleanup.js")) tags.push('<script src="./tools-image-cleanup.js?v=20260819-2" defer></script>');
@@ -153,6 +157,8 @@ self.addEventListener("fetch", (event) => {
     "/opoong-game-pack.js",
     "/opoong-progression.js",
     "/game-count.js",
+    "/opoong-classics.js",
+    "/game-heart-router.js",
     "/stack-tuning.js",
     "/qr-menu.js",
     "/hwp-beta.js",
