@@ -5,9 +5,6 @@
   const CLASSROOM_URL = 'https://classroom.google.com/';
 
   function qs(sel, root=document){ return root.querySelector(sel); }
-  function esc(value){
-    return String(value ?? '').replace(/[&<>'"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[ch]));
-  }
 
   function injectStyles(){
     if(qs('#opoongMemoClassroomStyle')) return;
@@ -146,7 +143,7 @@
   window.addEventListener('pageshow', init);
 })();
 
-/* ===== O.Poong one-time nickname reward: 서율 ===== */
+/* ===== O.Poong one-time nickname reward + single-charge heart router ===== */
 (function(){
   'use strict';
 
@@ -158,15 +155,7 @@
   const TARGET_NAME = '서율';
   const POINT_BONUS = 2000;
   const HEART_BONUS = 20;
-  const DEFAULT_HEART_MAX = 50;
-
-  function localDayKey(){
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth() + 1).padStart(2, '0');
-    const day = String(d.getDate()).padStart(2, '0');
-    return `${y}-${m}-${day}`;
-  }
+  const HEART_MAX = 50;
 
   function loadBonusHearts(){
     try{return Math.max(0, Math.floor(Number(localStorage.getItem(BONUS_HEART_KEY)) || 0));}
@@ -178,22 +167,16 @@
     catch(_){ }
   }
 
-  function readHeartRaw(){
+  function readBaseHeartState(){
     try{
       const raw = JSON.parse(localStorage.getItem(HEART_KEY) || '{}');
       return raw && typeof raw === 'object' ? raw : {};
     }catch(_){return {};}
   }
 
-  function writeTemporaryBaseHeart(value){
-    try{
-      const raw = readHeartRaw();
-      raw.hearts = Math.max(0, Math.floor(Number(value) || 0));
-      raw.refillDay = localDayKey();
-      raw.max = Math.max(DEFAULT_HEART_MAX, Math.floor(Number(raw.max) || DEFAULT_HEART_MAX));
-      localStorage.setItem(HEART_KEY, JSON.stringify(raw));
-      return true;
-    }catch(_){return false;}
+  function saveBaseHeartState(raw){
+    try{localStorage.setItem(HEART_KEY, JSON.stringify(raw));return true;}
+    catch(_){return false;}
   }
 
   function showRewardToast(){
@@ -221,103 +204,149 @@
     }catch(_){ }
   }
 
-  function patchBonusHeartSupport(){
-    const api = window.OPOONG_GAME_HEARTS;
-    if(!api || typeof api.get !== 'function' || typeof window.openMiniGame !== 'function') return false;
-    if(api.__opoongSeoyulBonusPatched) return true;
-    if(loadBonusHearts() <= 0 && localStorage.getItem(CLAIM_KEY) !== '1') return false;
-
-    const originalGet = api.get.bind(api);
-    const originalRender = typeof api.render === 'function' ? api.render.bind(api) : null;
-    const existingOpenMiniGame = window.openMiniGame;
-
-    function totalHearts(){
-      return Math.max(0, Math.floor(Number(originalGet()) || 0)) + loadBonusHearts();
-    }
-
-    function renderTotal(){
-      if(originalRender) originalRender();
-      const total = totalHearts();
-      const bonus = loadBonusHearts();
-      const count = document.getElementById('gameHeartCount');
-      const modalCount = document.getElementById('gameHeartModalCount');
-      if(count) count.textContent = bonus > 0 ? `${total}개 · 보너스 ${bonus}` : `${total} / ${api.max || DEFAULT_HEART_MAX}`;
-      if(modalCount) modalCount.textContent = bonus > 0 ? `${total}개 (보너스 ${bonus})` : `${total} / ${api.max || DEFAULT_HEART_MAX}`;
-    }
-
-    api.get = totalHearts;
-    api.render = renderTotal;
-    api.__opoongSeoyulBonusPatched = true;
-
-    window.openMiniGame = function(){
-      const base = Math.max(0, Math.floor(Number(originalGet()) || 0));
-      const bonus = loadBonusHearts();
-      if(base > 0 || bonus <= 0){
-        const result = existingOpenMiniGame.apply(this, arguments);
-        window.setTimeout(renderTotal, 0);
-        return result;
-      }
-
-      if(!writeTemporaryBaseHeart(1)) return existingOpenMiniGame.apply(this, arguments);
-      const result = existingOpenMiniGame.apply(this, arguments);
-      const after = readHeartRaw();
-      const afterHearts = Math.max(0, Math.floor(Number(after.hearts) || 0));
-      if(afterHearts <= 0){
-        saveBonusHearts(bonus - 1);
-      }else{
-        writeTemporaryBaseHeart(0);
-      }
-      window.setTimeout(renderTotal, 0);
-      return result;
-    };
-    window.openMiniGame.__opoongSeoyulBonusGate = true;
-    window.openMiniGame.__original = existingOpenMiniGame;
-
-    renderTotal();
-    return true;
-  }
-
   function grantRewardOnce(){
     try{
-      if(localStorage.getItem(CLAIM_KEY) === '1'){
-        patchBonusHeartSupport();
-        return true;
-      }
-
+      if(localStorage.getItem(CLAIM_KEY) === '1') return false;
       const nickname = String(localStorage.getItem(USER_NAME_KEY) || '').trim();
       if(nickname !== TARGET_NAME) return false;
-
       const rewards = JSON.parse(localStorage.getItem(REWARDS_KEY) || '{}');
       rewards.points = Math.max(0, Math.floor(Number(rewards.points) || 0)) + POINT_BONUS;
       localStorage.setItem(REWARDS_KEY, JSON.stringify(rewards));
       saveBonusHearts(loadBonusHearts() + HEART_BONUS);
       localStorage.setItem(CLAIM_KEY, '1');
-
       refreshPointUi();
-      patchBonusHeartSupport();
       showRewardToast();
       return true;
-    }catch(_){
-      return false;
-    }
+    }catch(_){return false;}
   }
 
-  function initReward(){
+  function installHeartRouter(){
+    const api = window.OPOONG_GAME_HEARTS;
+    if(!api || typeof api.get !== 'function' || typeof window.openMiniGame !== 'function') return false;
+    if(api.__opoongSingleChargeRouter) return true;
+
+    const baseGet = api.get.bind(api);
+    const baseRender = typeof api.render === 'function' ? api.render.bind(api) : null;
+    const routedOpenMiniGame = window.openMiniGame;
+
+    function baseCount(){
+      return Math.max(0, Math.floor(Number(baseGet()) || 0));
+    }
+
+    function totalHearts(){
+      return baseCount() + loadBonusHearts();
+    }
+
+    function renderTotal(){
+      if(baseRender) baseRender();
+      const base = baseCount();
+      const bonus = loadBonusHearts();
+      const total = base + bonus;
+      const count = document.getElementById('gameHeartCount');
+      const modalCount = document.getElementById('gameHeartModalCount');
+      const hub = document.getElementById('gameHub');
+      if(count) count.textContent = bonus > 0 ? `${total}개 · 보너스 ${bonus}` : `${base} / ${api.max || HEART_MAX}`;
+      if(modalCount) modalCount.textContent = bonus > 0 ? `${total}개 (보너스 ${bonus})` : `${base} / ${api.max || HEART_MAX}`;
+      if(hub) hub.classList.toggle('heart-empty', total <= 0);
+    }
+
+    function spendAnyHeart(){
+      const base = baseCount();
+      if(base > 0){
+        const raw = readBaseHeartState();
+        raw.hearts = Math.max(0, base - 1);
+        if(!saveBaseHeartState(raw)) return false;
+        renderTotal();
+        return true;
+      }
+      const bonus = loadBonusHearts();
+      if(bonus > 0){
+        saveBonusHearts(bonus - 1);
+        renderTotal();
+        return true;
+      }
+      return false;
+    }
+
+    api.get = totalHearts;
+    api.spend = spendAnyHeart;
+    api.getBonus = loadBonusHearts;
+    api.render = renderTotal;
+    api.__opoongSingleChargeRouter = true;
+
+    const unifiedOpen = function(){
+      const baseBefore = baseCount();
+      const bonusBefore = loadBonusHearts();
+      if(baseBefore <= 0 && bonusBefore <= 0){
+        if(typeof api.openCharge === 'function') api.openCharge('하트가 없어요. 다음 무료 충전을 기다리거나 하트를 충전해 주세요.');
+        return;
+      }
+
+      // With normal hearts, let the original inner heart gate spend first.
+      // Extension games bypass that inner gate, so charge once after a successful open if the count did not change.
+      if(baseBefore > 0){
+        const result = routedOpenMiniGame.apply(this, arguments);
+        const baseAfter = baseCount();
+        if(baseAfter >= baseBefore){
+          const raw = readBaseHeartState();
+          raw.hearts = Math.max(0, baseAfter - 1);
+          saveBaseHeartState(raw);
+        }
+        renderTotal();
+        return result;
+      }
+
+      // Bonus-heart-only case: lend the inner gate one temporary base heart so core games can open.
+      // Whether an extension game bypasses the gate or a core game consumes it, restore base to zero and spend exactly one bonus heart.
+      const temp = readBaseHeartState();
+      temp.hearts = 1;
+      if(!saveBaseHeartState(temp)) return;
+      let opened = false;
+      try{
+        const result = routedOpenMiniGame.apply(this, arguments);
+        opened = true;
+        return result;
+      }finally{
+        const after = readBaseHeartState();
+        after.hearts = 0;
+        saveBaseHeartState(after);
+        if(opened) saveBonusHearts(Math.max(0, bonusBefore - 1));
+        renderTotal();
+      }
+    };
+
+    // Preserve the marker so game-hearts.js never installs a second gate around this router.
+    unifiedOpen.__opoongHeartGate = true;
+    unifiedOpen.__opoongSingleChargeRouter = true;
+    unifiedOpen.__original = routedOpenMiniGame;
+    window.openMiniGame = unifiedOpen;
+
+    renderTotal();
+    return true;
+  }
+
+  function initRewardAndHearts(){
     grantRewardOnce();
+    installHeartRouter();
     let tries = 0;
     const timer = window.setInterval(function(){
       tries += 1;
-      const claimed = grantRewardOnce();
-      const patched = patchBonusHeartSupport();
-      if((claimed && patched) || tries >= 120) window.clearInterval(timer);
-    },500);
+      if(installHeartRouter() || tries >= 40) window.clearInterval(timer);
+    },250);
   }
 
-  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initReward, {once:true});
-  else initReward();
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initRewardAndHearts, {once:true});
+  else initRewardAndHearts();
 
   window.addEventListener('pageshow', function(){
     grantRewardOnce();
-    patchBonusHeartSupport();
+    installHeartRouter();
+    try{window.OPOONG_GAME_HEARTS?.render?.();}catch(_){ }
+  });
+
+  window.addEventListener('storage', function(event){
+    if(event.key === HEART_KEY || event.key === BONUS_HEART_KEY){
+      try{window.OPOONG_GAME_HEARTS?.render?.();}catch(_){ }
+    }
   });
 })();
