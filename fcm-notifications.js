@@ -66,19 +66,37 @@
     return token;
   }
 
+  async function cleanupLegacyWebPush() {
+    try {
+      const registrations = await navigator.serviceWorker.getRegistrations();
+      for (const registration of registrations) {
+        if (registration.active?.scriptURL?.includes("firebase-messaging-sw.js")) continue;
+        const subscription = await registration.pushManager?.getSubscription?.();
+        if (!subscription) continue;
+        try {
+          await fetch(WORKER_URL + "/unsubscribe", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ endpoint: subscription.endpoint })
+          });
+        } catch (_) {}
+        await subscription.unsubscribe().catch(() => {});
+      }
+    } catch (_) {}
+  }
+
   async function enableMorningFcm() {
     const token = await createFcmToken();
     await postToken("/fcm/subscribe", token);
     localStorage.setItem(TOKEN_KEY, token);
     localStorage.setItem(ENABLED_KEY, "true");
+    await cleanupLegacyWebPush();
     return token;
   }
 
   async function disableMorningFcm() {
     const token = localStorage.getItem(TOKEN_KEY);
-    if (token) {
-      await postToken("/fcm/unsubscribe", token).catch(() => {});
-    }
+    if (token) await postToken("/fcm/unsubscribe", token).catch(() => {});
     try {
       const { messaging, deleteToken } = await loadFirebase();
       await deleteToken(messaging);
@@ -99,6 +117,7 @@
       const token = await createFcmToken();
       await postToken("/fcm/subscribe", token);
       localStorage.setItem(TOKEN_KEY, token);
+      await cleanupLegacyWebPush();
     } catch (error) {
       console.warn("O.Poong FCM token refresh failed", error);
     }
@@ -128,18 +147,9 @@
     button.id = id;
     button.type = "button";
     Object.assign(button.style, {
-      position: "fixed",
-      right: "16px",
-      bottom,
-      zIndex: "9998",
-      border: "0",
-      borderRadius: "999px",
-      padding: "11px 16px",
-      background,
-      color: "#fff",
-      fontWeight: "800",
-      boxShadow: "0 6px 18px rgba(0,0,0,.2)",
-      cursor: "pointer"
+      position: "fixed", right: "16px", bottom, zIndex: "9998", border: "0",
+      borderRadius: "999px", padding: "11px 16px", background, color: "#fff",
+      fontWeight: "800", boxShadow: "0 6px 18px rgba(0,0,0,.2)", cursor: "pointer"
     });
     return button;
   }
@@ -203,9 +213,6 @@
   }
 
   listenForegroundMessages();
-  if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", mountButtons, { once: true });
-  } else {
-    mountButtons();
-  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", mountButtons, { once: true });
+  else mountButtons();
 })();
