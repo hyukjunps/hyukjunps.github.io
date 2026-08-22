@@ -145,3 +145,179 @@
 
   window.addEventListener('pageshow', init);
 })();
+
+/* ===== O.Poong one-time nickname reward: 서율 ===== */
+(function(){
+  'use strict';
+
+  const USER_NAME_KEY = 'opoong_user_name_v1';
+  const REWARDS_KEY = 'opoong_rewards_v2';
+  const HEART_KEY = 'opoong_game_hearts_v1';
+  const BONUS_HEART_KEY = 'opoong_bonus_hearts_seoyul_v1';
+  const CLAIM_KEY = 'opoong_once_reward_seoyul_20260822_v1';
+  const TARGET_NAME = '서율';
+  const POINT_BONUS = 2000;
+  const HEART_BONUS = 20;
+  const DEFAULT_HEART_MAX = 50;
+
+  function localDayKey(){
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${y}-${m}-${day}`;
+  }
+
+  function loadBonusHearts(){
+    try{return Math.max(0, Math.floor(Number(localStorage.getItem(BONUS_HEART_KEY)) || 0));}
+    catch(_){return 0;}
+  }
+
+  function saveBonusHearts(value){
+    try{localStorage.setItem(BONUS_HEART_KEY, String(Math.max(0, Math.floor(Number(value) || 0))));}
+    catch(_){ }
+  }
+
+  function readHeartRaw(){
+    try{
+      const raw = JSON.parse(localStorage.getItem(HEART_KEY) || '{}');
+      return raw && typeof raw === 'object' ? raw : {};
+    }catch(_){return {};}
+  }
+
+  function writeTemporaryBaseHeart(value){
+    try{
+      const raw = readHeartRaw();
+      raw.hearts = Math.max(0, Math.floor(Number(value) || 0));
+      raw.refillDay = localDayKey();
+      raw.max = Math.max(DEFAULT_HEART_MAX, Math.floor(Number(raw.max) || DEFAULT_HEART_MAX));
+      localStorage.setItem(HEART_KEY, JSON.stringify(raw));
+      return true;
+    }catch(_){return false;}
+  }
+
+  function showRewardToast(){
+    if(document.getElementById('opoongSeoyulRewardToast')) return;
+    const toast = document.createElement('div');
+    toast.id = 'opoongSeoyulRewardToast';
+    toast.setAttribute('role','status');
+    toast.setAttribute('aria-live','polite');
+    toast.style.cssText = 'position:fixed;z-index:60000;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(430px,calc(100% - 28px));padding:14px 16px;border:1px solid var(--line);border-radius:20px;background:var(--card);color:var(--text);box-shadow:0 20px 55px rgba(15,23,42,.24);font-weight:900;line-height:1.55;text-align:center;';
+    toast.innerHTML = '<b style="display:block;font-size:15px">서율님 특별 보상 🎁</b><span style="display:block;margin-top:4px;color:var(--muted);font-size:12.5px">하트 +20 · 포인트 +2,000P가 지급됐어요.</span>';
+    document.body.appendChild(toast);
+    window.setTimeout(function(){
+      toast.style.transition = 'opacity .25s ease, transform .25s ease';
+      toast.style.opacity = '0';
+      toast.style.transform = 'translate(-50%,8px)';
+      window.setTimeout(function(){toast.remove();},280);
+    },4200);
+  }
+
+  function refreshPointUi(){
+    try{
+      if(typeof window.renderOpoongColorShop === 'function') window.renderOpoongColorShop();
+      if(typeof window.updateFocusWallet === 'function') window.updateFocusWallet();
+      if(typeof window.renderHomeWidgets === 'function') window.renderHomeWidgets();
+    }catch(_){ }
+  }
+
+  function patchBonusHeartSupport(){
+    const api = window.OPOONG_GAME_HEARTS;
+    if(!api || typeof api.get !== 'function' || typeof window.openMiniGame !== 'function') return false;
+    if(api.__opoongSeoyulBonusPatched) return true;
+    if(loadBonusHearts() <= 0 && localStorage.getItem(CLAIM_KEY) !== '1') return false;
+
+    const originalGet = api.get.bind(api);
+    const originalRender = typeof api.render === 'function' ? api.render.bind(api) : null;
+    const existingOpenMiniGame = window.openMiniGame;
+
+    function totalHearts(){
+      return Math.max(0, Math.floor(Number(originalGet()) || 0)) + loadBonusHearts();
+    }
+
+    function renderTotal(){
+      if(originalRender) originalRender();
+      const total = totalHearts();
+      const bonus = loadBonusHearts();
+      const count = document.getElementById('gameHeartCount');
+      const modalCount = document.getElementById('gameHeartModalCount');
+      if(count) count.textContent = bonus > 0 ? `${total}개 · 보너스 ${bonus}` : `${total} / ${api.max || DEFAULT_HEART_MAX}`;
+      if(modalCount) modalCount.textContent = bonus > 0 ? `${total}개 (보너스 ${bonus})` : `${total} / ${api.max || DEFAULT_HEART_MAX}`;
+    }
+
+    api.get = totalHearts;
+    api.render = renderTotal;
+    api.__opoongSeoyulBonusPatched = true;
+
+    window.openMiniGame = function(){
+      const base = Math.max(0, Math.floor(Number(originalGet()) || 0));
+      const bonus = loadBonusHearts();
+      if(base > 0 || bonus <= 0){
+        const result = existingOpenMiniGame.apply(this, arguments);
+        window.setTimeout(renderTotal, 0);
+        return result;
+      }
+
+      if(!writeTemporaryBaseHeart(1)) return existingOpenMiniGame.apply(this, arguments);
+      const result = existingOpenMiniGame.apply(this, arguments);
+      const after = readHeartRaw();
+      const afterHearts = Math.max(0, Math.floor(Number(after.hearts) || 0));
+      if(afterHearts <= 0){
+        saveBonusHearts(bonus - 1);
+      }else{
+        writeTemporaryBaseHeart(0);
+      }
+      window.setTimeout(renderTotal, 0);
+      return result;
+    };
+    window.openMiniGame.__opoongSeoyulBonusGate = true;
+    window.openMiniGame.__original = existingOpenMiniGame;
+
+    renderTotal();
+    return true;
+  }
+
+  function grantRewardOnce(){
+    try{
+      if(localStorage.getItem(CLAIM_KEY) === '1'){
+        patchBonusHeartSupport();
+        return true;
+      }
+
+      const nickname = String(localStorage.getItem(USER_NAME_KEY) || '').trim();
+      if(nickname !== TARGET_NAME) return false;
+
+      const rewards = JSON.parse(localStorage.getItem(REWARDS_KEY) || '{}');
+      rewards.points = Math.max(0, Math.floor(Number(rewards.points) || 0)) + POINT_BONUS;
+      localStorage.setItem(REWARDS_KEY, JSON.stringify(rewards));
+      saveBonusHearts(loadBonusHearts() + HEART_BONUS);
+      localStorage.setItem(CLAIM_KEY, '1');
+
+      refreshPointUi();
+      patchBonusHeartSupport();
+      showRewardToast();
+      return true;
+    }catch(_){
+      return false;
+    }
+  }
+
+  function initReward(){
+    grantRewardOnce();
+    let tries = 0;
+    const timer = window.setInterval(function(){
+      tries += 1;
+      const claimed = grantRewardOnce();
+      const patched = patchBonusHeartSupport();
+      if((claimed && patched) || tries >= 120) window.clearInterval(timer);
+    },500);
+  }
+
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', initReward, {once:true});
+  else initReward();
+
+  window.addEventListener('pageshow', function(){
+    grantRewardOnce();
+    patchBonusHeartSupport();
+  });
+})();
