@@ -1,7 +1,4 @@
-/* O.Poong Firebase Cloud Messaging service worker
- * This worker is registered under a dedicated scope so it can coexist
- * with O.Poong's main PWA service worker during the FCM migration.
- */
+/* O.Poong Firebase Cloud Messaging service worker */
 importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js");
 importScripts("https://www.gstatic.com/firebasejs/10.13.2/firebase-messaging-compat.js");
 
@@ -14,6 +11,33 @@ firebase.initializeApp({
   appId: "1:284175533008:web:f484ad8d1ad2413f47efd5"
 });
 
-// Initializing Messaging is enough for Firebase notification messages to be
-// received while the PWA is in the background or closed.
-firebase.messaging();
+const messaging = firebase.messaging();
+
+messaging.onBackgroundMessage((payload) => {
+  const notification = payload.notification || {};
+  const data = payload.data || {};
+  const title = notification.title || data.title || "O.Poong 알림";
+
+  return self.registration.showNotification(title, {
+    body: notification.body || data.body || "새 알림이 도착했어요.",
+    icon: notification.icon || data.icon || "/android/launchericon-192-192.png",
+    badge: data.badge || "/android/launchericon-192-192.png",
+    tag: data.tag || "opoong-fcm",
+    data: { url: data.url || "/" }
+  });
+});
+
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const targetUrl = event.notification?.data?.url || "/";
+  event.waitUntil((async () => {
+    const windows = await clients.matchAll({ type: "window", includeUncontrolled: true });
+    for (const client of windows) {
+      if ("focus" in client) {
+        if ("navigate" in client) await client.navigate(targetUrl).catch(() => {});
+        return client.focus();
+      }
+    }
+    if (clients.openWindow) return clients.openWindow(targetUrl);
+  })());
+});
