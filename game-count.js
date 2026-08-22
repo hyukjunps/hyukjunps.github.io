@@ -6,6 +6,9 @@
   let rhythmFixInstalled = false;
   let rhythmFixState = null;
   let rhythmFixRaf = 0;
+  let ramenDragInstalled = false;
+  let ramenDragState = null;
+  let ramenSyntheticClick = false;
 
   function countGames(){
     const grid = document.querySelector('#gameHub .gameCardGrid');
@@ -204,6 +207,156 @@
     }, { passive:false, capture:true });
   }
 
+  function ramenPanelVisible(){
+    const panel = document.getElementById('gameOpoongRamenPanel');
+    return !!panel && !panel.hidden;
+  }
+
+  function ensureRamenDragUI(){
+    const panel = document.getElementById('gameOpoongRamenPanel');
+    if(!panel) return;
+
+    if(!document.getElementById('opoongRamenDragStyles')){
+      const style = document.createElement('style');
+      style.id = 'opoongRamenDragStyles';
+      style.textContent = `
+        #gameOpoongRamenPanel .ramenTool,#gameOpoongRamenPanel .ramenPot{cursor:grab;user-select:none;-webkit-user-select:none;touch-action:none}
+        #gameOpoongRamenPanel .ramenTool:active,#gameOpoongRamenPanel .ramenPot:active{cursor:grabbing}
+        .ramenServeZone{margin-top:12px;min-height:82px;border:2px dashed #fb7185;border-radius:20px;background:rgba(255,255,255,.76);display:grid;place-items:center;text-align:center;padding:12px;color:#9d174d;font-weight:1000;transition:.14s ease}
+        .ramenServeZone span{display:block;font-size:27px;margin-bottom:3px}.ramenServeZone.hot{border-color:#16a34a;background:#f0fdf4;color:#047857;transform:scale(1.01)}
+        .opoongRamenDragGhost{position:fixed;z-index:2147483646;pointer-events:none;min-width:72px;max-width:150px;padding:10px 13px;border-radius:17px;background:rgba(255,255,255,.96);border:2px solid #ec4899;box-shadow:0 15px 38px rgba(15,23,42,.25);text-align:center;color:#831843;font-weight:1000;transform:translate(-50%,-50%) rotate(-3deg)}
+        .opoongRamenDragGhost.pot{min-width:118px;border-color:#f59e0b;background:#fffbeb}
+        #gameOpoongRamenPanel .ramenPot.ramenDropTarget{outline:4px solid rgba(34,197,94,.45);background:rgba(255,255,255,.31)}
+      `;
+      document.head.appendChild(style);
+    }
+
+    const stove = panel.querySelector('.ramenStove');
+    if(stove && !panel.querySelector('.ramenServeZone')){
+      const zone = document.createElement('div');
+      zone.className = 'ramenServeZone';
+      zone.innerHTML = '<div><span>🍽️</span>완성된 냄비를 여기로 드래그해서 제공</div>';
+      stove.insertAdjacentElement('afterend', zone);
+    }
+
+    const hint = panel.querySelector('.ramenStartRow .muted');
+    if(hint) hint.textContent = '주전자·스프·면·계란·파를 냄비로 직접 드래그하세요. 완성된 냄비는 제공대로 끌어다 놓아야 판매됩니다.';
+    const message = panel.querySelector('#ramenMessage');
+    if(message && /선택|눌러/.test(message.textContent || '')) message.textContent = '재료를 잡아 냄비 위로 드래그해서 넣어주세요.';
+  }
+
+  function ramenClearDropTargets(){
+    document.querySelectorAll('#gameOpoongRamenPanel .ramenDropTarget').forEach(el => el.classList.remove('ramenDropTarget'));
+    document.querySelector('#gameOpoongRamenPanel .ramenServeZone')?.classList.remove('hot');
+  }
+
+  function ramenMoveGhost(x, y){
+    if(!ramenDragState?.ghost) return;
+    ramenDragState.ghost.style.left = `${x}px`;
+    ramenDragState.ghost.style.top = `${y}px`;
+  }
+
+  function ramenInternalClick(el){
+    if(!el) return;
+    ramenSyntheticClick = true;
+    try{ el.click(); }finally{ ramenSyntheticClick = false; }
+  }
+
+  function ramenStartDrag(event, source){
+    const tool = source.closest?.('[data-ramen-tool]');
+    const pot = source.closest?.('[data-ramen-pot]');
+    if(!tool && !pot) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    ensureRamenDragUI();
+
+    const ghost = document.createElement('div');
+    ghost.className = `opoongRamenDragGhost${pot ? ' pot' : ''}`;
+    if(tool){
+      const icon = tool.querySelector('span')?.textContent || '🥣';
+      const label = tool.querySelector('small')?.textContent || '재료';
+      ghost.textContent = `${icon} ${label}`;
+      ramenDragState = {type:'tool', key:tool.dataset.ramenTool, ghost, pointerId:event.pointerId};
+    }else{
+      const index = Number(pot.dataset.ramenPot);
+      ghost.textContent = `🍜 ${index + 1}번 냄비`;
+      ramenDragState = {type:'pot', index, ghost, pointerId:event.pointerId};
+    }
+    document.body.appendChild(ghost);
+    ramenMoveGhost(event.clientX, event.clientY);
+  }
+
+  function ramenDragMove(event){
+    if(!ramenDragState || event.pointerId !== ramenDragState.pointerId) return;
+    event.preventDefault();
+    ramenMoveGhost(event.clientX, event.clientY);
+    ramenClearDropTargets();
+    const under = document.elementFromPoint(event.clientX, event.clientY);
+    if(ramenDragState.type === 'tool') under?.closest?.('#gameOpoongRamenPanel .ramenPot')?.classList.add('ramenDropTarget');
+    else under?.closest?.('#gameOpoongRamenPanel .ramenServeZone')?.classList.add('hot');
+  }
+
+  function ramenDragEnd(event){
+    if(!ramenDragState || event.pointerId !== ramenDragState.pointerId) return;
+    event.preventDefault();
+    const state = ramenDragState;
+    ramenDragState = null;
+    const under = document.elementFromPoint(event.clientX, event.clientY);
+    ramenClearDropTargets();
+    state.ghost?.remove();
+
+    if(state.type === 'tool'){
+      const pot = under?.closest?.('#gameOpoongRamenPanel .ramenPot[data-ramen-pot]');
+      if(!pot) return;
+      const tool = document.querySelector(`#gameOpoongRamenPanel .ramenTool[data-ramen-tool="${state.key}"]`);
+      ramenInternalClick(tool);
+      const currentPot = document.querySelector(`#gameOpoongRamenPanel .ramenPot[data-ramen-pot="${pot.dataset.ramenPot}"]`);
+      ramenInternalClick(currentPot);
+      return;
+    }
+
+    const zone = under?.closest?.('#gameOpoongRamenPanel .ramenServeZone');
+    if(!zone) return;
+    const serve = document.querySelector('#gameOpoongRamenPanel .ramenTool[data-ramen-tool="serve"]');
+    ramenInternalClick(serve);
+    const currentPot = document.querySelector(`#gameOpoongRamenPanel .ramenPot[data-ramen-pot="${state.index}"]`);
+    ramenInternalClick(currentPot);
+  }
+
+  function installRamenDrag(){
+    if(ramenDragInstalled) return;
+    ramenDragInstalled = true;
+
+    document.addEventListener('click', event => {
+      if(ramenSyntheticClick || !ramenPanelVisible()) return;
+      const control = event.target.closest?.('#gameOpoongRamenPanel .ramenTool, #gameOpoongRamenPanel .ramenPot');
+      if(!control) return;
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }, true);
+
+    document.addEventListener('pointerdown', event => {
+      if(!ramenPanelVisible()) return;
+      const source = event.target.closest?.('#gameOpoongRamenPanel .ramenTool, #gameOpoongRamenPanel .ramenPot');
+      if(!source) return;
+      ramenStartDrag(event, source);
+    }, {capture:true, passive:false});
+
+    document.addEventListener('pointermove', ramenDragMove, {capture:true, passive:false});
+    document.addEventListener('pointerup', ramenDragEnd, {capture:true, passive:false});
+    document.addEventListener('pointercancel', event => {
+      if(!ramenDragState || event.pointerId !== ramenDragState.pointerId) return;
+      ramenDragState.ghost?.remove();
+      ramenDragState = null;
+      ramenClearDropTargets();
+    }, {capture:true, passive:false});
+
+    ensureRamenDragUI();
+    setTimeout(ensureRamenDragUI, 350);
+    setTimeout(ensureRamenDragUI, 1000);
+    setTimeout(ensureRamenDragUI, 2200);
+  }
+
   function install(){
     const grid = document.querySelector('#gameHub .gameCardGrid');
     if(!grid){ setTimeout(install, 120); return; }
@@ -216,6 +369,7 @@
     setTimeout(render, 2200);
     installRhythmFix();
     installRhythmInput();
+    installRamenDrag();
     window.OpoongGameCount = { refresh:render, get:countGames };
   }
 
