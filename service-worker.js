@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v56";
+const CACHE_VERSION = "v57";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -12,6 +12,7 @@ const APP_SHELL = [
   "./game-heart-purchase.js",
   "./game-extra.js",
   "./opoong-run.js",
+  "./opoong-ramen.js",
   "./stack-tuning.js",
   "./notice-override.js",
   "./qr-menu.js",
@@ -43,6 +44,7 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("game-heart-purchase.js")) tags.push('<script src="./game-heart-purchase.js?v=20260820-1" defer></script>');
       if (!html.includes("game-extra.js")) tags.push('<script src="./game-extra.js?v=20260819-1" defer></script>');
       if (!html.includes("opoong-run.js")) tags.push('<script src="./opoong-run.js?v=20260822-1" defer></script>');
+      if (!html.includes("opoong-ramen.js")) tags.push('<script src="./opoong-ramen.js?v=20260822-1" defer></script>');
       if (!html.includes("stack-tuning.js")) tags.push('<script src="./stack-tuning.js?v=20260820-2" defer></script>');
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
       if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-5" defer></script>');
@@ -122,6 +124,7 @@ self.addEventListener("fetch", (event) => {
     "/game-heart-purchase.js",
     "/game-extra.js",
     "/opoong-run.js",
+    "/opoong-ramen.js",
     "/stack-tuning.js",
     "/qr-menu.js",
     "/hwp-beta.js",
