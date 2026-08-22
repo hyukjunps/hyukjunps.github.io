@@ -162,26 +162,26 @@
     const sync = () => {
       const enabled = localStorage.getItem(ENABLED_KEY) === "true";
       mainButton.dataset.enabled = enabled ? "true" : "false";
-      mainButton.textContent = enabled ? "🔕 아침 알림 끄기" : "🔔 아침 알림 켜기";
+      mainButton.textContent = enabled ? "🔕 오전 8시 알림 끄기" : "🔔 오전 8시 알림 켜기";
       mainButton.style.background = enabled ? "#475569" : "#2563eb";
       testButton.hidden = !enabled;
     };
 
-    testButton.textContent = "🧪 FCM 테스트";
+    testButton.textContent = "🧪 오늘 알림 테스트";
     testButton.hidden = true;
 
     mainButton.addEventListener("click", async () => {
       mainButton.disabled = true;
       try {
         if (mainButton.dataset.enabled === "true") {
-          if (!confirm("매일 오전 8시 아침 알림을 끌까요?")) return;
+          if (!confirm("매일 오전 8시 학사일정·점심·저녁 알림을 끌까요?")) return;
           mainButton.textContent = "해제 중…";
           await disableMorningFcm();
-          alert("아침 알림을 껐어요.");
+          alert("오전 8시 알림을 껐어요.");
         } else {
           mainButton.textContent = "연결 중…";
           await enableMorningFcm();
-          alert("FCM 아침 알림을 켰어요. 매일 오전 8시에 받을 수 있습니다.");
+          alert("매일 오전 8시에 학사일정·점심·저녁 알림을 받을 수 있습니다.");
         }
       } catch (error) {
         alert(error.message || "FCM 알림 설정 중 오류가 발생했어요.");
@@ -194,12 +194,12 @@
     testButton.addEventListener("click", async () => {
       testButton.disabled = true;
       const old = testButton.textContent;
-      testButton.textContent = "전송 중…";
+      testButton.textContent = "오늘 알림 전송 중…";
       try {
-        await sendServerTest();
-        alert("FCM 테스트 전송을 요청했어요. 잠시 후 알림을 확인하세요.");
+        const result = await sendServerTest();
+        alert(`오늘의 실제 알림 ${result?.sent || 3}개를 전송했어요. 학사일정·점심·저녁 알림을 확인하세요.`);
       } catch (error) {
-        alert(error.message || "FCM 테스트 전송에 실패했어요.");
+        alert(error.message || "오늘 알림 전송에 실패했어요.");
       } finally {
         testButton.textContent = old;
         testButton.disabled = false;
