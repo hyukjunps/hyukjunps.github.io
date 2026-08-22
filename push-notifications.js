@@ -192,3 +192,13 @@
     mountButton();
   }
 })();
+
+// FCM migration layer: keep the existing O.Poong push path alive while Firebase
+// is verified independently. Once FCM delivery is confirmed, the legacy path can
+// be removed without risking a notification outage.
+if (!window.__opoongFcmLoaded) {
+  window.__opoongFcmLoaded = true;
+  import("./fcm-notifications.js?v=20260822-1").catch((error) => {
+    console.warn("O.Poong FCM loader failed", error);
+  });
+}
