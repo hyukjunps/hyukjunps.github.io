@@ -44,6 +44,7 @@
   };
 
   const NEW_GAMES = new Set(['click','typing','opoong-run','opoong-ramen']);
+  const OPOONG_SHARE_URL = 'https://hyukjunps.github.io/';
   let lastResult = null;
   let installed = false;
   let originalShowGameOverAd = null;
@@ -143,7 +144,7 @@
       adStage.appendChild(makeShareBlock('ad'));
       const note = document.createElement('p');
       note.className = 'opoongShareNote';
-      note.textContent = '방금 플레이한 기록을 PNG 이미지 파일로 공유해요.';
+      note.textContent = '결과 이미지와 “당신도 도전하세요!” 문구, O.Poong 링크를 함께 공유해요.';
       adStage.appendChild(note);
     }
 
@@ -254,9 +255,9 @@
     ctx.fillStyle = '#64748b';
     ctx.font = '800 15px system-ui,-apple-system,"Noto Sans KR",sans-serif';
     ctx.fillText(`O.Poong 결과 카드 · ${stamp} · RESULT ${code}`, 66, 568);
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '750 14px system-ui,-apple-system,"Noto Sans KR",sans-serif';
-    ctx.fillText('hyukjunps.github.io', 66, 597);
+    ctx.fillStyle = '#64748b';
+    ctx.font = '850 15px system-ui,-apple-system,"Noto Sans KR",sans-serif';
+    ctx.fillText('당신도 도전하세요! · hyukjunps.github.io', 66, 597);
 
     return new Promise((resolve, reject) => canvas.toBlob((blob) => blob ? resolve(blob) : reject(new Error('결과 이미지를 만들지 못했어요.')), 'image/png', 1));
   }
@@ -265,32 +266,54 @@
     return String(title || 'opoong-game').replace(/[\\/:*?"<>|\s]+/g, '-').replace(/-+/g, '-').slice(0, 55) + '-result.png';
   }
 
+  function makeShareText(result) {
+    return `당신도 도전하세요!\n\nO.Poong ${result.title} · ${result.primaryLabel} ${result.primaryValue}\n${OPOONG_SHARE_URL}`;
+  }
+
+  function downloadPng(blob, name) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+
   async function shareLastResult(button) {
     if (!lastResult) {
       alert('공유할 게임 기록이 없어요.');
       return;
     }
     const old = button?.textContent || '친구에게 기록 공유하기';
-    if (button) { button.disabled = true; button.textContent = 'PNG 만드는 중…'; }
+    if (button) { button.disabled = true; button.textContent = '공유 카드 만드는 중…'; }
     try {
       const blob = await makePng(lastResult);
       const file = new File([blob], filename(lastResult.title), { type:'image/png' });
+      const text = makeShareText(lastResult);
+      const fileShareData = {
+        title: `${lastResult.title} 기록 · O.Poong`,
+        text,
+        files:[file]
+      };
 
       if (navigator.share && (!navigator.canShare || navigator.canShare({ files:[file] }))) {
+        await navigator.share(fileShareData);
+      } else if (navigator.share) {
+        downloadPng(blob, file.name);
         await navigator.share({
-          title: `${lastResult.title} 기록`,
-          text: `O.Poong ${lastResult.title} · ${lastResult.primaryLabel} ${lastResult.primaryValue}`,
-          files:[file]
+          title: `${lastResult.title} 기록 · O.Poong`,
+          text
         });
       } else {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = file.name;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        setTimeout(() => URL.revokeObjectURL(url), 2000);
+        downloadPng(blob, file.name);
+        try {
+          await navigator.clipboard.writeText(text);
+          alert('공유 이미지를 저장했고, “당신도 도전하세요!” 문구와 O.Poong 링크를 클립보드에 복사했어요.');
+        } catch (_) {
+          alert(`공유 이미지를 저장했어요.\n\n${text}`);
+        }
       }
     } catch (error) {
       if (error?.name !== 'AbortError') alert(error?.message || '기록 공유에 실패했어요.');
