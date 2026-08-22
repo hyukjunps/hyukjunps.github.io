@@ -208,18 +208,29 @@
     if (!state || state.over) return;
     state.over = true;
     running = false;
+    cancelAnimationFrame(raf);
     const score = Math.floor(state.distance);
-    if (score > bestScore()) saveBest(score);
+    const coins = state.coins;
+    const oldBest = bestScore();
+    if (score > oldBest) saveBest(score);
     updateStats();
     const overlay = document.getElementById('opoongRunOverlay');
     const title = document.getElementById('opoongRunOverlayTitle');
     const text = document.getElementById('opoongRunOverlayText');
     if (overlay) overlay.hidden = false;
     if (title) title.textContent = `${score}m 달렸어요`;
-    if (text) text.innerHTML = `코인 ${state.coins}개 · 최고 ${bestScore()}m<br>점프 버튼이나 Space를 누르면 다시 시작해요.`;
+    if (text) text.innerHTML = `코인 ${coins}개 · 최고 ${Math.max(oldBest, score)}m<br>광고를 닫으면 다시 도전할 수 있어요.`;
     const meta = document.getElementById('gameCardOpoongRunMeta');
-    if (meta) meta.textContent = `최고 ${bestScore()}m`;
+    if (meta) meta.textContent = `최고 ${Math.max(oldBest, score)}m`;
     draw();
+    setTimeout(() => window.OpoongGameResults?.show('opoong-run', {
+      primaryLabel: '거리',
+      primaryValue: `${score}m`,
+      stats: [
+        { label:'코인', value:`${coins}개` },
+        { label:'최고 기록', value:`${Math.max(oldBest, score)}m` }
+      ]
+    }), 250);
   }
 
   function updateStats() {
@@ -234,7 +245,7 @@
   function roundedRect(ctx, x, y, w, h, r) {
     const rr = Math.min(r, w / 2, h / 2);
     ctx.beginPath();
-    ctx.roundRect ? ctx.roundRect(x, y, w, h, rr) : (ctx.rect(x, y, w, h));
+    ctx.roundRect ? ctx.roundRect(x, y, w, h, rr) : ctx.rect(x, y, w, h);
     ctx.fill();
   }
 
@@ -243,51 +254,18 @@
     if (!canvas || !state) return;
     const ctx = canvas.getContext('2d');
     const w = canvas.width, h = canvas.height;
-
     const sky = ctx.createLinearGradient(0, 0, 0, h);
     sky.addColorStop(0, '#bfdbfe'); sky.addColorStop(.68, '#eff6ff'); sky.addColorStop(1, '#dcfce7');
     ctx.fillStyle = sky; ctx.fillRect(0, 0, w, h);
-
     ctx.fillStyle = 'rgba(255,255,255,.85)';
-    for (let i = -1; i < 5; i++) {
-      const x = ((i * 240 - state.cloudOffset) % 1200) - 90;
-      ctx.beginPath(); ctx.arc(x, 95, 34, 0, Math.PI * 2); ctx.arc(x + 38, 82, 42, 0, Math.PI * 2); ctx.arc(x + 82, 100, 31, 0, Math.PI * 2); ctx.fill();
-    }
-
+    for (let i = -1; i < 5; i++) { const x = ((i * 240 - state.cloudOffset) % 1200) - 90; ctx.beginPath(); ctx.arc(x,95,34,0,Math.PI*2); ctx.arc(x+38,82,42,0,Math.PI*2); ctx.arc(x+82,100,31,0,Math.PI*2); ctx.fill(); }
     ctx.fillStyle = '#bbf7d0';
-    for (let i = -1; i < 6; i++) {
-      const x = ((i * 210 - state.hillOffset) % 1260) - 120;
-      ctx.beginPath(); ctx.moveTo(x, state.groundY); ctx.quadraticCurveTo(x + 80, 270, x + 175, state.groundY); ctx.fill();
-    }
-
-    ctx.fillStyle = '#86efac'; ctx.fillRect(0, state.groundY, w, h - state.groundY);
-    ctx.fillStyle = '#4ade80'; ctx.fillRect(0, state.groundY, w, 8);
-    ctx.fillStyle = '#a16207';
-    for (let x = -((state.distance * 2) % 64); x < w; x += 64) ctx.fillRect(x, state.groundY + 34, 34, 7);
-
-    for (const coin of state.pickups) {
-      if (coin.taken) continue;
-      ctx.fillStyle = '#fbbf24'; ctx.beginPath(); ctx.arc(coin.x, coin.y, coin.r, 0, Math.PI * 2); ctx.fill();
-      ctx.fillStyle = '#fef3c7'; ctx.beginPath(); ctx.arc(coin.x - 4, coin.y - 4, 4, 0, Math.PI * 2); ctx.fill();
-    }
-
-    for (const o of state.obstacles) {
-      if (o.kind === 'tower') {
-        ctx.fillStyle = '#475569'; roundedRect(ctx, o.x, o.y, o.w, o.h, 8);
-        ctx.fillStyle = '#94a3b8'; ctx.fillRect(o.x + 9, o.y + 12, o.w - 18, 8);
-      } else {
-        ctx.fillStyle = '#92400e'; roundedRect(ctx, o.x, o.y, o.w, o.h, 8);
-        ctx.strokeStyle = '#fbbf24'; ctx.lineWidth = 5; ctx.strokeRect(o.x + 6, o.y + 6, o.w - 12, o.h - 12);
-      }
-    }
-
-    const p = state.player;
-    ctx.save();
-    if (p.y < state.groundY - p.h - 2) ctx.rotate(Math.sin(state.time * 8) * .025);
-    ctx.fillStyle = '#2563eb'; roundedRect(ctx, p.x, p.y, p.w, p.h, 15);
-    ctx.fillStyle = '#ffffff'; ctx.font = '900 28px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText('O', p.x + p.w / 2, p.y + p.h / 2 + 1);
-    ctx.fillStyle = '#1e3a8a'; ctx.fillRect(p.x + 8, p.y + p.h - 7, 14, 7); ctx.fillRect(p.x + p.w - 22, p.y + p.h - 7, 14, 7);
-    ctx.restore();
+    for (let i = -1; i < 6; i++) { const x = ((i*210-state.hillOffset)%1260)-120; ctx.beginPath(); ctx.moveTo(x,state.groundY); ctx.quadraticCurveTo(x+80,270,x+175,state.groundY); ctx.fill(); }
+    ctx.fillStyle = '#86efac'; ctx.fillRect(0,state.groundY,w,h-state.groundY); ctx.fillStyle='#4ade80';ctx.fillRect(0,state.groundY,w,8);
+    ctx.fillStyle='#a16207';for(let x=-((state.distance*2)%64);x<w;x+=64)ctx.fillRect(x,state.groundY+34,34,7);
+    for(const coin of state.pickups){if(coin.taken)continue;ctx.fillStyle='#fbbf24';ctx.beginPath();ctx.arc(coin.x,coin.y,coin.r,0,Math.PI*2);ctx.fill();ctx.fillStyle='#fef3c7';ctx.beginPath();ctx.arc(coin.x-4,coin.y-4,4,0,Math.PI*2);ctx.fill();}
+    for(const o of state.obstacles){if(o.kind==='tower'){ctx.fillStyle='#475569';roundedRect(ctx,o.x,o.y,o.w,o.h,8);ctx.fillStyle='#94a3b8';ctx.fillRect(o.x+9,o.y+12,o.w-18,8);}else{ctx.fillStyle='#92400e';roundedRect(ctx,o.x,o.y,o.w,o.h,8);ctx.strokeStyle='#fbbf24';ctx.lineWidth=5;ctx.strokeRect(o.x+6,o.y+6,o.w-12,o.h-12);}}
+    const p=state.player;ctx.save();if(p.y<state.groundY-p.h-2)ctx.rotate(Math.sin(state.time*8)*.025);ctx.fillStyle='#2563eb';roundedRect(ctx,p.x,p.y,p.w,p.h,15);ctx.fillStyle='#fff';ctx.font='900 28px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('O',p.x+p.w/2,p.y+p.h/2+1);ctx.fillStyle='#1e3a8a';ctx.fillRect(p.x+8,p.y+p.h-7,14,7);ctx.fillRect(p.x+p.w-22,p.y+p.h-7,14,7);ctx.restore();
   }
 
   function loop(now) {
@@ -299,77 +277,40 @@
     if (running) raf = requestAnimationFrame(loop);
   }
 
-  function stopRun() {
-    running = false;
-    cancelAnimationFrame(raf);
-    raf = 0;
-  }
+  function stopRun() { running = false; cancelAnimationFrame(raf); raf = 0; }
 
   function openRun() {
     try { baseStopActiveMiniGame?.(); } catch (_) {}
     document.querySelectorAll('#view-game .miniGamePanel').forEach(el => { el.hidden = true; });
-    const hub = document.getElementById('gameHub');
-    if (hub) hub.hidden = true;
-    const panel = document.getElementById('gameOpoongRunPanel');
-    if (panel) panel.hidden = false;
-    resetGame();
-    panel?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const hub = document.getElementById('gameHub'); if (hub) hub.hidden = true;
+    const panel = document.getElementById('gameOpoongRunPanel'); if (panel) panel.hidden = false;
+    resetGame(); panel?.scrollIntoView({ behavior:'smooth', block:'start' });
   }
 
   function bindKeys() {
     window.addEventListener('keydown', (e) => {
       const panel = document.getElementById('gameOpoongRunPanel');
       if (!panel || panel.hidden) return;
-      if (['Space', 'ArrowUp', 'KeyW'].includes(e.code)) { e.preventDefault(); jump(); }
+      if (['Space','ArrowUp','KeyW'].includes(e.code)) { e.preventDefault(); jump(); }
       if (e.code === 'KeyR') { e.preventDefault(); resetGame(); startGame(); }
-    }, { passive: false });
+    }, { passive:false });
   }
 
   function wrapGameFunctions() {
-    baseOpenMiniGame = window.openMiniGame;
-    baseShowMiniGameHub = window.showMiniGameHub;
-    baseStopActiveMiniGame = window.stopActiveMiniGame;
+    baseOpenMiniGame = window.openMiniGame; baseShowMiniGameHub = window.showMiniGameHub; baseStopActiveMiniGame = window.stopActiveMiniGame;
     if (typeof baseOpenMiniGame !== 'function') return false;
-
-    window.openMiniGame = function(game) {
-      if (game === 'opoong-run') return openRun();
-      stopRun();
-      return baseOpenMiniGame.apply(this, arguments);
-    };
-
-    if (typeof baseShowMiniGameHub === 'function') {
-      window.showMiniGameHub = function() {
-        stopRun();
-        const result = baseShowMiniGameHub.apply(this, arguments);
-        const panel = document.getElementById('gameOpoongRunPanel');
-        if (panel) panel.hidden = true;
-        return result;
-      };
-    }
-
-    if (typeof baseStopActiveMiniGame === 'function') {
-      window.stopActiveMiniGame = function() {
-        stopRun();
-        return baseStopActiveMiniGame.apply(this, arguments);
-      };
-    }
+    window.openMiniGame = function(game) { if (game === 'opoong-run') return openRun(); stopRun(); return baseOpenMiniGame.apply(this, arguments); };
+    if (typeof baseShowMiniGameHub === 'function') window.showMiniGameHub = function() { stopRun(); const result=baseShowMiniGameHub.apply(this,arguments); const panel=document.getElementById('gameOpoongRunPanel'); if(panel)panel.hidden=true; return result; };
+    if (typeof baseStopActiveMiniGame === 'function') window.stopActiveMiniGame = function() { stopRun(); return baseStopActiveMiniGame.apply(this,arguments); };
     return true;
   }
 
   function install() {
     if (installed) return;
-    if (typeof window.openMiniGame !== 'function' || !document.querySelector('#gameHub .gameCardGrid')) {
-      setTimeout(install, 120);
-      return;
-    }
-    installed = true;
-    injectStyles();
-    addCard();
-    addPanel();
-    bindKeys();
-    wrapGameFunctions();
+    if (typeof window.openMiniGame !== 'function' || !document.querySelector('#gameHub .gameCardGrid')) { setTimeout(install,120); return; }
+    installed = true; injectStyles(); addCard(); addPanel(); bindKeys(); wrapGameFunctions();
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once: true });
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', install, { once:true });
   else install();
 })();
