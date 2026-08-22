@@ -3,7 +3,7 @@
 
   const HEART_KEY = 'opoong_game_hearts_v1';
   const HEART_MAX = 50;
-  const SCRIPT_VERSION = '2026-08-20-1';
+  const SCRIPT_VERSION = '2026-08-22-2';
   const HEART_AD = {
     unit: 'DAN-ps0PRxwqtGCGkBq2',
     width: 320,
@@ -256,8 +256,8 @@
   }
 
   function installGameEntryGate(){
+    if(window.__OPOONG_GAME_HEART_GATE_INSTALLED) return true;
     if(typeof window.openMiniGame !== 'function') return false;
-    if(window.openMiniGame.__opoongHeartGate) return true;
 
     const original = window.openMiniGame;
     const gated = function(game){
@@ -278,6 +278,7 @@
     gated.__opoongHeartGate = true;
     gated.__original = original;
     window.openMiniGame = gated;
+    window.__OPOONG_GAME_HEART_GATE_INSTALLED = true;
     return true;
   }
 
