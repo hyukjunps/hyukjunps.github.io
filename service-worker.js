@@ -1,5 +1,6 @@
 const CACHE_VERSION = "v68";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
+const PRESERVED_CACHE_PREFIXES = ["opoong-offline-dictionary-"];
 
 const APP_SHELL = [
   "./",
@@ -115,7 +116,10 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)));
+    await Promise.all(keys.map((k) => {
+      const keep = k === CACHE_NAME || PRESERVED_CACHE_PREFIXES.some((prefix) => k.startsWith(prefix));
+      return keep ? null : caches.delete(k);
+    }));
     await self.clients.claim();
   })());
 });
