@@ -204,7 +204,7 @@
     const observer = new MutationObserver(function(){
       renderCelebrationHeartUi();
     });
-    observer.observe(count, {childList:true, characterData:true, subtree:true});
+    observer.observe(count, {childList:true, characterData:true,subtree:true});
     count.__opoong500Observer = observer;
     renderCelebrationHeartUi();
     return true;
@@ -455,7 +455,7 @@
         </div>
 
         <button class="btn primary opoong500Ok" type="button">확인했어요</button>
-        <div class="opoong500Foot">X 또는 확인 버튼을 누르면 이 기기에서는 이 팝업이 다시 표시되지 않아요.</div>
+        <div class="opoong500Foot">500회는 8월 22일 기준 카카오 애드핏 요청수로 산정했습니다.<br>X 또는 확인 버튼을 누르면 이 기기에서는 이 팝업이 다시 표시되지 않아요.</div>
       </section>
     `;
 
@@ -470,7 +470,7 @@
       if(typeof NOTICE_CONFIG !== 'undefined' && NOTICE_CONFIG){
         NOTICE_CONFIG.enabled = true;
         NOTICE_CONFIG.title = '🎉 O.Poong 최대 조회수 500회 돌파!';
-        NOTICE_CONFIG.message = '오늘만 게임 하트 100개! 하트를 다 쓰면 이제 1개 200P · 앱 설치 후 게임과 저장된 시간표는 오프라인에서도 사용할 수 있어요.';
+        NOTICE_CONFIG.message = '오늘만 게임 하트 100개! 하트를 다 쓰면 이제 1개 200P · 앱 설치 후 게임과 저장된 시간표는 오프라인에서도 사용할 수 있어요. 500회는 8월 22일 기준 카카오 애드핏 요청수로 산정했습니다.';
         NOTICE_CONFIG.buttonText = '';
         NOTICE_CONFIG.buttonUrl = '';
       }
@@ -478,7 +478,7 @@
       const box = document.getElementById('noticeBanner');
       if(box){
         box.className = 'noticeBanner topNotice';
-        box.innerHTML = '<div><strong>🎉 O.Poong 최대 조회수 500회 돌파!</strong><p>오늘만 게임 하트 100개! 하트를 다 쓰면 이제 1개 200P · 앱 설치 후 게임과 저장된 시간표는 오프라인에서도 사용할 수 있어요.</p></div><span class="pill">EVENT</span>';
+        box.innerHTML = '<div><strong>🎉 O.Poong 최대 조회수 500회 돌파!</strong><p>오늘만 게임 하트 100개! 하트를 다 쓰면 이제 1개 200P · 앱 설치 후 게임과 저장된 시간표는 오프라인에서도 사용할 수 있어요.<br><small>500회는 8월 22일 기준 카카오 애드핏 요청수로 산정했습니다.</small></p></div><span class="pill">EVENT</span>';
         return true;
       }
     }catch(error){
