@@ -142,8 +142,8 @@
     const label = `${total} / ${CELEBRATION_TOTAL}`;
     if(count && count.textContent !== label) count.textContent = label;
     if(modalCount && modalCount.textContent !== label) modalCount.textContent = label;
-    if(refill) refill.textContent = '500회 돌파 기념으로 오늘(8월 23일)만 하트 100개가 제공돼요. 내일부터는 다시 평소 무료 충전량으로 돌아갑니다.';
-    if(hint) hint.textContent = '🎉 O.Poong 최대 조회수 500회 돌파! 오늘만 게임 하트 100개를 무료로 드려요.';
+    if(refill) refill.textContent = '카카오 애드핏 요청수 500회 돌파 기념으로 오늘(8월 23일)만 하트 100개가 제공돼요. 내일부터는 다시 평소 무료 충전량으로 돌아갑니다.';
+    if(hint) hint.textContent = '🎉 O.Poong 카카오 애드핏 요청수 500회 돌파! 오늘만 게임 하트 100개를 무료로 드려요.';
   }
 
   function patchHeartApi(){
@@ -279,7 +279,7 @@
     const note = document.getElementById('gameHeartModalNote');
     if(note){
       note.textContent = isCelebrationDay()
-        ? '🎉 500회 돌파 기념으로 오늘만 하트 100개가 제공돼요. 모두 사용한 뒤에는 200P로 1개씩 추가 구매할 수 있어요.'
+        ? '🎉 카카오 애드핏 요청수 500회 돌파 기념으로 오늘만 하트 100개가 제공돼요. 모두 사용한 뒤에는 200P로 1개씩 추가 구매할 수 있어요.'
         : '하트는 매일 무료 충전되며, 모두 사용한 뒤에는 200P로 1개씩 추가 구매할 수 있어요. 위 광고는 일반 광고이며 하트 지급과 연결되지 않습니다.';
     }
 
@@ -430,9 +430,9 @@
     back.innerHTML = `
       <section class="opoong500Popup">
         <button class="opoong500Close" type="button" aria-label="다시 보지 않고 닫기">×</button>
-        <span class="opoong500Badge">🎉 500 VIEWS</span>
-        <h2 id="opoong500PopupTitle">O.Poong 최대 조회수<br>500회 돌파!</h2>
-        <p class="opoong500Lead">찾아와 준 모두에게 감사해요. 기념으로 오늘 하루 혜택을 크게 올렸어요.</p>
+        <span class="opoong500Badge">🎉 500 REQUESTS</span>
+        <h2 id="opoong500PopupTitle">O.Poong 최대 요청수<br>500회 돌파!</h2>
+        <p class="opoong500Lead">이용해 준 모두에게 감사해요. 기념으로 오늘 하루 혜택을 크게 올렸어요.</p>
 
         <div class="opoong500Hero">
           <span>8월 23일 오늘만</span>
@@ -469,7 +469,7 @@
     try{
       if(typeof NOTICE_CONFIG !== 'undefined' && NOTICE_CONFIG){
         NOTICE_CONFIG.enabled = true;
-        NOTICE_CONFIG.title = '🎉 O.Poong 최대 조회수 500회 돌파!';
+        NOTICE_CONFIG.title = '🎉 O.Poong 최대 요청수 500회 돌파!';
         NOTICE_CONFIG.message = '오늘만 게임 하트 100개! 하트를 다 쓰면 이제 1개 200P · 앱 설치 후 게임과 저장된 시간표는 오프라인에서도 사용할 수 있어요. 500회는 8월 22일 기준 카카오 애드핏 요청수로 산정했습니다.';
         NOTICE_CONFIG.buttonText = '';
         NOTICE_CONFIG.buttonUrl = '';
@@ -478,11 +478,11 @@
       const box = document.getElementById('noticeBanner');
       if(box){
         box.className = 'noticeBanner topNotice';
-        box.innerHTML = '<div><strong>🎉 O.Poong 최대 조회수 500회 돌파!</strong><p>오늘만 게임 하트 100개! 하트를 다 쓰면 이제 1개 200P · 앱 설치 후 게임과 저장된 시간표는 오프라인에서도 사용할 수 있어요.<br><small>500회는 8월 22일 기준 카카오 애드핏 요청수로 산정했습니다.</small></p></div><span class="pill">EVENT</span>';
+        box.innerHTML = '<div><strong>🎉 O.Poong 최대 요청수 500회 돌파!</strong><p>오늘만 게임 하트 100개! 하트를 다 쓰면 이제 1개 200P · 앱 설치 후 게임과 저장된 시간표는 오프라인에서도 사용할 수 있어요.<br><small>500회는 8월 22일 기준 카카오 애드핏 요청수로 산정했습니다.</small></p></div><span class="pill">EVENT</span>';
         return true;
       }
     }catch(error){
-      console.error('O.Poong 500-view notice:', error);
+      console.error('O.Poong 500-request notice:', error);
     }
     return false;
   }
