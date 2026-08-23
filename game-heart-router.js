@@ -46,6 +46,30 @@
     catch(_){return false;}
   }
 
+  function installPointSync(){
+    const baseSpend = window.shopSpend;
+    if(typeof baseSpend !== 'function') return false;
+    if(baseSpend.__opoongPointSync) return true;
+
+    const syncedSpend = function(){
+      const result = baseSpend.apply(this, arguments);
+      if(result !== false){
+        try{window.renderOpoongColorShop?.();}catch(_){ }
+        try{window.updateFocusWallet?.();}catch(_){ }
+        try{
+          const points = Number(window.loadOpoongRewards?.().points) || 0;
+          window.dispatchEvent(new CustomEvent('opoong:points-changed', {detail:{points}}));
+        }catch(_){ }
+      }
+      return result;
+    };
+
+    syncedSpend.__opoongPointSync = true;
+    syncedSpend.__original = baseSpend;
+    window.shopSpend = syncedSpend;
+    return true;
+  }
+
   function installHeartRouter(){
     const api = window.OPOONG_GAME_HEARTS;
     if(!api || typeof api.get !== 'function' || typeof window.openMiniGame !== 'function') return false;
@@ -150,11 +174,16 @@
 
   function init(){
     migrateLegacyBonus();
-    installHeartRouter();
+    const heartReady = installHeartRouter();
+    const pointReady = installPointSync();
+    if(heartReady && pointReady) return;
+
     let tries = 0;
     const timer = window.setInterval(function(){
       tries += 1;
-      if(installHeartRouter() || tries >= 40) window.clearInterval(timer);
+      const heartsInstalled = installHeartRouter();
+      const pointsInstalled = installPointSync();
+      if((heartsInstalled && pointsInstalled) || tries >= 40) window.clearInterval(timer);
     },250);
   }
 
@@ -164,6 +193,7 @@
   window.addEventListener('pageshow', function(){
     migrateLegacyBonus();
     installHeartRouter();
+    installPointSync();
     try{window.OPOONG_GAME_HEARTS?.render?.();}catch(_){ }
   });
 
