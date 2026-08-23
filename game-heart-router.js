@@ -5,6 +5,11 @@
   const BONUS_HEART_KEY = 'opoong_bonus_hearts_v1';
   const LEGACY_BONUS_HEART_KEY = 'opoong_bonus_hearts_seoyul_v1';
   const HEART_MAX = 50;
+  const TTT_MOVE_SECONDS = 8;
+  let tttMoveTimerInstalled = false;
+  let tttMoveDeadline = 0;
+  let tttMoveKey = '';
+  let tttAutoMoving = false;
 
   function readNumber(key){
     try{return Math.max(0, Math.floor(Number(localStorage.getItem(key)) || 0));}
@@ -67,6 +72,107 @@
     syncedSpend.__opoongPointSync = true;
     syncedSpend.__original = baseSpend;
     window.shopSpend = syncedSpend;
+    return true;
+  }
+
+  function ensureTttMoveBadge(){
+    const status = document.getElementById('tttStatus');
+    if(!status) return null;
+    let badge = document.getElementById('tttMoveTimerBadge');
+    if(!badge){
+      badge = document.createElement('span');
+      badge.id = 'tttMoveTimerBadge';
+      badge.setAttribute('aria-live', 'polite');
+      badge.style.cssText = 'display:none;align-items:center;justify-content:center;margin-left:8px;padding:5px 9px;border-radius:999px;background:color-mix(in srgb,var(--pri) 10%,var(--card));border:1px solid color-mix(in srgb,var(--pri) 25%,var(--line));color:var(--pri);font-size:11px;font-weight:1000;white-space:nowrap;';
+      status.insertAdjacentElement('afterend', badge);
+    }
+    return badge;
+  }
+
+  function tttMoveTimerActive(){
+    try{
+      const board = document.getElementById('tttBoard');
+      const panel = board?.closest('.miniGamePanel');
+      return Boolean(
+        board && panel && !panel.hidden &&
+        typeof tttMode !== 'undefined' && tttMode === 'move' &&
+        typeof tttGameOver !== 'undefined' && !tttGameOver &&
+        typeof tttComputerThinking !== 'undefined' && !tttComputerThinking &&
+        typeof tttMarkCount === 'function' && tttMarkCount('X') >= 3 && tttMarkCount('O') >= 3
+      );
+    }catch(_){return false;}
+  }
+
+  function tttMoveCurrentMark(){
+    const twoPlayer = document.getElementById('tttOpponent2P')?.getAttribute('aria-pressed') === 'true';
+    if(!twoPlayer) return 'X';
+    const status = document.getElementById('tttStatus')?.textContent || '';
+    return status.includes('2P(O)') ? 'O' : 'X';
+  }
+
+  function tttMoveTurnKey(){
+    try{return `${tttMoveCurrentMark()}:${tttBoardState.join('|')}`;}
+    catch(_){return '';}
+  }
+
+  function autoMoveTicTacToe(){
+    if(tttAutoMoving || !tttMoveTimerActive() || typeof window.playTicTacToe !== 'function') return;
+    let board;
+    try{board = tttBoardState.slice();}catch(_){return;}
+    const mark = tttMoveCurrentMark();
+    const own = [];
+    const empty = [];
+    board.forEach(function(value, index){
+      if(value === mark) own.push(index);
+      else if(!value) empty.push(index);
+    });
+    if(!own.length || !empty.length) return;
+
+    const status = document.getElementById('tttStatus')?.textContent || '';
+    const destinationOnly = status.includes('빈 칸을 선택하세요');
+    const from = own[Math.floor(Math.random() * own.length)];
+    const to = empty[Math.floor(Math.random() * empty.length)];
+
+    tttAutoMoving = true;
+    try{
+      if(!destinationOnly) window.playTicTacToe(from);
+      window.playTicTacToe(to);
+    }catch(_){ }
+    tttAutoMoving = false;
+    tttMoveDeadline = 0;
+    tttMoveKey = '';
+  }
+
+  function tickTttMoveTimer(){
+    const badge = ensureTttMoveBadge();
+    if(!badge) return;
+    if(!tttMoveTimerActive()){
+      badge.style.display = 'none';
+      tttMoveDeadline = 0;
+      tttMoveKey = '';
+      return;
+    }
+
+    const key = tttMoveTurnKey();
+    const now = performance.now();
+    if(!tttMoveDeadline || key !== tttMoveKey){
+      tttMoveKey = key;
+      tttMoveDeadline = now + TTT_MOVE_SECONDS * 1000;
+    }
+
+    const remaining = Math.max(0, tttMoveDeadline - now);
+    badge.style.display = 'inline-flex';
+    badge.textContent = `⏱ 말 선택 · ${Math.max(0, Math.ceil(remaining / 1000))}초`;
+    if(remaining <= 0) autoMoveTicTacToe();
+  }
+
+  function installTttMoveTimer(){
+    if(tttMoveTimerInstalled) return true;
+    if(typeof window.playTicTacToe !== 'function' || !document.getElementById('tttBoard')) return false;
+    tttMoveTimerInstalled = true;
+    ensureTttMoveBadge();
+    window.setInterval(tickTttMoveTimer, 100);
+    tickTttMoveTimer();
     return true;
   }
 
@@ -176,14 +282,16 @@
     migrateLegacyBonus();
     const heartReady = installHeartRouter();
     const pointReady = installPointSync();
-    if(heartReady && pointReady) return;
+    const tttReady = installTttMoveTimer();
+    if(heartReady && pointReady && tttReady) return;
 
     let tries = 0;
     const timer = window.setInterval(function(){
       tries += 1;
       const heartsInstalled = installHeartRouter();
       const pointsInstalled = installPointSync();
-      if((heartsInstalled && pointsInstalled) || tries >= 40) window.clearInterval(timer);
+      const tttInstalled = installTttMoveTimer();
+      if((heartsInstalled && pointsInstalled && tttInstalled) || tries >= 40) window.clearInterval(timer);
     },250);
   }
 
@@ -194,6 +302,7 @@
     migrateLegacyBonus();
     installHeartRouter();
     installPointSync();
+    installTttMoveTimer();
     try{window.OPOONG_GAME_HEARTS?.render?.();}catch(_){ }
   });
 
