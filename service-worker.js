@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v66";
+const CACHE_VERSION = "v67";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 
 const APP_SHELL = [
@@ -17,6 +17,11 @@ const APP_SHELL = [
   "./opoong-village-airport.js",
   "./opoong-ghost.js",
   "./game-result-share.js",
+  "./opoong-fresh-core.js",
+  "./opoong-fishing.js",
+  "./opoong-pizza.js",
+  "./opoong-pungtal.js",
+  "./opoong-ttt-2p.js",
   "./opoong-ghost-share.js",
   "./opoong-game-pack.js",
   "./opoong-progression.js",
@@ -61,6 +66,11 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("opoong-village-airport.js")) tags.push('<script src="./opoong-village-airport.js?v=20260822-1" defer></script>');
       if (!html.includes("opoong-ghost.js")) tags.push('<script src="./opoong-ghost.js?v=20260822-1" defer></script>');
       if (!html.includes("game-result-share.js")) tags.push('<script src="./game-result-share.js?v=20260822-2" defer></script>');
+      if (!html.includes("opoong-fresh-core.js")) tags.push('<script src="./opoong-fresh-core.js?v=20260823-1" defer></script>');
+      if (!html.includes("opoong-fishing.js")) tags.push('<script src="./opoong-fishing.js?v=20260823-1" defer></script>');
+      if (!html.includes("opoong-pizza.js")) tags.push('<script src="./opoong-pizza.js?v=20260823-1" defer></script>');
+      if (!html.includes("opoong-pungtal.js")) tags.push('<script src="./opoong-pungtal.js?v=20260823-1" defer></script>');
+      if (!html.includes("opoong-ttt-2p.js")) tags.push('<script src="./opoong-ttt-2p.js?v=20260823-1" defer></script>');
       if (!html.includes("opoong-ghost-share.js")) tags.push('<script src="./opoong-ghost-share.js?v=20260822-1" defer></script>');
       if (!html.includes("opoong-game-pack.js")) tags.push('<script src="./opoong-game-pack.js?v=20260822-1" defer></script>');
       if (!html.includes("opoong-progression.js")) tags.push('<script src="./opoong-progression.js?v=20260822-1" defer></script>');
@@ -153,6 +163,11 @@ self.addEventListener("fetch", (event) => {
     "/opoong-village-airport.js",
     "/opoong-ghost.js",
     "/game-result-share.js",
+    "/opoong-fresh-core.js",
+    "/opoong-fishing.js",
+    "/opoong-pizza.js",
+    "/opoong-pungtal.js",
+    "/opoong-ttt-2p.js",
     "/opoong-ghost-share.js",
     "/opoong-game-pack.js",
     "/opoong-progression.js",
