@@ -1,5 +1,6 @@
-const CACHE_VERSION = "v67";
+const CACHE_VERSION = "v68";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
+const PRESERVED_CACHE_PREFIXES = ["opoong-offline-dictionary-"];
 
 const APP_SHELL = [
   "./",
@@ -34,6 +35,7 @@ const APP_SHELL = [
   "./hwp-beta.js",
   "./point-shop-fix.js",
   "./memo-classroom.js",
+  "./offline-dictionary.js",
   "./tools-image.js",
   "./tools-image-cleanup.js",
   "./tools-image-compress.js",
@@ -83,6 +85,7 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("hwp-beta.js")) tags.push('<script src="./hwp-beta.js?v=20260820-1" defer></script>');
       if (!html.includes("point-shop-fix.js")) tags.push('<script src="./point-shop-fix.js?v=20260820-1" defer></script>');
       if (!html.includes("memo-classroom.js")) tags.push('<script src="./memo-classroom.js?v=20260822-2" defer></script>');
+      if (!html.includes("offline-dictionary.js")) tags.push('<script src="./offline-dictionary.js?v=20260823-1" defer></script>');
     } else {
       if (!html.includes("tools-image.js")) tags.push('<script src="./tools-image.js?v=20260819-1" defer></script>');
       if (!html.includes("tools-image-cleanup.js")) tags.push('<script src="./tools-image-cleanup.js?v=20260819-2" defer></script>');
@@ -113,7 +116,10 @@ self.addEventListener("install", (event) => {
 self.addEventListener("activate", (event) => {
   event.waitUntil((async () => {
     const keys = await caches.keys();
-    await Promise.all(keys.map((k) => (k !== CACHE_NAME ? caches.delete(k) : null)));
+    await Promise.all(keys.map((k) => {
+      const keep = k === CACHE_NAME || PRESERVED_CACHE_PREFIXES.some((prefix) => k.startsWith(prefix));
+      return keep ? null : caches.delete(k);
+    }));
     await self.clients.claim();
   })());
 });
@@ -179,6 +185,7 @@ self.addEventListener("fetch", (event) => {
     "/hwp-beta.js",
     "/point-shop-fix.js",
     "/memo-classroom.js",
+    "/offline-dictionary.js",
     "/tools-image.js",
     "/tools-image-cleanup.js",
     "/tools-image-compress.js",
