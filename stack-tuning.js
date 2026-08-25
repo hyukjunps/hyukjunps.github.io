@@ -82,3 +82,21 @@
     init();
   }
 })();
+
+/* O.Poong mini-game trio loader: Helix / Pipe / Racing */
+(() => {
+  'use strict';
+  const files = [
+    './opoong-helix.js?v=20260825-1',
+    './opoong-pipe.js?v=20260825-1',
+    './opoong-racing.js?v=20260825-1'
+  ];
+  if (document.querySelector('script[data-opoong-trio-loader]')) return;
+  files.forEach((src, index) => {
+    const script = document.createElement('script');
+    script.src = src;
+    script.async = false;
+    script.dataset.opoongTrioLoader = String(index + 1);
+    document.head.appendChild(script);
+  });
+})();
