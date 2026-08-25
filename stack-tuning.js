@@ -67,13 +67,46 @@
     return true;
   }
 
+  function installTrioHeartGate(){
+    const api=window.OPOONG_GAME_HEARTS;
+    if(!api||typeof api.get!=='function'||typeof api.spend!=='function'||typeof window.openMiniGame!=='function')return false;
+    if(window.openMiniGame.__opoongTrioHeartGate)return true;
+    if(!document.getElementById('gameCardHelix')||!document.getElementById('gameCardPipe')||!document.getElementById('gameCardRacing'))return false;
+
+    const trio=new Set(['helix','pipe','racing']);
+    const base=window.openMiniGame;
+    const gated=function(game){
+      if(trio.has(game)){
+        const hearts=Math.max(0,Number(api.get())||0);
+        if(hearts<=0){
+          api.openCharge?.('하트가 없어요. 새 게임을 시작하려면 하트 1개가 필요해요.');
+          return;
+        }
+        if(!api.spend()){
+          api.openCharge?.('하트가 없어요. 다음 무료 충전을 기다리거나 하트를 충전해 주세요.');
+          return;
+        }
+      }
+      return base.apply(this,arguments);
+    };
+    gated.__opoongTrioHeartGate=true;
+    gated.__original=base;
+    window.openMiniGame=gated;
+    return true;
+  }
+
   function init() {
-    if (installStackTuning()) return;
     let tries = 0;
-    const timer = window.setInterval(() => {
+    const run = () => {
       tries += 1;
-      if (installStackTuning() || tries > 40) window.clearInterval(timer);
-    }, 250);
+      const stackReady = installStackTuning();
+      const heartReady = installTrioHeartGate();
+      if ((stackReady || tries > 40) && (heartReady || tries > 100)) {
+        window.clearInterval(timer);
+      }
+    };
+    const timer = window.setInterval(run, 150);
+    run();
   }
 
   if (document.readyState === 'loading') {
@@ -87,7 +120,7 @@
 (() => {
   'use strict';
   const files = [
-    './opoong-helix.js?v=20260825-2',
+    './opoong-helix.js?v=20260825-3',
     './opoong-pipe.js?v=20260825-1',
     './opoong-racing.js?v=20260825-1'
   ];
@@ -99,4 +132,15 @@
     script.dataset.opoongTrioLoader = String(index + 1);
     document.head.appendChild(script);
   });
+})();
+
+/* Fishing timing / anti-macro patch */
+(() => {
+  'use strict';
+  if (document.querySelector('script[data-opoong-fishing-timing]')) return;
+  const script = document.createElement('script');
+  script.src = './fishing-timing-fix.js?v=20260825-1';
+  script.async = false;
+  script.dataset.opoongFishingTiming = '1';
+  document.head.appendChild(script);
 })();
