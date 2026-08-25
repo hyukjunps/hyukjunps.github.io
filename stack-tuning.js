@@ -120,7 +120,7 @@
 (() => {
   'use strict';
   const files = [
-    './opoong-helix.js?v=20260825-3',
+    './opoong-helix.js?v=20260825-4',
     './opoong-pipe.js?v=20260825-1',
     './opoong-racing.js?v=20260825-1'
   ];
