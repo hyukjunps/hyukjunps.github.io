@@ -2,7 +2,6 @@
   'use strict';
 
   const HEART_KEY = 'opoong_game_hearts_v1';
-  const BONUS_HEART_KEY = 'opoong_bonus_hearts_seoyul_v1';
 
   function heartApi(){
     return window.OPOONG_GAME_HEARTS || null;
@@ -38,17 +37,12 @@
     try{
       const raw = JSON.parse(localStorage.getItem(HEART_KEY) || '{}');
       const base = Math.max(0, Math.floor(Number(raw.hearts) || 0));
-      if(base > 0){
-        raw.hearts = base - 1;
-        localStorage.setItem(HEART_KEY, JSON.stringify(raw));
-      }else{
-        const bonus = Math.max(0, Math.floor(Number(localStorage.getItem(BONUS_HEART_KEY)) || 0));
-        if(bonus <= 0){
-          openEmptyHeartNotice(api);
-          return false;
-        }
-        localStorage.setItem(BONUS_HEART_KEY, String(bonus - 1));
+      if(base <= 0){
+        openEmptyHeartNotice(api);
+        return false;
       }
+      raw.hearts = base - 1;
+      localStorage.setItem(HEART_KEY, JSON.stringify(raw));
     }catch(_){
       return false;
     }
