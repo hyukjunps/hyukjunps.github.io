@@ -144,3 +144,14 @@
   script.dataset.opoongFishingTiming = '1';
   document.head.appendChild(script);
 })();
+
+/* O.Poong game animation feedback patch */
+(() => {
+  'use strict';
+  if (document.querySelector('script[data-opoong-game-juice]')) return;
+  const script = document.createElement('script');
+  script.src = './opoong-game-juice.js?v=20260828-1';
+  script.async = false;
+  script.dataset.opoongGameJuice = '1';
+  document.head.appendChild(script);
+})();
