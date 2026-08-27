@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v68";
+const CACHE_VERSION = "v69";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 const PRESERVED_CACHE_PREFIXES = ["opoong-offline-dictionary-"];
 
@@ -12,6 +12,7 @@ const APP_SHELL = [
   "./game-heart-retries.js",
   "./game-heart-purchase.js",
   "./game-extra.js",
+  "./opoong-marble.js",
   "./opoong-run.js",
   "./opoong-ramen.js",
   "./opoong-village.js",
@@ -62,6 +63,7 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("game-heart-retries.js")) tags.push('<script src="./game-heart-retries.js?v=20260817" defer></script>');
       if (!html.includes("game-heart-purchase.js")) tags.push('<script src="./game-heart-purchase.js?v=20260820-1" defer></script>');
       if (!html.includes("game-extra.js")) tags.push('<script src="./game-extra.js?v=20260822-2" defer></script>');
+      if (!html.includes("opoong-marble.js")) tags.push('<script src="./opoong-marble.js?v=20260827-1" defer></script>');
       if (!html.includes("opoong-run.js")) tags.push('<script src="./opoong-run.js?v=20260822-2" defer></script>');
       if (!html.includes("opoong-ramen.js")) tags.push('<script src="./opoong-ramen.js?v=20260822-2" defer></script>');
       if (!html.includes("opoong-village.js")) tags.push('<script src="./opoong-village.js?v=20260822-4" defer></script>');
@@ -163,6 +165,7 @@ self.addEventListener("fetch", (event) => {
     "/game-heart-retries.js",
     "/game-heart-purchase.js",
     "/game-extra.js",
+    "/opoong-marble.js",
     "/opoong-run.js",
     "/opoong-ramen.js",
     "/opoong-village.js",
