@@ -1,13 +1,16 @@
-# O.Poong 서비스
-풍산고 생활, 앱 하나로
+# O.Poong
 
-소스 코드 공개되어 있습니다!
+풍산고등학교 생활에 필요한 기능을 한 화면에서 제공하는 개인 웹 서비스입니다.
 
-Copyright 2026 hyukjunps
+## 주요 기능
+- 급식, 학사일정, 시간표, 날씨
+- 집중 모드와 포인트 시스템
+- 다양한 미니게임
+- O.Poong 월드: 4인용 부동산 보드게임
+- 게임 1판 완료 시 참여 보상 포인트 지급
+- PWA 설치 및 일부 오프라인 기능
 
-Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+## Game
+O.Poong의 미니게임은 하트를 사용해 시작할 수 있으며, 게임 종료 시 기본 참여 보상 5P가 지급됩니다. 기존 게임별 승리·기록 보상은 별도로 유지됩니다.
 
-The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
+O.Poong 월드는 주사위를 굴려 도시를 매입하고, 건물을 업그레이드해 랜드마크를 건설하며, 수도 지정과 지역 독점을 활용해 경쟁하는 4인용 보드게임입니다.
