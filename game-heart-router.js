@@ -8,10 +8,15 @@
   ];
   const HEART_MAX = 50;
   const TTT_MOVE_SECONDS = 8;
+  const PLAY_REWARD_POINTS = 5;
   let tttMoveTimerInstalled = false;
   let tttMoveDeadline = 0;
   let tttMoveKey = '';
   let tttAutoMoving = false;
+  let playRewardHooksInstalled = false;
+  let playSerial = 0;
+  let rewardedPlaySerial = 0;
+  let activePlayGame = '';
 
   function clearRetiredBonusHearts(){
     try{
@@ -52,6 +57,52 @@
     syncedSpend.__opoongPointSync = true;
     syncedSpend.__original = baseSpend;
     window.shopSpend = syncedSpend;
+    return true;
+  }
+
+  function beginPlay(game){
+    playSerial += 1;
+    rewardedPlaySerial = 0;
+    activePlayGame = String(game || 'game');
+  }
+
+  function awardPlayReward(game){
+    if(!playSerial || rewardedPlaySerial === playSerial) return false;
+    if(typeof window.awardOpoongPoints !== 'function') return false;
+    rewardedPlaySerial = playSerial;
+    const finishedGame = String(game || activePlayGame || '게임');
+    window.awardOpoongPoints(PLAY_REWARD_POINTS, '게임 플레이 보상');
+    try{
+      window.dispatchEvent(new CustomEvent('opoong:play-reward', {
+        detail:{game:finishedGame, points:PLAY_REWARD_POINTS, play:playSerial}
+      }));
+    }catch(_){ }
+    return true;
+  }
+
+  function installPlayRewardHooks(){
+    if(playRewardHooksInstalled) return true;
+    if(typeof window.showGameOverAd !== 'function' || typeof window.OpoongGameResults?.show !== 'function') return false;
+
+    const baseShowGameOverAd = window.showGameOverAd;
+    const rewardedShowGameOverAd = function(game){
+      awardPlayReward(game);
+      return baseShowGameOverAd.apply(this, arguments);
+    };
+    rewardedShowGameOverAd.__opoongPlayReward = true;
+    rewardedShowGameOverAd.__original = baseShowGameOverAd;
+    window.showGameOverAd = rewardedShowGameOverAd;
+
+    const baseResultShow = window.OpoongGameResults.show;
+    const rewardedResultShow = function(game){
+      awardPlayReward(game);
+      return baseResultShow.apply(this, arguments);
+    };
+    rewardedResultShow.__opoongPlayReward = true;
+    rewardedResultShow.__original = baseResultShow;
+    window.OpoongGameResults.show = rewardedResultShow;
+
+    playRewardHooksInstalled = true;
     return true;
   }
 
@@ -205,6 +256,7 @@
       }
 
       const result = routedOpenMiniGame.apply(this, arguments);
+      beginPlay(arguments[0]);
       const after = baseCount();
       if(after >= before){
         const raw = readBaseHeartState();
@@ -229,7 +281,8 @@
     const heartReady = installHeartRouter();
     const pointReady = installPointSync();
     const tttReady = installTttMoveTimer();
-    if(heartReady && pointReady && tttReady) return;
+    const rewardReady = installPlayRewardHooks();
+    if(heartReady && pointReady && tttReady && rewardReady) return;
 
     let tries = 0;
     const timer = window.setInterval(function(){
@@ -237,7 +290,8 @@
       const heartsInstalled = installHeartRouter();
       const pointsInstalled = installPointSync();
       const tttInstalled = installTttMoveTimer();
-      if((heartsInstalled && pointsInstalled && tttInstalled) || tries >= 40) window.clearInterval(timer);
+      const rewardsInstalled = installPlayRewardHooks();
+      if((heartsInstalled && pointsInstalled && tttInstalled && rewardsInstalled) || tries >= 40) window.clearInterval(timer);
     },250);
   }
 
@@ -249,6 +303,7 @@
     installHeartRouter();
     installPointSync();
     installTttMoveTimer();
+    installPlayRewardHooks();
     try{window.OPOONG_GAME_HEARTS?.render?.();}catch(_){ }
   });
 
