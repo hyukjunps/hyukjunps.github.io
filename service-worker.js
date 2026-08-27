@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v69";
+const CACHE_VERSION = "v70";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 const PRESERVED_CACHE_PREFIXES = ["opoong-offline-dictionary-"];
 
@@ -80,7 +80,7 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("opoong-progression.js")) tags.push('<script src="./opoong-progression.js?v=20260822-1" defer></script>');
       if (!html.includes("game-count.js")) tags.push('<script src="./game-count.js?v=20260822-1" defer></script>');
       if (!html.includes("opoong-classics.js")) tags.push('<script src="./opoong-classics.js?v=20260822-1" defer></script>');
-      if (!html.includes("game-heart-router.js")) tags.push('<script src="./game-heart-router.js?v=20260822-1" defer></script>');
+      if (!html.includes("game-heart-router.js")) tags.push('<script src="./game-heart-router.js?v=20260827-1" defer></script>');
       if (!html.includes("stack-tuning.js")) tags.push('<script src="./stack-tuning.js?v=20260820-2" defer></script>');
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
       if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-5" defer></script>');
