@@ -1,14 +1,21 @@
 (() => {
-  const STARTUP_SURVEY_SESSION_KEY = 'opoong_startup_survey_closed_20260827_v1';
+  const STARTUP_SURVEY_STORAGE_KEY = 'opoong_startup_survey_closed_forever_v1';
+  const LEGACY_STARTUP_SURVEY_SESSION_KEY = 'opoong_startup_survey_closed_20260827_v1';
   const STARTUP_SURVEY_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdhPHvtVg18vATZeCusUeahFpFTSpu_NV5qUoEf2qwpBh-Hhg/viewform?embedded=true';
 
   function isStartupSurveyDismissed(){
-    try{return sessionStorage.getItem(STARTUP_SURVEY_SESSION_KEY) === '1';}
-    catch(_){return false;}
+    try{
+      if(localStorage.getItem(STARTUP_SURVEY_STORAGE_KEY) === '1') return true;
+      if(sessionStorage.getItem(LEGACY_STARTUP_SURVEY_SESSION_KEY) === '1'){
+        localStorage.setItem(STARTUP_SURVEY_STORAGE_KEY, '1');
+        return true;
+      }
+      return false;
+    }catch(_){return false;}
   }
 
   function rememberStartupSurveyDismissal(){
-    try{sessionStorage.setItem(STARTUP_SURVEY_SESSION_KEY, '1');}
+    try{localStorage.setItem(STARTUP_SURVEY_STORAGE_KEY, '1');}
     catch(_){ }
   }
 
@@ -62,10 +69,19 @@
         'color:var(--text,#0f172a)'
       ].join(';');
 
+      const titleWrap = document.createElement('div');
+      titleWrap.style.cssText = 'min-width:0;display:flex;flex-direction:column;gap:4px';
+
       const title = document.createElement('strong');
       title.id = 'opoongStartupSurveyTitle';
       title.textContent = 'O.Poong 설문';
       title.style.cssText = 'font-size:16px;font-weight:1000;letter-spacing:-.3px';
+
+      const notice = document.createElement('span');
+      notice.textContent = '이 설문은 한 번만 표시되며, 닫으면 이 기기에서는 다시 나타나지 않습니다.';
+      notice.style.cssText = 'color:var(--muted,#64748b);font-size:11.5px;font-weight:800;line-height:1.45';
+
+      titleWrap.append(title, notice);
 
       const close = document.createElement('button');
       close.type = 'button';
@@ -94,7 +110,7 @@
       frame.setAttribute('marginwidth', '0');
       frame.style.cssText = 'display:block;flex:1 1 auto;width:100%;min-height:0;border:0;background:#fff';
 
-      head.append(title, close);
+      head.append(titleWrap, close);
       card.append(head, frame);
       back.appendChild(card);
       document.body.appendChild(back);
