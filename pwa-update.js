@@ -1,4 +1,138 @@
 (() => {
+  const STARTUP_SURVEY_SESSION_KEY = 'opoong_startup_survey_closed_20260827_v1';
+  const STARTUP_SURVEY_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdhPHvtVg18vATZeCusUeahFpFTSpu_NV5qUoEf2qwpBh-Hhg/viewform?embedded=true';
+
+  function isStartupSurveyDismissed(){
+    try{return sessionStorage.getItem(STARTUP_SURVEY_SESSION_KEY) === '1';}
+    catch(_){return false;}
+  }
+
+  function rememberStartupSurveyDismissal(){
+    try{sessionStorage.setItem(STARTUP_SURVEY_SESSION_KEY, '1');}
+    catch(_){ }
+  }
+
+  function showStartupSurveyPopup(){
+    try{
+      if(location.pathname.endsWith('/tools.html')) return;
+      if(document.getElementById('opoongStartupSurveyBack')) return;
+      if(isStartupSurveyDismissed()) return;
+
+      const back = document.createElement('div');
+      back.id = 'opoongStartupSurveyBack';
+      back.setAttribute('role', 'dialog');
+      back.setAttribute('aria-modal', 'true');
+      back.setAttribute('aria-labelledby', 'opoongStartupSurveyTitle');
+      back.style.cssText = [
+        'position:fixed',
+        'z-index:120000',
+        'inset:0',
+        'display:grid',
+        'place-items:center',
+        'padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))',
+        'background:rgba(2,6,23,.72)',
+        'backdrop-filter:blur(10px)',
+        '-webkit-backdrop-filter:blur(10px)'
+      ].join(';');
+
+      const card = document.createElement('section');
+      card.style.cssText = [
+        'width:min(720px,100%)',
+        'height:min(923px,calc(100dvh - 24px))',
+        'max-height:calc(100vh - 24px)',
+        'display:flex',
+        'flex-direction:column',
+        'overflow:hidden',
+        'border:1px solid var(--line,#e2e8f0)',
+        'border-radius:26px',
+        'background:var(--card,#fff)',
+        'box-shadow:0 30px 100px rgba(0,0,0,.5)'
+      ].join(';');
+
+      const head = document.createElement('div');
+      head.style.cssText = [
+        'flex:0 0 auto',
+        'display:flex',
+        'align-items:center',
+        'justify-content:space-between',
+        'gap:12px',
+        'padding:14px 15px',
+        'border-bottom:1px solid var(--line,#e2e8f0)',
+        'background:var(--card,#fff)',
+        'color:var(--text,#0f172a)'
+      ].join(';');
+
+      const title = document.createElement('strong');
+      title.id = 'opoongStartupSurveyTitle';
+      title.textContent = 'O.Poong 설문';
+      title.style.cssText = 'font-size:16px;font-weight:1000;letter-spacing:-.3px';
+
+      const close = document.createElement('button');
+      close.type = 'button';
+      close.setAttribute('aria-label', '설문 팝업 닫기');
+      close.textContent = '닫기';
+      close.style.cssText = [
+        'min-width:58px',
+        'height:38px',
+        'padding:0 13px',
+        'border:1px solid var(--line,#e2e8f0)',
+        'border-radius:13px',
+        'background:var(--card2,#f8fbff)',
+        'color:var(--text,#0f172a)',
+        'font:inherit',
+        'font-size:13px',
+        'font-weight:950',
+        'cursor:pointer'
+      ].join(';');
+
+      const frame = document.createElement('iframe');
+      frame.src = STARTUP_SURVEY_URL;
+      frame.title = 'O.Poong Google 설문';
+      frame.loading = 'eager';
+      frame.setAttribute('frameborder', '0');
+      frame.setAttribute('marginheight', '0');
+      frame.setAttribute('marginwidth', '0');
+      frame.style.cssText = 'display:block;flex:1 1 auto;width:100%;min-height:0;border:0;background:#fff';
+
+      head.append(title, close);
+      card.append(head, frame);
+      back.appendChild(card);
+      document.body.appendChild(back);
+
+      const previousOverflow = document.documentElement.style.overflow;
+      document.documentElement.style.overflow = 'hidden';
+
+      const closePopup = () => {
+        rememberStartupSurveyDismissal();
+        document.documentElement.style.overflow = previousOverflow;
+        document.removeEventListener('keydown', onKeyDown);
+        back.remove();
+      };
+      const onKeyDown = (event) => {
+        if(event.key === 'Escape') closePopup();
+      };
+
+      close.addEventListener('click', closePopup);
+      back.addEventListener('click', (event) => {
+        if(event.target === back) closePopup();
+      });
+      document.addEventListener('keydown', onKeyDown);
+      window.setTimeout(() => close.focus({preventScroll:true}), 0);
+    }catch(error){
+      console.warn('O.Poong startup survey popup:', error);
+    }
+  }
+
+  function scheduleStartupSurveyPopup(){
+    window.setTimeout(showStartupSurveyPopup, 180);
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', scheduleStartupSurveyPopup, {once:true});
+  }else{
+    scheduleStartupSurveyPopup();
+  }
+
   if (!('serviceWorker' in navigator)) return;
 
   const FIRST_SETUP_FRESH_RELOAD = 'opoong_first_setup_fresh_reload_v1';
