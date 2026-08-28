@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v70";
+const CACHE_VERSION = "v71";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 const PRESERVED_CACHE_PREFIXES = ["opoong-offline-dictionary-"];
 
@@ -29,6 +29,7 @@ const APP_SHELL = [
   "./opoong-progression.js",
   "./game-count.js",
   "./opoong-classics.js",
+  "./game-animation-pass.js",
   "./game-heart-router.js",
   "./stack-tuning.js",
   "./notice-override.js",
@@ -80,6 +81,7 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("opoong-progression.js")) tags.push('<script src="./opoong-progression.js?v=20260822-1" defer></script>');
       if (!html.includes("game-count.js")) tags.push('<script src="./game-count.js?v=20260822-1" defer></script>');
       if (!html.includes("opoong-classics.js")) tags.push('<script src="./opoong-classics.js?v=20260822-1" defer></script>');
+      if (!html.includes("game-animation-pass.js")) tags.push('<script src="./game-animation-pass.js?v=20260827-1" defer></script>');
       if (!html.includes("game-heart-router.js")) tags.push('<script src="./game-heart-router.js?v=20260827-1" defer></script>');
       if (!html.includes("stack-tuning.js")) tags.push('<script src="./stack-tuning.js?v=20260820-2" defer></script>');
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
@@ -182,6 +184,7 @@ self.addEventListener("fetch", (event) => {
     "/opoong-progression.js",
     "/game-count.js",
     "/opoong-classics.js",
+    "/game-animation-pass.js",
     "/game-heart-router.js",
     "/stack-tuning.js",
     "/qr-menu.js",
