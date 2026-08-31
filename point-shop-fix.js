@@ -50,6 +50,15 @@
     document.head.appendChild(s);
   }
 
+  function loadAvatarAutoEquip(){
+    if(document.querySelector('script[data-opoong-avatar-autoequip]'))return;
+    const s=document.createElement('script');
+    s.src='./opoong-avatar-autoequip.js?v=20260831-1';
+    s.async=false;
+    s.dataset.opoongAvatarAutoequip='1';
+    document.head.appendChild(s);
+  }
+
   function refreshShop(){
     try{
       window.applyOpoongShop?.();
@@ -68,6 +77,7 @@
     loadExpansion();
     loadAvatarGacha();
     loadPetExpansion();
+    loadAvatarAutoEquip();
     refreshShop();
     return true;
   }
