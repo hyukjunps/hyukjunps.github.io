@@ -32,6 +32,15 @@
     document.head.appendChild(s);
   }
 
+  function loadAvatarGacha(){
+    if(document.querySelector('script[data-opoong-avatar-gacha]'))return;
+    const s=document.createElement('script');
+    s.src='./opoong-avatar-gacha.js?v=20260831-1';
+    s.async=false;
+    s.dataset.opoongAvatarGacha='1';
+    document.head.appendChild(s);
+  }
+
   function refreshShop(){
     try{
       window.applyOpoongShop?.();
@@ -48,6 +57,7 @@
       window.loadOpoongShop=repairedLoadOpoongShop;
     }
     loadExpansion();
+    loadAvatarGacha();
     refreshShop();
     return true;
   }
