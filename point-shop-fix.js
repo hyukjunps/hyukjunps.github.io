@@ -35,9 +35,18 @@
   function loadAvatarGacha(){
     if(document.querySelector('script[data-opoong-avatar-gacha]'))return;
     const s=document.createElement('script');
-    s.src='./opoong-avatar-gacha.js?v=20260831-1';
+    s.src='./opoong-avatar-gacha.js?v=20260831-2';
     s.async=false;
     s.dataset.opoongAvatarGacha='1';
+    document.head.appendChild(s);
+  }
+
+  function loadPetExpansion(){
+    if(document.querySelector('script[data-opoong-pet-expansion]'))return;
+    const s=document.createElement('script');
+    s.src='./opoong-pet-expansion.js?v=20260831-1';
+    s.async=false;
+    s.dataset.opoongPetExpansion='1';
     document.head.appendChild(s);
   }
 
@@ -58,6 +67,7 @@
     }
     loadExpansion();
     loadAvatarGacha();
+    loadPetExpansion();
     refreshShop();
     return true;
   }
