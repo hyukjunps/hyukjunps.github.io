@@ -41,6 +41,15 @@
     document.head.appendChild(s);
   }
 
+  function loadGachaOwnedFix(){
+    if(document.querySelector('script[data-opoong-gacha-owned-fix]'))return;
+    const s=document.createElement('script');
+    s.src='./opoong-gacha-owned-fix.js?v=20260831-1';
+    s.async=false;
+    s.dataset.opoongGachaOwnedFix='1';
+    document.head.appendChild(s);
+  }
+
   function loadPetExpansion(){
     if(document.querySelector('script[data-opoong-pet-expansion]'))return;
     const s=document.createElement('script');
@@ -76,6 +85,7 @@
     }
     loadExpansion();
     loadAvatarGacha();
+    loadGachaOwnedFix();
     loadPetExpansion();
     loadAvatarAutoEquip();
     refreshShop();
