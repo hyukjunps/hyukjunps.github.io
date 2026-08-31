@@ -4,33 +4,45 @@
   const SAVE_KEY='opoong_avatar_gacha_v1';
   const ORDER={common:1,rare:2,epic:3,legendary:4,mythic:5};
   let installed=false;
-  let beforeOwned=null;
   let drawStartedAt=0;
+  let drawCount=1;
 
   function readState(){
     try{return JSON.parse(localStorage.getItem(SAVE_KEY)||'null')||{};}
     catch(_){return{};}
   }
 
-  function ownedSet(){
-    const state=readState();
-    return new Set(Array.isArray(state.owned)?state.owned:[]);
+  function itemMap(){
+    const items=window.OpoongAvatarGacha?.items?.()||[];
+    return new Map(items.map(item=>[item.id,item]));
   }
 
-  function pickBestNew(before,after){
-    const items=window.OpoongAvatarGacha?.items?.()||[];
-    const map=new Map(items.map(item=>[item.id,item]));
-    const fresh=[...after].filter(id=>id!=='starter'&&!before.has(id)).map(id=>map.get(id)).filter(Boolean);
-    if(!fresh.length)return null;
-    fresh.sort((a,b)=>(ORDER[b.rarity]||0)-(ORDER[a.rarity]||0));
-    return fresh[0];
+  function pickBestLatest(){
+    const state=readState();
+    const map=itemMap();
+    const history=Array.isArray(state.history)?state.history:[];
+    const recent=history
+      .filter(entry=>Number(entry.at||0)>=drawStartedAt-250)
+      .slice(0,drawCount)
+      .map(entry=>{
+        const item=map.get(entry.id);
+        return item?{...item,duplicate:Boolean(entry.duplicate)}:null;
+      })
+      .filter(Boolean);
+
+    if(!recent.length){
+      const fallback=history.slice(0,drawCount).map(entry=>map.get(entry.id)).filter(Boolean);
+      if(!fallback.length)return null;
+      fallback.sort((a,b)=>(ORDER[b.rarity]||0)-(ORDER[a.rarity]||0));
+      return fallback[0];
+    }
+
+    recent.sort((a,b)=>(ORDER[b.rarity]||0)-(ORDER[a.rarity]||0));
+    return recent[0];
   }
 
   function applyAfterDraw(){
-    const before=beforeOwned||new Set();
-    const after=ownedSet();
-    const best=pickBestNew(before,after);
-    beforeOwned=null;
+    const best=pickBestLatest();
     if(!best)return;
 
     try{
@@ -51,12 +63,9 @@
     document.addEventListener('click',event=>{
       const button=event.target.closest('[data-avatar-draw]');
       if(!button)return;
-      beforeOwned=ownedSet();
       drawStartedAt=Date.now();
-      window.setTimeout(()=>{
-        if(Date.now()-drawStartedAt<250)return;
-        applyAfterDraw();
-      },900);
+      drawCount=Number(button.dataset.avatarDraw)===5?5:1;
+      window.setTimeout(applyAfterDraw,900);
     },true);
 
     return true;
