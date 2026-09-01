@@ -1,4 +1,4 @@
-const CACHE_VERSION = "v75";
+const CACHE_VERSION = "v76";
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 const PRESERVED_CACHE_PREFIXES = ["opoong-offline-dictionary-"];
 
@@ -12,11 +12,6 @@ const APP_SHELL = [
   "./qr-menu.js",
   "./hwp-beta.js",
   "./point-shop-fix.js",
-  "./opoong-shop-expansion.js",
-  "./opoong-avatar-gacha.js",
-  "./opoong-gacha-owned-fix.js",
-  "./opoong-pet-expansion.js",
-  "./opoong-avatar-autoequip.js",
   "./memo-classroom.js",
   "./offline-dictionary.js",
   "./tools-image.js",
@@ -54,7 +49,7 @@ function withInjectedScripts(response, requestUrl) {
       if (!html.includes("notice-override.js")) tags.push('<script src="./notice-override.js?v=20260817" defer></script>');
       if (!html.includes("qr-menu.js")) tags.push('<script src="./qr-menu.js?v=20260819-5" defer></script>');
       if (!html.includes("hwp-beta.js")) tags.push('<script src="./hwp-beta.js?v=20260820-1" defer></script>');
-      if (!html.includes("point-shop-fix.js")) tags.push('<script src="./point-shop-fix.js?v=20260901-1" defer></script>');
+      if (!html.includes("point-shop-fix.js")) tags.push('<script src="./point-shop-fix.js?v=20260901-2" defer></script>');
       if (!html.includes("memo-classroom.js")) tags.push('<script src="./memo-classroom.js?v=20260822-2" defer></script>');
       if (!html.includes("offline-dictionary.js")) tags.push('<script src="./offline-dictionary.js?v=20260823-1" defer></script>');
     } else {
@@ -134,11 +129,6 @@ self.addEventListener("fetch", (event) => {
     "/qr-menu.js",
     "/hwp-beta.js",
     "/point-shop-fix.js",
-    "/opoong-shop-expansion.js",
-    "/opoong-avatar-gacha.js",
-    "/opoong-gacha-owned-fix.js",
-    "/opoong-pet-expansion.js",
-    "/opoong-avatar-autoequip.js",
     "/memo-classroom.js",
     "/offline-dictionary.js",
     "/tools-image.js",
