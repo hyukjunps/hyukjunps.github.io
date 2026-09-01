@@ -3,9 +3,10 @@
 
   const SHOP_KEY='opoong_point_shop_v1';
   const VALID_IDS=new Set([
-    'completion','snake','mine','maze','rename','timetable','nowbar','focus','custom','season',
-    'gamecard','buttons','dday','homebg','gamehud','panels','resultfx'
+    'completion','rename','timetable','nowbar','focus','custom','season',
+    'buttons','dday','homebg','panels'
   ]);
+  const GAME_IDS=new Set(['snake','mine','maze','gamecard','gamehud','resultfx']);
 
   function repairedLoadOpoongShop(){
     try{
@@ -23,10 +24,20 @@
     }
   }
 
+  function removeGameProducts(){
+    try{
+      if(typeof OPOONG_SHOP_PRODUCTS==='undefined'||!Array.isArray(OPOONG_SHOP_PRODUCTS))return false;
+      for(let i=OPOONG_SHOP_PRODUCTS.length-1;i>=0;i--){
+        if(GAME_IDS.has(OPOONG_SHOP_PRODUCTS[i]?.id))OPOONG_SHOP_PRODUCTS.splice(i,1);
+      }
+      return true;
+    }catch(_){return false;}
+  }
+
   function loadExpansion(){
     if(document.querySelector('script[data-opoong-shop-expansion]'))return;
     const s=document.createElement('script');
-    s.src='./opoong-shop-expansion.js?v=20260825-1';
+    s.src='./opoong-shop-expansion.js?v=20260901-1';
     s.async=false;
     s.dataset.opoongShopExpansion='1';
     document.head.appendChild(s);
@@ -70,6 +81,7 @@
 
   function refreshShop(){
     try{
+      removeGameProducts();
       window.applyOpoongShop?.();
       window.renderOpoongColorShop?.();
       window.renderOpoongShopCatalog?.();
@@ -83,6 +95,7 @@
       repairedLoadOpoongShop.__opoongPointShopFixed=true;
       window.loadOpoongShop=repairedLoadOpoongShop;
     }
+    removeGameProducts();
     loadExpansion();
     loadAvatarGacha();
     loadGachaOwnedFix();

@@ -1,20 +1,21 @@
 (() => {
   'use strict';
 
-  const IDS=['gamecard','buttons','dday','homebg','gamehud','panels','resultfx'];
+  const IDS=['buttons','dday','homebg','panels'];
+  const GAME_IDS=new Set(['gamecard','gamehud','resultfx','snake','mine','maze']);
   const PRODUCTS=[
-    {id:'gamecard',icon:'🕹️',name:'게임 카드 스타일',price:350,desc:'게임 목록 카드를 유리·아케이드·컴팩트 스타일로',variants:[['glass','글라스'],['arcade','아케이드'],['compact','컴팩트']]},
     {id:'buttons',icon:'🔘',name:'버튼 디자인 팩',price:400,desc:'O.Poong 버튼 모양을 둥근·각진·글로우로 변경',variants:[['pill','둥근'],['square','각진'],['glow','글로우']]},
     {id:'dday',icon:'📅',name:'D-DAY 스킨',price:450,desc:'D-DAY 위젯을 티켓·네온·미니멀 스타일로',variants:[['ticket','티켓'],['neon','네온'],['minimal','미니멀']]},
     {id:'homebg',icon:'🌌',name:'홈 배경 팩',price:600,desc:'홈 화면 배경을 오로라·도트·스타필드로 변경',variants:[['aurora','오로라'],['dots','도트'],['stars','스타필드']]},
-    {id:'gamehud',icon:'🎛️',name:'게임 HUD 팩',price:550,desc:'게임 점수판을 글라스·네온·미니멀 스타일로',variants:[['glass','글라스'],['neon','네온'],['minimal','미니멀']]},
-    {id:'panels',icon:'🪟',name:'패널 디자인 팩',price:700,desc:'홈 위젯과 패널을 소프트·아웃라인·다크글라스로',variants:[['soft','소프트'],['outline','아웃라인'],['darkglass','다크글라스']]},
-    {id:'resultfx',icon:'🏆',name:'게임 결과 연출',price:800,desc:'게임 종료 화면을 버스트·스포트라이트·클린으로',variants:[['burst','버스트'],['spotlight','스포트라이트'],['clean','클린']]}
+    {id:'panels',icon:'🪟',name:'패널 디자인 팩',price:700,desc:'홈 위젯과 패널을 소프트·아웃라인·다크글라스로',variants:[['soft','소프트'],['outline','아웃라인'],['darkglass','다크글라스']]}
   ];
 
   function addProducts(){
     try{
       if(typeof OPOONG_SHOP_PRODUCTS==='undefined'||!Array.isArray(OPOONG_SHOP_PRODUCTS))return false;
+      for(let i=OPOONG_SHOP_PRODUCTS.length-1;i>=0;i--){
+        if(GAME_IDS.has(OPOONG_SHOP_PRODUCTS[i]?.id))OPOONG_SHOP_PRODUCTS.splice(i,1);
+      }
       PRODUCTS.forEach(item=>{if(!OPOONG_SHOP_PRODUCTS.some(x=>x.id===item.id))OPOONG_SHOP_PRODUCTS.push(item);});
       return true;
     }catch(_){return false;}
@@ -23,9 +24,6 @@
   function style(){
     if(document.getElementById('opoongExpandedShopStyles'))return;
     const s=document.createElement('style');s.id='opoongExpandedShopStyles';s.textContent=`
-html[data-shop-gamecard="glass"] #gameHub .gameCard{background:color-mix(in srgb,var(--card) 72%,transparent);backdrop-filter:blur(16px);border-color:color-mix(in srgb,var(--pri) 24%,var(--line));box-shadow:0 14px 30px rgba(15,23,42,.10)}
-html[data-shop-gamecard="arcade"] #gameHub .gameCard{border:2px solid color-mix(in srgb,var(--pri) 56%,var(--line));box-shadow:0 0 0 4px color-mix(in srgb,var(--pri) 8%,transparent),0 12px 24px rgba(15,23,42,.14)}
-html[data-shop-gamecard="compact"] #gameHub .gameCard{border-radius:15px!important}html[data-shop-gamecard="compact"] #gameHub .gameCardInfo{padding:10px!important}
 html[data-shop-buttons="pill"] :is(.btn,.smallbtn,.bigBtn){border-radius:999px!important}
 html[data-shop-buttons="square"] :is(.btn,.smallbtn,.bigBtn){border-radius:9px!important}
 html[data-shop-buttons="glow"] :is(.btn,.smallbtn,.bigBtn){box-shadow:0 0 0 1px color-mix(in srgb,var(--pri) 34%,transparent),0 0 22px color-mix(in srgb,var(--pri) 22%,transparent)!important}
@@ -35,16 +33,9 @@ html[data-shop-dday="minimal"] .widget[data-home-widget="dday"]{box-shadow:none!
 html[data-shop-homebg="aurora"] body{background:radial-gradient(900px 500px at 10% 5%,rgba(34,211,238,.23),transparent 58%),radial-gradient(800px 520px at 92% 10%,rgba(168,85,247,.22),transparent 60%),linear-gradient(180deg,var(--bg2),var(--bg))!important}
 html[data-shop-homebg="dots"] body:before{background-image:radial-gradient(color-mix(in srgb,var(--pri) 22%,transparent) 1.5px,transparent 1.5px)!important;background-size:22px 22px!important}
 html[data-shop-homebg="stars"] body:before{background-image:radial-gradient(circle at 15% 20%,rgba(255,255,255,.8) 0 1px,transparent 2px),radial-gradient(circle at 72% 34%,rgba(255,255,255,.7) 0 1px,transparent 2px),radial-gradient(circle at 38% 78%,rgba(147,197,253,.75) 0 1px,transparent 2px)!important;background-size:72px 72px,96px 96px,128px 128px!important;background-color:#07111f22!important}
-html[data-shop-gamehud="glass"] :is(.gameHud>div,.extraStat,.packStat,.freshStat,.hxHud>div,.ppHud>div,.rcHud>div){background:color-mix(in srgb,var(--card) 68%,transparent)!important;backdrop-filter:blur(12px)}
-html[data-shop-gamehud="neon"] :is(.gameHud>div,.extraStat,.packStat,.freshStat,.hxHud>div,.ppHud>div,.rcHud>div){border-color:color-mix(in srgb,var(--pri) 58%,var(--line))!important;box-shadow:0 0 18px color-mix(in srgb,var(--pri) 18%,transparent)!important}
-html[data-shop-gamehud="minimal"] :is(.gameHud>div,.extraStat,.packStat,.freshStat,.hxHud>div,.ppHud>div,.rcHud>div){box-shadow:none!important;border-radius:10px!important;background:transparent!important}
-html[data-shop-panels="soft"] :is(.panel,.gamePlayCard,.widget){border-radius:34px!important;box-shadow:0 18px 48px rgba(15,23,42,.08)!important}
-html[data-shop-panels="outline"] :is(.panel,.gamePlayCard,.widget){box-shadow:none!important;border:2px solid color-mix(in srgb,var(--pri) 28%,var(--line))!important}
-html[data-shop-panels="darkglass"] :is(.panel,.gamePlayCard,.widget){background:color-mix(in srgb,#0f172a 76%,transparent)!important;color:#e5e7eb!important;border-color:#334155!important;backdrop-filter:blur(18px)!important}
-html[data-shop-resultfx="burst"] .gameOverAdModal{box-shadow:0 0 0 8px color-mix(in srgb,var(--pri) 9%,transparent),0 28px 90px color-mix(in srgb,var(--pri) 28%,rgba(0,0,0,.35))!important;animation:opoongResultPop .5s cubic-bezier(.2,.9,.2,1)}
-html[data-shop-resultfx="spotlight"] .gameOverAdBack{background:radial-gradient(circle at 50% 30%,rgba(96,165,250,.24),rgba(2,6,23,.82) 48%)!important}
-html[data-shop-resultfx="clean"] .gameOverAdModal{box-shadow:none!important;border-radius:16px!important}
-@keyframes opoongResultPop{0%{transform:scale(.86);opacity:.3}70%{transform:scale(1.025)}100%{transform:scale(1);opacity:1}}`;
+html[data-shop-panels="soft"] :is(.panel,.widget){border-radius:34px!important;box-shadow:0 18px 48px rgba(15,23,42,.08)!important}
+html[data-shop-panels="outline"] :is(.panel,.widget){box-shadow:none!important;border:2px solid color-mix(in srgb,var(--pri) 28%,var(--line))!important}
+html[data-shop-panels="darkglass"] :is(.panel,.widget){background:color-mix(in srgb,#0f172a 76%,transparent)!important;color:#e5e7eb!important;border-color:#334155!important;backdrop-filter:blur(18px)!important}`;
     document.head.appendChild(s);
   }
 
@@ -54,6 +45,7 @@ html[data-shop-resultfx="clean"] .gameOverAdModal{box-shadow:none!important;bord
       const key='shop'+id.charAt(0).toUpperCase()+id.slice(1),value=shop?.equipped?.[id];
       if(value)document.documentElement.dataset[key]=value;else delete document.documentElement.dataset[key];
     });
+    ['shopGamecard','shopGamehud','shopResultfx'].forEach(key=>{try{delete document.documentElement.dataset[key];}catch(_){}});
   }
 
   function wrapApply(){

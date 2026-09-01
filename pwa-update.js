@@ -3,6 +3,95 @@
   const LEGACY_STARTUP_SURVEY_SESSION_KEY = 'opoong_startup_survey_closed_20260827_v1';
   const STARTUP_SURVEY_URL = 'https://docs.google.com/forms/d/e/1FAIpQLSdhPHvtVg18vATZeCusUeahFpFTSpu_NV5qUoEf2qwpBh-Hhg/viewform?embedded=true';
 
+  const GAME_SCRIPT_RE = /(?:fishing-timing-fix|game-(?:count|extra|heart-purchase|heart-retries|heart-router|hearts|result-share)|minesweeper-fix|stack-tuning|opoong-(?:candy|classics|crossing|fishing|fresh-core|game-juice|game-pack|ghost(?:-share)?|helix|marble|pipe|pizza|progression|pungtal|racing|ramen|run|ttt-2p|village(?:-airport)?))\.js/i;
+  const GAME_STORAGE_PREFIXES = [
+    'opoong_game', 'opoong_minigame', 'opoong_heart', 'opoong_fishing', 'opoong_marble',
+    'opoong_run', 'opoong_ramen', 'opoong_ghost', 'opoong_helix', 'opoong_pipe',
+    'opoong_racing', 'opoong_pizza', 'opoong_pungtal', 'opoong_candy', 'opoong_crossing',
+    'opoong_classics', 'opoong_village', 'opoong_ttt', 'opoong_minesweeper', 'opoong_snake',
+    'opoong_maze', 'opoong_stack'
+  ];
+
+  function removeGameStorage(){
+    try{
+      for(let i=localStorage.length-1;i>=0;i--){
+        const key=localStorage.key(i);
+        const low=String(key||'').toLowerCase();
+        if(GAME_STORAGE_PREFIXES.some(prefix=>low.startsWith(prefix))) localStorage.removeItem(key);
+      }
+    }catch(_){ }
+  }
+
+  function removeGameDom(){
+    try{
+      const selectors = [
+        '.navBtn[data-view="game"]', '#view-game', '#gameOverAdBack', '#gameHub',
+        '.miniGamePanel', '.gameLibrary', '.gameColorShop', '[data-opoong-game-card]'
+      ];
+      document.querySelectorAll(selectors.join(',')).forEach(el=>el.remove());
+
+      document.querySelectorAll('script[src]').forEach(script=>{
+        const src=script.getAttribute('src')||'';
+        if(GAME_SCRIPT_RE.test(src)) script.remove();
+      });
+
+      ['shopGamecard','shopGamehud','shopResultfx'].forEach(key=>{
+        try{ delete document.documentElement.dataset[key]; }catch(_){ }
+      });
+    }catch(error){
+      console.warn('O.Poong game cleanup:', error);
+    }
+  }
+
+  function disableGameRouting(){
+    try{
+      const original = window.go;
+      if(typeof original === 'function' && !original.__opoongGamesRemoved){
+        const wrapped = function(view){
+          if(String(view||'') === 'game') return original.call(this, 'home');
+          return original.apply(this, arguments);
+        };
+        wrapped.__opoongGamesRemoved = true;
+        wrapped.__original = original;
+        window.go = wrapped;
+      }
+
+      const url = new URL(location.href);
+      if(url.searchParams.get('page') === 'game'){
+        url.searchParams.delete('page');
+        history.replaceState(history.state, '', url.pathname + url.search + url.hash);
+        try{ window.go?.('home'); }catch(_){ }
+      }
+    }catch(_){ }
+  }
+
+  function installGameRemoval(){
+    removeGameStorage();
+    removeGameDom();
+    disableGameRouting();
+
+    if(!document.documentElement.dataset.opoongGameRemovalObserver){
+      document.documentElement.dataset.opoongGameRemovalObserver='1';
+      let queued=false;
+      const observer=new MutationObserver(()=>{
+        if(queued) return;
+        queued=true;
+        queueMicrotask(()=>{
+          queued=false;
+          removeGameDom();
+          disableGameRouting();
+        });
+      });
+      observer.observe(document.documentElement,{childList:true,subtree:true});
+    }
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', installGameRemoval, {once:true});
+  }else{
+    installGameRemoval();
+  }
+
   function isStartupSurveyDismissed(){
     try{
       if(localStorage.getItem(STARTUP_SURVEY_STORAGE_KEY) === '1') return true;
@@ -233,11 +322,12 @@
   document.addEventListener('DOMContentLoaded', wrapFirstSetupFinish, { once:true });
 
   /*
-   * 일반 업데이트에서는 게임·집중모드·입력 작업을 보호하기 위해 현재 화면을
-   * 강제로 새로고침하지 않는다. 단, 첫 설정을 완료한 직후에는 위 래퍼가 캐시와
-   * 이전 서비스워커를 정리한 뒤 최신 앱을 자동으로 한 번 다시 연다.
+   * 일반 업데이트에서는 집중모드와 입력 중인 작업을 보호하기 위해 현재 화면을
+   * 강제로 새로고침하지 않는다. 첫 설정 완료 직후에는 캐시와 이전 서비스워커를
+   * 정리한 뒤 최신 앱을 자동으로 한 번 다시 연다.
    */
   navigator.serviceWorker.addEventListener('controllerchange', () => {
+    installGameRemoval();
     try {
       window.dispatchEvent(new CustomEvent('opoong-sw-updated'));
     } catch (_) {}
@@ -245,8 +335,9 @@
   });
 
   window.addEventListener('load', async () => {
+    installGameRemoval();
     wrapFirstSetupFinish();
-    try {
+    try{
       const reg = await navigator.serviceWorker.getRegistration();
       if (!reg) return;
 
