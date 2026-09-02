@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'v78-start-fix';
+const CACHE_VERSION = 'v79-startup-rescue';
 const CACHE_NAME = `todaypoongsan-${CACHE_VERSION}`;
 const PRESERVED_CACHE_PREFIXES = ['opoong-offline-dictionary-'];
 
@@ -7,6 +7,7 @@ const APP_SHELL = [
   './index.html',
   './manifest.json',
   './pwa-update.js',
+  './notice-override.js',
   './O.poong.png',
   './logo.png'
 ];
@@ -17,7 +18,7 @@ self.addEventListener('install', (event) => {
     for (const item of APP_SHELL) {
       try {
         const response = await fetch(item, { cache: 'no-store' });
-        if (response.ok) await cache.put(item, response);
+        if (response.ok) await cache.put(item, response.clone());
       } catch (_) {}
     }
   })());
@@ -56,6 +57,16 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
+  const alwaysFresh = new Set([
+    '/pwa-update.js',
+    '/notice-override.js',
+    '/manifest.json'
+  ]);
+  if (alwaysFresh.has(url.pathname)) {
+    event.respondWith(networkFirst(request, url.pathname));
+    return;
+  }
+
   event.respondWith(staleWhileRevalidate(request));
 });
 
@@ -86,9 +97,16 @@ async function injectStartupRepair(response) {
   if (!type.includes('text/html')) return response;
 
   let html = await response.text();
+  const tags = [];
+  if (!html.includes('notice-override.js')) {
+    tags.push('<script src="./notice-override.js?v=20260902-1901" defer></script>');
+  }
   if (!html.includes('pwa-update.js')) {
-    const tag = '<script src="./pwa-update.js?v=20260902-startfix" defer></script>';
-    html = html.includes('</body>') ? html.replace('</body>', `${tag}\n</body>`) : `${html}\n${tag}`;
+    tags.push('<script src="./pwa-update.js?v=20260902-1901" defer></script>');
+  }
+  if (tags.length) {
+    const joined = tags.join('\n');
+    html = html.includes('</body>') ? html.replace('</body>', `${joined}\n</body>`) : `${html}\n${joined}`;
   }
 
   const headers = new Headers(response.headers);
