@@ -2243,7 +2243,6 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pr
         <a class="navBtn" data-view="schedule" href="/?page=schedule" onclick="event.preventDefault(); go('schedule'); scheduleLoadMonth();"><span class="left"><span class="icon">일</span><span><span class="title">학사일정</span><br><span class="hint">월별 달력</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="timetable" href="/?page=timetable" onclick="event.preventDefault(); go('timetable'); ttRenderTable();"><span class="left"><span class="icon">표</span><span><span class="title">시간표</span><br><span class="hint">로컬 저장</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="focus" href="/?page=focus" onclick="event.preventDefault(); go('focus')"><span class="left"><span class="icon">집</span><span><span class="title">집중 모드</span><br><span class="hint">전체화면·과목 분석</span></span></span><span>›</span></a>
-        <a class="navBtn" data-view="game" href="/?page=game" onclick="event.preventDefault(); go('game')"><span class="left"><span class="icon">겜</span><span><span class="title">미니게임</span><br><span class="hint">게임 7종</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="onway" href="/?page=onway" onclick="event.preventDefault(); go('onway')"><span class="left"><span class="icon">온</span><span><span class="title">온웨이에듀</span><br><span class="hint">외부 링크</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="school" href="/?page=school" onclick="event.preventDefault(); go('school')"><span class="left"><span class="icon">학</span><span><span class="title">학교 홈페이지</span><br><span class="hint">공식 사이트</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="library" href="/?page=library" onclick="event.preventDefault(); go('library')"><span class="left"><span class="icon">책</span><span><span class="title">도서관 조회</span><br><span class="hint">풍산고 도서관</span></span></span><span>›</span></a>
@@ -2453,134 +2452,7 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pr
 
 
         <div id="focusLockOverlay" class="focusLockOverlay" hidden role="dialog" aria-modal="true"><div class="focusLockCard"><span class="focusLockBadge">● FOCUS MODE</span><div id="focusLockWarning" class="focusLockWarning" hidden role="alert">집중 모드에서는 뒤로갈 수 없어요.</div><strong id="focusLockSubject" class="focusLockSubject">과목</strong><strong id="focusLockTime" class="focusLockTime">00:00:00</strong><span id="focusLockGoal" class="focusLockGoal">목표 25분</span><div class="focusLockTrack"><i id="focusLockBar" class="focusLockBar"></i></div><div class="focusLockMeta"><div><span>비상 탈출</span><strong id="focusEmergencyCount">5회 남음</strong></div><div><span>이번 세션 감점</span><strong id="focusLockPenalty">-0 P</strong></div></div><div class="focusLockActions"><button id="focusEmergencyBtn" class="btn focusEmergencyBtn" onclick="useFocusEmergencyExit()">비상 탈출 · 5회 남음</button><button id="focusFullscreenBtn" class="btn ghost" type="button" onclick="handleFocusFullscreenButton()">전체화면</button></div><p class="focusLockNote">비상 탈출은 감점 없이 공부를 일시정지합니다. 브라우저 제한상 다른 앱을 강제로 차단할 수는 없습니다.</p></div></div>
-      <section class="section view" id="view-game">
-        <div class="sectionHeader gameSectionHeader">
-          <div>
-            <h2>O.Poong 미니게임</h2>
-            <p>원하는 게임을 골라 플레이하고 포인트로 O.Poong 색상을 바꿔보세요.</p>
-          </div>
-          <div class="gameWallet"><span>보유 포인트</span><strong id="gamePoints">0 P</strong></div>
-        </div>
 
-        <div id="gameHub" class="gameLibrary">
-          <div class="gameLibraryLead">
-            <b>어떤 게임을 할까요?</b>
-            <span>게임을 선택하면 큰 화면으로 바로 시작할 수 있어요.</span>
-          </div>
-          <div class="gameCardGrid" aria-label="미니게임 목록">
-            <button class="gameCard" type="button" onclick="openMiniGame('jump')">
-              <span class="gameCover coverJump"><span class="coverJumpMark">P</span></span>
-              <span class="gameCardInfo"><b>O.Poong 점프</b><span id="gameCardJumpMeta">최고 0점</span></span>
-            </button>
-            <button class="gameCard" type="button" onclick="openMiniGame('ttt')">
-              <span class="gameCover coverTtt"><i>X</i><i></i><i>O</i><i></i><i>X</i><i></i><i>O</i><i></i><i>X</i></span>
-              <span class="gameCardInfo"><b>틱택토</b><span id="gameCardTttMeta">0승</span></span>
-            </button>
-            <button class="gameCard" type="button" onclick="openMiniGame('stack')">
-              <span class="gameCover coverStack"><i style="--block:#8b5cf6"></i><i style="--block:#ec4899"></i><i style="--block:#f59e0b"></i><i style="--block:#22c55e"></i></span>
-              <span class="gameCardInfo"><b>블록 쌓기</b><span id="gameCardStackMeta">최고 0층</span></span>
-            </button>
-            <button class="gameCard" type="button" onclick="openMiniGame('water')">
-              <span class="gameCover coverWater"><i class="coverTube" style="--a:#22c55e;--b:#38bdf8"></i><i class="coverTube" style="--a:#facc15;--b:#ef4444"></i><i class="coverTube" style="--a:#38bdf8;--b:#a855f7"></i></span>
-              <span class="gameCardInfo"><b>워터 소트</b><span id="gameCardWaterMeta">색깔 정리 퍼즐</span></span>
-            </button>
-            <button class="gameCard" type="button" onclick="openMiniGame('maze')"><span class="gameCover coverMaze">迷</span><span class="gameCardInfo"><b>미로 탈출</b><span id="gameCardMazeMeta">최고 기록 없음</span></span></button>
-            <button class="gameCard" type="button" onclick="openMiniGame('snake')"><span class="gameCover coverSnake">S</span><span class="gameCardInfo"><b>스네이크</b><span id="gameCardSnakeMeta">최고 0점</span></span></button>
-            <button class="gameCard" type="button" onclick="openMiniGame('mine')"><span class="gameCover coverMine">✹</span><span class="gameCardInfo"><b>지뢰찾기</b><span id="gameCardMineMeta">초급 9×9</span></span></button>
-          </div>
-        </div>
-
-        <div id="miniGameTopbar" class="miniGameTopbar" hidden>
-          <button class="smallbtn ghost" type="button" onclick="showMiniGameHub()">← 게임 목록</button>
-          <strong id="miniGameTitle">미니게임</strong>
-          <span class="pill">PLAY</span>
-        </div>
-
-        <div id="gameJumpPanel" class="gamePlayCard miniGamePanel" hidden>
-          <div class="gameHud gameHudFour">
-            <div><span>현재 점수</span><strong id="gameScore">0</strong></div>
-            <div><span>최고 점수</span><strong id="gameBest">0</strong></div>
-            <div><span>모은 별</span><strong id="gameStars">0개</strong></div>
-            <div><span>속도</span><strong id="gameSpeed">1.0×</strong></div>
-          </div>
-          <div class="gameCanvasWrap">
-            <canvas id="opoongGameCanvas" width="900" height="320" tabindex="0" aria-label="새와 장애물을 피하고 별을 모으는 점프 게임"></canvas>
-            <div id="gameMessage" class="gameMessage"><strong>준비됐나요?</strong><span>터치 또는 스페이스바 · 2단 점프</span></div>
-          </div>
-          <div class="gameControls">
-            <button id="gameStartButton" class="bigBtn" type="button" onclick="startOpoongGame()">게임 시작</button>
-            <button class="btn ghost gameJumpButton" type="button" onclick="opoongGameJump()">점프</button>
-            <span class="muted">새와 장애물을 피하고 별을 모으세요.</span>
-          </div>
-        </div>
-
-        <div id="gameTttPanel" class="gamePlayCard miniGamePanel" hidden>
-          <div class="gameHud">
-            <div><span>누적 승리</span><strong id="tttWins">0승</strong></div>
-            <div><span>현재 상태</span><strong id="tttStatus">내 차례</strong></div>
-          </div>
-          <div class="tttModeSwitch" aria-label="틱택토 게임 방식">
-            <button id="tttModeNormal" class="smallbtn" type="button" aria-pressed="true" onclick="setTttMode('normal')">일반 모드</button>
-            <button id="tttModeMove" class="smallbtn" type="button" aria-pressed="false" onclick="setTttMode('move')">말 이동 모드</button>
-          </div>
-          <div id="tttBoard" class="tttBoard" aria-label="틱택토 게임판"></div>
-          <div class="gameControls">
-            <button class="bigBtn" type="button" onclick="resetTicTacToe()">새 게임</button>
-            <span class="muted">이동 모드에서는 X 3개를 놓은 뒤 내 말을 빈칸으로 옮겨요. · AI 난이도 쉬움</span>
-          </div>
-        </div>
-
-        <div id="gameStackPanel" class="gamePlayCard miniGamePanel" hidden>
-          <div class="gameHud stackHud">
-            <div><span>현재 층</span><strong id="stackScore">0층</strong></div>
-            <div><span>최고 기록</span><strong id="stackBest">0층</strong></div>
-            <div><span>현재 상태</span><strong id="stackStatus">준비</strong></div>
-          </div>
-          <div class="gameCanvasWrap stackCanvasWrap">
-            <canvas id="stackCanvas" width="480" height="520" tabindex="0" aria-label="움직이는 블록을 맞춰 쌓는 게임"></canvas>
-            <div id="stackMessage" class="gameMessage"><strong>블록 쌓기</strong><span>움직이는 블록이 아래 블록과 겹칠 때 놓으세요.</span></div>
-          </div>
-          <div class="gameControls">
-            <button id="stackStartButton" class="bigBtn" type="button" onclick="startStackGame()">게임 시작</button>
-            <button class="btn ghost" type="button" onclick="dropStackBlock()">블록 놓기</button>
-            <span class="muted">화면 터치 또는 스페이스바로도 놓을 수 있어요.</span>
-          </div>
-        </div>
-
-        <div id="gameWaterPanel" class="gamePlayCard miniGamePanel" hidden>
-          <div class="gameHud stackHud">
-            <div><span>퍼즐</span><strong id="waterLevel">레벨 1</strong></div>
-            <div><span>이동 횟수</span><strong id="waterMoves">0회</strong></div>
-            <div><span>최고 기록</span><strong id="waterBest">-</strong></div>
-          </div>
-          <div id="waterBoard" class="waterBoard" aria-label="워터 소트 시험관"></div>
-          <div class="gameControls">
-            <button class="bigBtn" type="button" onclick="nextWaterPuzzle()">새 퍼즐</button>
-            <button class="btn ghost" type="button" onclick="undoWaterMove()">한 수 되돌리기</button>
-            <span id="waterStatus" class="muted">옮길 시험관을 선택하세요.</span>
-          </div>
-        </div>
-
-
-        <div id="gameMazePanel" class="gamePlayCard miniGamePanel" hidden><div class="gameHud stackHud"><div><span>현재 이동</span><strong id="mazeMoves">0회</strong></div><div><span>최고 기록</span><strong id="mazeBest">-</strong></div><div><span>남은 시간</span><strong id="mazeTime">90초</strong></div></div><div id="mazeBoard" class="mazeBoard" aria-label="21 곱하기 21 고난도 미로"></div><div class="gameDpad"><button class="smallbtn ghost up" onclick="moveMaze(-1,0)">↑</button><button class="smallbtn ghost left" onclick="moveMaze(0,-1)">←</button><button class="smallbtn ghost down" onclick="moveMaze(1,0)">↓</button><button class="smallbtn ghost right" onclick="moveMaze(0,1)">→</button></div><div class="gameControls"><button class="bigBtn" onclick="newMazeGame()">새 미로</button><span id="mazeStatus" class="muted">21×21 · 90초 · 주변 시야만 보여요.</span></div></div>
-        <div id="gameSnakePanel" class="gamePlayCard miniGamePanel" hidden><div class="gameHud stackHud"><div><span>점수</span><strong id="snakeScore">0점</strong></div><div><span>최고</span><strong id="snakeBest">0점</strong></div><div><span>상태</span><strong id="snakeStatus">준비</strong></div></div><div class="gameCanvasWrap snakeCanvasWrap"><canvas id="snakeCanvas" width="600" height="420"></canvas></div><div class="gameDpad"><button class="smallbtn ghost up" onclick="setSnakeDirection(-1,0)">↑</button><button class="smallbtn ghost left" onclick="setSnakeDirection(0,-1)">←</button><button class="smallbtn ghost down" onclick="setSnakeDirection(1,0)">↓</button><button class="smallbtn ghost right" onclick="setSnakeDirection(0,1)">→</button></div><div class="gameControls"><button id="snakeStartBtn" class="bigBtn" onclick="startSnakeGame()">게임 시작</button><button class="btn ghost" onclick="resetSnakeGame()">다시 시작</button><span class="muted">스와이프나 방향 버튼으로 움직이세요.</span></div></div>
-        <div id="gameMinePanel" class="gamePlayCard miniGamePanel" hidden><div class="gameHud stackHud"><div><span>남은 지뢰</span><strong id="mineRemaining">10개</strong></div><div><span>시간</span><strong id="mineTime">0초</strong></div><div><span>최고</span><strong id="mineBest">-</strong></div></div><div class="mineToolbar"><button id="mineFlagMode" class="smallbtn ghost" aria-pressed="false" onclick="toggleMineFlagMode()">🚩 깃발 모드 끄기</button></div><div id="mineBoard" class="mineBoard"></div><div class="gameControls"><button class="bigBtn" onclick="newMinesGame()">새 게임</button><span id="mineStatus" class="muted">첫 칸은 안전해요.</span></div></div>
-        <section id="gameColorShop" class="gameColorShop" aria-label="O.Poong 포인트 상점">
-          <div class="gameColorShopHead">
-            <div><b>O.Poong 포인트샵</b><p>게임과 집중으로 모은 포인트로 디자인 팩을 구매하고 자유롭게 장착하세요.</p></div>
-            <span class="pill">SHOP</span>
-          </div>
-          <div class="gameShopSection">
-            <div class="gameShopTitle"><b>기본 테마 색상</b><span>구매 후 계속 사용</span></div>
-            <div id="gameColorItems" class="gameColorItems"></div>
-          </div>
-          <div class="gameShopSection">
-            <div class="gameShopTitle"><b>꾸미기 상품</b><span>팩 구매 · 포함 디자인 자유 장착</span></div>
-            <div id="gameShopItems" class="gameShopItems"></div>
-          </div>
-          <div id="gameRewardMessage" class="gameRewardMessage" aria-live="polite"></div>
-        </section>
-      </section>
 
       <section class="section view" id="view-onway">
         <div class="sectionHeader">
@@ -2828,33 +2700,13 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pr
  </section>
 </div>
 
-<div id="gameOverAdBack" class="gameOverAdBack" hidden aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="gameOverAdTitle">
-  <div class="gameOverAdModal">
-    <section id="gameOverAdStage">
-      <div class="gameOverAdHead">
-        <strong id="gameOverAdTitle">게임 종료 · 광고</strong>
-        <button class="gameOverAdClose" type="button" aria-label="광고 닫기" onclick="closeGameOverAd()">×</button>
-      </div>
-      <p class="gameOverAdText">광고를 닫으면 같은 게임에 다시 도전할 수 있어요.</p>
-      <div id="gameOverAdSlot" class="gameOverAdSlot" aria-label="게임 종료 후 광고"></div>
-    </section>
-    <section id="gameOverRestartStage" class="gameOverRestart" hidden>
-      <h3>한 판 더?</h3>
-      <p>게임을 바로 다시 시작하거나 목록으로 돌아갈 수 있어요.</p>
-      <div class="gameOverRestartActions">
-        <button class="bigBtn" type="button" onclick="restartGameAfterAd()">게임 다시 시작</button>
-        <button class="btn ghost" type="button" onclick="closeGameRestartPrompt();showMiniGameHub()">게임 목록</button>
-      </div>
-    </section>
-  </div>
-</div>
 
 <script>
 /* =========================
    수정하기 쉬운 설정 영역
    ========================= */
 const NOTICE_CONFIG = {
-  enabled: true,
+  enabled: false,
   title: "O.Poong 나이스 계산기로 불편을 드려 죄송해요.",
   message: "기능은 곧 삭제될 예정이며, 디데이 기능이 추가되었습니다.",
   buttonText: "",
@@ -3027,6 +2879,11 @@ function closeFullNotice(){
 function renderNoticeBanner(){
   const box = $("#noticeBanner");
   if(!box) return;
+  if(!NOTICE_CONFIG.enabled){
+    box.hidden = true;
+    box.style.display = "none";
+    return;
+  }
 
   const colorMap = {
     default: {},
@@ -3101,7 +2958,7 @@ function setClassNowBarVisible(visible){
   const bar = document.getElementById("classNowBar");
   if(!grid || !bar) return;
   bar.hidden = !visible;
-  grid.classList.toggle("hasNowBar", visible);
+  grid.classList.toggle("hasNowBar", visible && NOTICE_CONFIG.enabled);
 }
 function renderClassNowBar(now){
   const bar = document.getElementById("classNowBar");
@@ -4232,9 +4089,9 @@ function initRoute(){
   if(view === "meal") setTodayAndLoad();
   if(view === "schedule") scheduleLoadMonth();
   if(view === "timetable") ttRenderTable();
-  if(view === "game") showMiniGameHub();
 }
 function go(view){
+  if(view === "game") view = "home";
   if(view === "about") view = "policy";
   const currentFocus=document.getElementById("view-focus");
   if(view!=="focus"&&currentFocus&&currentFocus.classList.contains("active"))leaveFocusForMenu();
@@ -5624,7 +5481,6 @@ const GLOBAL_SEARCH_STATIC = [
   {title:"학사일정",description:"학교 행사와 월별 달력",type:"메뉴",route:"schedule",keywords:"일정 시험 행사 방학 개학"},
   {title:"시간표",description:"요일별 수업 시간표",type:"메뉴",route:"timetable",keywords:"시간표 교시 수업 과목"},
   {title:"집중 모드",description:"직접 입력식 카운트다운·비상 탈출 5회·무단 이탈 100P 감점",type:"기능",route:"focus",keywords:"집중 공부 타이머 열품타 스톱워치 과목 분석 전체화면 이탈 차감"},
-  {title:"미니게임",description:"점프·틱택토·블록 쌓기·워터 소트·미로·스네이크·지뢰찾기",type:"게임",route:"game",keywords:"게임 점프 틱택토 블록 쌓기 워터 소트 미로 스네이크 지뢰찾기 퍼즐"},
   {title:"온웨이에듀",description:"상벌점·외출 관리 시스템",type:"바로가기",route:"onway",keywords:"상점 벌점 외출"},
   {title:"학교 홈페이지",description:"풍산고등학교 공식 사이트",type:"바로가기",route:"school",keywords:"학교 공지 공식"},
   {title:"도서관 조회",description:"풍산고 도서관 자료 검색",type:"바로가기",route:"library",keywords:"책 도서 독서"},
@@ -5796,7 +5652,6 @@ window.addEventListener("load",()=>{
   renderFullScreenNotice();
   initWidgetSelector();
   initGlobalSearch();
-  initOpoongGame();
   initAdminPointMode();
   initFocusTracker();
   const savedTheme = localStorage.getItem("opoong_theme");
