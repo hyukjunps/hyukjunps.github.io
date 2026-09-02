@@ -1,41 +1,9 @@
 (() => {
   'use strict';
 
-  // Keep startup intentionally simple: no survey, no first-run questionnaire,
-  // no forced update cover, and no startup-time game/point DOM mutations.
-
-  function bypassLegacyStartup() {
-    try {
-      document.body?.classList.remove('setup-pending');
-      document.documentElement.style.overflow = '';
-      if (document.body) document.body.style.overflow = '';
-
-      const firstStart = document.getElementById('firstStartBack');
-      if (firstStart) firstStart.remove();
-
-      const firstSetup = document.getElementById('firstSetupBack');
-      if (firstSetup) firstSetup.remove();
-
-      const survey = document.getElementById('opoongStartupSurveyBack');
-      if (survey) survey.remove();
-
-      // Prevent old startup gates from returning on this device.
-      try {
-        localStorage.setItem('opoong_first_setup_v1', '1');
-        localStorage.setItem('opoong_startup_survey_closed_forever_v1', '1');
-      } catch (_) {}
-    } catch (error) {
-      console.warn('O.Poong startup cleanup:', error);
-    }
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', bypassLegacyStartup, { once: true });
-  } else {
-    bypassLegacyStartup();
-  }
-
-  window.addEventListener('load', bypassLegacyStartup, { once: true });
+  // O.Poong PWA updater only.
+  // Startup survey popup has been removed.
+  // Existing first-run onboarding/setup flow remains unchanged.
 
   if (!('serviceWorker' in navigator)) return;
 
