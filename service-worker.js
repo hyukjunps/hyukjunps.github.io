@@ -1,7 +1,6 @@
 /* O.Poong emergency PWA recovery worker
- * Purpose: remove stale app caches/service workers so the installed app
- * opens the live GitHub Pages site directly. Offline caching is temporarily
- * disabled until launch reliability is confirmed.
+ * Removes stale caches and unregisters itself so the installed app opens
+ * the live GitHub Pages site directly. Offline caching is temporarily off.
  */
 
 self.addEventListener('install', () => {
@@ -17,16 +16,23 @@ self.addEventListener('activate', (event) => {
 
     try { await self.clients.claim(); } catch (_) {}
 
+    let windows = [];
     try {
-      const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
-      for (const client of clients) {
-        try { client.postMessage({ type: 'OPOONG_SW_RECOVERED' }); } catch (_) {}
-      }
+      windows = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
     } catch (_) {}
 
     try { await self.registration.unregister(); } catch (_) {}
+
+    for (const client of windows) {
+      try {
+        const url = new URL(client.url || self.location.origin + '/');
+        url.pathname = '/';
+        url.search = '?appRecovery=20260902-1901';
+        url.hash = '';
+        await client.navigate(url.toString());
+      } catch (_) {}
+    }
   })());
 });
 
-// Intentionally no fetch handler.
-// Once this worker activates, navigation goes straight to the network.
+// Intentionally no fetch handler: all requests go directly to the network.
