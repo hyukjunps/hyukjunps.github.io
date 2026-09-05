@@ -11,6 +11,14 @@
   cleanup();
   const observer = new MutationObserver(cleanup);
   observer.observe(document.documentElement, { childList: true, subtree: true });
+
+  if (!document.querySelector('script[data-odrop-qr-loader]')) {
+    const script = document.createElement('script');
+    script.src = '/drop/string-mode.js?v=20260905-qr6';
+    script.dataset.odropQrLoader = '1';
+    document.body.appendChild(script);
+  }
+
   setTimeout(() => {
     cleanup();
     observer.disconnect();
