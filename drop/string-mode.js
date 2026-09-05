@@ -1,127 +1,59 @@
 (() => {
-  const $ = (s) => document.querySelector(s);
-  const $$ = (s) => [...document.querySelectorAll(s)];
+  const originalDecodePayload = window.decodePayload;
+  if (typeof originalDecodePayload !== 'function') return;
 
-  // QR generation must never block O.drop's string-based pairing flow.
-  // The core O.drop code calls drawQr() while preparing offers/answers,
-  // so replace it with a harmless placeholder renderer.
-  window.drawQr = async function (_canvasSelector, placeholderSelector) {
-    const ph = $(placeholderSelector);
-    if (ph) {
-      ph.hidden = false;
-      ph.innerHTML = '연결 문자열을 복사해서<br>상대 기기에 붙여넣어 주세요.';
+  function normalizeCandidates(input) {
+    const raw = String(input ?? '')
+      .replace(/[\u200B-\u200D\u2060\uFEFF]/g, '')
+      .trim();
+    const out = [];
+    const add = (v) => {
+      v = String(v ?? '').trim();
+      if (v && !out.includes(v)) out.push(v);
+    };
+    add(raw);
+
+    try {
+      const u = new URL(raw);
+      add(u.searchParams.get('data'));
+      add(u.searchParams.get('payload'));
+      add(u.searchParams.get('odrop'));
+      if (u.hash) add(u.hash.slice(1));
+    } catch (_) {}
+
+    for (const v of [...out]) {
+      try { add(decodeURIComponent(v)); } catch (_) {}
+      const a = v.indexOf('OD1.');
+      const b = v.indexOf('OD0.');
+      const i = a >= 0 && b >= 0 ? Math.min(a, b) : Math.max(a, b);
+      if (i >= 0) add(v.slice(i).trim().split(/\s+/)[0]);
     }
+    return out;
+  }
+
+  window.decodePayload = function (text) {
+    let lastError = null;
+    for (const candidate of normalizeCandidates(text)) {
+      if (!candidate.startsWith('OD1.') && !candidate.startsWith('OD0.')) continue;
+      try { return originalDecodePayload(candidate); }
+      catch (err) { lastError = err; }
+    }
+    if (lastError) throw lastError;
+    throw new Error('O.drop 연결 QR을 인식하지 못했어요. QR을 크게 맞춰 다시 스캔해 주세요.');
   };
 
-  const style = document.createElement('style');
-  style.id = 'odrop-string-mode-style';
-  style.textContent = `
-    .qrShell, #scanAnswerBtn, #scanOfferBtn, #scannerBack { display:none !important; }
-    .manual { margin-top:0 !important; }
-    .manual > summary { display:none !important; }
-    .manual textarea {
-      min-height:150px !important;
-      font-size:12px !important;
-      line-height:1.5 !important;
-      word-break:break-all !important;
-    }
-    .stringModeBadge {
-      display:inline-flex; margin:0 0 12px; padding:7px 10px; border-radius:999px;
-      background:color-mix(in srgb,var(--pri) 9%,var(--card)); color:var(--pri);
-      border:1px solid color-mix(in srgb,var(--pri) 22%,var(--line));
-      font-size:11.5px; font-weight:950;
-    }
-    .stringGuide {
-      margin:0 0 12px; padding:12px 13px; border-radius:16px;
-      background:var(--card2); border:1px solid var(--line);
-      color:var(--muted); font-size:12px; font-weight:800; line-height:1.65;
-    }
-    #copyOfferBtn, #copyAnswerBtn, #applyOfferBtn, #applyAnswerBtn { min-height:44px; }
-  `;
-  document.head.appendChild(style);
+  const heroTitle = document.querySelector('.hero h1');
+  if (heroTitle) heroTitle.innerHTML = 'QR로 연결하고,<br>기기끼리 바로 보내기.';
+  const heroText = document.querySelector('.hero p');
+  if (heroText) heroText.textContent = '파일은 O.Poong 서버에 업로드하지 않습니다. QR로 연결한 뒤 브라우저끼리 직접 전송하며, 연결 문자열은 카메라가 어려울 때만 보조로 사용할 수 있어요.';
 
-  function setText(sel, text) {
-    const el = $(sel);
-    if (el) el.textContent = text;
-  }
+  document.querySelectorAll('details.manual').forEach(el => { el.open = false; });
 
-  $$('details.manual').forEach((el) => { el.open = true; });
+  const sendTab = document.querySelector('.modeTab[data-mode="send"] span');
+  const receiveTab = document.querySelector('.modeTab[data-mode="receive"] span');
+  if (sendTab) sendTab.textContent = '파일을 고르고 연결 QR 만들기';
+  if (receiveTab) receiveTab.textContent = '상대 QR을 스캔해 연결하기';
 
-  const heroTitle = $('.hero h1');
-  if (heroTitle) heroTitle.innerHTML = '문자열로 연결하고,<br>기기끼리 바로 보내기.';
-  const heroP = $('.hero p');
-  if (heroP) heroP.textContent = '파일은 O.Poong 서버에 업로드하지 않습니다. 두 기기가 연결 문자열을 서로 복사·붙여넣기한 뒤 브라우저끼리 직접 연결합니다.';
-
-  const modeTabs = $$('.modeTab');
-  if (modeTabs[0]) modeTabs[0].innerHTML = '보내기<span>파일을 고르고 연결 문자열 만들기</span>';
-  if (modeTabs[1]) modeTabs[1].innerHTML = '받기<span>상대 연결 문자열 붙여넣기</span>';
-
-  setText('#makeOfferBtn', '연결 문자열 만들기');
-  setText('#copyOfferBtn', '연결 문자열 복사');
-  setText('#applyAnswerBtn', '답변 문자열 적용');
-  setText('#applyOfferBtn', '연결 문자열 적용');
-  setText('#copyAnswerBtn', '답변 문자열 복사');
-
-  const answerManual = $('#answerManual');
-  if (answerManual) answerManual.placeholder = '받는 기기에서 복사한 답변 문자열(OD1... 또는 OD0...)을 붙여넣으세요.';
-  const offerManual = $('#offerManual');
-  if (offerManual) offerManual.placeholder = '보내는 기기에서 복사한 연결 문자열(OD1... 또는 OD0...)을 붙여넣으세요.';
-
-  const sendManual = answerManual?.closest('.manual');
-  if (sendManual) {
-    sendManual.insertAdjacentHTML('afterbegin', '<span class="stringModeBadge">기본 연결 방식 · 문자열</span><div class="stringGuide">① 연결 문자열 만들기 → ② 연결 문자열 복사 → ③ 받는 기기에 붙여넣기 → ④ 돌아온 답변 문자열을 아래에 붙여넣고 적용</div>');
-  }
-  const receiveManual = offerManual?.closest('.manual');
-  if (receiveManual) {
-    receiveManual.insertAdjacentHTML('afterbegin', '<span class="stringModeBadge">기본 연결 방식 · 문자열</span><div class="stringGuide">① 보내는 기기의 연결 문자열을 아래에 붙여넣기 → ② 연결 문자열 적용 → ③ 답변 문자열 복사 → ④ 보내는 기기에 다시 붙여넣기</div>');
-  }
-
-  const replacements = [
-    ['연결 QR이 준비됐어요. 받는 기기에서 스캔해 주세요.', '연결 문자열이 준비됐어요. 복사해서 받는 기기에 붙여넣어 주세요.'],
-    ['답변 QR이 준비됐어요. 보내는 기기에서 이 QR을 스캔해 주세요.', '답변 문자열이 준비됐어요. 복사해서 보내는 기기에 붙여넣어 주세요.'],
-    ['파일이 준비됐어요. 연결 QR을 만들어 주세요.', '파일이 준비됐어요. 연결 문자열을 만들어 주세요.'],
-    ['보내는 기기의 QR을 스캔해 주세요.', '보내는 기기의 연결 문자열을 붙여넣어 주세요.'],
-    ['O.drop 연결 QR이 아니에요.', 'O.drop 연결 문자열이 아니에요.'],
-    ['답변 QR이 아니에요.', '답변 연결 문자열이 아니에요.'],
-    ['다른 전송의 답변 QR이에요.', '다른 전송의 답변 연결 문자열이에요.'],
-    ['보내기용 O.drop QR이 아니에요.', '보내기용 O.drop 연결 문자열이 아니에요.']
-  ];
-
-  function replaceValue(value) {
-    let next = String(value ?? '');
-    for (const [from, to] of replacements) next = next.split(from).join(to);
-    return next;
-  }
-
-  function rewriteText(root = document.body) {
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-    const nodes = [];
-    while (walker.nextNode()) nodes.push(walker.currentNode);
-    for (const node of nodes) {
-      const before = node.nodeValue;
-      const after = replaceValue(before);
-      if (after !== before) node.nodeValue = after;
-    }
-  }
-  rewriteText();
-
-  const observer = new MutationObserver((mutations) => {
-    for (const m of mutations) {
-      if (m.type === 'characterData' && m.target?.nodeValue) {
-        const before = m.target.nodeValue;
-        const after = replaceValue(before);
-        if (after !== before) m.target.nodeValue = after;
-      }
-      for (const node of m.addedNodes) {
-        if (node.nodeType === Node.TEXT_NODE) {
-          const before = node.nodeValue;
-          const after = replaceValue(before);
-          if (after !== before) node.nodeValue = after;
-        } else if (node.nodeType === Node.ELEMENT_NODE) {
-          rewriteText(node);
-        }
-      }
-    }
-  });
-  observer.observe(document.body, {subtree:true, childList:true, characterData:true});
+  const makeOffer = document.querySelector('#makeOfferBtn');
+  if (makeOffer) makeOffer.textContent = '연결 QR 만들기';
 })();
