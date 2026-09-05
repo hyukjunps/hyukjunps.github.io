@@ -12,18 +12,6 @@
   "theme_color": "#ffffff",
   "shortcuts": [
     {
-      "name": "O.drop",
-      "short_name": "O.drop",
-      "description": "QR로 연결해 기기끼리 암호화 파일 전송",
-      "url": "/drop/",
-      "icons": [
-        {
-          "src": "android/launchericon-192-192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
       "name": "O.Poong Tools",
       "short_name": "Tools",
       "description": "QR 만들기와 랜덤 뽑기",
