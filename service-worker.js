@@ -1,7 +1,7 @@
 /* O.Poong stable service worker
  * Network-first and cache-free.
- * Enhances the main navigation with O.drop and promotes string-based
- * O.drop pairing without modifying the large HTML files directly.
+ * Enhances the main navigation with O.drop and applies a small QR decoder fix
+ * without modifying the large HTML files directly.
  */
 
 self.addEventListener('install', () => {
@@ -19,9 +19,9 @@ self.addEventListener('activate', (event) => {
 });
 
 const ODROP_NAV_MARKER = '<a class="navBtn" href="https://classroom.google.com/" target="_blank" rel="noopener noreferrer">';
-const ODROP_NAV_ITEM = '<a class="navBtn" href="/drop/" aria-label="O.drop 파일 전송"><span class="left"><span class="icon">드</span><span><span class="title">O.drop</span><br><span class="hint">문자열 직접 전송</span></span></span><span>›</span></a>';
+const ODROP_NAV_ITEM = '<a class="navBtn" href="/drop/" aria-label="O.drop 파일 전송"><span class="left"><span class="icon">드</span><span><span class="title">O.drop</span><br><span class="hint">QR 직접 전송</span></span></span><span>›</span></a>';
 const ODROP_MOBILE_STYLE = '<style id="odrop-mobile-nav-style">@media (max-width:760px){.navGrid{grid-template-columns:repeat(10,minmax(0,1fr))!important}}</style>';
-const ODROP_STRING_SCRIPT = '<script src="/drop/string-mode.js?v=20260905-3"></script>';
+const ODROP_QR_FIX_SCRIPT = '<script src="/drop/string-mode.js?v=20260905-qr2"></script>';
 
 function enhanceHomeHtml(html){
   if (!html) return html;
@@ -41,8 +41,8 @@ function enhanceHomeHtml(html){
 }
 
 function enhanceDropHtml(html){
-  if (!html || html.includes('/drop/string-mode.js')) return html;
-  return html.replace('</body>', ODROP_STRING_SCRIPT + '\n</body>');
+  if (!html || html.includes('/drop/string-mode.js?v=20260905-qr2')) return html;
+  return html.replace('</body>', ODROP_QR_FIX_SCRIPT + '\n</body>');
 }
 
 async function transformedNavigation(request, transform){
