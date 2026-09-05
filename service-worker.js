@@ -1,6 +1,7 @@
 /* O.Poong stable service worker
- * Keeps the app network-first and cache-free, while adding the O.drop
- * shortcut to the main navigation without touching the large index file.
+ * Network-first and cache-free.
+ * Enhances the main navigation with O.drop and promotes string-based
+ * O.drop pairing without modifying the large HTML files directly.
  */
 
 self.addEventListener('install', () => {
@@ -18,17 +19,20 @@ self.addEventListener('activate', (event) => {
 });
 
 const ODROP_NAV_MARKER = '<a class="navBtn" href="https://classroom.google.com/" target="_blank" rel="noopener noreferrer">';
-const ODROP_NAV_ITEM = '<a class="navBtn" href="/drop/" aria-label="O.drop 파일 전송"><span class="left"><span class="icon">드</span><span><span class="title">O.drop</span><br><span class="hint">QR 직접 전송</span></span></span><span>›</span></a>';
+const ODROP_NAV_ITEM = '<a class="navBtn" href="/drop/" aria-label="O.drop 파일 전송"><span class="left"><span class="icon">드</span><span><span class="title">O.drop</span><br><span class="hint">문자열 직접 전송</span></span></span><span>›</span></a>';
 const ODROP_MOBILE_STYLE = '<style id="odrop-mobile-nav-style">@media (max-width:760px){.navGrid{grid-template-columns:repeat(10,minmax(0,1fr))!important}}</style>';
+const ODROP_STRING_SCRIPT = '<script src="/drop/string-mode.js?v=20260905-2"></script>';
 
 function enhanceHomeHtml(html){
-  if (!html || html.includes('href="/drop/"')) return html;
-  if (!html.includes(ODROP_NAV_MARKER)) return html;
+  if (!html) return html;
+  let next = html;
 
-  let next = html.replace(
-    ODROP_NAV_MARKER,
-    ODROP_NAV_ITEM + '\n        ' + ODROP_NAV_MARKER
-  );
+  if (!next.includes('href="/drop/"') && next.includes(ODROP_NAV_MARKER)) {
+    next = next.replace(
+      ODROP_NAV_MARKER,
+      ODROP_NAV_ITEM + '\n        ' + ODROP_NAV_MARKER
+    );
+  }
 
   if (!next.includes('id="odrop-mobile-nav-style"')) {
     next = next.replace('</head>', ODROP_MOBILE_STYLE + '\n</head>');
@@ -36,42 +40,52 @@ function enhanceHomeHtml(html){
   return next;
 }
 
+function enhanceDropHtml(html){
+  if (!html || html.includes('/drop/string-mode.js')) return html;
+  return html.replace('</body>', ODROP_STRING_SCRIPT + '\n</body>');
+}
+
+async function transformedNavigation(request, transform){
+  try {
+    const response = await fetch(request);
+    if (!response.ok) return response;
+
+    const contentType = response.headers.get('content-type') || '';
+    if (!contentType.includes('text/html')) return response;
+
+    const html = await response.clone().text();
+    const enhanced = transform(html);
+    if (enhanced === html) return response;
+
+    const headers = new Headers(response.headers);
+    headers.delete('content-length');
+    headers.delete('content-encoding');
+    headers.delete('etag');
+
+    return new Response(enhanced, {
+      status: response.status,
+      statusText: response.statusText,
+      headers
+    });
+  } catch (_) {
+    return fetch(request);
+  }
+}
+
 self.addEventListener('fetch', (event) => {
   const request = event.request;
+  if (request.mode !== 'navigate') return;
+
   let url;
   try { url = new URL(request.url); } catch (_) { return; }
+  if (url.origin !== self.location.origin) return;
 
-  const isHomeNavigation =
-    request.mode === 'navigate' &&
-    url.origin === self.location.origin &&
-    (url.pathname === '/' || url.pathname === '/index.html');
+  if (url.pathname === '/' || url.pathname === '/index.html') {
+    event.respondWith(transformedNavigation(request, enhanceHomeHtml));
+    return;
+  }
 
-  if (!isHomeNavigation) return;
-
-  event.respondWith((async () => {
-    try {
-      const response = await fetch(request);
-      if (!response.ok) return response;
-
-      const contentType = response.headers.get('content-type') || '';
-      if (!contentType.includes('text/html')) return response;
-
-      const html = await response.clone().text();
-      const enhanced = enhanceHomeHtml(html);
-      if (enhanced === html) return response;
-
-      const headers = new Headers(response.headers);
-      headers.delete('content-length');
-      headers.delete('content-encoding');
-      headers.delete('etag');
-
-      return new Response(enhanced, {
-        status: response.status,
-        statusText: response.statusText,
-        headers
-      });
-    } catch (_) {
-      return fetch(request);
-    }
-  })());
+  if (url.pathname === '/drop/' || url.pathname === '/drop/index.html') {
+    event.respondWith(transformedNavigation(request, enhanceDropHtml));
+  }
 });
