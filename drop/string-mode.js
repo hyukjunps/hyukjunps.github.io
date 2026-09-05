@@ -1,5 +1,6 @@
 (() => {
   const originalDecodePayload = window.decodePayload;
+  const originalDrawQr = window.drawQr;
   if (typeof originalDecodePayload !== 'function') return;
 
   function normalizeCandidates(input) {
@@ -39,7 +40,109 @@
       catch (err) { lastError = err; }
     }
     if (lastError) throw lastError;
-    throw new Error('O.drop 연결 QR을 인식하지 못했어요. QR을 크게 맞춰 다시 스캔해 주세요.');
+    throw new Error('O.drop 연결 QR을 인식하지 못했어요. QR 전체가 카메라에 보이도록 거리를 조금 벌려 주세요.');
+  };
+
+  // Make dense WebRTC QR codes physically larger and give them a wider quiet zone.
+  if (typeof originalDrawQr === 'function' && window.QRCode) {
+    window.drawQr = async function (canvasSelector, placeholderSelector, text) {
+      const canvas = document.querySelector(canvasSelector);
+      const ph = document.querySelector(placeholderSelector);
+      if (!canvas) return originalDrawQr(canvasSelector, placeholderSelector, text);
+      await QRCode.toCanvas(canvas, text, {
+        width: 720,
+        margin: 5,
+        errorCorrectionLevel: 'L',
+        color: { dark: '#000000', light: '#ffffff' }
+      });
+      canvas.hidden = false;
+      if (ph) ph.hidden = true;
+    };
+  }
+
+  const style = document.createElement('style');
+  style.id = 'odrop-qr-reliability-style';
+  style.textContent = `
+    .qrShell{width:min(100%,520px)!important;padding:12px!important;border-radius:22px!important}
+    .qrShell canvas{image-rendering:pixelated!important;width:100%!important;height:100%!important;background:#fff!important}
+    #qrReader{min-height:360px!important;background:#000!important}
+    #qrReader video{object-fit:cover!important}
+    @media(max-width:760px){.qrShell{width:min(94vw,500px)!important}.scannerModal{width:min(96vw,620px)!important}}
+  `;
+  document.head.appendChild(style);
+
+  // Replace the original small 260x260 scan box with a large full-camera scan area.
+  window.openScanner = async function (title, handler) {
+    if (!window.Html5Qrcode) {
+      if (typeof window.toast === 'function') toast('QR 카메라 모듈을 불러오지 못했어요.');
+      return;
+    }
+
+    window.scannerHandler = handler;
+    const titleEl = document.querySelector('#scannerTitle');
+    const back = document.querySelector('#scannerBack');
+    const status = document.querySelector('#scannerStatus');
+    const reader = document.querySelector('#qrReader');
+    if (titleEl) titleEl.textContent = title;
+    if (back) back.hidden = false;
+    if (status) {
+      status.className = 'status';
+      status.textContent = 'QR 전체가 화면 안에 들어오도록 맞춰 주세요. 가까이 대기보다 조금 거리를 두는 게 더 잘 읽혀요.';
+    }
+
+    try {
+      if (window.scanner) {
+        try { await window.scanner.stop(); } catch (_) {}
+        try { await window.scanner.clear(); } catch (_) {}
+      }
+      if (reader) reader.innerHTML = '';
+      window.scanner = new Html5Qrcode('qrReader', { verbose: false });
+
+      const config = {
+        fps: 20,
+        disableFlip: false,
+        videoConstraints: {
+          facingMode: { ideal: 'environment' },
+          width: { ideal: 1920 },
+          height: { ideal: 1080 },
+          focusMode: 'continuous'
+        }
+      };
+
+      const onSuccess = async (decodedText) => {
+        const fn = window.scannerHandler;
+        try {
+          if (window.scanner) {
+            try { await window.scanner.stop(); } catch (_) {}
+            try { await window.scanner.clear(); } catch (_) {}
+            window.scanner = null;
+          }
+          if (back) back.hidden = true;
+          if (reader) reader.innerHTML = '';
+          await fn(decodedText);
+          if (typeof window.toast === 'function') toast('QR을 읽었어요.');
+        } catch (e) {
+          console.error(e);
+          if (typeof window.toast === 'function') toast(e.message || 'QR을 처리하지 못했어요.');
+        }
+      };
+
+      const cameras = await Html5Qrcode.getCameras();
+      if (!cameras?.length) throw new Error('사용 가능한 카메라가 없어요.');
+      const preferred = cameras.find(c => /back|rear|environment|후면/i.test(c.label)) || cameras[cameras.length - 1];
+      await window.scanner.start(preferred.id, config, onSuccess, () => {});
+
+      if (status) {
+        status.className = 'status ok';
+        status.textContent = '스캔 중 · QR의 네 모서리가 모두 카메라 화면에 보이게 해 주세요.';
+      }
+    } catch (e) {
+      console.error(e);
+      if (status) {
+        status.className = 'status bad';
+        status.textContent = '카메라를 시작하지 못했어요: ' + e.message;
+      }
+    }
   };
 
   const heroTitle = document.querySelector('.hero h1');
