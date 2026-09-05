@@ -45,12 +45,11 @@
     if (el) el.textContent = text;
   }
 
-  // Open the existing manual pairing controls and promote them to the main UI.
   $$('details.manual').forEach((el) => { el.open = true; });
 
-  const heroTitle = document.querySelector('.hero h1');
+  const heroTitle = $('.hero h1');
   if (heroTitle) heroTitle.innerHTML = '문자열로 연결하고,<br>기기끼리 바로 보내기.';
-  const heroP = document.querySelector('.hero p');
+  const heroP = $('.hero p');
   if (heroP) heroP.textContent = '파일은 O.Poong 서버에 업로드하지 않습니다. 두 기기가 연결 문자열을 서로 복사·붙여넣기한 뒤 브라우저끼리 직접 연결합니다.';
 
   const modeTabs = $$('.modeTab');
@@ -70,14 +69,13 @@
 
   const sendManual = answerManual?.closest('.manual');
   if (sendManual) {
-    sendManual.insertAdjacentHTML('afterbegin', '<span class="stringModeBadge">기본 연결 방식 · 문자열</span><div class="stringGuide">① 위에서 연결 문자열 만들기 → ② 연결 문자열 복사 → ③ 받는 기기에 붙여넣기 → ④ 돌아온 답변 문자열을 아래에 붙여넣고 적용</div>');
+    sendManual.insertAdjacentHTML('afterbegin', '<span class="stringModeBadge">기본 연결 방식 · 문자열</span><div class="stringGuide">① 연결 문자열 만들기 → ② 연결 문자열 복사 → ③ 받는 기기에 붙여넣기 → ④ 돌아온 답변 문자열을 아래에 붙여넣고 적용</div>');
   }
   const receiveManual = offerManual?.closest('.manual');
   if (receiveManual) {
     receiveManual.insertAdjacentHTML('afterbegin', '<span class="stringModeBadge">기본 연결 방식 · 문자열</span><div class="stringGuide">① 보내는 기기의 연결 문자열을 아래에 붙여넣기 → ② 연결 문자열 적용 → ③ 답변 문자열 복사 → ④ 보내는 기기에 다시 붙여넣기</div>');
   }
 
-  // Replace QR-centric helper/status copy whenever the core app updates it.
   const replacements = [
     ['연결 QR이 준비됐어요. 받는 기기에서 스캔해 주세요.', '연결 문자열이 준비됐어요. 복사해서 받는 기기에 붙여넣어 주세요.'],
     ['답변 QR이 준비됐어요. 보내는 기기에서 이 QR을 스캔해 주세요.', '답변 문자열이 준비됐어요. 복사해서 보내는 기기에 붙여넣어 주세요.'],
@@ -89,39 +87,41 @@
     ['보내기용 O.drop QR이 아니에요.', '보내기용 O.drop 연결 문자열이 아니에요.']
   ];
 
+  function replaceValue(value) {
+    let next = String(value ?? '');
+    for (const [from, to] of replacements) next = next.split(from).join(to);
+    return next;
+  }
+
   function rewriteText(root = document.body) {
     const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
     const nodes = [];
     while (walker.nextNode()) nodes.push(walker.currentNode);
     for (const node of nodes) {
-      let text = node.nodeValue;
-      let next = text;
-      for (const [from, to] of replacements) next = next.split(from).join(to);
-      if (next !== text) node.nodeValue = next;
+      const before = node.nodeValue;
+      const after = replaceValue(before);
+      if (after !== before) node.nodeValue = after;
     }
   }
   rewriteText();
 
   const observer = new MutationObserver((mutations) => {
     for (const m of mutations) {
+      if (m.type === 'characterData' && m.target?.nodeValue) {
+        const before = m.target.nodeValue;
+        const after = replaceValue(before);
+        if (after !== before) m.target.nodeValue = after;
+      }
       for (const node of m.addedNodes) {
         if (node.nodeType === Node.TEXT_NODE) {
-          let t = node.nodeValue;
-          for (const [from, to] of replacements) t = t.split(from).join(to);
-          node.nodeValue = t;
+          const before = node.nodeValue;
+          const after = replaceValue(before);
+          if (after !== before) node.nodeValue = after;
         } else if (node.nodeType === Node.ELEMENT_NODE) {
           rewriteText(node);
         }
       }
-      if (m.type === 'characterData' && m.target?.nodeValue) {
-        let t = m.target.nodeValue;
-        for (const [from, to] of replacements) t = t.split(from).join(to);
-        m.target.nodeValue = t;
-      }
     }
   });
   observer.observe(document.body, {subtree:true, childList:true, characterData:true});
-
-  // Paste convenience: when clipboard permission is available, users can use normal paste;
-  // no automatic clipboard reading is performed.
 })();
