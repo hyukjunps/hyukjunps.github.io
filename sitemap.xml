@@ -72,10 +72,4 @@
     <changefreq>monthly</changefreq>
     <priority>0.65</priority>
   </url>
-  <url>
-    <loc>https://hyukjunps.github.io/seo/opoong.html</loc>
-    <lastmod>2026-09-10</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.60</priority>
-  </url>
 </urlset>
