@@ -2477,6 +2477,21 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--pri)}
  .modalHead,.modalBody,.modalFoot{padding:16px}
 }
 
+
+/* Reserve the D-DAY header and a complete row of counters within the viewport. */
+#view-home .homeDashboardWidgets{grid-template-rows:minmax(0,1fr) minmax(0,1fr) 148px!important}
+#view-home .widget[data-home-widget="dday"] .widgetHead{margin-bottom:10px}
+#view-home #homeDdayBody{min-height:64px!important;overflow:auto!important;padding-bottom:2px}
+#view-home .ddayItem{min-height:60px;padding:10px 12px}
+#view-home .ddayCount{line-height:1.3}
+@media(max-width:760px){
+ #view-home .homeDashboardWidgets{grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) 148px!important}
+ #view-home .ddayList{grid-template-columns:repeat(auto-fit,minmax(140px,1fr))!important}
+ #view-home .ddayItem{grid-template-columns:minmax(0,1fr) auto!important;padding:8px}
+ #view-home .ddayItemText b{font-size:12px!important}
+ #view-home .ddayCount{font-size:17px!important}
+}
+
 </style>
 </head>
 
