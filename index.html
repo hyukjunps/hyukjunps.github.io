@@ -2343,6 +2343,128 @@ body.home-view .sideNav{max-height:calc(100dvh - 110px);overflow-y:auto;scrollba
  #view-home .widgetBody{font-size:12px}
 }
 @media(max-height:700px){#view-home .homeDashboardMessage,#view-home .homeDashboardHero .kicker{display:none}#view-home .homeDashboardHero{padding:10px 14px!important}}
+/* Shared visual language: navigation, content, controls and dialogs. */
+:root{--bg:#f4f6f9;--bg2:#f4f6f9;--card2:#f8fafc;--text:#202b3d;--muted:#697586;--line:#e6eaf0;--pri:#234a91;--pri2:#234a91;--radius:20px;--radius2:14px;--shadow:0 4px 16px rgba(24,39,65,.035);--shadow2:0 2px 8px rgba(24,39,65,.025)}
+html[data-theme="dark"]{--bg:#101722;--bg2:#101722;--card:#182232;--card2:#1c2839;--text:#e8edf5;--muted:#a4afbf;--line:#2c394b;--pri:#91b9ff;--pri2:#3264b6}
+body{font-size:14px;letter-spacing:-.2px;-webkit-font-smoothing:antialiased}
+.topbar{border-radius:20px;background:var(--card);backdrop-filter:none;padding:12px 16px;box-shadow:var(--shadow)}
+.logoWrap{width:48px;height:48px;border-radius:14px;box-shadow:none}
+.brandText b{font-size:18px;font-weight:700;letter-spacing:-.5px}
+.brandText span{font-size:11px;font-weight:400;margin-top:4px}
+.sideNav{padding:10px;background:var(--card);border-radius:20px}
+.sideNavTitle{font-size:11px;font-weight:600;letter-spacing:.6px;padding:10px 12px 14px}
+.navGrid{gap:4px}
+.navBtn{border-color:transparent;border-radius:12px;background:transparent;box-shadow:none;min-height:58px;padding:10px 12px}
+.navBtn:hover{background:var(--card2);transform:none;opacity:1}
+.navBtn .title{font-size:13px;font-weight:600}
+.navBtn .hint{font-size:10px;font-weight:400;margin-top:3px}
+.navBtn .icon{width:28px;height:28px}
+.navBtn>span:last-child{font-size:14px;font-weight:400;color:var(--muted)}
+.navBtn[data-active="1"]{border-color:transparent;background:color-mix(in srgb,var(--pri) 9%,var(--card));box-shadow:none}
+.navBtn[data-active="1"] .title{color:var(--pri)}
+.navBtn.goHomeNav{border-color:color-mix(in srgb,#db6c59 16%,var(--line));background:color-mix(in srgb,#db6c59 5%,var(--card))}
+.navBtn.goHomeNav[data-active="1"]{background:color-mix(in srgb,#db6c59 12%,var(--card));box-shadow:none}
+.navBtn.evalPlanNav{border-color:color-mix(in srgb,#8b5cf6 16%,var(--line));background:color-mix(in srgb,#8b5cf6 5%,var(--card))}
+.navBtn.evalPlanNav[data-active="1"]{background:color-mix(in srgb,#8b5cf6 12%,var(--card));box-shadow:none}
+.panel{border-radius:20px;background:var(--card);box-shadow:var(--shadow)}
+.section:not(#view-home){padding:28px}
+.sectionHeader{align-items:center;margin-bottom:24px;gap:12px}
+.sectionHeader h2{font-size:24px;line-height:1.35;letter-spacing:-.7px;font-weight:650}
+.sectionHeader p{font-size:13px;font-weight:400;line-height:1.7;margin-top:8px;max-width:640px}
+.btn,.smallbtn,.bigBtn,.tabBtn,.evalPlanGrade,.evalPlanOpen{border-radius:10px;font-size:13px;font-weight:600;letter-spacing:-.2px;box-shadow:none;transition:background .15s ease,border-color .15s ease}
+.btn,.smallbtn{min-height:42px;padding:10px 14px}
+.bigBtn{min-height:46px;padding:12px 18px}
+.btn.primary,.smallbtn.primary,.bigBtn{background:#234a91;color:#fff;box-shadow:none}
+.btn.ok{background:#087f64;color:#fff;box-shadow:none}
+.btn.ghost,.smallbtn.ghost{background:var(--card);border:1px solid var(--line);box-shadow:none}
+.btn:hover,.smallbtn:hover,.bigBtn:hover,.tabBtn:hover{transform:none;opacity:1;filter:brightness(.96)}
+.btn:active,.smallbtn:active,.bigBtn:active{transform:none;filter:brightness(.92)}
+.btn:disabled,.smallbtn:disabled{opacity:.5;cursor:default}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,summary:focus-visible{outline:3px solid color-mix(in srgb,var(--pri) 45%,transparent);outline-offset:3px}
+.controls{padding:14px;gap:8px;border-radius:14px;background:var(--card2);box-shadow:none}
+.controls>span{font-size:12px;font-weight:600!important;color:var(--muted)}
+input[type="date"],input[type="month"],input[type="number"],input[type="text"],textarea{border-radius:10px;background:var(--card);min-height:42px;padding:10px 12px;font-size:13px;font-weight:400;box-shadow:none}
+input[type="checkbox"],input[type="radio"]{accent-color:var(--pri)}
+.notice,.contentBox{border-radius:14px;padding:14px 16px;background:var(--card2);font-size:13px;font-weight:400;line-height:1.75;box-shadow:none}
+.notice b,.contentBox b{font-weight:600}
+.notice.ok{background:color-mix(in srgb,var(--ok) 5%,var(--card));border-color:color-mix(in srgb,var(--ok) 20%,var(--line))}
+.pill{font-size:11px;font-weight:500;border-color:var(--line);background:var(--card2);padding:5px 9px}
+.kicker{border:0;background:color-mix(in srgb,var(--pri) 7%,var(--card));font-size:11px;font-weight:600;padding:6px 10px}
+#view-home .homeDashboardHero{border:0;border-radius:14px;box-shadow:none;background:var(--card2)}
+#view-home .homeDashboardTitle{font-weight:650!important;letter-spacing:-.6px}
+.widget,.toolCard,.weatherMetric,.weatherDetailSection,.weatherForecastCard,.weatherSafetyCard,.ddayItem{border-radius:14px;box-shadow:none;background:var(--card)}
+#view-home .homeDashboardWidgets .widget{border-radius:14px;padding:14px}
+.widgetHead b{font-size:14px;font-weight:600}
+.widgetBody{font-size:13px;line-height:1.75}
+.toolCard{padding:20px;transition:border-color .15s ease}
+.toolCard:hover{transform:none;box-shadow:none}
+.toolCard b{font-size:15px;font-weight:600}
+.toolCard p{font-weight:400;font-size:13px;line-height:1.75}
+.weatherDetailHero{border-color:var(--line);background:var(--card2);box-shadow:none;border-radius:14px;padding:24px}
+.weatherDetailTemp{font-weight:650;letter-spacing:-2px;font-variant-numeric:tabular-nums}
+.weatherDetailCondition,.weatherSafetyCard p,.weatherForecastMeta,.weatherAlertItem p,.weatherSourceLine{font-weight:400}
+.weatherMetric span,.weatherDetailSectionHead span{font-weight:500}
+.weatherMetric strong,.weatherDetailSectionHead h3,.weatherForecastCard strong{font-weight:600}
+.weatherDetailSection{padding:20px}
+.weatherForecastCard{background:var(--card2)}
+.weatherAlertItem{border-radius:12px}
+.mealTableWrap{border-radius:14px;box-shadow:none}
+.mealTable thead th{background:var(--card2);font-size:12px;font-weight:600}
+.mealTable td{font-size:13px;line-height:1.75}
+.allergyPanel{border-radius:14px;background:color-mix(in srgb,var(--warn) 3%,var(--card));border-color:color-mix(in srgb,var(--warn) 16%,var(--line))}
+.allergyChip,.setupOption{border-radius:10px;font-weight:500}
+.allergyWarnText{font-weight:500}
+.allergyHit{font-weight:650}
+.scheduleDayHead{border-radius:10px;font-weight:600}
+.scheduleDayCell,.scheduleEmptyCell{border-radius:12px;background:var(--card);font-size:12px;font-weight:400}
+.scheduleDayCell b{font-weight:600}
+.ttTable th{font-weight:600;font-size:12px}
+.ttTable input{font-weight:400;border-radius:8px}
+.goHomeCounterCard{border-radius:18px;background:var(--card2);border-color:var(--line);box-shadow:none}
+.goHomeCountLabel,.goHomeCountUnit{font-weight:500;color:var(--muted)}
+.goHomeCount{font-weight:650;font-variant-numeric:tabular-nums}
+.goHomePressBtn{border-radius:12px;background:#c85b49;box-shadow:none;font-weight:600}
+.goHomePressBtn:hover{transform:none;box-shadow:none;background:#b95141}
+.evalPlanGrade,.evalPlanOpen{min-height:42px}
+.evalPlanToolbar{padding:10px;border:1px solid var(--line);border-radius:14px;background:var(--card2)}
+.evalPlanGrade[aria-pressed="true"]{background:#7351b7;border-color:#7351b7}
+.evalPlanFrame{border-radius:14px}
+.modal{border-radius:20px;box-shadow:0 24px 70px rgba(0,0,0,.2)}
+.modalHead{background:var(--card);padding:18px 22px}
+.modalHead b{font-size:17px;font-weight:600}
+.modalBody{padding:22px;font-size:13px;font-weight:400}
+.modalFoot{padding:16px 22px}
+.ddayAutoOptions,.ddayEditItem,.ddayRecommendItem{border-radius:12px;background:var(--card2)}
+.ddayItemText b,.ddayRecommendItem{font-weight:600}
+.ddayCount{font-weight:650;font-variant-numeric:tabular-nums}
+.footer{border-radius:18px;background:transparent;border-color:transparent;font-size:11px;font-weight:400;padding:18px 8px}
+.footerLinks .btn{font-size:11px;min-height:34px;padding:7px 10px;background:transparent}
+@media(max-width:960px){
+ .navGrid{display:grid!important;grid-template-columns:none!important;grid-auto-flow:column!important;grid-auto-columns:88px!important;grid-template-rows:1fr!important;overflow-x:auto!important;overscroll-behavior-x:contain;gap:5px!important;padding-bottom:4px}
+ .sideNav{position:relative;top:auto;padding:8px;border-radius:16px;max-height:none!important;overflow-y:visible!important}
+ .sideNavTitle{display:none}
+ .navBtn{height:62px!important;min-height:62px!important;padding:6px 3px!important;border-radius:10px!important}
+ .navBtn .left{flex-direction:column!important;gap:4px!important}
+ .navBtn .icon{width:23px!important;height:23px!important}
+ .navBtn .title{display:-webkit-box!important;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:10.5px!important;line-height:1.3;white-space:normal!important;text-align:center}
+ .navBtn .hint,.navBtn>span:last-child,.navBtn br{display:none!important}
+}
+@media(max-width:620px){
+ .section:not(#view-home){padding:18px}
+ .sectionHeader{margin-bottom:18px}
+ .sectionHeader h2{font-size:21px}
+ .topbar{padding:10px;border-radius:16px;gap:8px}
+ .logoWrap{width:40px;height:40px;border-radius:12px}
+ .brandText b{font-size:16px}
+ .brandText span{font-size:10px}
+ .actions .btn{min-height:36px;padding:8px 10px;font-size:11px}
+ .controls{padding:10px}
+ .weatherDetailHero,.weatherDetailSection{padding:18px}
+ #view-home .homeDashboardWidgets .widget{padding:10px}
+ #view-home .widgetHead b{font-size:12px}
+ .modalHead,.modalBody,.modalFoot{padding:16px}
+}
+
 </style>
 </head>
 
@@ -5951,7 +6073,7 @@ function fitHomeWidgets(){
   const hero=panel?.querySelector(".homeDashboardHero");
   const widgets=panel?.querySelector(".homeDashboardWidgets");
   if(!panel||!hero||!widgets||!panel.classList.contains("active"))return;
-  const top=widgets.getBoundingClientRect().top;
+  const top=widgets.getBoundingClientRect().top+window.scrollY;
   const ad=panel.querySelector("#ad-home"),mobileAd=panel.querySelector("#ad-home-mobile");
   const ads=[ad,mobileAd].filter(el=>el&&el.getBoundingClientRect().height>0);
   const adHeight=ads.reduce((total,el)=>total+el.getBoundingClientRect().height+16,0);
