@@ -2300,6 +2300,49 @@ body::before{display:none}
 #view-home .homeDashboardWidgets{border:0;background:transparent;box-shadow:none;padding:0!important;max-height:none!important;overflow:visible!important}
 @media(min-width:761px){.navBtn{min-height:58px;padding:9px 11px}}
 @media(max-width:560px){#view-home .homeDashboardTitle{font-size:20px!important}#view-home .homeDashboardHero{padding:18px!important}}
+
+/* Home widgets fit the visible screen; long content scrolls inside its card. */
+#view-home .homeDashboard{gap:12px!important}
+#view-home .homeDashboardHero{padding:14px 18px!important}
+#view-home .homeDashboardTitle{font-size:21px!important;margin-top:6px!important}
+#view-home .homeDashboardMessage{margin-top:4px!important}
+#view-home .homeDashboardWidgets{
+ height:var(--home-fit-height,calc(100dvh - 350px))!important;
+ max-height:var(--home-fit-height,calc(100dvh - 350px))!important;
+ grid-template-columns:minmax(0,1.25fr) repeat(2,minmax(0,1fr))!important;
+ grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(70px,.65fr)!important;
+ gap:10px!important;overflow:hidden!important;
+}
+#view-home .homeDashboardWidgets .widget{min-height:0!important;height:100%!important;min-width:0!important;aspect-ratio:auto!important;display:flex!important;flex-direction:column!important;overflow:hidden!important}
+#view-home .homeDashboardWidgets .widgetHead{flex-shrink:0;gap:6px}
+#view-home .homeDashboardWidgets .widgetBody{flex:1;min-height:0!important;max-height:none!important;overflow:auto!important}
+#view-home #homeMealBody{min-height:0!important;max-height:none!important;overflow:auto!important}
+#view-home .widget[data-home-widget="meal"]{grid-column:1!important;grid-row:1 / 3!important}
+#view-home .widget[data-home-widget="weather"]{grid-column:2 / 4!important;grid-row:1!important}
+#view-home .widget[data-home-widget="schedule"]{grid-column:2!important;grid-row:2!important}
+#view-home .widget[data-home-widget="timetable"]{grid-column:3!important;grid-row:2!important}
+#view-home .widget[data-home-widget="dday"]{grid-column:1 / -1!important;grid-row:3!important}
+#view-home .ddayList{grid-template-columns:repeat(auto-fit,minmax(180px,1fr))!important}
+#view-home .homeMealMore summary{position:sticky;top:0;background:var(--card);z-index:1}
+body.home-view .sideNav{max-height:calc(100dvh - 110px);overflow-y:auto;scrollbar-width:thin}
+@media(max-width:760px){
+ .navGrid{grid-template-columns:none!important;grid-auto-flow:column!important;grid-auto-columns:88px!important;grid-template-rows:1fr!important;overflow-x:auto!important;overscroll-behavior-x:contain;padding-bottom:4px!important}
+ .navBtn{height:62px!important;min-height:62px!important}
+ body.home-view .sideNav{max-height:none;overflow-y:visible}
+ #view-home .homeDashboardWidgets{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr)!important;grid-template-rows:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(70px,.75fr)!important}
+ #view-home .widget[data-home-widget="meal"]{grid-column:1!important;grid-row:1 / 4!important}
+ #view-home .widget[data-home-widget="weather"]{grid-column:2!important;grid-row:1!important}
+ #view-home .widget[data-home-widget="schedule"]{grid-column:2!important;grid-row:2!important}
+ #view-home .widget[data-home-widget="timetable"]{grid-column:2!important;grid-row:3!important}
+ #view-home .widget[data-home-widget="dday"]{grid-column:1 / -1!important;grid-row:4!important}
+ #view-home .homeDashboardTitle{font-size:17px!important}
+ #view-home .homeDashboardHero .kicker{display:none}
+ #view-home .homeDashboardMessage{font-size:12px!important}
+ #view-home .widgetHead b{font-size:12px}
+ #view-home .widgetHead .pill{font-size:10px;padding:4px 6px}
+ #view-home .widgetBody{font-size:12px}
+}
+@media(max-height:700px){#view-home .homeDashboardMessage,#view-home .homeDashboardHero .kicker{display:none}#view-home .homeDashboardHero{padding:10px 14px!important}}
 </style>
 </head>
 
@@ -5162,6 +5205,7 @@ function ttRenderTable(){
     homeRenderTodayTimetable();
   }));
   homeRenderTodayTimetable();
+  requestAnimationFrame(fitHomeWidgets);
 }
 function homeRenderTodayTimetable(){
   const store = ttLoad();
@@ -5892,6 +5936,37 @@ function initGlobalSearch(){
 }
 
 
+
+function handleHomeMealToggle(details){
+  if(!details.open)return;
+  requestAnimationFrame(()=>{
+    const box=document.getElementById("homeMealBody");
+    if(!box||!details.isConnected)return;
+    const top=box.scrollTop+details.getBoundingClientRect().top-box.getBoundingClientRect().top-8;
+    box.scrollTo({top:Math.max(0,top),behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth"});
+  });
+}
+function fitHomeWidgets(){
+  const panel=document.getElementById("view-home");
+  const hero=panel?.querySelector(".homeDashboardHero");
+  const widgets=panel?.querySelector(".homeDashboardWidgets");
+  if(!panel||!hero||!widgets||!panel.classList.contains("active"))return;
+  const top=widgets.getBoundingClientRect().top;
+  const ad=panel.querySelector("#ad-home"),mobileAd=panel.querySelector("#ad-home-mobile");
+  const ads=[ad,mobileAd].filter(el=>el&&el.getBoundingClientRect().height>0);
+  const adHeight=ads.reduce((total,el)=>total+el.getBoundingClientRect().height+16,0);
+  const available=window.innerHeight-top-24;
+  // Keep all widgets above the fold; reserve space for the banner when the screen permits it.
+  const budget=available-adHeight>=280?available-adHeight:available;
+  widgets.style.setProperty("--home-fit-height",Math.max(180,Math.floor(budget))+"px");
+}
+window.addEventListener("load",()=>{
+  fitHomeWidgets();
+  const targets=[document.querySelector(".topbar"),document.querySelector(".sideNav"),document.querySelector(".homeDashboardHero"),document.querySelector("#ad-home"),document.querySelector("#ad-home-mobile")].filter(Boolean);
+  if("ResizeObserver" in window){const observer=new ResizeObserver(fitHomeWidgets);targets.forEach(el=>observer.observe(el));}
+});
+window.addEventListener("resize",fitHomeWidgets);
+
 function homeMealPeriod(){
   const hour=Number(new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Seoul",hour:"2-digit",hourCycle:"h23"}).format(new Date()));
   return hour<10?"조식":hour<15?"중식":"석식";
@@ -5902,7 +5977,7 @@ function renderHomeMealOverview(meals){
   const featured=meals.find(meal=>String(meal.type).includes(preferred))||meals[0];
   const render=meal=>'<div class="homeMealBlock"><b>'+escapeHtml(meal.type)+'</b><ul>'+meal.menu.map(renderMenuItem).join("")+'</ul></div>';
   const others=meals.filter(meal=>meal!==featured);
-  return '<div class="homeMealEyebrow">지금 확인할 급식</div>'+render(featured)+(others.length?'<details class="homeMealMore"><summary>다른 식사 '+others.length+'개 보기</summary>'+others.map(render).join("")+'</details>':"");
+  return '<div class="homeMealEyebrow">지금 확인할 급식</div>'+render(featured)+(others.length?'<details class="homeMealMore" ontoggle="handleHomeMealToggle(this)"><summary>다른 식사 '+others.length+'개 보기</summary>'+others.map(render).join("")+'</details>':"");
 }
 
 async function renderHomeWidgets(){
