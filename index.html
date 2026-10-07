@@ -2236,6 +2236,10 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pr
 .evalPlanNotice{font-size:12px;color:var(--muted);line-height:1.7;margin:14px 0 8px;}
 .evalPlanAttribution{font-size:10px;color:var(--muted);opacity:.65;line-height:1.6;overflow-wrap:anywhere;word-break:normal;margin:8px 0 0;}
 @media(max-width:600px){.evalPlanFrame{height:65vh;min-height:360px}.evalPlanOpen{margin-left:0}}
+.ddayAutoOptions{display:grid;gap:14px;padding:16px;margin-bottom:16px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+.ddayAutoOptions label{display:flex;align-items:center;justify-content:space-between;gap:14px;cursor:pointer}
+.ddayAutoOptions b{font-size:14px}.ddayAutoOptions small{display:block;color:var(--muted);font-size:12px;line-height:1.5;margin-top:4px}
+.ddayAutoOptions input{flex:0 0 auto;width:20px;height:20px;accent-color:var(--pri)}
 </style>
 </head>
 
@@ -2618,6 +2622,10 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pr
       <button class="btn ghost" type="button" onclick="closeDdaySettings()">닫기</button>
     </div>
     <div class="modalBody">
+      <div class="ddayAutoOptions">
+        <label><span><b>자동 추천</b><small>가장 가까운 귀가·수능·시험을 하나씩 표시해요.</small></span><input type="checkbox" role="switch" id="ddayAutoToggle" onchange="setDdayAuto(this.checked)"></label>
+        <label><span><b>지난 디데이 자동 삭제</b><small>당일은 유지하고, 다음 날부터 저장한 일정도 삭제해요.</small></span><input type="checkbox" role="switch" id="ddayExpireToggle" onchange="setDdayExpire(this.checked)"></label>
+      </div>
       <div class="ddaySettingsTabs">
         <button class="tabBtn" type="button" data-dday-tab="manage" aria-selected="true" onclick="showDdaySettingsTab('manage')">수정·삭제</button>
         <button class="tabBtn" type="button" data-dday-tab="custom" aria-selected="false" onclick="showDdaySettingsTab('custom')">직접 추가</button>
@@ -5434,10 +5442,95 @@ async function renderWeatherDetail(force = false){
 
 const DDAY_KEY = "opoong_ddays_v1";
 let ddayScheduleCache = [];
+
+const DDAY_AUTO_KEY = "opoong_dday_auto_v1";
+const DDAY_EXPIRE_KEY = "opoong_dday_expire_v1";
+const DDAY_AUTO_CACHE_KEY = "opoong_dday_auto_cache_v1";
+let ddayAutoItems = [];
+let ddayAutoLoading = false;
+let ddayAutoFetchedAt = 0;
+let ddayLastDate = "";
+function ddayToday(){
+  const parts = new Intl.DateTimeFormat("en-US",{timeZone:"Asia/Seoul",year:"numeric",month:"2-digit",day:"2-digit"}).formatToParts(new Date());
+  const get=type=>parts.find(p=>p.type===type).value;
+  return get("year")+"-"+get("month")+"-"+get("day");
+}
+function ddayAutoEnabled(){try{return localStorage.getItem(DDAY_AUTO_KEY)==="1";}catch{return false;}}
+function ddayExpireEnabled(){try{return localStorage.getItem(DDAY_EXPIRE_KEY)!=="0";}catch{return true;}}
+function syncDdayOptions(){
+  const auto=$("#ddayAutoToggle"),expire=$("#ddayExpireToggle");
+  if(auto) auto.checked=ddayAutoEnabled();
+  if(expire) expire.checked=ddayExpireEnabled();
+}
+function setDdayAuto(enabled){
+  try{localStorage.setItem(DDAY_AUTO_KEY,enabled?"1":"0");}catch{}
+  renderDdayWidget();
+  if(enabled) refreshAutoDdays(true);
+}
+function setDdayExpire(enabled){
+  try{localStorage.setItem(DDAY_EXPIRE_KEY,enabled?"1":"0");}catch{}
+  renderDdayWidget();renderDdaySettingsList();
+}
+function nearestAutoDdays(rows,today){
+  const grouped=new Map();
+  rows.sort((a,b)=>a.date.localeCompare(b.date)).forEach(item=>{
+    const title=String(item.title||"").trim();
+    if(!title || !/^\d{4}-\d{2}-\d{2}$/.test(item.date))return;
+    const category=/대학수학능력시험|수능/.test(title)&&!/모의/.test(title)?"수능":/귀가/.test(title)?"귀가":/고사|시험|학력평가|모의평가/.test(title)?"시험":"";
+    if(!category)return;
+    const key=item.seq ? category+"|"+item.seq : category+"|"+title+"|"+item.date;
+    if(!grouped.has(key))grouped.set(key,{title,date:item.date,category,auto:true});
+  });
+  const future=[...grouped.values()].filter(item=>item.date>=today).sort((a,b)=>a.date.localeCompare(b.date));
+  return ["귀가","수능","시험"].map(category=>future.find(item=>item.category===category)).filter(Boolean);
+}
+async function refreshAutoDdays(force=false){
+  if(!ddayAutoEnabled()||ddayAutoLoading)return;
+  const today=ddayToday();
+  if(!force&&ddayAutoFetchedAt&&Date.now()-ddayAutoFetchedAt<3600000&&ddayLastDate===today)return;
+  ddayAutoLoading=true;ddayLastDate=today;renderDdayWidget();
+  try{
+    const months=Array.from({length:13},(_,i)=>{
+      const d=new Date(today+"T00:00:00Z");d.setUTCDate(1);d.setUTCMonth(d.getUTCMonth()+i-1);
+      return String(d.getUTCFullYear())+String(d.getUTCMonth()+1).padStart(2,"0");
+    });
+    const results=await Promise.allSettled(months.map(fetchScheduleMonthProxy));
+    const rows=[];
+    results.forEach(result=>{
+      if(result.status==="fulfilled")Object.entries(result.value).forEach(([date,items])=>(items||[]).forEach(item=>rows.push({date,title:String(item.title||item),seq:item.seq})));
+    });
+    // Officially announced dates; do not calculate unannounced future dates.
+    [{title:"2027학년도 수능",date:"2026-11-19"},{title:"2028학년도 수능",date:"2027-11-18"}].forEach(item=>{
+      if(!rows.some(row=>row.date===item.date&&/대학수학능력시험|수능/.test(row.title)&&!/모의/.test(row.title)))rows.push(item);
+    });
+    if(!results.some(result=>result.status==="fulfilled"))throw new Error("schedule unavailable");
+    ddayAutoItems=nearestAutoDdays(rows,today);ddayAutoFetchedAt=Date.now();
+    try{localStorage.setItem(DDAY_AUTO_CACHE_KEY,JSON.stringify({items:ddayAutoItems,updatedAt:ddayAutoFetchedAt}));}catch{}
+  }catch{
+    try{
+      const cache=JSON.parse(localStorage.getItem(DDAY_AUTO_CACHE_KEY)||"null");
+      if(cache&&Array.isArray(cache.items))ddayAutoItems=cache.items.filter(item=>item.date>=today);
+    }catch{}
+  }finally{ddayAutoLoading=false;renderDdayWidget();}
+}
+function initAutoDdays(){
+  syncDdayOptions();renderDdayWidget();refreshAutoDdays();
+  ddayLastDate=ddayToday();
+}
+window.addEventListener("load",initAutoDdays);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden)initAutoDdays();});
+window.setInterval(()=>{
+  if(document.hidden)return;
+  if(ddayLastDate!==ddayToday()){ddayLastDate=ddayToday();renderDdayWidget();renderDdaySettingsList();refreshAutoDdays(true);}
+},60000);
+
 function loadDdays(){
   try{
     const data = JSON.parse(localStorage.getItem(DDAY_KEY) || "[]");
-    return Array.isArray(data) ? data.filter(x=>x && x.title && /^\d{4}-\d{2}-\d{2}$/.test(x.date)) : [];
+    const valid = Array.isArray(data) ? data.filter(x=>x && x.title && /^\d{4}-\d{2}-\d{2}$/.test(x.date)) : [];
+    const items = ddayExpireEnabled() ? valid.filter(x=>x.date>=ddayToday()) : valid;
+    if(items.length!==valid.length)localStorage.setItem(DDAY_KEY,JSON.stringify(items));
+    return items;
   }catch{return []}
 }
 function saveDdays(items){
@@ -5445,27 +5538,24 @@ function saveDdays(items){
   renderDdayWidget();
 }
 function ddayValue(dateStr){
-  const today = new Date();
-  const start = new Date(today.getFullYear(),today.getMonth(),today.getDate());
-  const parts = dateStr.split("-").map(Number);
-  const target = new Date(parts[0],parts[1]-1,parts[2]);
-  return Math.round((target-start)/86400000);
+  return Math.round((Date.parse(dateStr+"T00:00:00Z")-Date.parse(ddayToday()+"T00:00:00Z"))/86400000);
 }
 function ddayLabel(dateStr){
   const days = ddayValue(dateStr);
   return days === 0 ? "D-DAY" : days > 0 ? "D-" + days : "D+" + Math.abs(days);
 }
 function renderDdayWidget(){
-  const body = $("#homeDdayBody");
-  const status = $("#homeDdayStatus");
-  if(!body || !status) return;
-  const items = loadDdays().sort((a,b)=>a.date.localeCompare(b.date));
-  status.textContent = "저장 " + items.length + "개";
-  body.innerHTML = items.length ? '<div class="ddayList">' + items.map(item=>`
+  const body=$("#homeDdayBody"),status=$("#homeDdayStatus");
+  if(!body||!status)return;
+  const saved=loadDdays();
+  const auto=ddayAutoEnabled()?ddayAutoItems.filter(item=>item.date>=ddayToday()):[];
+  const items=saved.concat(auto.filter(item=>!saved.some(x=>x.title===item.title&&x.date===item.date))).sort((a,b)=>a.date.localeCompare(b.date));
+  status.textContent="저장 "+saved.length+"개"+(ddayAutoEnabled()?" · 자동 "+auto.length+"개":"");
+  body.innerHTML=items.length?'<div class="ddayList">'+items.map(item=>`
     <div class="ddayItem">
-      <div class="ddayItemText"><b>${escapeHtml(item.title)}</b><span>${escapeHtml(item.date)}</span></div>
+      <div class="ddayItemText"><b>${escapeHtml(item.title)}</b><span>${escapeHtml(item.date)}${item.auto?" · 자동 추천":""}</span></div>
       <div class="ddayCount">${ddayLabel(item.date)}</div>
-    </div>`).join("") + "</div>" : '<div class="muted">아직 저장한 D-DAY가 없어요. 톱니바퀴를 눌러 추가해 보세요.</div>';
+    </div>`).join("")+"</div>":'<div class="muted">'+(ddayAutoEnabled()?(ddayAutoLoading?"가까운 일정을 불러오는 중…":"현재 추천할 일정을 찾지 못했어요. 잠시 후 다시 확인해 주세요."):"아직 저장한 D-DAY가 없어요. 톱니바퀴를 눌러 추가하거나 자동 추천을 켜 보세요.")+"</div>";
 }
 function removeDday(sortedIndex){
   const sorted = loadDdays().sort((a,b)=>a.date.localeCompare(b.date));
@@ -5480,6 +5570,7 @@ function openDdaySettings(){
   if(!back) return;
   back.style.display = "flex";
   back.setAttribute("aria-hidden","false");
+  syncDdayOptions();
   showDdaySettingsTab("manage");
   renderDdaySettingsList();
 }
