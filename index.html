@@ -2497,6 +2497,7 @@ html[data-shop-season="christmas"]{--bg:#f0fdf4;--bg2:#fef2f2;--pri:#166534;--pr
           <button class="goHomePressBtn" id="goHomePressBtn" type="button" onclick="addGoHomeCount()">집가고 싶어요</button>
           <p class="goHomeLocalNote">횟수는 서버로 전송하지 않고 현재 브라우저의 로컬 저장소에만 저장됩니다.</p>
         </div>
+        <div class="adfitWrap" id="ad-gohome" aria-label="광고" style="margin-top:32px"></div>
       </section>
 
       <section class="section view" id="view-onway">
@@ -4186,6 +4187,7 @@ function go(view){
    핵심: 숨겨진 section 안에 미리 <ins>를 넣지 않고,
    화면이 열린 뒤 광고 영역을 새로 만들고 ba.min.js를 다시 실행합니다. */
 const KAKAO_ADS = {
+  gohome: { unit: "DAN-rJlK5gWdIDLwSy9f", width: 320, height: 100, container: "ad-gohome" },
   homeDesktop: { unit: "DAN-QDvR0fxl5ri9KE4D", width: 728, height: 90, container: "ad-home" },
   homeMobile: { unit: "DAN-ps0PRxwqtGCGkBq2", width: 320, height: 50, container: "ad-home-mobile" },
   meal: { unit: "DAN-ldKVhVTYzKi5pUti", width: 320, height: 50, container: "ad-meal" },
@@ -4214,7 +4216,7 @@ function mountKakaoAd(ad){
 }
 
 function clearKakaoAdBoxes(){
-  ["ad-home","ad-home-mobile","ad-meal","ad-onway"].forEach(id=>{
+  ["ad-home","ad-home-mobile","ad-meal","ad-onway","ad-gohome"].forEach(id=>{
     const box = document.getElementById(id);
     if(box) box.innerHTML = "";
   });
@@ -4229,6 +4231,7 @@ function loadKakaoAdsForView(view){
       const isMobile = window.matchMedia("(max-width:760px)").matches;
       mountKakaoAd(isMobile ? KAKAO_ADS.homeMobile : KAKAO_ADS.homeDesktop);
     }
+    if(view === "gohome" && document.getElementById("view-gohome").classList.contains("active")) mountKakaoAd(KAKAO_ADS.gohome);
     if(view === "meal") mountKakaoAd(KAKAO_ADS.meal);
     if(view === "onway") mountKakaoAd(KAKAO_ADS.onway);
   }, 180);
