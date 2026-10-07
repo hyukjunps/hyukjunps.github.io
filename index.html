@@ -2492,6 +2492,31 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--pri)}
  #view-home .ddayCount{font-size:17px!important}
 }
 
+
+/* O.Poong 2.0: one-time introduction and user-initiated sharing. */
+.releaseBack[hidden]{display:none!important}
+.releaseBack{position:fixed;inset:0;z-index:260;display:grid;place-items:center;padding:20px;background:rgba(15,23,42,.48)}
+.releaseCard{width:min(620px,100%);max-height:calc(100dvh - 40px);overflow:auto;border:1px solid var(--line);border-radius:24px;background:var(--card);color:var(--text);box-shadow:0 24px 80px rgba(0,0,0,.2);padding:28px;position:relative}
+.releaseBadge{display:inline-block;padding:6px 10px;border-radius:8px;color:var(--pri);background:color-mix(in srgb,var(--pri) 8%,var(--card));font-size:11px;font-weight:600;letter-spacing:.6px}
+.releaseClose{position:absolute;right:18px;top:18px;width:36px;height:36px;min-height:36px;padding:0;font-size:20px}
+.releaseCard h2{margin:16px 0 10px;font-size:30px;font-weight:650;letter-spacing:-1px;line-height:1.3}
+.releaseLead{margin:0 0 22px;color:var(--muted);font-size:14px;line-height:1.7}
+.releaseFeatures{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0;padding:0;list-style:none}
+.releaseFeatures li{padding:14px;border-radius:12px;background:var(--card2);border:1px solid var(--line)}
+.releaseFeatures b{display:block;margin-bottom:5px;font-size:13px;font-weight:600}
+.releaseFeatures span{display:block;color:var(--muted);font-size:12px;line-height:1.6}
+.releaseFeatures .releaseAccent{border-color:color-mix(in srgb,var(--pri) 20%,var(--line))}
+.releaseActions{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:22px}
+.releaseActions .btn{min-height:46px}
+.releaseNote{margin:12px 0 0;color:var(--muted);font-size:11px;line-height:1.6;text-align:center}
+.releaseShareStatus{min-height:18px;margin:8px 0 0;color:var(--pri);font-size:12px;text-align:center}
+.shareFallback[hidden]{display:none!important}
+.shareFallback{display:grid;gap:8px;margin-top:12px;font-size:12px;color:var(--muted)}
+.shareFallback input{width:100%;min-width:0}
+.siteShareToast[hidden]{display:none!important}
+.siteShareToast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:270;max-width:calc(100vw - 32px);padding:14px 18px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);box-shadow:var(--shadow);font-size:13px;line-height:1.6}
+@media(max-width:520px){.releaseBack{padding:12px}.releaseCard{padding:22px 18px;max-height:calc(100dvh - 24px);border-radius:20px}.releaseCard h2{font-size:25px}.releaseFeatures{gap:8px}.releaseFeatures li{padding:12px}.releaseActions{grid-template-columns:1fr}.releaseLead{font-size:13px;margin-bottom:16px}}
+
 </style>
 </head>
 
@@ -2537,6 +2562,7 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--pri)}
     <div class="actions">
       <button id="globalSearchButton" class="btn ghost topSearchBtn" type="button" onclick="openGlobalSearch()" aria-label="통합 검색"><span aria-hidden="true">⌕</span><span class="topSearchLabel">검색</span></button>
       <div id="userBadge" class="userBadge">사용자</div>
+      <button class="btn ghost" type="button" onclick="shareOpoong()" aria-label="친구에게 공유하기">공유</button>
       <button id="btnInstallTop" class="btn ok" type="button">앱 설치</button>
       <button class="btn ghost" type="button" onclick="startFirstSetup()" aria-label="맞춤 설정">맞춤 설정</button>
         <button id="btnLight" class="btn ghost" type="button">라이트</button>
@@ -2859,6 +2885,7 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--pri)}
     <b style="color:var(--text)">O.Poong</b> ㅣ 풍산고 생활, 한 화면에서.<br>
     본 사이트는 풍산고 학생 생활 편의를 위한 비공식 웹앱입니다. 공식 정보는 학교 홈페이지와 NEIS 자료를 함께 확인해 주세요.
     <div class="footerLinks">
+      <button class="btn ghost" type="button" onclick="openReleaseIntro(true)">2.0 새 소식</button>
       <button class="btn ghost" type="button" onclick="go('policy')">개인정보 안내</button>
       <button class="btn ghost" type="button" onclick="go('about')">서비스 소개</button>
       <button class="btn ghost" type="button" onclick="openSchoolHome()">학교 홈페이지</button>
@@ -6203,6 +6230,84 @@ function adminSetPoints(){const amount=readAdminPointAmount();if(amount!==null)a
 function adminClearPoints(){if(confirm("포인트를 모두 0P로 초기화할까요? 구매 상품과 기록은 유지됩니다."))adminCommitPoints(0,"관리자 초기화 완료");}
 function initAdminPointMode(){const logo=document.getElementById("adminLogoTrigger");if(!logo)return;logo.addEventListener("click",handleAdminLogoTap);logo.addEventListener("keydown",function(e){if(e.key==="Enter"||e.key===" "){e.preventDefault();handleAdminLogoTap();}});const back=document.getElementById("adminPointBack");if(back)back.addEventListener("click",function(e){if(e.target===back)closeAdminPointMode();});}
 
+</script>
+
+<div id="releaseIntroBack" class="releaseBack" role="dialog" aria-modal="true" aria-labelledby="releaseIntroTitle" aria-describedby="releaseIntroLead" hidden>
+  <section class="releaseCard">
+    <button class="btn ghost releaseClose" type="button" onclick="closeReleaseIntro()" aria-label="2.0 소개 닫기">×</button>
+    <span class="releaseBadge">WHAT’S NEW · 2.0</span>
+    <h2 id="releaseIntroTitle">O.Poong 2.0 출시</h2>
+    <p id="releaseIntroLead" class="releaseLead">풍산고 생활, 한 화면에서.<br>더 깔끔해진 오풍에서 필요한 정보를 빠르게 확인해 보세요.</p>
+    <ul class="releaseFeatures">
+      <li><b>오늘의 급식</b><span>조식·중식·석식과 알레르기, 좋아하는 음식을 확인해요.</span></li>
+      <li><b>날씨와 학사일정</b><span>풍산고 날씨와 월별 학교 일정을 한곳에서 확인해요.</span></li>
+      <li><b>나만의 시간표</b><span>시간표를 입력하고 홈에서 오늘 수업을 확인해요.</span></li>
+      <li class="releaseAccent"><b>D-DAY 자동 추천</b><span>가장 가까운 귀가·시험·수능을 표시하고 지난 일정은 정리해요.</span></li>
+      <li class="releaseAccent"><b>집가고 싶어요</b><span>누를 때마다 1씩! 이 기기에 마음을 차곡차곡 쌓아요.</span></li>
+      <li class="releaseAccent"><b>교수·학습 및 평가계획</b><span>2026학년도 2학기 학년별 PDF를 확인해요.</span></li>
+    </ul>
+    <div class="releaseActions">
+      <button class="btn primary" type="button" onclick="closeReleaseIntro()">알겠어요, 시작하기</button>
+      <button class="btn ghost" type="button" onclick="shareOpoong()">친구에게 공유하기</button>
+    </div>
+    <p class="releaseNote">닫으면 이 브라우저에서는 다시 자동으로 나타나지 않아요.</p>
+    <p id="releaseShareStatus" class="releaseShareStatus" role="status" aria-live="polite"></p>
+    <label id="releaseShareFallback" class="shareFallback" hidden>링크를 복사해 친구에게 보내 주세요.<input type="text" readonly value="https://hyukjunps.github.io/" aria-label="O.Poong 공유 링크" onclick="this.select()"></label>
+  </section>
+</div>
+<div id="siteShareToast" class="siteShareToast" role="status" aria-live="polite" hidden><span id="siteShareMessage"></span><label id="siteShareFallback" class="shareFallback" hidden>링크를 복사해 친구에게 보내 주세요.<input type="text" readonly value="https://hyukjunps.github.io/" aria-label="친구에게 보낼 O.Poong 링크" onclick="this.select()"></label></div>
+
+<script>
+const OPOONG_RELEASE_SEEN_KEY='opoong_release_seen_2_0';
+const OPOONG_SHARE_URL='https://hyukjunps.github.io/';
+let releaseIntroDismissed=false,releaseIntroPreviousFocus=null,releaseIntroPreviousOverflow='',siteShareToastTimer;
+function hasSeenReleaseIntro(){try{return localStorage.getItem(OPOONG_RELEASE_SEEN_KEY)==='1';}catch{return releaseIntroDismissed;}}
+function openReleaseIntro(manual=false){
+  const back=document.getElementById('releaseIntroBack');
+  if(!back||(!manual&&(releaseIntroDismissed||hasSeenReleaseIntro())))return;
+  if(!back.hidden)return;
+  releaseIntroPreviousFocus=document.activeElement;releaseIntroPreviousOverflow=document.body.style.overflow;
+  back.hidden=false;document.body.style.overflow='hidden';
+  document.getElementById('releaseShareStatus').textContent='';
+  document.getElementById('releaseShareFallback').hidden=true;
+  back.querySelector('.releaseActions button').focus({preventScroll:true});
+}
+function closeReleaseIntro(){
+  const back=document.getElementById('releaseIntroBack');if(!back||back.hidden)return;
+  releaseIntroDismissed=true;try{localStorage.setItem(OPOONG_RELEASE_SEEN_KEY,'1');}catch{}
+  back.hidden=true;document.body.style.overflow=releaseIntroPreviousOverflow;
+  const target=releaseIntroPreviousFocus;
+  if(target&&target.isConnected&&target.getClientRects().length)target.focus({preventScroll:true});
+  else (document.body.classList.contains('setup-pending')?document.getElementById('firstStartBtn'):document.getElementById('globalSearchButton'))?.focus({preventScroll:true});
+}
+function showOpoongShareStatus(message,manualCopy=false){
+  const inIntro=!document.getElementById('releaseIntroBack').hidden;
+  document.getElementById(inIntro?'releaseShareStatus':'siteShareMessage').textContent=message;
+  const fallback=document.getElementById(inIntro?'releaseShareFallback':'siteShareFallback');fallback.hidden=!manualCopy;
+  if(!inIntro){const toast=document.getElementById('siteShareToast');toast.hidden=false;clearTimeout(siteShareToastTimer);if(!manualCopy)siteShareToastTimer=setTimeout(()=>{toast.hidden=true;},4500);}
+  if(manualCopy){const input=fallback.querySelector('input');input.focus({preventScroll:true});input.select();}
+}
+async function shareOpoong(){
+  const data={title:'O.Poong 2.0',text:'풍산고 생활, 한 화면에서. 급식·날씨·학사일정·시간표와 D-DAY까지 O.Poong에서 확인해 봐!',url:OPOONG_SHARE_URL};
+  if(typeof navigator.share==='function'){try{await navigator.share(data);showOpoongShareStatus('공유를 완료했어요.');return;}catch(error){if(error?.name==='AbortError')return;}}
+  try{if(!navigator.clipboard?.writeText)throw new Error('clipboard unavailable');await navigator.clipboard.writeText(OPOONG_SHARE_URL);showOpoongShareStatus('링크를 복사했어요. 친구에게 붙여넣어 보내 주세요.');}
+  catch{showOpoongShareStatus('아래 링크를 복사해 공유할 수 있어요.',true);}
+}
+window.addEventListener('load',()=>{
+  const back=document.getElementById('releaseIntroBack');
+  back.addEventListener('click',event=>{if(event.target===back)closeReleaseIntro();});
+  document.addEventListener('keydown',event=>{
+    if(back.hidden)return;
+    if(event.key==='Escape'){event.preventDefault();event.stopImmediatePropagation();closeReleaseIntro();return;}
+    if(event.key!=='Tab')return;
+    const controls=[...back.querySelectorAll('button,input')].filter(el=>!el.disabled&&el.getClientRects().length);
+    const first=controls[0],last=controls[controls.length-1];
+    if(event.shiftKey&&document.activeElement===first){event.preventDefault();last.focus();}
+    else if(!event.shiftKey&&document.activeElement===last){event.preventDefault();first.focus();}
+  },true);
+  // Existing welcome/setup remains intact behind this release introduction.
+  requestAnimationFrame(()=>openReleaseIntro());
+});
 </script>
 </body>
 </html>
