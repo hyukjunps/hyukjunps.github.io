@@ -2291,6 +2291,15 @@ body::before{display:none}
  html{scroll-behavior:auto}
  *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}
 }
+
+/* Wider home introduction after visual review */
+#view-home .homeDashboard{grid-template-columns:minmax(0,1fr)!important}
+#view-home .homeDashboardHero{min-height:0!important;padding:20px 22px!important}
+#view-home .homeDashboardTitle{max-width:none!important;font-size:24px!important;line-height:1.4!important;margin-top:10px!important}
+#view-home .homeDashboardMessage{max-width:none!important;margin-top:8px!important;font-size:14px!important;font-weight:450!important}
+#view-home .homeDashboardWidgets{border:0;background:transparent;box-shadow:none;padding:0!important;max-height:none!important;overflow:visible!important}
+@media(min-width:761px){.navBtn{min-height:58px;padding:9px 11px}}
+@media(max-width:560px){#view-home .homeDashboardTitle{font-size:20px!important}#view-home .homeDashboardHero{padding:18px!important}}
 </style>
 </head>
 
