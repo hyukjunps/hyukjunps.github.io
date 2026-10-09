@@ -2861,8 +2861,8 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
           <div class="japanHeroMeta"><span class="pill">10.26 월 – 10.29 목</span><span class="pill">학생 98명 · 인솔교사 10명 예정</span><span class="japanCountdown" id="japanCountdown"></span></div>
         </div>
         <div class="japanFlights" aria-label="왕복 항공 일정">
-          <div class="japanFlight"><div><small>10.26 월 · 출국</small><b>대구 TAE → 간사이 KIX</b></div><span>08:00 – 09:40<br>티웨이 TW311</span></div>
-          <div class="japanFlight"><div><small>10.29 목 · 귀국</small><b>간사이 KIX → 대구 TAE</b></div><span>19:20 – 21:05<br>티웨이 TW314</span></div>
+          <div class="japanFlight"><div><small>10.26 월 · 출국</small><b>대구 TAE → 간사이 KIX</b></div><span>08:00 – 09:40<br>트리니티항공 TW311</span></div>
+          <div class="japanFlight"><div><small>10.29 목 · 귀국</small><b>간사이 KIX → 대구 TAE</b></div><span>19:20 – 21:05<br>트리니티항공 TW314</span></div>
         </div>
         <div class="japanDayTabs" role="tablist" aria-label="일본 수학여행 날짜">
           <button class="japanDayTab" id="japanTab0" role="tab" aria-selected="true" aria-controls="japanDayPanel" tabindex="0" type="button" onclick="renderJapanTrip(0)"><b>10.26 월</b><span>1일차 · 오사카</span></button>
@@ -2871,7 +2871,7 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
           <button class="japanDayTab" id="japanTab3" role="tab" aria-selected="false" aria-controls="japanDayPanel" tabindex="-1" type="button" onclick="renderJapanTrip(3)"><b>10.29 목</b><span>4일차 · 귀국</span></button>
         </div>
         <div id="japanDayPanel" role="tabpanel" aria-labelledby="japanTab0" tabindex="0"></div>
-        <div class="japanSource"><p>자료 기준: (변경공고) 2026학년도 풍산고등학교 2학년 국외(일본) 수학여행 위탁용역 과업지시서, 1–3쪽.</p><p>항공 및 현지 상황에 따라 일정이 변경될 수 있습니다. 학교의 최종 안내를 우선 확인해 주세요. 숙소는 4성급 이상 호텔·2인 1실 기준이며, B팀 첫날은 홈스테이 일정입니다.</p><p class="japanDisclaimer">일정이 변경될 수 있으며, 변경되었을 경우, O.Poong에서 책임지지 않습니다.</p></div>
+        <div class="japanSource"><p class="japanDisclaimer">일정이 변경될 수 있으며, 변경되었을 경우, O.Poong에서 책임지지 않습니다.</p></div>
       </section>
 
       <section class="section view" id="view-evaluation">
@@ -6392,7 +6392,7 @@ const JAPAN_TRIP_DAYS=[
   {"date":"2026-10-26","label":"10.26 월","title":"오사카 도착 · 팀별 첫 일정","area":"대구 → 간사이 → 오사카·효고현","summary":"오전에는 함께 이동하고, 중식 이후 본진과 교류조가 나뉘어 활동해요.","meals":"조식 공항식 · 중식 현지식 · 석식 현지식 (B팀 가정식)","stay":"A팀: 4성급 호텔, 2인 1실 · B팀: 일본 가정 홈스테이 1박","rows":[
     {"time":"04:30–05:45","transport":"전용버스","title":"풍산고 출발 → 대구 국제공항","detail":"안동 풍산고등학교에서 출발해 대구 국제공항에 도착합니다."},
     {"time":"05:45–07:30","transport":"도보","title":"공항 집결 · 발권 · 조식","detail":"항공권 단체 발권, 위탁 수하물 접수 및 공항식 조식."},
-    {"time":"08:00–09:40","transport":"항공기 · TW311","title":"대구(TAE) → 간사이(KIX)","detail":"티웨이항공 · 대구 국제공항 08:00 출발, 간사이 국제공항 도착."},
+    {"time":"08:00–09:40","transport":"항공기 · TW311","title":"대구(TAE) → 간사이(KIX)","detail":"트리니티항공 · 대구 국제공항 08:00 출발, 간사이 국제공항 도착."},
     {"time":"09:40–12:10","transport":"전용버스","title":"입국 수속 → 오사카 시내 이동","detail":"간사이 공항 입국 수속 후 오사카 시내로 이동."},
     {"time":"12:10–13:40","transport":"도보","title":"전원 통합 중식","detail":"오사카 시내 대형 식당에서 단체 일식 정식."},
     {"time":"13:40–19:00","transport":"버스 · 도보","title":"팀별 분리 운영","groups":[
@@ -6428,7 +6428,7 @@ const JAPAN_TRIP_DAYS=[
     {"time":"12:30–14:00","transport":"도보","title":"덴포잔 마켓플레이스 인근 중식","detail":"인근 지정 식당에서 점심 식사."},
     {"time":"14:00–15:00","transport":"버스","title":"덴포잔 → 간사이 국제공항"},
     {"time":"15:00–19:20","transport":"도보","title":"출국 수속 · 면세구역 대기 · 석식","detail":"공항 출국 수속 및 면세구역 대기, 공항식 석식."},
-    {"time":"19:20–21:05","transport":"항공기 · TW314","title":"간사이(KIX) → 대구(TAE)","detail":"티웨이항공 · 간사이 공항 출발 후 대구 공항 도착."},
+    {"time":"19:20–21:05","transport":"항공기 · TW314","title":"간사이(KIX) → 대구(TAE)","detail":"트리니티항공 · 간사이 공항 출발 후 대구 공항 도착."},
     {"time":"21:05–23:30","transport":"항공기 · 버스 (원문)","title":"대구공항 입국 → 풍산고 도착","detail":"입국 수속 및 수하물 수취 후 국내 전세 버스 3대 탑승, 안동 풍산고등학교 최종 도착."}
   ]}
 ]
