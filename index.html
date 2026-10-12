@@ -2452,8 +2452,10 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--pri)}
 .footer{border-radius:18px;background:transparent;border-color:transparent;font-size:11px;font-weight:400;padding:18px 8px}
 .footerLinks .btn{font-size:11px;min-height:34px;padding:7px 10px;background:transparent}
 @media(max-width:960px){
- .navGrid{display:grid!important;grid-template-columns:none!important;grid-auto-flow:column!important;grid-auto-columns:88px!important;grid-template-rows:1fr!important;overflow-x:auto!important;overscroll-behavior-x:contain;gap:5px!important;padding-bottom:4px}
- .sideNav{position:relative;top:auto;padding:8px;border-radius:16px;max-height:none!important;overflow-y:visible!important}
+ /* Keep the menu inside the viewport so its own horizontal overflow can scroll. */
+ .layout{grid-template-columns:minmax(0,1fr)!important}
+ .navGrid{display:grid!important;grid-template-columns:none!important;grid-auto-flow:column!important;grid-auto-columns:88px!important;grid-template-rows:1fr!important;min-width:0;max-width:100%;width:100%!important;overflow:auto hidden!important;overscroll-behavior-x:contain;touch-action:auto;-webkit-overflow-scrolling:touch;gap:5px!important;padding-bottom:4px}
+ .sideNav{position:relative;top:auto;min-width:0;padding:8px;border-radius:16px;max-height:none!important;overflow:visible!important}
  .sideNavTitle{display:none}
  .navBtn{height:62px!important;min-height:62px!important;padding:6px 3px!important;border-radius:10px!important}
  .navBtn .left{flex-direction:column!important;gap:4px!important}
