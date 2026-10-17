@@ -2754,23 +2754,28 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
         <div class="sectionHeader">
           <div>
             <h2>급식</h2>
-            <p>날짜별 급식을 확인하고, 월별 표로도 볼 수 있어요.</p>
+            <p>날짜·요일·이번 주·월별 급식을 확인하고 한 번에 복사해요.</p>
           </div>
         </div>
         <div class="controls">
           <button class="smallbtn primary" type="button" onclick="moveDate(-1)">이전</button>
           <input type="date" id="date" aria-label="급식 조회 날짜" />
           <button class="smallbtn primary" type="button" onclick="moveDate(1)">다음</button>
-          <button class="smallbtn primary" type="button" onclick="onDay()">조회</button>
+          <button class="smallbtn primary" type="button" onclick="mealQuerySelected()">조회</button>
           <button class="smallbtn ghost" type="button" onclick="toggleMealMode()" id="btnMealMonth">월별 표</button>
-          <button class="smallbtn ghost" type="button" id="btnCopy">복사</button>
+          <button class="smallbtn ghost" type="button" onclick="mealThisWeek()">이번 주</button>
+          <button class="smallbtn ghost" type="button" id="btnCopy" disabled>하루 급식 복사</button>
         </div>
         <div class="controls" id="mealMonthControls" style="display:none;margin-top:12px">
           <span style="font-weight:1000">월 선택</span>
           <input type="month" id="mealMonth" aria-label="월별 급식 조회 월" />
           <button class="smallbtn primary" type="button" onclick="mealLoadMonth()">월별 조회</button>
         </div>
-        <div id="notice" class="notice">급식 조회가 준비되었습니다.</div>
+        <div id="mealWeekPicker" style="margin-top:12px">
+          <div class="muted" id="mealWeekLabel" style="margin-bottom:8px"></div>
+          <div class="tabBar" id="mealWeekDays" role="group" aria-label="요일별 급식 선택"></div>
+        </div>
+        <div id="notice" class="notice" role="status" aria-live="polite">급식 조회가 준비되었습니다.</div>
         <div class="notice">
           <b style="color:var(--text)">알레르기 번호 안내</b><br>
           1 난류 · 2 우유 · 3 메밀 · 4 땅콩 · 5 대두 · 6 밀 · 7 고등어 · 8 게 · 9 새우 · 10 돼지고기 · 11 복숭아 · 12 토마토 · 13 아황산염 · 14 호두 · 15 닭고기 · 16 쇠고기 · 17 오징어 · 18 조개류
@@ -4823,7 +4828,8 @@ function renderFavoriteFoodEditor(){
   }
 }
 function refreshFavoriteFoodViews(){
-  if(typeof mealMode !== "undefined" && mealMode === "month") mealLoadMonth();
+  if(typeof mealMode !== "undefined" && mealMode === "week") mealLoadWeek();
+  else if(typeof mealMode !== "undefined" && mealMode === "month") mealLoadMonth();
   else if($("#date") && $("#date").value) onDay();
   renderHomeWidgets();
 }
@@ -4933,7 +4939,8 @@ function renderAllergySelector(){
       saveSelectedAllergies(picked);
       updateAllergySummary();
 
-      if(typeof mealMode !== "undefined" && mealMode === "month") mealLoadMonth();
+      if(typeof mealMode !== "undefined" && mealMode === "week") mealLoadWeek();
+  else if(typeof mealMode !== "undefined" && mealMode === "month") mealLoadMonth();
       else if($("#date") && $("#date").value) onDay();
     });
   });
@@ -5278,83 +5285,120 @@ async function initMeals(){
   renderAllergySelector();
   renderFavoriteFoodEditor();
 }
-let mealMode = "day";
+let mealMode = "day", mealRequestId = 0;
+const MEAL_WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
+function mealWeekDates(iso){
+  const start = ymdToDateObj(iso);
+  start.setDate(start.getDate() - (start.getDay()+6)%7);
+  return Array.from({length:7}, (_,i)=>{
+    const d = new Date(start); d.setDate(start.getDate()+i); return dateToYMD(d);
+  });
+}
+function mealDateLabel(ymd){
+  const iso = ymd.includes("-") ? ymd : `${ymd.slice(0,4)}-${ymd.slice(4,6)}-${ymd.slice(6,8)}`;
+  return `${ymd2str(toYMDNoDash(iso))} (${MEAL_WEEKDAYS[ymdToDateObj(iso).getDay()]})`;
+}
+function renderMealWeekPicker(){
+  const selected = $("#date").value || todayStr(), dates = mealWeekDates(selected);
+  $("#mealWeekPicker").style.display = mealMode === "month" ? "none" : "block";
+  $("#mealWeekLabel").textContent = `${dates[0]} ~ ${dates[6]} · 요일을 눌러 하루 급식 보기`;
+  $("#mealWeekDays").innerHTML = dates.map(iso=>{
+    const d = ymdToDateObj(iso);
+    return `<button class="tabBtn" type="button" aria-pressed="${mealMode==='day' && selected===iso}" aria-selected="${mealMode==='day' && selected===iso}" onclick="mealSelectDay('${iso}')">${MEAL_WEEKDAYS[d.getDay()]} ${d.getMonth()+1}/${d.getDate()}</button>`;
+  }).join("");
+}
+function mealSetMode(mode){
+  mealMode = mode;
+  $("#mealMonthControls").style.display = mode === "month" ? "flex" : "none";
+  $("#meals").style.display = mode === "day" ? "block" : "none";
+  $("#mealMonthTable").style.display = mode === "day" ? "none" : "block";
+  $("#btnMealMonth").textContent = mode === "month" ? "일별 카드" : "월별 표";
+  $("#btnCopy").textContent = mode === "month" ? "월별 급식 복사" : mode === "week" ? "한 주 급식 복사" : "하루 급식 복사";
+  renderMealWeekPicker();
+}
+function mealClearCopy(){ $("#shareText").textContent = ""; $("#btnCopy").disabled = true; }
+function mealSetCopy(text){ $("#shareText").textContent = text; $("#btnCopy").disabled = !text.trim(); }
+function mealFormatCopy(results, title){
+  return `[${SCHOOL_NAME}] ${title}\n` + results.map(({ymd,meals})=>
+    `\n${mealDateLabel(ymd)}\n` + (meals.length ? meals.map(m=>`[${m.type}]${m.cal ? ' '+m.cal : ''}\n- ${m.menu.join("\n- ")}`).join("\n\n") : "급식 정보 없음")
+  ).join("\n");
+}
 function toggleMealMode(){
-  mealMode = mealMode === "day" ? "month" : "day";
-  const isMonth = mealMode === "month";
-  $("#mealMonthControls").style.display = isMonth ? "flex" : "none";
-  $("#meals").style.display = isMonth ? "none" : "block";
-  $("#mealMonthTable").style.display = isMonth ? "block" : "none";
-  $("#btnMealMonth").textContent = isMonth ? "일별 카드" : "월별 표";
-  if(isMonth) mealLoadMonth();
+  if(mealMode === "month") onDay();
+  else { $("#mealMonth").value = ($("#date").value || todayStr()).slice(0,7); mealLoadMonth(); }
+}
+function mealSelectDay(iso){ $("#date").value = iso; return onDay(); }
+function mealQuerySelected(){ return mealMode === "week" ? mealLoadWeek() : onDay(); }
+function mealThisWeek(){
+  $("#date").value = new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+  return mealLoadWeek();
 }
 async function onDay(){
+  const request = ++mealRequestId;
+  mealSetMode("day"); mealClearCopy();
   try{
+    if(!$("#date").value) throw new Error("날짜를 선택해 주세요.");
     const ymd = toYMDNoDash($("#date").value);
     setNotice("", "급식 정보를 불러오는 중입니다…", true);
     $("#meals").innerHTML = `<div class="notice">불러오는 중…</div>`;
     const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
+    if(request !== mealRequestId) return;
     if(!meals.length){
       $("#meals").innerHTML = `<div class="notice">선택한 날짜에는 급식 정보가 없어요.</div>`;
-      $("#shareText").textContent = "";
-      setNotice("", "급식 정보가 없습니다.", true);
-      return;
+      setNotice("", "급식 정보가 없습니다.", true); return;
     }
-    $("#meals").innerHTML = `<h3 style="margin:0 0 10px">${ymd2str(ymd)} 급식</h3>` + meals.map(m=>`
-      <div class="notice">
-        <b style="color:var(--text)">${escapeHtml(m.type)}</b>
+    $("#meals").innerHTML = `<h3 style="margin:0 0 10px">${mealDateLabel(ymd)} 급식</h3>` + meals.map(m=>`
+      <div class="notice"><b style="color:var(--text)">${escapeHtml(m.type)}</b>
         ${m.cal ? `<span class="pill">${escapeHtml(m.cal)}</span>` : ""}
         <ul style="margin:10px 0 0;padding-left:18px;line-height:1.8">${m.menu.map(renderMenuItem).join("")}</ul>
       </div>`).join("");
-    $("#shareText").textContent = `[${SCHOOL_NAME}] ${ymd2str(ymd)} 급식\n` + meals.map(m=>`\n[${m.type}] ${m.cal}\n- ${m.menu.join("\n- ")}`).join("\n").trim();
-    setNotice("", "", false);
-  }catch(err){ setNotice("err", "조회 중 오류: " + (err.message || err), true); }
+    mealSetCopy(mealFormatCopy([{ymd,meals}], "하루 급식")); setNotice("", "", false);
+  }catch(err){
+    if(request !== mealRequestId) return;
+    $("#meals").innerHTML = ""; setNotice("err", "조회 중 오류: " + (err.message || err), true);
+  }
 }
 function moveDate(days){
-  const d = ymdToDateObj($("#date").value);
-  d.setDate(d.getDate()+days);
-  $("#date").value = dateToYMD(d);
-  onDay();
+  const d = ymdToDateObj($("#date").value || todayStr());
+  d.setDate(d.getDate() + days * (mealMode === "week" ? 7 : 1));
+  $("#date").value = dateToYMD(d); mealQuerySelected();
 }
-function setTodayAndLoad(){
-  $("#date").value = todayStr();
-  mealMode = "day";
-  $("#mealMonthControls").style.display = "none";
-  $("#meals").style.display = "block";
-  $("#mealMonthTable").style.display = "none";
-  $("#btnMealMonth").textContent = "월별 표";
-  onDay();
-}
-async function mealLoadMonth(){
+function setTodayAndLoad(){ $("#date").value = todayStr(); return onDay(); }
+function mealLoadWeek(){ return mealLoadRange("week"); }
+function mealLoadMonth(){ return mealLoadRange("month"); }
+async function mealLoadRange(mode){
+  const request = ++mealRequestId;
+  mealSetMode(mode); mealClearCopy();
+  $("#mealMonthTable").innerHTML = `<div class="notice">불러오는 중…</div>`;
   try{
     const ym = $("#mealMonth").value;
-    if(!ym) return setNotice("err","월을 선택해 주세요.",true);
-    const [y,m] = ym.split("-");
-    setNotice("", `${y}년 ${m}월 급식을 불러오는 중…`, true);
-    $("#mealMonthTable").innerHTML = `<div class="notice">불러오는 중…</div>`;
-    const results = [];
-    for(const ymd of monthDates(ym)){
-      try{
-        const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
-        if(meals.length) results.push({ymd, meals});
-      }catch(_){}
+    if(mode === "month" && !/^\d{4}-\d{2}$/.test(ym)) throw new Error("월을 선택해 주세요.");
+    const dates = mode === "month" ? monthDates(ym) : mealWeekDates($("#date").value || todayStr()).map(toYMDNoDash);
+    const title = mode === "month" ? `${ym.slice(0,4)}년 ${ym.slice(5)}월 급식` : `${mealDateLabel(dates[0])} ~ ${mealDateLabel(dates[6])} 급식`;
+    setNotice("", title + "을 불러오는 중…", true);
+    const data = await neis("mealServiceDietInfo",{ATPT_OFCDC_SC_CODE:ATPT,SD_SCHUL_CODE,MLSV_FROM_YMD:dates[0],MLSV_TO_YMD:dates[dates.length-1]});
+    if(request !== mealRequestId) return;
+    const apiResult = data?.RESULT || data?.mealServiceDietInfo?.[0]?.head?.find(item=>item.RESULT)?.RESULT;
+    if(apiResult && !["INFO-000","INFO-200"].includes(apiResult.CODE)) throw new Error(apiResult.MESSAGE || "급식 응답 오류");
+    const rows = data?.mealServiceDietInfo?.[1]?.row || [];
+    const results = dates.map(ymd=>({ymd,meals:rows.filter(r=>r.MLSV_YMD===ymd).sort((a,b)=>Number(a.MMEAL_SC_CODE)-Number(b.MMEAL_SC_CODE)).map(r=>({
+      type:r.MMEAL_SC_NM || "", cal:r.CAL_INFO || "", menu:String(r.DDISH_NM||"").replace(/<br\s*\/?>/gi,"\n").split("\n").map(s=>s.trim()).filter(Boolean)
+    }))}));
+    if(!results.some(day=>day.meals.length)){
+      $("#mealMonthTable").innerHTML = `<div class="notice">선택한 ${mode === "month" ? "월" : "주"}에는 급식 정보가 없어요.</div>`;
+      setNotice("", "급식 정보가 없습니다.", true); return;
     }
-    if(!results.length){
-      $("#mealMonthTable").innerHTML = `<div class="notice">해당 월에는 급식 정보가 없네요.</div>`;
-      return;
-    }
-    $("#mealMonthTable").innerHTML = `
-      <div class="mealTableWrap"><table class="mealTable">
-      <thead><tr><th>날짜</th><th>급식 내용</th></tr></thead><tbody>
-      ${results.map(({ymd,meals})=>`
-        <tr><td><b>${ymd2str(ymd)}</b></td><td>
-        ${meals.map(m=>`
-          <div style="margin-bottom:12px"><span class="pill">${escapeHtml(m.type)}${m.cal ? " · "+escapeHtml(m.cal) : ""}</span>
-          <ul class="mealMenus">${m.menu.map(renderMenuItem).join("")}</ul></div>`).join("")}
-        </td></tr>`).join("")}
+    $("#mealMonthTable").innerHTML = `<h3>${escapeHtml(title)}</h3><div class="mealTableWrap"><table class="mealTable">
+      <thead><tr><th scope="col">날짜</th><th scope="col">급식 내용</th></tr></thead><tbody>
+      ${results.map(({ymd,meals})=>`<tr><td><b>${mealDateLabel(ymd)}</b></td><td>${meals.length ? meals.map(m=>`
+        <div style="margin-bottom:12px"><span class="pill">${escapeHtml(m.type)}${m.cal ? " · "+escapeHtml(m.cal) : ""}</span>
+        <ul class="mealMenus">${m.menu.map(renderMenuItem).join("")}</ul></div>`).join("") : '<span class="muted">급식 정보 없음</span>'}</td></tr>`).join("")}
       </tbody></table></div>`;
-    setNotice("", "", false);
-  }catch(err){ setNotice("err", "월별 급식 오류: " + (err.message || err), true); }
+    mealSetCopy(mealFormatCopy(results,title)); setNotice("", "", false);
+  }catch(err){
+    if(request !== mealRequestId) return;
+    $("#mealMonthTable").innerHTML = ""; setNotice("err", "급식 조회 오류: " + (err.message || err), true);
+  }
 }
 async function copyTextReliable(text){
   try{ if(navigator.clipboard && window.isSecureContext){ await navigator.clipboard.writeText(text); return true; } }catch(_){}
@@ -6686,4 +6730,3 @@ window.addEventListener('load',initJapanTrip);
 </script>
 </body>
 </html>
-
