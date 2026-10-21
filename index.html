@@ -2591,6 +2591,26 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
 /* Top bar error report link */
 .topbar .btn.errorReportBtn{color:#fff;background:#b91c1c;border-color:#b91c1c;text-decoration:none;flex-shrink:0}
 .topbar .btn.errorReportBtn:hover{background:#991b1b;border-color:#991b1b}
+#view-finger{animation:none}
+#view-finger .fpToolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.fpBoard{position:relative;isolation:isolate;overflow:hidden;min-height:390px;height: min(64vh,650px);border-radius:24px;background:radial-gradient(ellipse at 50% 30%,#263952,transparent 70%),#0b1220;color:#fff;touch-action:none;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none;overscroll-behavior:contain;border:1px solid #334155;cursor:crosshair}
+.fpBoardTop{position:absolute;inset:18px 20px auto;display:flex;justify-content:space-between;align-items:center;font-size:10px;letter-spacing:2px;color:#b0bfd5;z-index:4;pointer-events:none}
+.fpBoardTop button{pointer-events:auto;border:1px solid #64748b;background:#1e293b;color:#fff;border-radius:10px;padding:10px;letter-spacing:0}
+.fpCenter{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;pointer-events:none;padding:24px;z-index:1}
+.fpEyebrow{font-size:12px;font-weight:800;color:#a5b4fc;letter-spacing:1px;margin-bottom:12px}
+.fpCenter strong{font-size:clamp(40px,8vw,66px);line-height:1.15;letter-spacing:-2px;color:#fff}
+.fpCenter p{font-size:14px;line-height:1.8;color:#b8c5d9;margin-top:14px}
+.fpBoardBottom{position:absolute;bottom:18px;left:16px;right:16px;text-align:center;font-size:11px;line-height:1.7;color:#b0bfd5;pointer-events:none}
+.fpDot{position:absolute;left:0;top:0;width:94px;height:94px;border:3px solid var(--fp-color);border-radius:50%;transform:translate(-50%,-50%);background:color-mix(in srgb,var(--fp-color) 20%,transparent);box-shadow:0 0 0 10px color-mix(in srgb,var(--fp-color) 9%,transparent),0 0 34px color-mix(in srgb,var(--fp-color) 25%,transparent);display:flex;align-items:center;justify-content:center;flex-direction:column;color:#fff;pointer-events:none;transition:opacity .2s,box-shadow .3s;z-index:2}
+.fpDot b{font-size:26px;line-height:1.1}.fpDot span{font-size:10px;margin-top:4px;font-weight:800}
+.fpDot.fpWinner{z-index:3;border-width:5px;background:color-mix(in srgb,var(--fp-color) 45%,#0b1220);box-shadow:0 0 0 15px color-mix(in srgb,var(--fp-color) 22%,transparent),0 0 65px var(--fp-color);animation:fpWin .7s ease-out}
+.fpDot.fpLoser{opacity:.18}.fpBoard.fpResult .fpCenter{justify-content:flex-start;padding-top:70px}.fpBoard.fpResult .fpCenter strong{font-size:32px}.fpBoard.fpResult .fpCenter p{margin-top:6px}
+.fpBoard:fullscreen,.fpBoard.fpExpanded{border-radius:0;width:100%;height:100%;min-height:0}.fpBoard.fpExpanded{position:fixed;inset:0;z-index:10000;height:100dvh}.fpBoard:fullscreen .fpBoardTop,.fpBoard.fpExpanded .fpBoardTop{top:max(18px,env(safe-area-inset-top))}
+.fpSr{position:absolute;width:1px;height:1px;padding:0;overflow:hidden;clip-path:inset(50%);white-space:nowrap}
+@keyframes fpWin{from{transform:translate(-50%,-50%) scale(.75)}to{transform:translate(-50%,-50%) scale(1)}}
+@media(max-width:620px){.fpBoard{height:60vh;min-height:350px}.fpDot{width:78px;height:78px}.fpCenter strong{font-size:46px}.fpBoardBottom{font-size:10px}.fpBoardTop{left:14px;right:14px;letter-spacing:1px}}
+@media(prefers-reduced-motion:reduce){.fpDot.fpWinner{animation:none}}
+
 </style>
 </head>
 
@@ -2691,10 +2711,23 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
         <a class="navBtn" data-view="school" href="/?page=school" onclick="event.preventDefault(); go('school')"><span class="left"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v11H3zM9 21v-6h6v6"/><circle cx="12" cy="10" r="2"/></svg></span><span><span class="title">학교 홈페이지</span><br><span class="hint">공식 사이트</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="library" href="/?page=library" onclick="event.preventDefault(); go('library')"><span class="left"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5c-3-2-6-2-9-1v15c3-1 6-1 9 1 3-2 6-2 9-1V4c-3-1-6-1-9 1zM12 5v15"/></svg></span><span><span class="title">도서관 조회</span><br><span class="hint">풍산고 도서관</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="policy" href="/?page=policy" onclick="event.preventDefault(); go('policy')"><span class="left"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 11v6m0-10v1"/></svg></span><span><span class="title">안내·정책</span><br><span class="hint">개인정보</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="finger" href="/?page=finger" onclick="event.preventDefault(); go('finger')"><span class="left"><span class="icon" aria-hidden="true">☝</span><span><span class="title">손가락 추첨</span><br><span class="hint">함께 누르고 한 명 뽑기</span></span></span><span>›</span></a>
       </nav>
     </aside>
 
     <main id="main" class="panel" tabindex="-1">
+<section class="section view" id="view-finger">
+  <div class="sectionHeader"><div><span class="pill">같이 쓰는 오풍</span><h2>손가락 추첨</h2><p>누가 먼저 할까? 화면에 손가락을 올리고 함께 기다려봐.</p></div></div>
+  <div class="fpToolbar"><span id="fpCount" class="pill">참가자 0명</span><button type="button" id="fpFullscreen" class="btn ghost">화면 크게</button><button type="button" id="fpReset" class="btn ghost">다시 뽑기</button></div>
+  <div id="fpBoard" class="fpBoard" aria-label="손가락 추첨 영역. 두 명 이상 손가락을 올려주세요.">
+    <div class="fpBoardTop"><span>O.Poong · TOUCH PICK</span><div><button type="button" id="fpAgain">다시 뽑기</button> <button type="button" id="fpExit" hidden>큰 화면 닫기</button></div></div>
+    <div class="fpCenter"><span class="fpEyebrow" id="fpEyebrow">함께 터치해봐</span><strong id="fpMain">여기에 꾹!</strong><p id="fpHint">2명 이상 손가락을 올리면<br>3초 뒤 한 명을 뽑아요.</p></div>
+    <div id="fpDots" aria-hidden="true"></div><div class="fpBoardBottom" id="fpBottom">손가락을 떼거나 추가하면 카운트다운이 다시 시작돼요.</div>
+  </div>
+  <p id="fpAnnouncement" class="fpSr" aria-live="polite" aria-atomic="true"></p>
+  <div class="notice">① 한 사람씩 손가락 하나를 올려요. ② 모두 그대로 3초 기다려요. ③ 빛나는 원이 선택된 사람이에요!<br>터치 가능한 휴대폰·태블릿에서 사용해 주세요. 동시에 인식하는 손가락 수는 기기에 따라 달라요.</div>
+</section>
+
       <section class="section view active" id="view-home">
         <div class="homeDashboard">
           <div class="homeDashboardHero">
@@ -4589,7 +4622,7 @@ function pageUrl(view){
 function initRoute(){
   const params = new URLSearchParams(window.location.search);
   const page = params.get("page") || "home";
-  const allowed = ["home","weather","meal","schedule","timetable","gohome","evaluation","japan","focus","game","onway","school","library","policy","about"];
+  const allowed = ["finger","home","weather","meal","schedule","timetable","gohome","evaluation","japan","focus","game","onway","school","library","policy","about"];
   const view = allowed.includes(page) ? page : "home";
 
   go(view);
@@ -6120,6 +6153,7 @@ function addRecommendedDday(index){
 }
 
 const GLOBAL_SEARCH_STATIC = [
+  {title:"손가락 추첨",description:"함께 화면을 누르면 3초 뒤 한 명 선택",type:"메뉴",route:"finger",keywords:"추첨 랜덤 뽑기 손가락 순서 당첨"},
   {title:"일본 수학여행",description:"10월 26–29일 · A팀 날짜별 일정",type:"메뉴",route:"japan",keywords:"일본 여행 A팀 오사카 교토 USJ 간사이 수학여행"},
   {title:"집가고 싶어요",description:"집에 가고 싶은 횟수 기록",type:"메뉴",route:"gohome",keywords:"집 귀가 카운터"},
   {title:"교수·학습 및 평가계획",description:"2026년 2학기 학년별 PDF",type:"메뉴",route:"evaluation",keywords:"평가계획 수행평가 PDF"},
@@ -6733,5 +6767,57 @@ function initJapanTrip(){
 window.addEventListener('load',initJapanTrip);
 
 </script>
+<script>
+/* O.Poong touch picker: each membership change restarts a full countdown. */
+(()=>{
+  const board=document.getElementById('fpBoard');
+  if(!board)return;
+  const dots=document.getElementById('fpDots'),count=document.getElementById('fpCount'),main=document.getElementById('fpMain'),hint=document.getElementById('fpHint'),eyebrow=document.getElementById('fpEyebrow'),announce=document.getElementById('fpAnnouncement');
+  const colors=['#60a5fa','#fb7185','#34d399','#fbbf24','#c084fc','#22d3ee','#fb923c','#f472b6','#a3e635','#a5b4fc'];
+  const fingers=new Map();let timer=null,deadline=0,phase='waiting',number=0,expanded=false,previousOverflow='';
+  const say=text=>{announce.textContent=text;};
+  function stop(){if(timer!==null)clearTimeout(timer);timer=null;}
+  function heading(a,b,c){eyebrow.textContent=a;main.textContent=b;hint.textContent=c;}
+  function reset(){stop();fingers.clear();dots.replaceChildren();phase='waiting';number=0;board.classList.remove('fpResult');count.textContent='참가자 0명';heading('함께 터치해봐','여기에 꾹!','2명 이상 손가락을 올리면 3초 뒤 한 명을 뽑아요.');say('새 추첨을 준비했어요. 손가락을 올려주세요.');}
+  function randomIndex(n){const a=new Uint32Array(1),limit=Math.floor(4294967296/n)*n;do{crypto.getRandomValues(a);}while(a[0]>=limit);return a[0]%n;}
+  function finish(){
+    timer=null;if(phase!=='counting'||fingers.size<2)return;
+    const list=Array.from(fingers.values()),winner=list[randomIndex(list.length)];phase='result';board.classList.add('fpResult');
+    list.forEach(f=>{f.el.classList.add(f===winner?'fpWinner':'fpLoser');f.el.querySelector('span').textContent=f===winner?'선택!':'참가자';});
+    heading('결정 끝!',winner.number+'번 선택!','손가락을 떼고 ‘다시 뽑기’를 눌러주세요.');say(list.length+'명 중 '+winner.number+'번이 선택됐어요.');
+    if(navigator.vibrate)navigator.vibrate([80,50,160]);
+  }
+  function tick(){if(phase!=='counting')return;const left=deadline-performance.now();if(left<=0){finish();return;}main.textContent=String(Math.ceil(left/1000));timer=setTimeout(tick,Math.min(left,100));}
+  function changed(){
+    stop();count.textContent='참가자 '+fingers.size+'명';
+    if(fingers.size<2){phase='waiting';heading('함께 터치해봐',fingers.size?'한 명 더!':'여기에 꾹!','2명 이상 손가락을 올리면 3초 뒤 한 명을 뽑아요.');return;}
+    phase='counting';deadline=performance.now()+3000;heading('모두 그대로!','3',fingers.size+'명 중 한 명을 뽑고 있어요.');say(fingers.size+'명 참가. 3초 뒤 선택해요.');tick();
+  }
+  function position(f,e){const r=board.getBoundingClientRect();f.el.style.left=(e.clientX-r.left)+'px';f.el.style.top=(e.clientY-r.top)+'px';}
+  board.addEventListener('pointerdown',e=>{
+    if(e.target.closest('button')||phase==='result'||fingers.has(e.pointerId)||e.button!==0)return;
+    e.preventDefault();const el=document.createElement('div');el.className='fpDot';const n=++number;
+    el.style.setProperty('--fp-color',colors[(n-1)%colors.length]);const b=document.createElement('b'),label=document.createElement('span');b.textContent=n;label.textContent='참가자';el.append(b,label);dots.append(el);
+    const f={el,number:n};fingers.set(e.pointerId,f);position(f,e);try{board.setPointerCapture(e.pointerId);}catch(_){}changed();
+  });
+  board.addEventListener('pointermove',e=>{const f=fingers.get(e.pointerId);if(!f||phase==='result')return;e.preventDefault();position(f,e);});
+  function release(e){if(phase==='result')return;const f=fingers.get(e.pointerId);if(!f)return;f.el.remove();fingers.delete(e.pointerId);changed();}
+  ['pointerup','pointercancel','lostpointercapture'].forEach(type=>board.addEventListener(type,release));
+  board.addEventListener('contextmenu',e=>e.preventDefault());
+  document.getElementById('fpReset').addEventListener('click',reset);
+  document.getElementById('fpAgain').addEventListener('click',reset);
+  function exitExpanded(){if(expanded){board.classList.remove('fpExpanded');document.body.style.overflow=previousOverflow;expanded=false;}document.getElementById('fpExit').hidden=true;reset();}
+  document.getElementById('fpFullscreen').addEventListener('click',async()=>{reset();if(document.fullscreenElement===board)return;try{await board.requestFullscreen();}catch(_){previousOverflow=document.body.style.overflow;document.body.style.overflow='hidden';expanded=true;board.classList.add('fpExpanded');}document.getElementById('fpExit').hidden=false;});
+  document.getElementById('fpExit').addEventListener('click',()=>{if(document.fullscreenElement===board)document.exitFullscreen().catch(()=>{});else exitExpanded();});
+  document.addEventListener('fullscreenchange',()=>{if(document.fullscreenElement!==board)exitExpanded();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&expanded)exitExpanded();});
+  document.addEventListener('visibilitychange',()=>{if(document.hidden)reset();});
+  window.addEventListener('blur',()=>{if(phase!=='result')reset();});
+  window.addEventListener('resize',()=>{if(phase!=='result')reset();});
+  new MutationObserver(()=>{if(!document.getElementById('view-finger').classList.contains('active')){if(expanded)exitExpanded();else reset();}}).observe(document.getElementById('view-finger'),{attributes:true,attributeFilter:['class']});
+})();
+
+</script>
 </body>
 </html>
+
