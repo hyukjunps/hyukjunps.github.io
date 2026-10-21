@@ -2611,6 +2611,21 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
 @media(max-width:620px){.fpBoard{height:60vh;min-height:350px}.fpDot{width:78px;height:78px}.fpCenter strong{font-size:46px}.fpBoardBottom{font-size:10px}.fpBoardTop{left:14px;right:14px;letter-spacing:1px}}
 @media(prefers-reduced-motion:reduce){.fpDot.fpWinner{animation:none}}
 
+/* The selected touch becomes the origin of the full-board color reveal. */
+.fpBoard::before,.fpBoard::after{content:"";position:absolute;left:var(--fp-origin-x,50%);top:var(--fp-origin-y,50%);width:var(--fp-spread-size,0px);height:var(--fp-spread-size,0px);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%) scale(0);z-index:0}
+.fpBoard::before{background:var(--fp-selected-color,#60a5fa)}
+.fpBoard::after{border:3px solid rgba(255,255,255,.55);opacity:0}
+.fpBoard.fpResult::before{transform:translate(-50%,-50%) scale(1);animation:fpColorSpread 1.15s cubic-bezier(.16,1,.3,1) both}
+.fpBoard.fpResult::after{animation:fpColorWave 1.3s cubic-bezier(.12,.72,.18,1) both}
+.fpBoardBottom{z-index:1}
+.fpBoard.fpResult .fpCenter strong,.fpBoard.fpResult .fpEyebrow,.fpBoard.fpResult .fpCenter p,.fpBoard.fpResult .fpBoardTop,.fpBoard.fpResult .fpBoardBottom{color:#0b182b;transition:color .45s ease}
+.fpBoard.fpResult .fpWinner{border-color:#fff;background:#142238;box-shadow:0 0 0 12px rgba(255,255,255,.22),0 12px 44px rgba(11,24,43,.28);animation:fpWinnerPop .8s cubic-bezier(.16,1,.3,1) both}
+.fpBoard.fpResult .fpLoser{opacity:.12}
+@keyframes fpColorSpread{0%{transform:translate(-50%,-50%) scale(0)}100%{transform:translate(-50%,-50%) scale(1)}}
+@keyframes fpColorWave{0%{opacity:.85;transform:translate(-50%,-50%) scale(0)}75%{opacity:.3}100%{opacity:0;transform:translate(-50%,-50%) scale(1.12)}}
+@keyframes fpWinnerPop{0%{transform:translate(-50%,-50%) scale(.8)}45%{transform:translate(-50%,-50%) scale(1.16)}100%{transform:translate(-50%,-50%) scale(1)}}
+@media(prefers-reduced-motion:reduce){.fpBoard.fpResult::before{animation:none;transform:translate(-50%,-50%) scale(1)}.fpBoard.fpResult::after,.fpBoard.fpResult .fpWinner{animation:none}.fpBoard.fpResult .fpCenter strong,.fpBoard.fpResult .fpEyebrow,.fpBoard.fpResult .fpCenter p,.fpBoard.fpResult .fpBoardTop,.fpBoard.fpResult .fpBoardBottom{transition:none}}
+
 </style>
 </head>
 
@@ -6782,7 +6797,13 @@ window.addEventListener('load',initJapanTrip);
   function randomIndex(n){const a=new Uint32Array(1),limit=Math.floor(4294967296/n)*n;do{crypto.getRandomValues(a);}while(a[0]>=limit);return a[0]%n;}
   function finish(){
     timer=null;if(phase!=='counting'||fingers.size<2)return;
-    const list=Array.from(fingers.values()),winner=list[randomIndex(list.length)];phase='result';board.classList.add('fpResult');
+    const list=Array.from(fingers.values()),winner=list[randomIndex(list.length)];
+    const rect=board.getBoundingClientRect(),x=parseFloat(winner.el.style.left),y=parseFloat(winner.el.style.top);
+    const radius=Math.hypot(Math.max(x,rect.width-x),Math.max(y,rect.height-y));
+    board.style.setProperty('--fp-origin-x',x+'px');board.style.setProperty('--fp-origin-y',y+'px');
+    board.style.setProperty('--fp-spread-size',(2*radius+8)+'px');
+    board.style.setProperty('--fp-selected-color',colors[(winner.number-1)%colors.length]);
+    phase='result';board.classList.add('fpResult');
     list.forEach(f=>{f.el.classList.add(f===winner?'fpWinner':'fpLoser');f.el.querySelector('span').textContent=f===winner?'선택!':'참가자';});
     heading('결정 끝!',winner.number+'번 선택!','손가락을 떼고 ‘다시 뽑기’를 눌러주세요.');say(list.length+'명 중 '+winner.number+'번이 선택됐어요.');
     if(navigator.vibrate)navigator.vibrate([80,50,160]);
@@ -6820,4 +6841,5 @@ window.addEventListener('load',initJapanTrip);
 </script>
 </body>
 </html>
+
 
