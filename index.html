@@ -2587,6 +2587,10 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
   background:linear-gradient(125deg,color-mix(in srgb,#a16afa 23%,var(--card)),color-mix(in srgb,#8952d8 12%,var(--card)));
   box-shadow:0 8px 22px rgba(134,85,221,.13);
 }
+
+/* Top bar error report link */
+.topbar .btn.errorReportBtn{color:#fff;background:#b91c1c;border-color:#b91c1c;text-decoration:none;flex-shrink:0}
+.topbar .btn.errorReportBtn:hover{background:#991b1b;border-color:#991b1b}
 </style>
 </head>
 
@@ -2630,6 +2634,7 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
       </div>
     </div>
     <div class="actions">
+      <a class="btn errorReportBtn" href="https://docs.google.com/forms/d/e/1FAIpQLSdhPHvtVg18vATZeCusUeahFpFTSpu_NV5qUoEf2qwpBh-Hhg/viewform?usp=header" target="_blank" rel="noopener noreferrer" aria-label="오류 신고 (새 탭에서 열기)">오류 신고</a>
       <button id="globalSearchButton" class="btn ghost topSearchBtn" type="button" onclick="openGlobalSearch()" aria-label="통합 검색"><span aria-hidden="true">⌕</span><span class="topSearchLabel">검색</span></button>
       <div id="userBadge" class="userBadge">사용자</div>
       <button class="btn ghost" type="button" onclick="shareOpoong()" aria-label="친구에게 공유하기">공유</button>
