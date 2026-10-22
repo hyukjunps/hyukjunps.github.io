@@ -2626,6 +2626,28 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
 @keyframes fpWinnerPop{0%{transform:translate(-50%,-50%) scale(.8)}45%{transform:translate(-50%,-50%) scale(1.16)}100%{transform:translate(-50%,-50%) scale(1)}}
 @media(prefers-reduced-motion:reduce){.fpBoard.fpResult::before{animation:none;transform:translate(-50%,-50%) scale(1)}.fpBoard.fpResult::after,.fpBoard.fpResult .fpWinner{animation:none}.fpBoard.fpResult .fpCenter strong,.fpBoard.fpResult .fpEyebrow,.fpBoard.fpResult .fpCenter p,.fpBoard.fpResult .fpBoardTop,.fpBoard.fpResult .fpBoardBottom{transition:none}}
 
+
+/* Japan trip destinations */
+.japanMapSection{margin-top:20px;padding:18px;border:1px solid var(--line);border-radius:16px;background:var(--card)}
+.japanMapHeading{display:flex;gap:12px;justify-content:space-between;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.japanMapHeading h3{margin:0 0 5px;font-size:18px}.japanMapHeading p{margin:0;color:var(--muted);font-size:12px;line-height:1.6}
+.japanMapControls{display:flex;gap:6px}.japanMapControls button{border:1px solid var(--line);background:var(--card2);color:var(--text);padding:8px 12px;border-radius:9px;cursor:pointer;font:inherit;font-size:12px}
+.japanMapControls button[aria-pressed="true"]{background:var(--trip-accent);color:var(--card);border-color:var(--trip-accent)}
+.japanMapCanvas{height:340px;width:100%;border:1px solid var(--line);border-radius:12px;background:var(--card2);z-index:0}
+.japanMapStatus{font-size:12px;color:var(--muted);line-height:1.7;margin:10px 0}
+.japanMapHint{margin:10px 0 14px;font-size:11px;color:var(--muted);line-height:1.7}
+.japanPlaceList{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.japanPlaceCard{padding:13px;border:1px solid var(--line);border-radius:12px;background:var(--card2);min-width:0}
+.japanPlaceTop{display:flex;align-items:center;gap:9px}.japanPlaceNum{display:grid;place-items:center;flex:none;width:27px;height:27px;background:var(--trip-soft);color:var(--trip-accent);font-size:12px;font-weight:700;border-radius:50%}
+.japanPlaceKind{font-size:10px;color:var(--muted)}.japanPlaceCard h4{font-size:13px;margin:3px 0;line-height:1.5}
+.japanPlaceCard>p{font-size:11px;color:var(--muted);line-height:1.6;margin:8px 0}
+.japanPlaceActions,.japanRowLinks{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.japanPlaceActions a,.japanPlaceActions button,.japanRowLinks a{border:1px solid var(--line);border-radius:7px;background:var(--card);color:var(--trip-accent);padding:7px 9px;font:inherit;font-size:11px;text-decoration:none;cursor:pointer;line-height:1.5}
+.japanMapMarker{background:none;border:0}.japanMapMarker span{display:grid;place-items:center;width:30px;height:30px;border-radius:50% 50% 50% 3px;transform:rotate(-45deg);background:#137f77;color:white;border:2px solid white;box-shadow:0 2px 6px #0005;font:700 12px system-ui}
+.japanMapMarker span{transform:none;border-radius:50%;}.japanMapMarker .isRestaurant{background:#b45309}.japanMapMarker .isHotel{background:#5b5bd6}
+.japanPinPopup{font-family:inherit;min-width:180px;max-width:240px}.japanPinPopup b{font-size:13px}.japanPinPopup p{font-size:12px;line-height:1.6}.japanPinPopup div{display:flex;gap:12px;margin-top:9px}.japanPinPopup a{font-size:12px}
+@media(max-width:620px){.japanMapSection{padding:13px}.japanMapCanvas{height:290px}.japanPlaceList{grid-template-columns:1fr}.japanMapHeading h3{font-size:16px}}
+
 </style>
 </head>
 
@@ -2947,6 +2969,15 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
           <button class="japanDayTab" id="japanTab2" role="tab" aria-selected="false" aria-controls="japanDayPanel" tabindex="-1" type="button" onclick="renderJapanTrip(2)"><b>10.28 수</b><span>3일차 · USJ</span></button>
           <button class="japanDayTab" id="japanTab3" role="tab" aria-selected="false" aria-controls="japanDayPanel" tabindex="-1" type="button" onclick="renderJapanTrip(3)"><b>10.29 목</b><span>4일차 · 귀국</span></button>
         </div>
+        <section class="japanMapSection" aria-labelledby="japanMapTitle">
+          <div class="japanMapHeading"><div><h3 id="japanMapTitle">여행지 지도</h3><p id="japanMapScope" aria-live="polite">날짜별 방문 장소</p></div>
+            <div class="japanMapControls" role="group" aria-label="지도에 표시할 장소"><button type="button" data-japan-scope="day" aria-pressed="true">선택한 날짜</button><button type="button" data-japan-scope="all" aria-pressed="false">전체 장소</button></div>
+          </div>
+          <p id="japanMapStatus" class="japanMapStatus" role="status">지도를 준비하고 있어요.</p>
+          <div id="japanMap" class="japanMapCanvas" role="region" aria-label="일본 수학여행 방문지 지도"></div>
+          <p class="japanMapHint">번호 핀을 누르면 장소를 확인할 수 있어요. Google Maps에서 열거나 길찾기로 바로 이동해 보세요.<br>관광지·거리 핀은 대표 위치예요. 식당은 확인된 지점만 표시하며 나머지는 추후 추가돼요.</p>
+          <div id="japanPlaceList" class="japanPlaceList"></div>
+        </section>
         <div id="japanDayPanel" role="tabpanel" aria-labelledby="japanTab0" tabindex="0"></div>
         <div class="japanSource"><p class="japanDisclaimer">일정이 변경될 수 있으며, 변경되었을 경우, O.Poong에서 책임지지 않습니다.</p></div>
       </section>
@@ -6510,7 +6541,7 @@ const JAPAN_TRIP_DAYS=[
     "title": "오사카성 · 도톤보리 · 신사이바시",
     "area": "풍산고 → 대구 → 간사이 → 오사카",
     "summary": "04:00에 학교에서 출발해 오사카성을 관람하고 도톤보리와 신사이바시를 탐방해요.",
-    "meals": "조식 김치찌개 · 중식 야키니쿠 무한리필 · 석식 쿠시카츠",
+    "meals": "조식 김치찌개 · 중식 사콘 도톤보리점(야키니쿠) · 석식 다루마 동물원앞점(쿠시카츠)",
     "stay": "웰리나 호텔 나카노시마 웨스트 · 2인 1실 기준, 패밀리룸",
     "rows": [
       {
@@ -6545,7 +6576,7 @@ const JAPAN_TRIP_DAYS=[
         "time": "11:00",
         "transport": "전용차량 · 도보",
         "title": "중식",
-        "detail": "야키니쿠 무한리필 · A팀 분리"
+        "detail": "야키니쿠 사콘 도톤보리점 · 무한리필 · A팀 분리"
       },
       {
         "time": "13:00",
@@ -6556,7 +6587,7 @@ const JAPAN_TRIP_DAYS=[
         "time": "15:00",
         "transport": "전용차량 · 도보",
         "title": "석식",
-        "detail": "쿠시카츠"
+        "detail": "쿠시카츠 다루마 동물원앞점"
       },
       {
         "time": "16:00",
@@ -6834,6 +6865,276 @@ window.addEventListener('load',initJapanTrip);
   window.addEventListener('blur',()=>{if(phase!=='result')reset();});
   window.addEventListener('resize',()=>{if(phase!=='result')reset();});
   new MutationObserver(()=>{if(!document.getElementById('view-finger').classList.contains('active')){if(expanded)exitExpanded();else reset();}}).observe(document.getElementById('view-finger'),{attributes:true,attributeFilter:['class']});
+})();
+
+</script>
+<script>
+
+/* Japan destination map. Add confirmed restaurants to JAPAN_MAP_PLACES and JAPAN_ROW_PLACES. */
+const JAPAN_MAP_PLACES=[
+  {
+    "id": "castle",
+    "name": "오사카성",
+    "jp": "大阪城",
+    "lat": 34.68739,
+    "lng": 135.52575,
+    "days": [
+      0
+    ],
+    "kind": "관광",
+    "source": "https://jcastle.info/view/Osaka_Castle"
+  },
+  {
+    "id": "dotonbori",
+    "name": "도톤보리",
+    "jp": "道頓堀 大阪",
+    "lat": 34.66865,
+    "lng": 135.5031,
+    "days": [
+      0
+    ],
+    "kind": "거리",
+    "source": "https://www.mandro.ai/osaka/things-to-do/dotonbori"
+  },
+  {
+    "id": "shinsaibashi",
+    "name": "신사이바시 상점가",
+    "jp": "心斎橋筋商店街 大阪",
+    "lat": 34.6711172,
+    "lng": 135.5013491,
+    "days": [
+      0,
+      3
+    ],
+    "kind": "쇼핑",
+    "source": "https://www.coordinatesfinder.com/coordinates/159850-shinsaibashi"
+  },
+  {
+    "id": "kiyomizu",
+    "name": "청수사",
+    "jp": "清水寺 京都 東山区",
+    "lat": 34.99483055555556,
+    "lng": 135.78500277777778,
+    "days": [
+      1
+    ],
+    "kind": "관광",
+    "source": "https://www.wikidata.org/wiki/Q221716"
+  },
+  {
+    "id": "sannenzaka",
+    "name": "산넨자카",
+    "jp": "産寧坂 京都",
+    "lat": 34.996471944444444,
+    "lng": 135.78093111111113,
+    "days": [
+      1
+    ],
+    "kind": "거리",
+    "source": "https://www.wikidata.org/wiki/Q11574990"
+  },
+  {
+    "id": "ninenzaka",
+    "name": "니넨자카",
+    "jp": "二年坂 京都",
+    "lat": 34.9981,
+    "lng": 135.780839,
+    "days": [
+      1
+    ],
+    "kind": "거리",
+    "source": "https://commons.wikimedia.org/wiki/File:Ninenzaka_near_Kiyomizudera_Temple.jpg"
+  },
+  {
+    "id": "doshisha",
+    "name": "도시샤 대학 이마데가와 캠퍼스",
+    "jp": "同志社大学 今出川キャンパス",
+    "lat": 35.02861111111111,
+    "lng": 135.75916666666666,
+    "days": [
+      1
+    ],
+    "kind": "관광",
+    "note": "윤동주·정지용 시비는 캠퍼스 안에서 확인해 주세요.",
+    "source": "https://www.wikidata.org/wiki/Q11414632"
+  },
+  {
+    "id": "mimizuka",
+    "name": "미미즈카 · 귀무덤",
+    "jp": "耳塚 京都",
+    "lat": 34.991464,
+    "lng": 135.77033,
+    "days": [
+      1
+    ],
+    "kind": "추모",
+    "source": "https://www.dewiki.de/Lexikon/Mimizuka"
+  },
+  {
+    "id": "inari",
+    "name": "후시미 이나리 신사",
+    "jp": "伏見稲荷大社",
+    "lat": 34.9671402,
+    "lng": 135.7726717,
+    "days": [
+      1
+    ],
+    "kind": "관광",
+    "source": "https://www.wikidata.org/wiki/Q714828"
+  },
+  {
+    "id": "umeda",
+    "name": "우메다 공중정원",
+    "jp": "梅田スカイビル 空中庭園展望台",
+    "lat": 34.7052952,
+    "lng": 135.4901486,
+    "days": [
+      1
+    ],
+    "kind": "전망",
+    "source": "https://www.coordinatesfinder.com/coordinates/159851-umeda-sky-building"
+  },
+  {
+    "id": "usj",
+    "name": "유니버설 스튜디오 재팬 · USJ",
+    "jp": "ユニバーサル・スタジオ・ジャパン",
+    "lat": 34.665394,
+    "lng": 135.432526,
+    "days": [
+      2
+    ],
+    "kind": "테마파크",
+    "source": "https://www.latlong.net/place/universal-studios-japan-osaka-japan-26258.html"
+  },
+  {
+    "id": "kaiyukan",
+    "name": "가이유칸 · 해유관",
+    "jp": "海遊館 大阪",
+    "lat": 34.6545464,
+    "lng": 135.4289211,
+    "days": [
+      3
+    ],
+    "kind": "관광",
+    "source": "https://www.coordinatesfinder.com/coordinates/896605-osaka-aquarium-kaiyukan"
+  },
+  {
+    "id": "hotel",
+    "name": "웰리나 호텔 나카노시마 웨스트",
+    "jp": "Welina Hotel Premier 中之島 West 大阪市西区江戸堀1丁目17-22",
+    "lat": 34.6913185,
+    "lng": 135.4951019,
+    "days": [
+      0,
+      1,
+      2,
+      3
+    ],
+    "kind": "숙소",
+    "source": "https://welina-hotel.jp/nakanoshimawest/access/"
+  },
+  {
+    "id": "daruma",
+    "name": "쿠시카츠 다루마 동물원앞점",
+    "jp": "串かつだるま 動物園前店 大阪市浪速区恵美須東2-4-5",
+    "lat": 34.6510511,
+    "lng": 135.5064663,
+    "days": [
+      0
+    ],
+    "kind": "식당",
+    "note": "1일차 쿠시카츠 석식 · 동물원앞점",
+    "source": "https://mapfan.com/spots/S5YIA%2CJ%2CE807D0"
+  },
+  {
+    "id": "sakon",
+    "name": "야키니쿠 사콘 도톤보리점",
+    "jp": "黒毛和牛食べ放題 焼肉左近 道頓堀店 大阪市中央区道頓堀1丁目4-22",
+    "lat": 34.66859,
+    "lng": 135.5034729,
+    "days": [
+      0
+    ],
+    "kind": "식당",
+    "note": "1일차 야키니쿠 중식 · 클로드빌딩 2층",
+    "source": "https://www.v-sakon.co.jp/shop/20241112-67/"
+  }
+];
+const JAPAN_ROW_PLACES=[
+  {4:[''],5:['sakon'],6:['castle'],7:['daruma'],8:['dotonbori','shinsaibashi'],10:['hotel']},
+  {0:['hotel'],1:['kiyomizu','sannenzaka','ninenzaka'],3:['doshisha'],4:['mimizuka'],5:['inari'],7:['umeda'],9:['hotel']},
+  {0:['usj'],1:['usj'],3:['hotel']},
+  {0:['hotel'],1:['kaiyukan'],3:['shinsaibashi']}
+];
+(()=>{
+  const section=document.getElementById('view-japan'),host=document.getElementById('japanMap');
+  if(!section||!host)return;
+  const esc=escapeHtml;
+  let map=null,layers=null,loading=null,scope='day',markers=new Map(),fitPending=true,selectedId=null;
+  const places=()=>JAPAN_MAP_PLACES.filter(p=>scope==='all'||p.days.includes(japanSelectedDay));
+  const byId=id=>JAPAN_MAP_PLACES.find(p=>p.id===id);
+  const mapsUrl=p=>'https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(p.jp);
+  const directionsUrl=p=>'https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(p.jp);
+  const links=p=>'<a href="'+esc(mapsUrl(p))+'" target="_blank" rel="noopener noreferrer" aria-label="'+esc(p.name)+' Google Maps에서 열기">Google Maps ↗</a><a href="'+esc(directionsUrl(p))+'" target="_blank" rel="noopener noreferrer" aria-label="'+esc(p.name)+' 길찾기">길찾기 ↗</a>';
+  function renderCards(){
+    document.getElementById('japanMapScope').textContent=scope==='all'?'전체 여행 · '+places().length+'곳':JAPAN_TRIP_DAYS[japanSelectedDay].label+' · '+places().length+'곳';
+    document.querySelectorAll('[data-japan-scope]').forEach(b=>b.setAttribute('aria-pressed',String(b.dataset.japanScope===scope)));
+    document.getElementById('japanPlaceList').innerHTML=places().map((p,i)=>'<article class="japanPlaceCard"><div class="japanPlaceTop"><span class="japanPlaceNum">'+(i+1)+'</span><div><span class="japanPlaceKind">'+esc(p.kind)+'</span><h4>'+esc(p.name)+'</h4></div></div>'+(p.note?'<p>'+esc(p.note)+'</p>':'')+'<div class="japanPlaceActions"><button type="button" data-japan-place="'+p.id+'" aria-label="'+esc(p.name)+' 지도에서 보기">지도 핀 보기</button>'+links(p)+'</div></article>').join('');
+    document.querySelectorAll('#japanDayPanel .japanEvent').forEach((event,i)=>{
+      event.querySelector('.japanRowLinks')?.remove();
+      const rowPlaces=(JAPAN_ROW_PLACES[japanSelectedDay][i]||[]).map(byId).filter(Boolean);
+      if(rowPlaces.length){const row=document.createElement('div');row.className='japanRowLinks';row.innerHTML=rowPlaces.map(p=>'<a href="'+esc(mapsUrl(p))+'" target="_blank" rel="noopener noreferrer">'+esc(p.name)+' ↗</a>').join('');event.append(row);}
+    });
+  }
+  function loadLeaflet(){
+    if(window.L)return Promise.resolve(window.L);
+    if(loading)return loading;
+    if(!document.getElementById('japanLeafletCss')){
+      const css=document.createElement('link');css.id='japanLeafletCss';css.rel='stylesheet';css.href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css';css.integrity='sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=';css.crossOrigin='anonymous';document.head.append(css);
+    }
+    loading=new Promise((resolve,reject)=>{
+      const script=document.createElement('script');script.src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js';script.integrity='sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=';script.crossOrigin='anonymous';
+      script.onload=()=>resolve(window.L);script.onerror=()=>{script.remove();loading=null;reject(new Error('지도 연결 실패'));};document.head.append(script);
+    });return loading;
+  }
+  function drawPins(){
+    if(!map)return;
+    layers.clearLayers();markers.clear();
+    places().forEach((p,i)=>{
+      const icon=L.divIcon({className:'japanMapMarker',html:'<span class="'+(p.kind==='식당'?'isRestaurant':p.kind==='숙소'?'isHotel':'')+'">'+(i+1)+'</span>',iconSize:[30,36],iconAnchor:[15,36]});
+      const marker=L.marker([p.lat,p.lng],{icon,title:p.name,alt:p.name,keyboard:true}).addTo(layers);
+      marker.bindPopup('<div class="japanPinPopup"><b>'+esc(p.name)+'</b>'+(p.note?'<p>'+esc(p.note)+'</p>':'')+'<div>'+links(p)+'</div></div>');markers.set(p.id,marker);
+    });
+    fitPending=true;refreshSize();
+  }
+  function refreshSize(){
+    if(!map||!host.getClientRects().length)return;
+    map.invalidateSize({pan:false});
+    if(fitPending){const list=places();if(list.length)map.fitBounds(list.map(p=>[p.lat,p.lng]),{padding:[32,32],maxZoom:15,animate:false});fitPending=false;}
+    if(selectedId){const p=byId(selectedId),marker=markers.get(selectedId);if(p&&marker){map.setView([p.lat,p.lng],16,{animate:false});marker.openPopup();}selectedId=null;}
+  }
+  async function ensureMap(){
+    if(!host.getClientRects().length)return;
+    if(map){refreshSize();return;}
+    const status=document.getElementById('japanMapStatus');status.hidden=false;status.textContent='지도를 불러오는 중이에요…';
+    try{
+      await loadLeaflet();if(map)return;
+      map=L.map(host,{scrollWheelZoom:false}).setView([34.8,135.6],10);
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:19,attribution:'&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'}).addTo(map);
+      layers=L.layerGroup().addTo(map);status.hidden=true;drawPins();
+    }catch(error){status.textContent='지도를 불러오지 못했어요. 아래 Google Maps 링크는 바로 이용할 수 있어요.';}
+  }
+  const originalRender=renderJapanTrip;
+  renderJapanTrip=function(index){originalRender(index);scope='day';selectedId=null;renderCards();if(map)drawPins();else ensureMap();};
+  section.addEventListener('click',event=>{
+    const scopeButton=event.target.closest('[data-japan-scope]');
+    if(scopeButton){scope=scopeButton.dataset.japanScope;selectedId=null;renderCards();if(map)drawPins();else ensureMap();return;}
+    const placeButton=event.target.closest('[data-japan-place]');
+    if(placeButton){selectedId=placeButton.dataset.japanPlace;host.scrollIntoView({behavior:'smooth',block:'center'});if(map)refreshSize();else ensureMap();}
+  });
+  new MutationObserver(()=>{if(section.classList.contains('active'))ensureMap();}).observe(section,{attributes:true,attributeFilter:['class']});
+  new ResizeObserver(()=>{if(host.getClientRects().length){if(map)refreshSize();else ensureMap();}}).observe(host);
+  window.addEventListener('load',()=>{renderCards();ensureMap();});
 })();
 
 </script>
