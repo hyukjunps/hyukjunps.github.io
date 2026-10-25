@@ -4771,6 +4771,8 @@ let kakaoAdTimer = 0;
 let kakaoAdGeneration = 0;
 let kakaoAdView = "";
 let kakaoHomeAdUnit = "";
+// Optional troubleshooting flag; no device or ad-unit parameters are altered.
+const kakaoAdCheckFormat = new URLSearchParams(window.location.search).get("adcheck");
 const KAKAO_AD_CONTAINERS = Object.values(KAKAO_ADS).map(ad=>ad.container);
 function ensureKakaoAdSdk(){
   if(typeof window.adfit?.render === "function") return Promise.resolve(window.adfit);
@@ -4841,7 +4843,7 @@ function selectKakaoHomeAd(){
   const style=window.getComputedStyle(panel);
   const left=parseFloat(style.paddingLeft)||0,right=parseFloat(style.paddingRight)||0;
   const usable=panel.clientWidth-left-right;
-  const ad=usable>=KAKAO_ADS.homeDesktop.width ? KAKAO_ADS.homeDesktop : KAKAO_ADS.homeMobile;
+  const ad=kakaoAdCheckFormat==="mobile" ? KAKAO_ADS.homeMobile : usable>=KAKAO_ADS.homeDesktop.width ? KAKAO_ADS.homeDesktop : KAKAO_ADS.homeMobile;
   const mobileBox=document.getElementById(KAKAO_ADS.homeMobile.container);
   mobileBox.style.setProperty("--home-ad-left",left+"px");
   mobileBox.style.setProperty("--home-ad-right",right+"px");
