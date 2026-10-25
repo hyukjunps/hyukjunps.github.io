@@ -2649,6 +2649,41 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
 @media(max-width:620px){.japanMapSection{padding:13px}.japanMapCanvas{height:290px}.japanPlaceList{grid-template-columns:1fr}.japanMapHeading h3{font-size:16px}}
 
 </style>
+<style id="opoong-mobile-widget-fix">
+/* Mobile widget repair: allow the document to grow with card contents. */
+@media (max-width:960px){
+ #view-home .homeDashboardWidgets{
+  height:auto!important;max-height:none!important;
+  grid-template-columns:minmax(0,1fr)!important;
+  grid-template-rows:none!important;grid-auto-rows:auto!important;
+  overflow:visible!important;align-items:start!important;
+ }
+ #view-home .homeDashboardWidgets .widget[data-home-widget]{
+  grid-column:1!important;grid-row:auto!important;
+  height:auto!important;min-height:0!important;max-height:none!important;
+  min-width:0!important;max-width:100%!important;aspect-ratio:auto!important;
+  overflow:visible!important;
+ }
+ #view-home .homeDashboardWidgets .widgetHead{
+  flex-wrap:wrap;align-items:center;row-gap:8px;
+ }
+ #view-home .homeDashboardWidgets .widgetHead b{font-size:14px;overflow-wrap:anywhere}
+ #view-home .homeDashboardWidgets .widgetHead .pill{max-width:100%;white-space:normal;overflow-wrap:anywhere}
+ #view-home .homeDashboardWidgets .widgetBody,
+ #view-home .homeDashboardWidgets #homeMealBody,
+ #view-home .homeDashboardWidgets #homeDdayBody{
+  flex:0 1 auto!important;height:auto!important;
+  min-height:0!important;max-height:none!important;
+  min-width:0!important;overflow:visible!important;
+  font-size:14px;overflow-wrap:anywhere;
+ }
+ #view-home .homeDashboardWidgets .ddayList{grid-template-columns:minmax(0,1fr)!important}
+ #view-home .homeDashboardWidgets .ddayItem{min-width:0;grid-template-columns:minmax(0,1fr) auto!important}
+ #view-home .homeDashboardWidgets .ddayItemText{min-width:0}
+ #view-home .homeDashboardWidgets .weatherWidgetHeadActions{flex-wrap:wrap;max-width:100%}
+}
+#view-home .homeDashboardWidgets .widget.homeWidgetHidden{display:none!important}
+</style>
 </head>
 
 <body class="setup-pending home-view">
@@ -6349,6 +6384,10 @@ function handleHomeMealToggle(details){
   });
 }
 function fitHomeWidgets(){
+  if(window.matchMedia("(max-width:960px)").matches){
+    document.querySelector("#view-home .homeDashboardWidgets")?.style.removeProperty("--home-fit-height");
+    return;
+  }
   const panel=document.getElementById("view-home");
   const hero=panel?.querySelector(".homeDashboardHero");
   const widgets=panel?.querySelector(".homeDashboardWidgets");
