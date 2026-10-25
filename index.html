@@ -7259,6 +7259,66 @@ const JAPAN_ROW_PLACES=[
 })();
 
 </script>
+<!-- OPOONG_JAPAN_MODE_2026_START -->
+<style id="opoong-japan-mode-style">
+.japanModeBanner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;margin:0 0 18px;padding:16px 18px;border:1px solid color-mix(in srgb,#dc3545 25%,var(--line));border-radius:14px;background:color-mix(in srgb,#dc3545 5%,var(--card))}
+.japanModeBanner b{display:block;font-size:15px;color:var(--text)}
+.japanModeBanner p{margin:5px 0 0;font-size:12px;color:var(--muted);line-height:1.6}
+html[data-japan-mode="2026"] #japanDayPanel{margin:0 0 20px}
+html[data-japan-mode="2026"] .japanTripNav .title{color:var(--trip-accent,#137f77)}
+</style>
+<script id="opoong-japan-mode-2026">
+(()=>{
+  const endsAt=Date.parse('2026-10-29T22:00:00+09:00');
+  const active=()=>Date.now()<endsAt;
+  if(!active())return;
+  const originalGo=go;
+  const panel=document.getElementById('japanDayPanel');
+  const mapSection=document.querySelector('#view-japan .japanMapSection');
+  const placeholder=document.createComment('Japan itinerary original position');
+  panel.before(placeholder);
+  mapSection.before(panel);
+  const banner=document.createElement('div');
+  banner.className='japanModeBanner';
+  banner.innerHTML='<div><b>🇯🇵 오풍 일본 모드</b><p>4일차 · 10월 29일 귀국 일정이 메인이에요.<br>10.29 목요일 22:00까지 · 한국·일본 시간</p></div><button type="button" class="btn ghost">학교 대시보드</button>';
+  document.querySelector('#view-japan .sectionHeader').after(banner);
+  banner.querySelector('button').addEventListener('click',()=>originalGo('home'));
+  const homeTitle=document.querySelector('[data-view="home"] .title');
+  const homeHint=document.querySelector('[data-view="home"] .hint');
+  const oldTitle=homeTitle.textContent,oldHint=homeHint.textContent;
+  homeTitle.textContent='홈 · 일본 모드';homeHint.textContent='4일차 일정 바로 보기';
+  document.documentElement.dataset.japanMode='2026';
+  let ended=false,timer;
+  function finish(){
+    if(ended)return;ended=true;clearTimeout(timer);
+    const wasJapan=document.getElementById('view-japan').classList.contains('active');
+    go=originalGo;
+    delete document.documentElement.dataset.japanMode;
+    homeTitle.textContent=oldTitle;homeHint.textContent=oldHint;
+    placeholder.replaceWith(panel);banner.remove();
+    document.getElementById('opoong-japan-mode-style')?.remove();
+    document.removeEventListener('visibilitychange',check);
+    window.removeEventListener('pageshow',check);
+    if(wasJapan)originalGo('home');
+  }
+  go=function(view){
+    if(!active()){finish();return originalGo(view);}
+    if(view==='home'){japanSelectedDay=3;return originalGo('japan');}
+    return originalGo(view);
+  };
+  japanSelectedDay=3;
+  window.addEventListener('load',()=>{if(active())renderJapanTrip(3);else finish();});
+  function check(){
+    clearTimeout(timer);
+    if(!active()){finish();return;}
+    timer=setTimeout(check,Math.min(60000,endsAt-Date.now()));
+  }
+  document.addEventListener('visibilitychange',check);
+  window.addEventListener('pageshow',check);
+  check();
+})();
+</script>
+<!-- OPOONG_JAPAN_MODE_2026_END -->
 </body>
 </html>
 
