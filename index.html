@@ -2684,6 +2684,20 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
 }
 #view-home .homeDashboardWidgets .widget.homeWidgetHidden{display:none!important}
 </style>
+<style id="opoong-portrait-ad-fix">
+/* Choose the home slot from usable space, independently of viewport breakpoints. */
+#view-home .adfitWrap[data-ad-selected="true"]{display:flex!important}
+#view-home .adfitWrap[data-ad-selected="false"]{display:none!important}
+.adfitWrap{justify-content:flex-start;overflow-x:auto}
+.adfitWrap .adfitBox{
+ padding-left:0;padding-right:0;border-left:0;border-right:0;
+ min-width:var(--opoong-ad-width,0px);flex-shrink:0;margin-inline:auto;
+}
+#view-home #ad-home-mobile[data-ad-selected="true"]{
+ margin-left:calc(-1 * var(--home-ad-left,18px));
+ width:calc(100% + var(--home-ad-left,18px) + var(--home-ad-right,18px));
+}
+</style>
 </head>
 
 <body class="setup-pending home-view">
@@ -4756,6 +4770,7 @@ let kakaoSdkPromise = null;
 let kakaoAdTimer = 0;
 let kakaoAdGeneration = 0;
 let kakaoAdView = "";
+let kakaoHomeAdUnit = "";
 const KAKAO_AD_CONTAINERS = Object.values(KAKAO_ADS).map(ad=>ad.container);
 function ensureKakaoAdSdk(){
   if(typeof window.adfit?.render === "function") return Promise.resolve(window.adfit);
@@ -4798,6 +4813,7 @@ function mountKakaoAd(ad,generation=kakaoAdGeneration){
   box.dataset.adUnit=ad.unit;box.dataset.adState="sdk-loading";
   box.innerHTML='<div class="adfitBox"><span class="adfitLabel">AD</span></div>';
   const frame=box.querySelector(".adfitBox");
+  frame.style.setProperty("--opoong-ad-width",ad.width+"px");
   ensureKakaoAdSdk().then(sdk=>{
     if(generation!==kakaoAdGeneration || !frame.isConnected ||
       !isKakaoAdViewVisible(kakaoAdView) || !box.getClientRects().length) return;
@@ -4820,6 +4836,20 @@ function mountKakaoAd(ad,generation=kakaoAdGeneration){
     }
   });
 }
+function selectKakaoHomeAd(){
+  const panel=document.getElementById("view-home");
+  const style=window.getComputedStyle(panel);
+  const left=parseFloat(style.paddingLeft)||0,right=parseFloat(style.paddingRight)||0;
+  const usable=panel.clientWidth-left-right;
+  const ad=usable>=KAKAO_ADS.homeDesktop.width ? KAKAO_ADS.homeDesktop : KAKAO_ADS.homeMobile;
+  const mobileBox=document.getElementById(KAKAO_ADS.homeMobile.container);
+  mobileBox.style.setProperty("--home-ad-left",left+"px");
+  mobileBox.style.setProperty("--home-ad-right",right+"px");
+  [KAKAO_ADS.homeDesktop,KAKAO_ADS.homeMobile].forEach(candidate=>{
+    document.getElementById(candidate.container).dataset.adSelected=String(candidate===ad);
+  });
+  return ad;
+}
 function loadKakaoAdsForView(view){
   window.clearTimeout(kakaoAdTimer);
   const sameView=kakaoAdView===view;
@@ -4829,7 +4859,11 @@ function loadKakaoAdsForView(view){
   kakaoAdTimer=window.setTimeout(()=>{
     if(!isKakaoAdViewVisible(view))return;
     let ads=[];
-    if(view==="home") ads=[window.matchMedia("(max-width:760px)").matches?KAKAO_ADS.homeMobile:KAKAO_ADS.homeDesktop];
+    if(view==="home"){
+      const ad=selectKakaoHomeAd();
+      if(kakaoHomeAdUnit!==ad.unit){kakaoAdGeneration++;clearKakaoAdBoxes();kakaoHomeAdUnit=ad.unit;}
+      ads=[ad];
+    }
     if(view==="gohome") ads=[KAKAO_ADS.gohome];
     if(view==="evaluation") ads=[KAKAO_ADS.evaluationTop,KAKAO_ADS.evaluationBottom];
     if(view==="meal") ads=[KAKAO_ADS.meal];
@@ -4839,15 +4873,8 @@ function loadKakaoAdsForView(view){
     ads.forEach(ad=>mountKakaoAd(ad,kakaoAdGeneration));
   },180);
 }
-let kakaoAdMobile = window.matchMedia("(max-width:760px)").matches;
 window.addEventListener("resize",()=>{
-  const mobile=window.matchMedia("(max-width:760px)").matches;
-  if(mobile!==kakaoAdMobile){
-    kakaoAdMobile=mobile;
-    if(kakaoAdView==="home"){
-      kakaoAdGeneration++;clearKakaoAdBoxes();loadKakaoAdsForView("home");
-    }
-  }
+  if(kakaoAdView==="home")loadKakaoAdsForView("home");
 });
 
 const GAME_OVER_ADS = [
@@ -7220,6 +7247,7 @@ const JAPAN_ROW_PLACES=[
 </script>
 </body>
 </html>
+
 
 
 
