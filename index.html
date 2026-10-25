@@ -7300,7 +7300,8 @@ html[data-japan-mode="2026"] .japanTripNav .title{color:var(--trip-accent,#137f7
     <div class="japanSimCompare"><div><small>여행사 제공 · 전달받은 안내</small><b>1GB + 3G 무제한</b><span>1GB 사용 후 3G로 계속 이용<br>속도 조건은 여행사에 확인</span></div><div><small>유심사 일본 상품</small><b>완전 무제한</b><span>빠른 데이터가 필요하다면<br>완전 무제한 옵션 확인</span></div></div>
     <a class="japanSimCta" href="${affiliateUrl}" target="_blank" rel="sponsored noopener noreferrer">유심사 완전 무제한 보러가기 ↗</a>
     <p class="japanSimFine">실제 속도는 현지 통신망·혼잡도·선택 상품에 따라 달라요. 구매 전 속도 제한·공정사용정책(FUP), 이용 기간과 단말기 지원 여부를 확인하세요.</p>
-    <p class="japanSimFine">이 링크를 통한 구매 시 운영자에게 수수료가 지급될 수 있어요.</p>`;
+    <p class="japanSimFine">이 링크를 통한 구매 시 운영자에게 수수료가 지급될 수 있어요.</p>
+    <button type="button" class="btn ghost japanSimDismiss" style="width:100%;margin-top:4px">닫고 다시 보지 않기</button>`;
   document.body.appendChild(simNotice);
   const simCard=document.createElement('div');simCard.className='japanSimReopen';
   simCard.innerHTML=`<div><b>AD · 일본 여행 데이터 준비</b>유심사 완전 무제한 상품을 확인해 보세요.</div><a href="${affiliateUrl}" target="_blank" rel="sponsored noopener noreferrer">유심사 바로가기 ↗</a>`;
@@ -7317,10 +7318,21 @@ html[data-japan-mode="2026"] .japanTripNav .title{color:var(--trip-accent,#137f7
     kakaoAdView=view;
     kakaoAdTimer=setTimeout(()=>{if(isKakaoAdViewVisible(view))mountKakaoAd(japanAd,kakaoAdGeneration);},180);
   };
-  const showSimNotice=()=>{if(active()&&!ended)simNotice.hidden=false;};
-  simNotice.querySelector('.japanSimClose').addEventListener('click',()=>{simNotice.hidden=true;});
-  simNotice.addEventListener('keydown',event=>{if(event.key==='Escape')simNotice.hidden=true;});
-  // Show on every launch/reload, and whenever the app returns to the foreground.
+  const simDismissKey='opoong_usimsa_dismissed_2026';
+  let simDismissed=false;
+  try{simDismissed=localStorage.getItem(simDismissKey)==='1';}catch(error){}
+  const dismissSimNotice=()=>{
+    simDismissed=true;simNotice.hidden=true;
+    try{localStorage.setItem(simDismissKey,'1');}catch(error){}
+  };
+  const showSimNotice=()=>{
+    try{if(localStorage.getItem(simDismissKey)==='1')simDismissed=true;}catch(error){}
+    if(active()&&!ended&&!simDismissed)simNotice.hidden=false;
+  };
+  simNotice.querySelector('.japanSimClose').addEventListener('click',dismissSimNotice);
+  simNotice.querySelector('.japanSimDismiss').addEventListener('click',dismissSimNotice);
+  simNotice.addEventListener('keydown',event=>{if(event.key==='Escape')dismissSimNotice();});
+  // Remember dismissal across launches, reloads, and foreground changes.
   const resumeSimNotice=()=>{if(!document.hidden)showSimNotice();};
   document.addEventListener('visibilitychange',resumeSimNotice);
   window.addEventListener('pageshow',showSimNotice);
