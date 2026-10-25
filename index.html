@@ -4751,52 +4751,104 @@ const KAKAO_ADS = {
   onway: { unit: "DAN-vszyC76aKoBwX0tg", width: 320, height: 50, container: "ad-onway" }
 };
 
-function mountKakaoAd(ad){
-  const box = document.getElementById(ad.container);
-  if(!box) return;
-
-  box.innerHTML = `
-    <div class="adfitBox">
-      <span class="adfitLabel">AD</span>
-      <ins class="kakao_ad_area" style="display:none;"
-        data-ad-unit="${ad.unit}"
-        data-ad-width="${ad.width}"
-        data-ad-height="${ad.height}"></ins>
-    </div>
-  `;
-
-  const script = document.createElement("script");
-  script.type = "text/javascript";
-  script.async = true;
-  script.src = "https://t1.kakaocdn.net/kas/static/ba.min.js?" + Date.now();
-  document.body.appendChild(script);
+// Keep one SDK instance. Render only the newly visible slot, never every ad again.
+let kakaoSdkPromise = null;
+let kakaoAdTimer = 0;
+let kakaoAdGeneration = 0;
+let kakaoAdView = "";
+const KAKAO_AD_CONTAINERS = Object.values(KAKAO_ADS).map(ad=>ad.container);
+function ensureKakaoAdSdk(){
+  if(typeof window.adfit?.render === "function") return Promise.resolve(window.adfit);
+  if(kakaoSdkPromise) return kakaoSdkPromise;
+  kakaoSdkPromise = new Promise((resolve,reject)=>{
+    const script=document.createElement("script");
+    script.id="opoong-adfit-sdk";
+    script.async=true;script.type="text/javascript";script.charset="utf-8";
+    script.src="https://t1.kakaocdn.net/kas/static/ba.min.js";
+    script.onload=()=>{
+      if(typeof window.adfit?.render === "function") resolve(window.adfit);
+      else {kakaoSdkPromise=null;script.remove();reject(new Error("AdFit SDK unavailable"));}
+    };
+    script.onerror=()=>{kakaoSdkPromise=null;script.remove();reject(new Error("AdFit SDK could not load"));};
+    document.body.appendChild(script);
+  });
+  return kakaoSdkPromise;
 }
-
+function clearKakaoAdBox(box){
+  if(!box) return;
+  box.querySelectorAll("ins.kakao_ad_area").forEach(el=>{
+    if(typeof window.adfit?.destroy === "function") window.adfit.destroy(el);
+  });
+  box.replaceChildren();
+  delete box.dataset.adUnit;
+  delete box.dataset.adState;
+}
 function clearKakaoAdBoxes(){
-  ["ad-home","ad-home-mobile","ad-meal","ad-onway","ad-gohome","ad-evaluation-top","ad-evaluation-bottom"].forEach(id=>{
-    const box = document.getElementById(id);
-    if(box) box.innerHTML = "";
+  KAKAO_AD_CONTAINERS.forEach(id=>clearKakaoAdBox(document.getElementById(id)));
+}
+function isKakaoAdViewVisible(view){
+  const panel=document.getElementById("view-"+view);
+  return !document.body.classList.contains("setup-pending") &&
+    !!panel?.classList.contains("active") && panel.getClientRects().length>0;
+}
+function mountKakaoAd(ad,generation=kakaoAdGeneration){
+  const box=document.getElementById(ad.container);
+  if(!box || !box.getClientRects().length || box.dataset.adUnit===ad.unit) return;
+  clearKakaoAdBox(box);
+  box.dataset.adUnit=ad.unit;box.dataset.adState="sdk-loading";
+  box.innerHTML='<div class="adfitBox"><span class="adfitLabel">AD</span></div>';
+  const frame=box.querySelector(".adfitBox");
+  ensureKakaoAdSdk().then(sdk=>{
+    if(generation!==kakaoAdGeneration || !frame.isConnected ||
+      !isKakaoAdViewVisible(kakaoAdView) || !box.getClientRects().length) return;
+    const slot=document.createElement("ins");
+    slot.className="kakao_ad_area";slot.style.display="none";
+    slot.setAttribute("data-ad-unit",ad.unit);
+    slot.setAttribute("data-ad-width",String(ad.width));
+    slot.setAttribute("data-ad-height",String(ad.height));
+    const callback="opoongAd_"+ad.container.replace(/-/g,"_");
+    window[callback+"Loaded"]=el=>{if(el.isConnected)box.dataset.adState="loaded";};
+    window[callback+"Failed"]=el=>{if(el.isConnected)box.dataset.adState="no-ad";};
+    slot.setAttribute("data-ad-onload",callback+"Loaded");
+    slot.setAttribute("data-ad-onfail",callback+"Failed");
+    frame.appendChild(slot);box.dataset.adState="requested";
+    sdk.render(slot);
+  }).catch(error=>{
+    if(generation===kakaoAdGeneration && frame.isConnected){
+      box.dataset.adState="sdk-error";
+      console.warn("[O.Poong AdFit]",error.message);
+    }
   });
 }
-
 function loadKakaoAdsForView(view){
-  // 카카오 애드핏은 display:none인 section에서 먼저 실행되면 빈 박스로 남을 수 있어 약간 늦게 실행합니다.
-  // 동시에 여러 <ins>가 남아 있는 것도 막기 위해 현재 화면 광고만 남깁니다.
-  clearKakaoAdBoxes();
-  window.setTimeout(()=>{
-    if(view === "home"){
-      const isMobile = window.matchMedia("(max-width:760px)").matches;
-      mountKakaoAd(isMobile ? KAKAO_ADS.homeMobile : KAKAO_ADS.homeDesktop);
-    }
-    if(view === "gohome" && document.getElementById("view-gohome").classList.contains("active")) mountKakaoAd(KAKAO_ADS.gohome);
-    if(view === "evaluation" && document.getElementById("view-evaluation").classList.contains("active")){
-      mountKakaoAd(KAKAO_ADS.evaluationTop);
-      mountKakaoAd(KAKAO_ADS.evaluationBottom);
-    }
-    if(view === "meal") mountKakaoAd(KAKAO_ADS.meal);
-    if(view === "onway") mountKakaoAd(KAKAO_ADS.onway);
-  }, 180);
+  window.clearTimeout(kakaoAdTimer);
+  const sameView=kakaoAdView===view;
+  kakaoAdView=view;
+  // A repeated call for the same visible view must not erase an in-flight banner.
+  if(!sameView){kakaoAdGeneration++;clearKakaoAdBoxes();}
+  kakaoAdTimer=window.setTimeout(()=>{
+    if(!isKakaoAdViewVisible(view))return;
+    let ads=[];
+    if(view==="home") ads=[window.matchMedia("(max-width:760px)").matches?KAKAO_ADS.homeMobile:KAKAO_ADS.homeDesktop];
+    if(view==="gohome") ads=[KAKAO_ADS.gohome];
+    if(view==="evaluation") ads=[KAKAO_ADS.evaluationTop,KAKAO_ADS.evaluationBottom];
+    if(view==="meal") ads=[KAKAO_ADS.meal];
+    if(view==="onway") ads=[KAKAO_ADS.onway];
+    const wanted=new Set(ads.map(ad=>ad.container));
+    KAKAO_AD_CONTAINERS.forEach(id=>{if(!wanted.has(id))clearKakaoAdBox(document.getElementById(id));});
+    ads.forEach(ad=>mountKakaoAd(ad,kakaoAdGeneration));
+  },180);
 }
+let kakaoAdMobile = window.matchMedia("(max-width:760px)").matches;
+window.addEventListener("resize",()=>{
+  const mobile=window.matchMedia("(max-width:760px)").matches;
+  if(mobile!==kakaoAdMobile){
+    kakaoAdMobile=mobile;
+    if(kakaoAdView==="home"){
+      kakaoAdGeneration++;clearKakaoAdBoxes();loadKakaoAdsForView("home");
+    }
+  }
+});
 
 const GAME_OVER_ADS = [
   { unit: "DAN-rJlK5gWdIDLwSy9f", width: 320, height: 100 },
@@ -5090,6 +5142,8 @@ let setupStepIndex = 0;
 
 function showMainApp(){
   document.body.classList.remove("setup-pending");
+  const active=document.querySelector(".view.active");
+  if(active)loadKakaoAdsForView(active.id.replace(/^view-/,""));
 }
 function showFirstStartOnly(){
   document.body.classList.add("setup-pending");
@@ -7166,5 +7220,6 @@ const JAPAN_ROW_PLACES=[
 </script>
 </body>
 </html>
+
 
 
