@@ -4798,6 +4798,7 @@ function clearKakaoAdBox(box){
   });
   box.replaceChildren();
   delete box.dataset.adUnit;
+  delete box.dataset.adPrimary;
   delete box.dataset.adState;
 }
 function clearKakaoAdBoxes(){
@@ -4810,9 +4811,9 @@ function isKakaoAdViewVisible(view){
 }
 function mountKakaoAd(ad,generation=kakaoAdGeneration){
   const box=document.getElementById(ad.container);
-  if(!box || !box.getClientRects().length || box.dataset.adUnit===ad.unit) return;
+  if(!box || !box.getClientRects().length || (box.dataset.adUnit===ad.unit || box.dataset.adPrimary===ad.unit)) return;
   clearKakaoAdBox(box);
-  box.dataset.adUnit=ad.unit;box.dataset.adState="sdk-loading";
+  box.dataset.adUnit=ad.unit;box.dataset.adPrimary=ad.primaryUnit||ad.unit;box.dataset.adState="sdk-loading";
   box.innerHTML='<div class="adfitBox"><span class="adfitLabel">AD</span></div>';
   const frame=box.querySelector(".adfitBox");
   frame.style.setProperty("--opoong-ad-width",ad.width+"px");
@@ -4826,7 +4827,18 @@ function mountKakaoAd(ad,generation=kakaoAdGeneration){
     slot.setAttribute("data-ad-height",String(ad.height));
     const callback="opoongAd_"+ad.container.replace(/-/g,"_");
     window[callback+"Loaded"]=el=>{if(el.isConnected)box.dataset.adState="loaded";};
-    window[callback+"Failed"]=el=>{if(el.isConnected)box.dataset.adState="no-ad";};
+    window[callback+"Failed"]=el=>{
+      if(!el.isConnected)return;
+      box.dataset.adState="no-ad";
+      // One same-size fallback only; retain it on repeated visits to this view.
+      const fallbackEligible=!ad.primaryUnit &&
+        (ad.unit===KAKAO_ADS.homeMobile.unit || ad.unit===KAKAO_ADS.meal.unit);
+      if(fallbackEligible)window.setTimeout(()=>{
+        if(generation!==kakaoAdGeneration || !el.isConnected ||
+          !isKakaoAdViewVisible(kakaoAdView))return;
+        mountKakaoAd({...KAKAO_ADS.evaluationTop,container:ad.container,primaryUnit:ad.unit},generation);
+      },0);
+    };
     slot.setAttribute("data-ad-onload",callback+"Loaded");
     slot.setAttribute("data-ad-onfail",callback+"Failed");
     frame.appendChild(slot);box.dataset.adState="requested";
