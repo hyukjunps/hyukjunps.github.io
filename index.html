@@ -1750,50 +1750,6 @@ body.setup-pending .firstStartBack{
 
 
 
-/* ===== O.Poong Kakao AdFit reliable patch ===== */
-.adfitWrap{
-  margin:18px 0 0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  width:100%;
-  overflow:hidden;
-}
-.adfitBox{
-  width:min(100%,760px);
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
-  gap:6px;
-  padding:8px;
-  border:1px solid color-mix(in srgb,var(--line) 86%,transparent);
-  border-radius:20px;
-  background:color-mix(in srgb,var(--card) 82%,transparent);
-  box-shadow:0 8px 18px rgba(15,23,42,.04);
-  overflow:hidden;
-}
-.adfitLabel{
-  align-self:flex-start;
-  color:var(--muted);
-  font-size:11px;
-  font-weight:900;
-  line-height:1;
-}
-.adfitMobile .adfitBox{width:min(100%,340px);min-height:66px;}
-.adfitDesktop .adfitBox{min-height:112px;}
-.adfitWrap ins.kakao_ad_area{max-width:100%;}
-#view-onway .adfitWrap{justify-content:flex-start;}
-#view-onway .adfitBox,#view-meal .adfitBox{width:min(100%,340px);}
-@media (max-width:760px){
-  .adfitDesktop{display:none!important;}
-}
-@media (min-width:761px){
-  .adfitMobile.homeTopMobile{display:none!important;}
-}
-
-
-
 /* ===== O.Poong games + fixed-price color shop ===== */
 html[data-opoong-color="mint"]{--pri:#047857;--pri2:#059669;--pri3:#6ee7b7;--line2:#a7f3d0}
 html[data-opoong-color="purple"]{--pri:#6d28d9;--pri2:#7c3aed;--pri3:#c4b5fd;--line2:#ddd6fe}
@@ -1802,31 +1758,6 @@ html[data-opoong-color="pink"]{--pri:#be185d;--pri2:#db2777;--pri3:#f9a8d4;--lin
 .gameSectionHeader{align-items:center}
 .gameWallet{display:flex;align-items:center;gap:10px;padding:10px 14px;border:1px solid color-mix(in srgb,var(--pri) 30%,var(--line));border-radius:999px;background:color-mix(in srgb,var(--pri) 9%,var(--card))}
 .gameWallet span{color:var(--muted);font-size:11px;font-weight:900}.gameWallet strong{color:var(--pri);font-size:18px}
-.gameOverAdBack{
-  position:fixed;inset:0;z-index:1200;display:grid;place-items:center;padding:16px;
-  background:rgba(2,6,23,.72);backdrop-filter:blur(8px);
-}
-.gameOverAdBack[hidden]{display:none!important}
-.gameOverAdModal{
-  width:min(390px,100%);padding:16px;border:1px solid var(--line);border-radius:26px;
-  background:var(--card);box-shadow:0 28px 80px rgba(0,0,0,.38);
-}
-.gameOverAdHead{display:flex;align-items:center;justify-content:space-between;gap:12px}
-.gameOverAdHead strong{font-size:14px}
-.gameOverAdClose{
-  width:42px;height:42px;border:1px solid var(--line);border-radius:15px;
-  background:var(--card2);color:var(--text);font-size:25px;line-height:1;
-}
-.gameOverAdText{margin:10px 0 14px;color:var(--muted);font-size:13px;font-weight:800;line-height:1.6}
-.gameOverAdSlot{
-  min-height:116px;display:grid;place-items:center;overflow:hidden;
-  border:1px solid var(--line);border-radius:20px;background:var(--card2);
-}
-.gameOverRestart{text-align:center;padding:12px 4px 4px}
-.gameOverRestart h3{margin:0;font-size:24px}
-.gameOverRestart p{margin:9px 0 17px;color:var(--muted);font-weight:800}
-.gameOverRestartActions{display:flex;justify-content:center;gap:9px;flex-wrap:wrap}
-
 .gameLibrary{max-width:920px;margin:0 auto}.gameLibrary[hidden],.miniGamePanel[hidden],.miniGameTopbar[hidden],.gameColorShop[hidden]{display:none!important}
 .gameLibraryLead{display:flex;align-items:end;justify-content:space-between;gap:12px;margin:2px 2px 13px}.gameLibraryLead b{font-size:18px}.gameLibraryLead span{color:var(--muted);font-size:11.5px;font-weight:850}
 .gameCardGrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.gameCard{min-width:0;padding:8px;border:1px solid var(--line);border-radius:22px;background:color-mix(in srgb,var(--card) 96%,transparent);color:var(--text);text-align:left;box-shadow:var(--shadow2);transition:.18s;cursor:pointer}.gameCard:hover{border-color:color-mix(in srgb,var(--pri) 45%,var(--line));transform:translateY(-3px)}.gameCard:active{transform:scale(.98)}
@@ -2684,19 +2615,14 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
 }
 #view-home .homeDashboardWidgets .widget.homeWidgetHidden{display:none!important}
 </style>
-<style id="opoong-portrait-ad-fix">
-/* Choose the home slot from usable space, independently of viewport breakpoints. */
-#view-home .adfitWrap[data-ad-selected="true"]{display:flex!important}
-#view-home .adfitWrap[data-ad-selected="false"]{display:none!important}
-.adfitWrap{justify-content:flex-start;overflow-x:auto}
-.adfitWrap .adfitBox{
- padding-left:0;padding-right:0;border-left:0;border-right:0;
- min-width:var(--opoong-ad-width,0px);flex-shrink:0;margin-inline:auto;
-}
-#view-home #ad-home-mobile[data-ad-selected="true"]{
- margin-left:calc(-1 * var(--home-ad-left,18px));
- width:calc(100% + var(--home-ad-left,18px) + var(--home-ad-right,18px));
-}
+
+<style id="opoong-content-guides">
+.guideStrip{padding:18px;border:1px solid var(--line);border-radius:18px;background:var(--card2);margin:20px 0;line-height:1.8;min-width:0;overflow-wrap:anywhere}
+.guideStrip h3{margin:0 0 6px;font-size:17px}.guideStrip p{margin:6px 0;color:var(--muted);font-size:13px}
+.guideLinks{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}.guideLinks a{display:inline-block;padding:7px 12px;border:1px solid var(--line);border-radius:10px;color:var(--pri);background:var(--card);font-size:13px;text-decoration:none}
+.sourceNote{font-size:12px;color:var(--muted);line-height:1.8;margin:14px 0;overflow-wrap:anywhere}.sourceNote a,.guideStrip a{color:var(--pri)}
+.dataFailure{font-size:13px;line-height:1.8}.dataFailure .guideLinks{margin-top:8px}.dataFailure a{color:var(--pri)}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:3px solid var(--pri);outline-offset:3px}
 </style>
 </head>
 
@@ -2705,7 +2631,7 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
 <div id="firstStartBack" class="firstStartBack" aria-label="O.Poong 시작 화면">
   <section class="firstStartCard">
     <div class="firstStartTopLogo">
-      <img class="firstStartLogoImg" src="./android-launchericon-512-512.png" data-logo-fallbacks="./logo.png|./O.poong.png|./O.Poong.png|./opoong.png" alt="오풍 O.Poong 로고" onerror="opoongLogoFallback(this)">
+      <img class="firstStartLogoImg" src="./android/launchericon-512-512.png" data-logo-fallbacks="./logo.png|./O.poong.png|./O.Poong.png|./opoong.png" alt="오풍 O.Poong 로고" onerror="opoongLogoFallback(this)">
       <div class="firstStartLogoFallback">O.P</div>
     </div>
 
@@ -2732,7 +2658,7 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
   <header class="topbar" aria-label="상단 메뉴">
     <div class="brand">
       <div class="logoWrap" aria-label="오풍 O.Poong 홈 로고">
-        <img class="logo" src="./android-launchericon-512-512.png" data-logo-fallbacks="./logo.png|./O.poong.png|./O.Poong.png|./opoong.png" alt="O.Poong 로고" onerror="opoongLogoFallback(this)">
+        <img class="logo" src="./android/launchericon-512-512.png" data-logo-fallbacks="./logo.png|./O.poong.png|./O.Poong.png|./opoong.png" alt="O.Poong 로고" onerror="opoongLogoFallback(this)">
       </div>
       <div class="brandText">
         <b>O.Poong</b>
@@ -2782,6 +2708,7 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
     <aside class="sideNav" aria-label="주요 메뉴">
       <div class="sideNavTitle">메뉴</div>
       <nav class="navGrid">
+<a class="navBtn" href="/guides/"><span class="left"><span class="icon" aria-hidden="true">▤</span><span><span class="title">학교생활 안내</span><br><span class="hint">급식·일정·설정 도움말</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="home" href="/" onclick="event.preventDefault(); go('home')"><span class="left"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-7h6v7"/></svg></span><span><span class="title">홈</span><br><span class="hint">대시보드</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="weather" href="/?page=weather" onclick="event.preventDefault(); go('weather')"><span class="left"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.4 1.4M17.6 17.6 19 19M5 19l1.4-1.4M17.6 6.4 19 5"/></svg></span><span><span class="title">날씨</span><br><span class="hint">예보·특보</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="meal" href="/?page=meal" onclick="event.preventDefault(); go('meal'); setTodayAndLoad();"><span class="left"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v6a3 3 0 0 0 6 0V3M7 3v18M20 21V3c-4 1-5 5-5 9h5"/></svg></span><span><span class="title">급식</span><br><span class="hint">일별/월별</span></span></span><span>›</span></a>
@@ -2815,6 +2742,7 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
 </section>
 
       <section class="section view active" id="view-home">
+
         <div class="homeDashboard">
           <div class="homeDashboardHero">
             <span class="kicker">O.Poong Portal</span>
@@ -2858,9 +2786,8 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
             </div>
           </aside>
         </div>
-        <div class="adfitWrap adfitDesktop" id="ad-home" aria-label="광고"></div>
-        <div class="adfitWrap adfitMobile homeTopMobile" id="ad-home-mobile" aria-label="광고"></div>
-      </section>
+      <aside class="guideStrip" aria-labelledby="homeGuideTitle"><h3 id="homeGuideTitle">학교생활, 필요한 정보부터</h3><p>오늘 급식과 학사일정을 확인하고, 직접 입력한 시간표와 D-DAY로 하루를 준비하세요. 정보가 다르거나 표시되지 않으면 자료 출처와 확인 방법을 안내에서 찾을 수 있어요.</p><div class="guideLinks"><a href="/guides/meals.html">급식 확인과 표시 설정</a><a href="/guides/schedule.html">일정·D-DAY 활용</a><a href="/guides/timetable.html">시간표 저장과 앱 설치</a><a href="/guides/evaluation.html">평가계획 읽는 방법</a><a href="/guides/troubleshooting.html">오류 해결</a></div></aside>
+</section>
 
       <section class="section view" id="view-weather">
         <div class="sectionHeader">
@@ -2872,7 +2799,7 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
         </div>
         <div id="weatherDetailStatus" class="notice">날씨 정보를 불러오는 중…</div>
         <div id="weatherDetailContent" aria-live="polite"></div>
-      </section>
+      <details class="guideStrip"><summary>관측·예보·생활 안내를 구분하세요</summary><p>관측값은 관측 시각의 상태이고 예보는 앞으로의 예상이에요. 오풍의 생활 기상안내는 공식 특보와 구분해 표시합니다. 외출 전에는 갱신 시각과 기상청 발표를 함께 확인하세요.</p><a href="/guides/sources.html">자세한 안내 읽기 →</a></details><p class="sourceNote">자료·확인 경로: <a href="https://www.weather.go.kr/" target="_blank" rel="noopener noreferrer">기상청 날씨누리</a> · <a href="/guides/sources.html">출처와 갱신 기준</a></p></section>
 
       <section class="section view" id="view-meal">
         <div class="sectionHeader">
@@ -2940,10 +2867,9 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
         </div>
         <div id="meals" style="margin-top:14px"></div>
         <div id="mealMonthTable" style="display:none"></div>
-        <div class="adfitWrap adfitMobile" id="ad-meal" aria-label="광고"></div>
 
         <div id="shareText"></div>
-      </section>
+      <details class="guideStrip"><summary>급식 정보를 확인하는 방법</summary><p>날짜를 선택한 뒤 조회를 누르면 식사별 메뉴가 표시됩니다. 이번 주에서는 요일을, 월별 표에서는 조회 월을 바꿀 수 있어요. 알레르기 강조는 원문 번호를 표시하는 보조 기능이며, 표시가 없다는 이유로 섭취 가능하다고 판단하지 마세요.</p><a href="/guides/meals.html">자세한 안내 읽기 →</a></details><p class="sourceNote">자료·확인 경로: <a href="https://open.neis.go.kr/" target="_blank" rel="noopener noreferrer">NEIS 교육정보 개방 포털</a> · <a href="/guides/sources.html">출처와 갱신 기준</a></p></section>
 
       <section class="section view" id="view-schedule">
         <div class="sectionHeader">
@@ -2960,7 +2886,7 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
         </div>
         <div id="schNotice" class="notice">학사일정 조회가 준비되었습니다.</div>
         <div id="schList" style="margin-top:14px"></div>
-      </section>
+      <details class="guideStrip"><summary>일정과 D-DAY를 함께 확인하세요</summary><p>월을 선택해 학사일정을 확인하고 중요한 일정은 D-DAY에 따로 등록하세요. 자동 추천과 직접 등록한 일정은 구분해서 확인하고, 변경 공지가 있으면 저장한 날짜도 수정해 주세요.</p><a href="/guides/schedule.html">자세한 안내 읽기 →</a></details><p class="sourceNote">자료·확인 경로: <a href="https://school.gyo6.net/poongsanhs/main.do?sysId=poongsanhs" target="_blank" rel="noopener noreferrer">풍산고등학교 공식 홈페이지</a> · <a href="/guides/sources.html">출처와 갱신 기준</a></p></section>
 
       <section class="section view" id="view-timetable">
         <div class="sectionHeader">
@@ -2977,7 +2903,7 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
         </div>
         <div class="notice ok">입력 내용은 브라우저에만 저장됩니다.</div>
         <div id="ttTableWrap" class="ttWrap"></div>
-      </section>
+      <details class="guideStrip"><summary>시간표는 이 브라우저에 저장돼요</summary><p>교시 수를 적용한 뒤 요일별 과목을 입력하세요. 학교 시간표가 자동으로 연동되는 기능은 아니에요. 기기나 브라우저가 바뀌면 입력값이 옮겨지지 않으므로 별도로 기록해 두세요.</p><a href="/guides/timetable.html">자세한 안내 읽기 →</a></details><p class="sourceNote">자료·확인 경로: <a href="/guides/timetable.html" target="_blank" rel="noopener noreferrer">오풍 시간표 이용 안내</a> · <a href="/guides/sources.html">출처와 갱신 기준</a></p></section>
 
 
 
@@ -2996,10 +2922,9 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
           <button class="goHomePressBtn" id="goHomePressBtn" type="button" onclick="addGoHomeCount()">집가고 싶어요</button>
           <p class="goHomeLocalNote">횟수는 서버로 전송하지 않고 현재 브라우저의 로컬 저장소에만 저장됩니다.</p>
         </div>
-        <div class="adfitWrap" id="ad-gohome" aria-label="광고" style="margin-top:32px"></div>
       </section>
 
-      
+
       <section class="section view" id="view-japan">
         <div class="sectionHeader"><div><h2>일본 수학여행</h2><p>2026학년도 풍산고등학교 2학년 · A팀 날짜별 여행 일정</p></div></div>
         <div class="japanHero">
@@ -3033,7 +2958,6 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
 
       <section class="section view" id="view-evaluation">
         <div class="sectionHeader"><div><h2>교수·학습 및 평가계획</h2><p>2026학년도 2학기 · 풍산고등학교</p></div></div>
-        <div class="adfitWrap" id="ad-evaluation-top" aria-label="광고"></div>
         <div class="evalPlanToolbar" role="group" aria-label="학년 선택">
           <button class="evalPlanGrade" type="button" data-grade="1" aria-pressed="true" onclick="selectEvaluationGrade(1)">1학년</button>
           <button class="evalPlanGrade" type="button" data-grade="2" aria-pressed="false" onclick="selectEvaluationGrade(2)">2학년</button>
@@ -3041,10 +2965,9 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
           <button class="evalPlanOpen" type="button" onclick="openEvaluationPdf()">PDF 크게 보기 ↗</button>
         </div>
         <iframe class="evalPlanFrame" id="evaluationPdf" title="1학년 교수·학습 및 평가계획 PDF"></iframe>
-        <div class="adfitWrap" id="ad-evaluation-bottom" aria-label="광고" style="margin-top:24px"></div>
         <p class="evalPlanNotice">이 자료는 2026년 9월에 풍산고등학교가 제출한 9월 공시 자료이며, 실제 평가 등의 내용과 일치하지 않거나 상이할 수 있습니다. 문제 발생 시 O.Poong에서 책임지지 않습니다.</p>
         <p class="evalPlanAttribution">본 저작물은 풍산고등학교에서 2026년 작성하여 공공누리 제3유형으로 개방한 '4-가. 교과별(학년별) 교수ㆍ학습 및 평가계획에 관한 사항'을 이용하였으며, 해당 저작물은 '학교알리미, https://www.schoolinfo.go.kr/ei/ss/Pneiss_b01_s0.do?SHL_IDF_CD=76d24e28-6648-48d4-a082-a0940462edbe'에서 무료로 다운받으실 수 있습니다.</p>
-      </section>
+      <details class="guideStrip"><summary>평가계획을 읽기 전에</summary><p>먼저 학년과 학기를 확인한 뒤 과목별 평가 요소, 반영 비율, 수행평가 기준을 살펴보세요. 공시 이후 변경 사항과 실제 제출 기한은 교과 선생님의 최신 안내를 확인하세요.</p><a href="/guides/evaluation.html">자세한 안내 읽기 →</a></details><p class="sourceNote">자료·확인 경로: <a href="https://www.schoolinfo.go.kr/" target="_blank" rel="noopener noreferrer">학교알리미</a> · <a href="/guides/sources.html">출처와 갱신 기준</a></p></section>
 
       <section class="section view" id="view-onway">
         <div class="sectionHeader">
@@ -3056,7 +2979,6 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
         <div class="contentBox">
           링크 찾기 힘드셨죠? 제가 찾아드렸어요!
         </div>
-        <div class="adfitWrap adfitMobile" id="ad-onway" aria-label="광고"></div>
 
         <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap">
           <button class="bigBtn" type="button" onclick="openOnway()">온웨이에듀 열기</button>
@@ -3097,7 +3019,7 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
         <div class="sectionHeader">
           <div>
             <h2>안내·개인정보·운영 원칙</h2>
-            <p>사이트 신뢰도와 사용자 안내를 위해 필요한 내용을 정리했습니다.</p>
+            <p>오풍의 운영 목적, 정보 출처와 기기 저장 방식, 문의 방법을 안내합니다.</p>
           </div>
         </div>
         <div class="cardGrid">
@@ -3106,10 +3028,9 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
             <p>O.Poong은 풍산고 학생의 일상 확인을 돕는 비공식 웹앱입니다. 학교 공식 앱이나 공식 행정 서비스가 아닙니다.</p>
           </article>
           <article class="toolCard">
-            <b>개인정보 안내</b>
-            <p>이름과 시간표 입력 내용은 사용자의 기기 브라우저 저장소에 저장됩니다. 서버로 별도 전송하지 않습니다.</p>
+            <b>개인정보 안내</b><p>이름·시간표·맞춤 설정은 기기의 브라우저에 저장합니다. 외부 정보 조회 시에는 해당 제공자와 통신합니다.</p><a href="/guides/privacy.html">저장 항목과 외부 서비스 안내 →</a>
           </article>
-        </div>
+        </div><div class="guideLinks"><a href="/guides/about.html">운영 소개·오류 신고</a><a href="/guides/sources.html">자료 출처·갱신 기준</a><a href="/guides/">전체 이용 안내</a></div>
       </section>
     </main>
   </div>
@@ -3118,6 +3039,10 @@ html[data-theme="dark"] #view-japan{--trip-accent:#74d9cd}
     <b style="color:var(--text)">O.Poong</b> ㅣ 풍산고 생활, 한 화면에서.<br>
     본 사이트는 풍산고 학생 생활 편의를 위한 비공식 웹앱입니다. 공식 정보는 학교 홈페이지와 NEIS 자료를 함께 확인해 주세요.
     <div class="footerLinks">
+<a class="btn ghost" href="/guides/">학교생활 안내</a>
+<a class="btn ghost" href="/guides/about.html">운영 소개·문의</a>
+<a class="btn ghost" href="/guides/privacy.html">개인정보 처리 안내</a>
+<a class="btn ghost" href="/guides/sources.html">자료 출처</a>
       <button class="btn ghost" type="button" onclick="openReleaseIntro(true)">새 소식</button>
       <button class="btn ghost" type="button" onclick="go('policy')">개인정보 안내</button>
       <button class="btn ghost" type="button" onclick="go('about')">서비스 소개</button>
@@ -4020,7 +3945,7 @@ function endOpoongGame(){
   }
   const button=document.getElementById("gameStartButton");if(button)button.textContent="다시 하기";
   drawOpoongGame();
-  showGameOverAd("jump");
+
 }
 function opoongGameFrame(timestamp){
   const s=opoongRunner;
@@ -4129,7 +4054,7 @@ function finishTicTacToe(text,line,result){
   }
   awardOpoongPoints(reward,"틱택토 "+text);
   renderTicTacToe(line);
-  showGameOverAd("ttt");
+
 }
 function chooseTttComputerPlacement(){
   const empty=tttBoardState.map(function(value,index){return value?"":index;}).filter(function(value){return value!=="";});
@@ -4295,7 +4220,7 @@ function endStackGame(){
   if(score>0)awardOpoongPoints(Math.max(1,score*2),"블록 쌓기 "+score+"층");
   const message=document.getElementById("stackMessage");
   if(message){message.classList.remove("hidden");message.innerHTML="<strong>"+score+"층 완성!</strong><span>게임 시작을 눌러 다시 도전하세요.</span>";}
-  showGameOverAd("stack");
+
 }
 function dropStackBlock(){
   const s=opoongStack;
@@ -4371,7 +4296,7 @@ function selectWaterTube(index){
     const best=loadWaterBest();
     if(!best[waterLevelIndex]||waterMoves<best[waterLevelIndex]){best[waterLevelIndex]=waterMoves;saveWaterBest(best);}
     if(!waterRewarded){waterRewarded=true;awardOpoongPoints(40+waterLevelIndex*5,"워터 소트 완성");}
-    showGameOverAd("water");
+
   }else setWaterStatus("좋아요. 다음 시험관을 선택하세요.");
   renderWaterSort();
 }
@@ -4387,10 +4312,10 @@ const OPOONG_MAZE_BEST_KEY="opoong_maze_best_v1",MAZE_SIZE=21,MAZE_LIMIT=90;
 let mazeGrid=[],mazePlayer={r:1,c:1},mazeMoves=0,mazeSolved=false,mazeFailed=false,mazeStarted=false,mazeSwipeStart=null,mazeSeconds=MAZE_LIMIT,mazeTimer=0;
 function loadMazeBest(){return Math.max(0,Number(localStorage.getItem(OPOONG_MAZE_BEST_KEY)||0));}
 function carveMaze(r,c){mazeGrid[r][c]=0;[[-2,0],[2,0],[0,-2],[0,2]].sort(function(){return Math.random()-.5;}).forEach(function(d){const nr=r+d[0],nc=c+d[1];if(nr>0&&nr<MAZE_SIZE-1&&nc>0&&nc<MAZE_SIZE-1&&mazeGrid[nr][nc]){mazeGrid[r+d[0]/2][c+d[1]/2]=0;carveMaze(nr,nc);}});}
-function startMazeTimer(){if(mazeStarted||mazeSolved||mazeFailed)return;mazeStarted=true;mazeTimer=setInterval(function(){if(mazeSolved||mazeFailed){clearInterval(mazeTimer);return;}mazeSeconds--;if(mazeSeconds<=0){mazeSeconds=0;mazeFailed=true;clearInterval(mazeTimer);showGameOverAd("maze");}renderMaze();},1000);}
+function startMazeTimer(){if(mazeStarted||mazeSolved||mazeFailed)return;mazeStarted=true;mazeTimer=setInterval(function(){if(mazeSolved||mazeFailed){clearInterval(mazeTimer);return;}mazeSeconds--;if(mazeSeconds<=0){mazeSeconds=0;mazeFailed=true;clearInterval(mazeTimer);}renderMaze();},1000);}
 function newMazeGame(){clearInterval(mazeTimer);mazeGrid=Array.from({length:MAZE_SIZE},function(){return Array(MAZE_SIZE).fill(1);});carveMaze(1,1);mazeGrid[MAZE_SIZE-2][MAZE_SIZE-2]=0;mazePlayer={r:1,c:1};mazeMoves=0;mazeSolved=false;mazeFailed=false;mazeStarted=false;mazeSeconds=MAZE_LIMIT;mazeTimer=0;renderMaze();}
 function renderMaze(){const b=document.getElementById("mazeBoard");if(!b)return;const goal=MAZE_SIZE-2;b.style.setProperty("--maze-size",MAZE_SIZE);b.innerHTML=mazeGrid.flatMap(function(row,r){return row.map(function(cell,c){const visible=Math.abs(r-mazePlayer.r)+Math.abs(c-mazePlayer.c)<=4;let k="mazeCell"+(cell?" wall":"")+(r===goal&&c===goal?" goal":"")+(r===mazePlayer.r&&c===mazePlayer.c?" player":"")+(!visible&&!(r===goal&&c===goal)?" fog":"");return'<i class="'+k+'"></i>';});}).join("");const best=loadMazeBest();document.getElementById("mazeMoves").textContent=mazeMoves+"회";document.getElementById("mazeBest").textContent=best?best+"회":"-";document.getElementById("mazeTime").textContent=mazeSeconds+"초";document.getElementById("mazeStatus").textContent=mazeSolved?"탈출 성공!":mazeFailed?"시간 초과 · 새 미로에 도전하세요.":mazeStarted?"21×21 고난도 · 출구는 오른쪽 아래예요.":"첫 이동부터 90초가 시작돼요.";}
-function moveMaze(dr,dc){if(mazeSolved||mazeFailed||!mazeGrid.length)return;const r=mazePlayer.r+dr,c=mazePlayer.c+dc;if(!mazeGrid[r]||mazeGrid[r][c]!==0)return;mazePlayer={r:r,c:c};mazeMoves++;startMazeTimer();const goal=MAZE_SIZE-2;if(r===goal&&c===goal){mazeSolved=true;clearInterval(mazeTimer);const best=loadMazeBest();if(!best||mazeMoves<best)localStorage.setItem(OPOONG_MAZE_BEST_KEY,String(mazeMoves));awardOpoongPoints(16,"고난도 미로 탈출 성공");showGameOverAd("maze");}renderMaze();renderGameLibraryStats();}
+function moveMaze(dr,dc){if(mazeSolved||mazeFailed||!mazeGrid.length)return;const r=mazePlayer.r+dr,c=mazePlayer.c+dc;if(!mazeGrid[r]||mazeGrid[r][c]!==0)return;mazePlayer={r:r,c:c};mazeMoves++;startMazeTimer();const goal=MAZE_SIZE-2;if(r===goal&&c===goal){mazeSolved=true;clearInterval(mazeTimer);const best=loadMazeBest();if(!best||mazeMoves<best)localStorage.setItem(OPOONG_MAZE_BEST_KEY,String(mazeMoves));awardOpoongPoints(16,"고난도 미로 탈출 성공");}renderMaze();renderGameLibraryStats();}
 function mazeSwipeDown(e){mazeSwipeStart={x:e.clientX,y:e.clientY};}
 function mazeSwipeUp(e){if(!mazeSwipeStart)return;const x=e.clientX-mazeSwipeStart.x,y=e.clientY-mazeSwipeStart.y;mazeSwipeStart=null;if(Math.max(Math.abs(x),Math.abs(y))<18)return;if(Math.abs(x)>Math.abs(y))moveMaze(0,x>0?1:-1);else moveMaze(y>0?1:-1,0);}
 
@@ -4401,7 +4326,7 @@ function placeSnakeFood(){const free=[];for(let y=0;y<14;y++)for(let x=0;x<20;x+
 function resetSnakeGame(){clearInterval(snakeTimer);snakeTimer=0;snakeRunning=false;snakeOver=false;snakeBody=[{x:6,y:7},{x:5,y:7},{x:4,y:7}];snakeDirection={x:1,y:0};snakeNextDirection={x:1,y:0};snakeScore=0;placeSnakeFood();drawSnakeGame();}
 function startSnakeGame(){if(snakeOver||!snakeBody.length)resetSnakeGame();if(snakeRunning)return;snakeRunning=true;snakeTimer=setInterval(snakeStep,125);drawSnakeGame();}
 function setSnakeDirection(dr,dc){const n={x:dc,y:dr};if(n.x===-snakeDirection.x&&n.y===-snakeDirection.y)return;snakeNextDirection=n;if(!snakeRunning)startSnakeGame();}
-function snakeStep(){snakeDirection=snakeNextDirection;const h={x:snakeBody[0].x+snakeDirection.x,y:snakeBody[0].y+snakeDirection.y};if(h.x<0||h.x>=20||h.y<0||h.y>=14||snakeBody.some(function(p){return p.x===h.x&&p.y===h.y;})){snakeRunning=false;snakeOver=true;clearInterval(snakeTimer);snakeTimer=0;if(snakeScore>loadSnakeBest())localStorage.setItem(OPOONG_SNAKE_BEST_KEY,String(snakeScore));if(snakeScore)awardOpoongPoints(Math.max(2,Math.floor(snakeScore/2)),"스네이크");drawSnakeGame();renderGameLibraryStats();showGameOverAd("snake");return;}snakeBody.unshift(h);if(h.x===snakeFood.x&&h.y===snakeFood.y){snakeScore++;placeSnakeFood();}else snakeBody.pop();drawSnakeGame();}
+function snakeStep(){snakeDirection=snakeNextDirection;const h={x:snakeBody[0].x+snakeDirection.x,y:snakeBody[0].y+snakeDirection.y};if(h.x<0||h.x>=20||h.y<0||h.y>=14||snakeBody.some(function(p){return p.x===h.x&&p.y===h.y;})){snakeRunning=false;snakeOver=true;clearInterval(snakeTimer);snakeTimer=0;if(snakeScore>loadSnakeBest())localStorage.setItem(OPOONG_SNAKE_BEST_KEY,String(snakeScore));if(snakeScore)awardOpoongPoints(Math.max(2,Math.floor(snakeScore/2)),"스네이크");drawSnakeGame();renderGameLibraryStats();return;}snakeBody.unshift(h);if(h.x===snakeFood.x&&h.y===snakeFood.y){snakeScore++;placeSnakeFood();}else snakeBody.pop();drawSnakeGame();}
 function drawSnakeGame(){const c=document.getElementById("snakeCanvas");if(!c)return;const g=c.getContext("2d"),w=c.width/20,h=c.height/14,palette=getOpoongSnakePalette();g.fillStyle=palette.bg;g.fillRect(0,0,c.width,c.height);g.fillStyle=palette.food;g.beginPath();g.arc((snakeFood.x+.5)*w,(snakeFood.y+.5)*h,Math.min(w,h)*.32,0,Math.PI*2);g.fill();snakeBody.forEach(function(p,i){g.fillStyle=i?(palette.body==="rainbow"?["#f43f5e","#f59e0b","#22c55e","#38bdf8","#a855f7"][i%5]:palette.body):palette.head;g.fillRect(p.x*w+3,p.y*h+3,w-6,h-6);});document.getElementById("snakeScore").textContent=snakeScore+"점";document.getElementById("snakeBest").textContent=Math.max(loadSnakeBest(),snakeScore)+"점";document.getElementById("snakeStatus").textContent=snakeOver?"게임 종료":snakeRunning?"진행 중":"준비";document.getElementById("snakeStartBtn").textContent=snakeRunning?"진행 중":"게임 시작";}
 function snakeSwipeDown(e){snakeSwipeStart={x:e.clientX,y:e.clientY};}
 function snakeSwipeUp(e){if(!snakeSwipeStart)return;const x=e.clientX-snakeSwipeStart.x,y=e.clientY-snakeSwipeStart.y;snakeSwipeStart=null;if(Math.max(Math.abs(x),Math.abs(y))<18)return;if(Math.abs(x)>Math.abs(y))setSnakeDirection(0,x>0?1:-1);else setSnakeDirection(y>0?1:-1,0);}
@@ -4413,10 +4338,10 @@ function mineNeighbors(i){const r=Math.floor(i/9),c=i%9,a=[];for(let y=-1;y<=1;y
 function calculateMineNumbers(){mineCells.forEach(function(c,i){c.number=c.mine?0:mineNeighbors(i).filter(function(n){return mineCells[n].mine;}).length;});}
 function newMinesGame(){clearInterval(mineTimer);mineTimer=0;mineElapsed=0;mineStartedAt=0;mineEnded=false;mineFirstMove=true;mineFlagMode=false;mineCells=Array.from({length:81},function(){return{mine:false,open:false,flag:false,number:0};});Array.from({length:81},function(_,i){return i;}).sort(function(){return Math.random()-.5;}).slice(0,10).forEach(function(i){mineCells[i].mine=true;});calculateMineNumbers();const st=document.getElementById("mineStatus");if(st)st.textContent="첫 칸은 안전해요.";renderMines();}
 function startMineTimer(){if(mineStartedAt)return;mineStartedAt=Date.now();mineTimer=setInterval(function(){mineElapsed=Math.floor((Date.now()-mineStartedAt)/1000);renderMineHud();},1000);}
-function openMineCell(i){if(mineEnded)return;if(mineFlagMode){toggleMineFlag(i);return;}let c=mineCells[i];if(!c||c.flag||c.open)return;if(mineFirstMove){if(c.mine){const t=mineCells.findIndex(function(v,n){return n!==i&&!v.mine;});c.mine=false;mineCells[t].mine=true;calculateMineNumbers();c=mineCells[i];}mineFirstMove=false;startMineTimer();}if(c.mine){c.open=true;mineEnded=true;clearInterval(mineTimer);mineCells.forEach(function(v){if(v.mine)v.open=true;});document.getElementById("mineStatus").textContent="지뢰를 찾았어요.";renderMines();showGameOverAd("mine");return;}const q=[i],seen=new Set();while(q.length){const n=q.shift(),v=mineCells[n];if(seen.has(n)||!v||v.flag||v.open||v.mine)continue;seen.add(n);v.open=true;if(!v.number)mineNeighbors(n).forEach(function(k){q.push(k);});}checkMineWin();renderMines();}
+function openMineCell(i){if(mineEnded)return;if(mineFlagMode){toggleMineFlag(i);return;}let c=mineCells[i];if(!c||c.flag||c.open)return;if(mineFirstMove){if(c.mine){const t=mineCells.findIndex(function(v,n){return n!==i&&!v.mine;});c.mine=false;mineCells[t].mine=true;calculateMineNumbers();c=mineCells[i];}mineFirstMove=false;startMineTimer();}if(c.mine){c.open=true;mineEnded=true;clearInterval(mineTimer);mineCells.forEach(function(v){if(v.mine)v.open=true;});document.getElementById("mineStatus").textContent="지뢰를 찾았어요.";renderMines();return;}const q=[i],seen=new Set();while(q.length){const n=q.shift(),v=mineCells[n];if(seen.has(n)||!v||v.flag||v.open||v.mine)continue;seen.add(n);v.open=true;if(!v.number)mineNeighbors(n).forEach(function(k){q.push(k);});}checkMineWin();renderMines();}
 function toggleMineFlag(i){if(mineEnded)return;const c=mineCells[i];if(c&&!c.open)c.flag=!c.flag;renderMines();}
 function toggleMineFlagMode(){mineFlagMode=!mineFlagMode;renderMines();}
-function checkMineWin(){if(!mineCells.length||!mineCells.every(function(c){return c.mine||c.open;}))return;mineEnded=true;clearInterval(mineTimer);mineTimer=0;mineElapsed=mineStartedAt?Math.floor((Date.now()-mineStartedAt)/1000):0;if(!loadMineBest()||mineElapsed<loadMineBest())localStorage.setItem(OPOONG_MINE_BEST_KEY,String(mineElapsed));awardOpoongPoints(10,"지뢰찾기 성공");document.getElementById("mineStatus").textContent="모든 안전한 칸을 찾았어요!";renderGameLibraryStats();showGameOverAd("mine");}
+function checkMineWin(){if(!mineCells.length||!mineCells.every(function(c){return c.mine||c.open;}))return;mineEnded=true;clearInterval(mineTimer);mineTimer=0;mineElapsed=mineStartedAt?Math.floor((Date.now()-mineStartedAt)/1000):0;if(!loadMineBest()||mineElapsed<loadMineBest())localStorage.setItem(OPOONG_MINE_BEST_KEY,String(mineElapsed));awardOpoongPoints(10,"지뢰찾기 성공");document.getElementById("mineStatus").textContent="모든 안전한 칸을 찾았어요!";renderGameLibraryStats();}
 function renderMineHud(){const f=mineCells.filter(function(c){return c.flag;}).length;document.getElementById("mineRemaining").textContent=Math.max(0,10-f)+"개";document.getElementById("mineTime").textContent=mineElapsed+"초";document.getElementById("mineBest").textContent=loadMineBest()?loadMineBest()+"초":"-";const b=document.getElementById("mineFlagMode");b.setAttribute("aria-pressed",String(mineFlagMode));b.textContent=mineFlagMode?"🚩 깃발 모드 켜짐":"🚩 깃발 모드 끄기";}
 function renderMines(){const b=document.getElementById("mineBoard");if(!b)return;const symbols=getOpoongMineSymbols();b.innerHTML=mineCells.map(function(c,i){let t="",k="mineCell";if(c.open){k+=" open";if(c.mine){k+=" mine";t=symbols.mine;}else if(c.number){k+=" n"+c.number;t=c.number;}}else if(c.flag){k+=" flag";t=symbols.flag;}return'<button class="'+k+'" onclick="openMineCell('+i+')" oncontextmenu="event.preventDefault();toggleMineFlag('+i+')">'+t+'</button>';}).join("");renderMineHud();}
 
@@ -4742,208 +4667,19 @@ function go(view){
   if(view === "evaluation") initEvaluationPlans();
   if(view === "japan") renderJapanTrip();
   history.replaceState(null,"",pageUrl(view));
+  const titles={home:"풍산고 생활, 한 화면에서",meal:"급식",schedule:"학사일정",weather:"날씨",timetable:"시간표",policy:"안내·개인정보",evaluation:"교수·학습 및 평가계획",japan:"일본 수학여행",gohome:"집가고 싶어요",finger:"손가락 추첨",onway:"온웨이에듀",school:"학교 홈페이지",library:"도서관 조회"};
+  document.title="오풍(O.Poong) | "+(titles[view]||"학교생활");
+  document.querySelector('link[rel="canonical"]').href="https://hyukjunps.github.io"+pageUrl(view);
+  document.querySelector('meta[property="og:title"]').content=document.title;
+  document.querySelector('meta[property="og:url"]').content="https://hyukjunps.github.io"+pageUrl(view);
   window.scrollTo({top:0,behavior:"smooth"});
   if(view === "home") renderHomeWidgets();
   if(view === "weather") renderWeatherDetail();
   if(view === "meal") { renderAllergySelector(); renderFavoriteFoodEditor(); }
   if(view === "timetable") ttRenderTable();
   if(view === "game") showMiniGameHub();
-  loadKakaoAdsForView(view);
 }
 
-
-/* ===== O.Poong Kakao AdFit reliable loader =====
-   핵심: 숨겨진 section 안에 미리 <ins>를 넣지 않고,
-   화면이 열린 뒤 광고 영역을 새로 만들고 ba.min.js를 다시 실행합니다. */
-const KAKAO_ADS = {
-  gohome: { unit: "DAN-rJlK5gWdIDLwSy9f", width: 320, height: 100, container: "ad-gohome" },
-  evaluationTop: { unit: "DAN-mrfQcLgptQsCE1ci", width: 320, height: 50, container: "ad-evaluation-top" },
-  evaluationBottom: { unit: "DAN-YjOdZeyzOy7YEylv", width: 320, height: 100, container: "ad-evaluation-bottom" },
-  homeDesktop: { unit: "DAN-QDvR0fxl5ri9KE4D", width: 728, height: 90, container: "ad-home" },
-  homeMobile: { unit: "DAN-ps0PRxwqtGCGkBq2", width: 320, height: 50, container: "ad-home-mobile" },
-  meal: { unit: "DAN-ldKVhVTYzKi5pUti", width: 320, height: 50, container: "ad-meal" },
-  onway: { unit: "DAN-vszyC76aKoBwX0tg", width: 320, height: 50, container: "ad-onway" }
-};
-
-// Keep one SDK instance. Render only the newly visible slot, never every ad again.
-let kakaoSdkPromise = null;
-let kakaoAdTimer = 0;
-let kakaoAdGeneration = 0;
-let kakaoAdView = "";
-let kakaoHomeAdUnit = "";
-// Optional troubleshooting flag; no device or ad-unit parameters are altered.
-const kakaoAdCheckFormat = new URLSearchParams(window.location.search).get("adcheck");
-const KAKAO_AD_CONTAINERS = Object.values(KAKAO_ADS).map(ad=>ad.container);
-function ensureKakaoAdSdk(){
-  if(typeof window.adfit?.render === "function") return Promise.resolve(window.adfit);
-  if(kakaoSdkPromise) return kakaoSdkPromise;
-  kakaoSdkPromise = new Promise((resolve,reject)=>{
-    const script=document.createElement("script");
-    script.id="opoong-adfit-sdk";
-    script.async=true;script.type="text/javascript";script.charset="utf-8";
-    script.src="https://t1.kakaocdn.net/kas/static/ba.min.js";
-    script.onload=()=>{
-      if(typeof window.adfit?.render === "function") resolve(window.adfit);
-      else {kakaoSdkPromise=null;script.remove();reject(new Error("AdFit SDK unavailable"));}
-    };
-    script.onerror=()=>{kakaoSdkPromise=null;script.remove();reject(new Error("AdFit SDK could not load"));};
-    document.body.appendChild(script);
-  });
-  return kakaoSdkPromise;
-}
-function clearKakaoAdBox(box){
-  if(!box) return;
-  box.querySelectorAll("ins.kakao_ad_area").forEach(el=>{
-    if(typeof window.adfit?.destroy === "function") window.adfit.destroy(el);
-  });
-  box.replaceChildren();
-  delete box.dataset.adUnit;
-  delete box.dataset.adPrimary;
-  delete box.dataset.adState;
-}
-function clearKakaoAdBoxes(){
-  KAKAO_AD_CONTAINERS.forEach(id=>clearKakaoAdBox(document.getElementById(id)));
-}
-function isKakaoAdViewVisible(view){
-  const panel=document.getElementById("view-"+view);
-  return !document.body.classList.contains("setup-pending") &&
-    !!panel?.classList.contains("active") && panel.getClientRects().length>0;
-}
-function mountKakaoAd(ad,generation=kakaoAdGeneration){
-  const box=document.getElementById(ad.container);
-  if(!box || !box.getClientRects().length || (box.dataset.adUnit===ad.unit || box.dataset.adPrimary===ad.unit)) return;
-  clearKakaoAdBox(box);
-  box.dataset.adUnit=ad.unit;box.dataset.adPrimary=ad.primaryUnit||ad.unit;box.dataset.adState="sdk-loading";
-  box.innerHTML='<div class="adfitBox"><span class="adfitLabel">AD</span></div>';
-  const frame=box.querySelector(".adfitBox");
-  frame.style.setProperty("--opoong-ad-width",ad.width+"px");
-  ensureKakaoAdSdk().then(sdk=>{
-    if(generation!==kakaoAdGeneration || !frame.isConnected ||
-      !isKakaoAdViewVisible(kakaoAdView) || !box.getClientRects().length) return;
-    const slot=document.createElement("ins");
-    slot.className="kakao_ad_area";slot.style.display="none";
-    slot.setAttribute("data-ad-unit",ad.unit);
-    slot.setAttribute("data-ad-width",String(ad.width));
-    slot.setAttribute("data-ad-height",String(ad.height));
-    const callback="opoongAd_"+ad.container.replace(/-/g,"_");
-    window[callback+"Loaded"]=el=>{if(el.isConnected)box.dataset.adState="loaded";};
-    window[callback+"Failed"]=el=>{
-      if(!el.isConnected)return;
-      box.dataset.adState="no-ad";
-      // One same-size fallback only; retain it on repeated visits to this view.
-      const fallbackEligible=!ad.primaryUnit &&
-        (ad.unit===KAKAO_ADS.homeMobile.unit || ad.unit===KAKAO_ADS.meal.unit);
-      if(fallbackEligible)window.setTimeout(()=>{
-        if(generation!==kakaoAdGeneration || !el.isConnected ||
-          !isKakaoAdViewVisible(kakaoAdView))return;
-        mountKakaoAd({...KAKAO_ADS.evaluationTop,container:ad.container,primaryUnit:ad.unit},generation);
-      },0);
-    };
-    slot.setAttribute("data-ad-onload",callback+"Loaded");
-    slot.setAttribute("data-ad-onfail",callback+"Failed");
-    frame.appendChild(slot);box.dataset.adState="requested";
-    sdk.render(slot);
-  }).catch(error=>{
-    if(generation===kakaoAdGeneration && frame.isConnected){
-      box.dataset.adState="sdk-error";
-      console.warn("[O.Poong AdFit]",error.message);
-    }
-  });
-}
-function selectKakaoHomeAd(){
-  const panel=document.getElementById("view-home");
-  const style=window.getComputedStyle(panel);
-  const left=parseFloat(style.paddingLeft)||0,right=parseFloat(style.paddingRight)||0;
-  const usable=panel.clientWidth-left-right;
-  const ad=kakaoAdCheckFormat==="mobile" ? KAKAO_ADS.homeMobile : usable>=KAKAO_ADS.homeDesktop.width ? KAKAO_ADS.homeDesktop : KAKAO_ADS.homeMobile;
-  const mobileBox=document.getElementById(KAKAO_ADS.homeMobile.container);
-  mobileBox.style.setProperty("--home-ad-left",left+"px");
-  mobileBox.style.setProperty("--home-ad-right",right+"px");
-  [KAKAO_ADS.homeDesktop,KAKAO_ADS.homeMobile].forEach(candidate=>{
-    document.getElementById(candidate.container).dataset.adSelected=String(candidate===ad);
-  });
-  return ad;
-}
-function loadKakaoAdsForView(view){
-  window.clearTimeout(kakaoAdTimer);
-  const sameView=kakaoAdView===view;
-  kakaoAdView=view;
-  // A repeated call for the same visible view must not erase an in-flight banner.
-  if(!sameView){kakaoAdGeneration++;clearKakaoAdBoxes();}
-  kakaoAdTimer=window.setTimeout(()=>{
-    if(!isKakaoAdViewVisible(view))return;
-    let ads=[];
-    if(view==="home"){
-      const ad=selectKakaoHomeAd();
-      if(kakaoHomeAdUnit!==ad.unit){kakaoAdGeneration++;clearKakaoAdBoxes();kakaoHomeAdUnit=ad.unit;}
-      ads=[ad];
-    }
-    if(view==="gohome") ads=[KAKAO_ADS.gohome];
-    if(view==="evaluation") ads=[KAKAO_ADS.evaluationTop,KAKAO_ADS.evaluationBottom];
-    if(view==="meal") ads=[KAKAO_ADS.meal];
-    if(view==="onway") ads=[KAKAO_ADS.onway];
-    const wanted=new Set(ads.map(ad=>ad.container));
-    KAKAO_AD_CONTAINERS.forEach(id=>{if(!wanted.has(id))clearKakaoAdBox(document.getElementById(id));});
-    ads.forEach(ad=>mountKakaoAd(ad,kakaoAdGeneration));
-  },180);
-}
-window.addEventListener("resize",()=>{
-  if(kakaoAdView==="home")loadKakaoAdsForView("home");
-});
-
-const GAME_OVER_ADS = [
-  { unit: "DAN-rJlK5gWdIDLwSy9f", width: 320, height: 100 },
-  { unit: "DAN-mrfQcLgptQsCE1ci", width: 320, height: 50 },
-  { unit: "DAN-YjOdZeyzOy7YEylv", width: 320, height: 100 }
-];
-let gameOverAdGame="";
-function showGameOverAd(game){
-  if(!GAME_OVER_ADS.length)return;
-  gameOverAdGame=game;
-  const back=document.getElementById("gameOverAdBack");
-  const adStage=document.getElementById("gameOverAdStage");
-  const restartStage=document.getElementById("gameOverRestartStage");
-  const slot=document.getElementById("gameOverAdSlot");
-  if(!back||!adStage||!restartStage||!slot)return;
-  let index=0;
-  try{index=Math.max(0,Number(sessionStorage.getItem("opoong_game_ad_index")||0))%GAME_OVER_ADS.length;}catch(e){}
-  const ad=GAME_OVER_ADS[index];
-  try{sessionStorage.setItem("opoong_game_ad_index",String((index+1)%GAME_OVER_ADS.length));}catch(e){}
-  slot.innerHTML='<ins class="kakao_ad_area" style="display:none;" data-ad-unit="'+ad.unit+'" data-ad-width="'+ad.width+'" data-ad-height="'+ad.height+'"></ins>';
-  adStage.hidden=false;restartStage.hidden=true;back.hidden=false;back.setAttribute("aria-hidden","false");
-  const script=document.createElement("script");
-  script.type="text/javascript";script.async=true;
-  script.src="https://t1.kakaocdn.net/kas/static/ba.min.js?"+Date.now();
-  script.onload=script.onerror=function(){script.remove();};
-  document.body.appendChild(script);
-  const closeButton=back.querySelector(".gameOverAdClose");
-  if(closeButton)setTimeout(function(){closeButton.focus({preventScroll:true});},0);
-}
-function closeGameOverAd(){
-  const adStage=document.getElementById("gameOverAdStage");
-  const restartStage=document.getElementById("gameOverRestartStage");
-  const slot=document.getElementById("gameOverAdSlot");
-  if(slot)slot.innerHTML="";
-  if(adStage)adStage.hidden=true;
-  if(restartStage){restartStage.hidden=false;const button=restartStage.querySelector("button");if(button)setTimeout(function(){button.focus({preventScroll:true});},0);}
-}
-function closeGameRestartPrompt(){
-  const back=document.getElementById("gameOverAdBack");
-  const slot=document.getElementById("gameOverAdSlot");
-  if(slot)slot.innerHTML="";
-  if(back){back.hidden=true;back.setAttribute("aria-hidden","true");}
-}
-function restartGameAfterAd(){
-  const game=gameOverAdGame;
-  closeGameRestartPrompt();
-  if(game==="jump")startOpoongGame();
-  else if(game==="ttt")resetTicTacToe();
-  else if(game==="stack")startStackGame();
-  else if(game==="water")resetWaterPuzzle();
-  else if(game==="maze")newMazeGame();
-  else if(game==="snake"){resetSnakeGame();startSnakeGame();}
-  else if(game==="mine")newMinesGame();
-}
 
 function applyTheme(theme){
   document.documentElement.setAttribute("data-theme",theme);
@@ -4953,12 +4689,34 @@ function applyTheme(theme){
 $("#btnLight").addEventListener("click",()=>applyTheme("light"));
 $("#btnDark").addEventListener("click",()=>applyTheme("dark"));
 
+async function fetchDataJson(url, options = {}, timeoutMs = 12000){
+  const controller = new AbortController();
+  const timer = setTimeout(()=>controller.abort(), timeoutMs);
+  try{
+    const res = await fetch(url, {...options, signal:controller.signal});
+    if(!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  }catch(error){
+    if(controller.signal.aborted) throw new Error("응답 시간이 길어 조회를 중단했어요. 다시 시도해 주세요.");
+    throw error;
+  }finally{ clearTimeout(timer); }
+}
+function dataFailureHtml(kind, retry){
+  const name = kind === "meal" ? "급식" : kind === "schedule" ? "학사일정" : "날씨";
+  const url = kind === "weather" ? "https://www.weather.go.kr/" : SCHOOL_HOME_URL;
+  return `<div class="dataFailure" role="status">${name} 정보를 가져오지 못했어요. 네트워크 연결 또는 제공 기관의 응답을 확인해 주세요.<div class="guideLinks"><button class="btn ghost" type="button" onclick="${retry}">다시 조회</button><a href="${url}" target="_blank" rel="noopener noreferrer">공식 정보 확인 ↗</a><a href="/guides/troubleshooting.html">오류 해결 안내</a></div></div>`;
+}
+function dataCheckedLabel(){return new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',month:'long',day:'numeric',hour:'2-digit',minute:'2-digit'}).format(new Date());}
+
 async function neis(endpoint, params){
   const base = `https://open.neis.go.kr/hub/${endpoint}`;
   const q = new URLSearchParams({KEY:API_KEY,Type:"json",pIndex:"1",pSize:"200",...params});
-  const res = await fetch(`${base}?${q.toString()}`);
-  if(!res.ok) throw new Error(`HTTP ${res.status}`);
-  return res.json();
+  const data = await fetchDataJson(`${base}?${q.toString()}`);
+  const result = data.RESULT || data[endpoint]?.[0]?.head?.find(item=>item.RESULT)?.RESULT;
+  if(result?.CODE && !["INFO-000","INFO-200"].includes(result.CODE)) throw new Error("급식 제공 기관에서 정상 응답을 받지 못했어요.");
+  if(result?.CODE === "INFO-200") return {};
+  if(!Array.isArray(data[endpoint]?.[1]?.row)) throw new Error("급식 응답 형식을 확인할 수 없어요.");
+  return data;
 }
 
 
@@ -5184,7 +4942,6 @@ let setupStepIndex = 0;
 function showMainApp(){
   document.body.classList.remove("setup-pending");
   const active=document.querySelector(".view.active");
-  if(active)loadKakaoAdsForView(active.id.replace(/^view-/,""));
 }
 function showFirstStartOnly(){
   document.body.classList.add("setup-pending");
@@ -5381,9 +5138,7 @@ async function fetchWeatherData(force = false){
 
   const base = WEATHER_API_BASE.replace(/\/$/, "");
   weatherDataPromise = (async ()=>{
-    const res = await fetch(`${base}/weather`, { cache:"no-store" });
-    if(!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json();
+    const data = await fetchDataJson(`${base}/weather`, { cache:"no-store" });
     if(!data?.ok) throw new Error(data?.error || "날씨 API 오류");
     weatherDataCache = { data, fetchedAt:Date.now() };
     return data;
@@ -5566,10 +5321,10 @@ async function onDay(){
         ${m.cal ? `<span class="pill">${escapeHtml(m.cal)}</span>` : ""}
         <ul style="margin:10px 0 0;padding-left:18px;line-height:1.8">${m.menu.map(renderMenuItem).join("")}</ul>
       </div>`).join("");
-    mealSetCopy(mealFormatCopy([{ymd,meals}], "하루 급식")); setNotice("", "", false);
+    mealSetCopy(mealFormatCopy([{ymd,meals}], "하루 급식")); setNotice("ok", "NEIS 급식 조회 완료 · 확인 " + dataCheckedLabel(), true);
   }catch(err){
     if(request !== mealRequestId) return;
-    $("#meals").innerHTML = ""; setNotice("err", "조회 중 오류: " + (err.message || err), true);
+    $("#meals").innerHTML = dataFailureHtml("meal", "mealQuerySelected()"); setNotice("err", "조회 중 오류: " + (err.message || err), true);
   }
 }
 function moveDate(days){
@@ -5630,11 +5385,11 @@ function setSchNotice(kind,text){
   box.className = "notice" + (kind ? ` ${kind}` : "");
   box.textContent = text;
 }
+const scheduleSourceMeta = new Map();
 async function fetchScheduleMonthProxy(yyyymm){
-  const res = await fetch(`${SCHEDULE_DATA_BASE}${encodeURIComponent(yyyymm)}.json?v=${Date.now()}`, { cache:"no-store" });
-  if(!res.ok) throw new Error("학사일정 프록시 오류 HTTP " + res.status);
-  const data = await res.json();
+  const data = await fetchDataJson(`${SCHEDULE_DATA_BASE}${encodeURIComponent(yyyymm)}.json?v=${Date.now()}`, { cache:"no-store" });
   if(!data.ok) throw new Error(data.error || "학사일정 응답 오류");
+  scheduleSourceMeta.set(yyyymm, data.updatedAt || "");
   return data.byDate || {};
 }
 function renderScheduleCalendar(yyyymm, byDate){
@@ -5670,11 +5425,12 @@ async function scheduleLoadMonth(){
     setSchNotice("", "학사일정을 불러오는 중…");
     const byDate = await fetchScheduleMonthProxy(yyyymm);
     renderScheduleCalendar(yyyymm, byDate);
-    setSchNotice("ok", "학사일정 조회 완료");
+    const collected = scheduleSourceMeta.get(yyyymm);
+    setSchNotice("ok", "학사일정 조회 완료 · 확인 " + dataCheckedLabel() + (collected ? " · 자료 수집 " + weatherFullTimeLabel(collected) : ""));
     homeRenderTodaySchedule(byDate);
   }catch(err){
     setSchNotice("err", "학사일정 오류: " + (err.message || err));
-    $("#schList").innerHTML = "";
+    $("#schList").innerHTML = dataFailureHtml("schedule", "scheduleLoadMonth()");
   }
 }
 function scheduleLoadToday(){
@@ -5963,7 +5719,7 @@ async function renderHomeWeather(){
   }catch(err){
     console.error("O.Poong weather:", err);
     status.textContent = "연결 오류";
-    body.innerHTML = `<div class="muted">현재 날씨를 불러오지 못했어요.</div>`;
+    body.innerHTML = dataFailureHtml("weather", "renderHomeWeather()");
     const banner = $("#weatherAlertBanner");
     if(banner) banner.hidden = true;
     renderPersonalHeroLine();
@@ -5973,7 +5729,7 @@ async function renderHomeWeather(){
 function weatherFullTimeLabel(iso){
   const d = new Date(iso);
   if(Number.isNaN(d.getTime())) return "시각 정보 없음";
-  return `${d.getMonth()+1}월 ${d.getDate()}일 ${pad2(d.getHours())}:${pad2(d.getMinutes())}`;
+  return new Intl.DateTimeFormat("ko-KR",{timeZone:"Asia/Seoul",month:"long",day:"numeric",hour:"2-digit",minute:"2-digit",hourCycle:"h23"}).format(d);
 }
 
 function weatherRiskSummary(data){
@@ -6073,7 +5829,7 @@ async function renderWeatherDetail(force = false){
     console.error("O.Poong detailed weather:", err);
     status.className = "notice err";
     status.textContent = "날씨 정보를 불러오지 못했어요. 잠시 후 새로고침해 주세요.";
-    content.innerHTML = `<div class="weatherDetailSection"><div class="muted">연결이 복구되면 현재 관측과 시간별 예보를 자동으로 표시합니다.</div></div>`;
+    content.innerHTML = dataFailureHtml("weather", "renderWeatherDetail(true)");
   }
 }
 
@@ -6529,14 +6285,17 @@ async function renderHomeWidgets(){
     $("#homeMealBody").innerHTML = meals.length
       ? renderHomeMealOverview(meals)
       : `<div class="muted">오늘 급식 정보가 없습니다.</div>`;
-  }catch{ $("#homeMealBody").innerHTML = `<div class="muted">급식 정보를 불러오지 못했어요.</div>`; }
+    $("#homeMealBody").insertAdjacentHTML("beforeend", `<p class="sourceNote">NEIS · 조회 확인 ${dataCheckedLabel()}</p>`);
+  }catch{ $("#homeMealBody").innerHTML = dataFailureHtml("meal", "renderHomeWidgets()"); }
 
   try{
     $("#homeSchDate").textContent = todayStr();
     $("#homeSchBody").innerHTML = `<div class="muted">불러오는 중…</div>`;
     const byDate = await fetchScheduleMonthProxy(todayYYYYMM());
     homeRenderTodaySchedule(byDate);
-  }catch{ $("#homeSchBody").innerHTML = `<div class="muted">학사일정을 불러오지 못했어요.</div>`; }
+    const collected = scheduleSourceMeta.get(todayYYYYMM());
+    if(collected) $("#homeSchBody").insertAdjacentHTML("beforeend", `<p class="sourceNote">학교 홈페이지 · 자료 수집 ${escapeHtml(weatherFullTimeLabel(collected))}</p>`);
+  }catch{ $("#homeSchBody").innerHTML = dataFailureHtml("schedule", "renderHomeWidgets()"); }
 
   homeRenderTodayTimetable();
 }
@@ -7271,7 +7030,6 @@ html[data-japan-mode="2026"] .japanTripNav .title{color:var(--trip-accent,#137f7
 .japanSimNotice[hidden]{display:none!important}.japanSimTag{font-size:11px;font-weight:700;color:#137f77;letter-spacing:.4px}.japanSimNotice h3{font-size:24px;letter-spacing:-.8px;line-height:1.35;margin:12px 30px 14px 0}.japanSimClose{position:absolute;right:12px;top:12px;border:1px solid var(--line);border-radius:50%;width:34px;height:34px;background:var(--card2);color:var(--text);font-size:22px;cursor:pointer}
 .japanSimCompare{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0}.japanSimCompare div{padding:13px;border:1px solid var(--line);border-radius:12px;background:var(--card2);min-width:0}.japanSimCompare div:last-child{border-color:#137f77;background:color-mix(in srgb,#137f77 8%,var(--card))}.japanSimCompare small,.japanSimCompare b,.japanSimCompare span{display:block}.japanSimCompare small{font-size:10px;color:var(--muted)}.japanSimCompare b{font-size:16px;margin:7px 0}.japanSimCompare span{font-size:12px;line-height:1.65}
 .japanSimFine{font-size:11px!important;line-height:1.75!important;color:var(--muted);margin:12px 0!important}.japanSimCta{display:block;text-align:center;border-radius:12px;padding:14px 12px;background:#137f77;color:white!important;text-decoration:none;font-size:14px;font-weight:700}.japanSimReopen{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 16px;margin:0 0 16px;border:1px solid var(--line);border-radius:12px;background:var(--card2);font-size:12px}.japanSimReopen b{display:block;margin-bottom:4px}.japanSimReopen a{color:var(--trip-accent,#137f77);font-weight:700}
-#view-japan #ad-japan-mode{display:flex;justify-content:center;box-sizing:border-box;min-width:0;width:100%;margin:16px 0;padding:0;overflow:visible}
 @media(max-width:370px){.japanSimNotice{padding:18px 14px}.japanSimNotice h3{font-size:21px}.japanSimCompare div{padding:10px}}
 </style>
 <script id="opoong-japan-mode-2026">
@@ -7306,18 +7064,6 @@ html[data-japan-mode="2026"] .japanTripNav .title{color:var(--trip-accent,#137f7
   const simCard=document.createElement('div');simCard.className='japanSimReopen';
   simCard.innerHTML=`<div><b>AD · 일본 여행 데이터 준비</b>유심사 완전 무제한 상품을 확인해 보세요.</div><a href="${affiliateUrl}" target="_blank" rel="sponsored noopener noreferrer">유심사 바로가기 ↗</a>`;
   banner.after(simCard);
-  const adBox=document.createElement('div');adBox.id='ad-japan-mode';adBox.className='adfitWrap';
-  simCard.after(adBox);
-  const japanAd={...KAKAO_ADS.homeMobile,container:adBox.id};
-  KAKAO_AD_CONTAINERS.push(adBox.id);
-  const originalAdLoader=loadKakaoAdsForView;
-  loadKakaoAdsForView=function(view){
-    if(view!=='japan')return originalAdLoader(view);
-    clearTimeout(kakaoAdTimer);
-    if(kakaoAdView!==view){kakaoAdGeneration++;clearKakaoAdBoxes();}
-    kakaoAdView=view;
-    kakaoAdTimer=setTimeout(()=>{if(isKakaoAdViewVisible(view))mountKakaoAd(japanAd,kakaoAdGeneration);},180);
-  };
   const simDismissKey='opoong_usimsa_dismissed_2026';
   let simDismissed=false;
   try{simDismissed=localStorage.getItem(simDismissKey)==='1';}catch(error){}
@@ -7351,11 +7097,7 @@ html[data-japan-mode="2026"] .japanTripNav .title{color:var(--trip-accent,#137f7
     delete document.documentElement.dataset.japanMode;
     homeTitle.textContent=oldTitle;homeHint.textContent=oldHint;
     placeholder.replaceWith(panel);banner.remove();
-    loadKakaoAdsForView=originalAdLoader;
-    clearKakaoAdBox(adBox);
-    const adIndex=KAKAO_AD_CONTAINERS.indexOf(adBox.id);
-    if(adIndex>=0)KAKAO_AD_CONTAINERS.splice(adIndex,1);
-    adBox.remove();simNotice.remove();simCard.remove();
+    simNotice.remove();simCard.remove();
     document.removeEventListener('visibilitychange',resumeSimNotice);
     window.removeEventListener('pageshow',showSimNotice);
     window.removeEventListener('load',showSimNotice);
