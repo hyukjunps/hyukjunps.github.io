@@ -55,10 +55,6 @@ jobs:
               freq, priority = settings.get(page, ('weekly', '0.60'))
               urls.append((f'/?page={page}', freq, priority))
 
-          for guide in sorted(Path('guides').glob('*.html')):
-              path = '/guides/' if guide.name == 'index.html' else '/' + guide.as_posix()
-              urls.append((path, 'monthly', '0.65'))
-
           if Path('seo/opoong.html').exists():
               urls.append(('/seo/opoong.html', 'monthly', '0.60'))
 
