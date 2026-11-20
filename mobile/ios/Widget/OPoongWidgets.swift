@@ -123,26 +123,38 @@ struct WidgetCardView: View {
     }
 }
 
-struct OPoongWidget: Widget {
-    let kind: WidgetKind
-
-    var body: some WidgetConfiguration {
-        StaticConfiguration(kind: kind == .meal ? "OPoongMeal" : "OPoong-\(kind.rawValue)",
-                            provider: WidgetTimeline(kind: kind)) { entry in
-            WidgetCardView(kind: kind, entry: entry)
-        }
-        .configurationDisplayName("오풍 · \(kind.label)")
-        .description(kind.description)
-        .supportedFamilies([.systemSmall, .systemMedium])
+private func configuration(for kind: WidgetKind) -> some WidgetConfiguration {
+    StaticConfiguration(kind: kind == .meal ? "OPoongMeal" : "OPoong-\(kind.rawValue)",
+                        provider: WidgetTimeline(kind: kind)) { entry in
+        WidgetCardView(kind: kind, entry: entry)
     }
+    .configurationDisplayName("오풍 · \(kind.label)")
+    .description(kind.description)
+    .supportedFamilies([.systemSmall, .systemMedium])
+}
+
+struct MealWidget: Widget {
+    var body: some WidgetConfiguration { configuration(for: .meal) }
+}
+
+struct WeatherWidget: Widget {
+    var body: some WidgetConfiguration { configuration(for: .weather) }
+}
+
+struct ScheduleWidget: Widget {
+    var body: some WidgetConfiguration { configuration(for: .schedule) }
+}
+
+struct OnwayWidget: Widget {
+    var body: some WidgetConfiguration { configuration(for: .onway) }
 }
 
 @main
 struct OPoongWidgetBundle: WidgetBundle {
     var body: some Widget {
-        OPoongWidget(kind: .meal)
-        OPoongWidget(kind: .weather)
-        OPoongWidget(kind: .schedule)
-        OPoongWidget(kind: .onway)
+        MealWidget()
+        WeatherWidget()
+        ScheduleWidget()
+        OnwayWidget()
     }
 }
