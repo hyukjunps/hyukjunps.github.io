@@ -1,0 +1,6 @@
+<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">
+    <background android:drawable="@color/opoong_icon_blue"/>
+    <foreground>
+        <inset android:drawable="@mipmap/opoong_icon_art" android:inset="17%"/>
+    </foreground>
+</adaptive-icon>

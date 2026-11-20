@@ -1,0 +1,23 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_root" android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical" android:background="@drawable/dday_background"
+    android:paddingStart="14dp" android:paddingEnd="14dp"
+    android:paddingTop="11dp" android:paddingBottom="10dp">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="22dp"
+        android:orientation="horizontal" android:gravity="center_vertical">
+        <TextView android:id="@+id/widget_label" android:text="나의 D-DAY" android:layout_width="0dp" android:layout_height="wrap_content"
+            android:layout_weight="1" android:textColor="#F6D2FF" android:textSize="13sp" android:textStyle="bold"
+            android:maxLines="1" android:ellipsize="end"/>
+        <ImageView android:id="@+id/widget_symbol" android:layout_width="24dp" android:layout_height="24dp"
+            android:importantForAccessibility="no" android:src="@drawable/dday_symbol"/>
+    </LinearLayout>
+    <TextView android:id="@+id/widget_title" android:text="D-12" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" android:textColor="#FFF9FA" android:textSize="33sp"
+        android:fontFamily="sans-serif" android:textStyle="bold" android:includeFontPadding="false" android:maxLines="1" android:ellipsize="end"/>
+    <TextView android:id="@+id/widget_detail" android:text="기말고사" android:layout_width="match_parent" android:layout_height="0dp"
+        android:layout_weight="1" android:layout_marginTop="3dp" android:textColor="#E9E8F2"
+        android:textSize="14sp" android:includeFontPadding="false" android:maxLines="3" android:ellipsize="end"/>
+    <TextView android:id="@+id/widget_footer" android:text="12월 2일 수" android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="4dp" android:textColor="#CAC6D7" android:textSize="12sp" android:maxLines="1"
+        android:ellipsize="end"/>
+</LinearLayout>
