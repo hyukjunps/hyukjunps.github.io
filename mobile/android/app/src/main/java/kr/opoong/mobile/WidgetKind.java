@@ -11,7 +11,9 @@ enum WidgetKind {
     SCHEDULE("학사일정", "오늘부터 7일", "https://hyukjunps.github.io/?page=schedule",
             WidgetProvider.Schedule.class, R.drawable.schedule_background, R.drawable.schedule_symbol, "#DDCDFF", 3),
     ONWAY("온웨이에듀", "상벌점 · 외출 관리", "https://ps.onwayedu.co.kr/login/login.php",
-            WidgetProvider.Onway.class, R.drawable.onway_background, R.drawable.onway_symbol, "#A3F3DC", 0);
+            WidgetProvider.Onway.class, R.drawable.onway_background, R.drawable.onway_symbol, "#A3F3DC", 0),
+    DDAY("나의 D-DAY", "저장한 일정까지 남은 날", "https://hyukjunps.github.io/?opoong=dday",
+            WidgetProvider.Dday.class, R.drawable.dday_background, R.drawable.dday_symbol, "#F6D2FF", 0);
 
     final String label;
     final String description;

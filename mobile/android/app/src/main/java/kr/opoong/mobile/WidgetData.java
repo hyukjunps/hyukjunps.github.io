@@ -39,6 +39,7 @@ final class WidgetData {
 
     static Card card(Context context, WidgetKind kind, boolean failed) {
         LocalDate today = SchoolMeals.today();
+        if (kind == WidgetKind.DDAY) return SiteSnapshot.ddayCard(context, today);
         if (kind == WidgetKind.ONWAY) {
             return new Card("학교생활", "온웨이에듀", "상벌점 · 외출 관리", "상벌점 · 외출 관리", "로그인 열기  ↗");
         }
@@ -46,7 +47,7 @@ final class WidgetData {
             case MEAL -> mealCard(context, today);
             case WEATHER -> weatherCard(context);
             case SCHEDULE -> scheduleCard(context, today);
-            case ONWAY -> throw new IllegalStateException();
+            case ONWAY, DDAY -> throw new IllegalStateException();
         };
         if (card != null) return card;
         boolean offline = context.getSystemService(ConnectivityManager.class).getActiveNetwork() == null;
@@ -135,7 +136,7 @@ final class WidgetData {
                     if (!first.equals(last)) refreshSchedule(context, last);
                 }
             }
-            case ONWAY -> { }
+            case ONWAY, DDAY -> { }
         }
     }
 

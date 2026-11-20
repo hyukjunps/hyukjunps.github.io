@@ -2,7 +2,7 @@
     android:initialLayout="@layout/widget_card"
     android:previewLayout="@layout/schedule_preview"
     android:minWidth="190dp" android:minHeight="130dp"
-    android:minResizeWidth="120dp" android:minResizeHeight="130dp"
+    android:minResizeWidth="120dp" android:minResizeHeight="105dp"
     android:targetCellWidth="4" android:targetCellHeight="2"
     android:description="@string/schedule_description"
     android:updatePeriodMillis="3600000"
