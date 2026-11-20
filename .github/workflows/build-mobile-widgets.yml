@@ -45,4 +45,11 @@ jobs:
           xcodegen generate
       - name: Build app and widget for the iOS simulator
         working-directory: mobile/ios
-        run: xcodebuild -project OPoong.xcodeproj -scheme OPoong -configuration Debug -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+        run: xcodebuild -project OPoong.xcodeproj -scheme OPoong -configuration Debug -derivedDataPath "$RUNNER_TEMP/opoong-ios" -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
+      - name: Package the iOS simulator app
+        run: ditto -c -k --sequesterRsrc --keepParent "$RUNNER_TEMP/opoong-ios/Build/Products/Debug-iphonesimulator/OPoong.app" "$RUNNER_TEMP/OPoong-iOS-Simulator.zip"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: O.Poong-iOS-Simulator
+          path: ${{ runner.temp }}/OPoong-iOS-Simulator.zip
+          if-no-files-found: error

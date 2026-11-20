@@ -4,8 +4,8 @@ options:
     iOS: "17.0"
 settings:
   base:
-    MARKETING_VERSION: "1.0"
-    CURRENT_PROJECT_VERSION: "1"
+    MARKETING_VERSION: "1.1"
+    CURRENT_PROJECT_VERSION: "2"
     SWIFT_VERSION: "5.0"
 targets:
   OPoong:
@@ -14,6 +14,7 @@ targets:
     sources:
       - path: App
         excludes: [Info.plist]
+      - path: Shared
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: kr.opoong.mobile
@@ -28,6 +29,7 @@ targets:
     sources:
       - path: Widget
         excludes: [Info.plist]
+      - path: Shared
     settings:
       base:
         PRODUCT_BUNDLE_IDENTIFIER: kr.opoong.mobile.MealWidget

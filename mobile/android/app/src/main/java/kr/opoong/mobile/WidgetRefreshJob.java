@@ -1,0 +1,66 @@
+package kr.opoong.mobile;
+
+import android.app.job.JobInfo;
+import android.app.job.JobParameters;
+import android.app.job.JobScheduler;
+import android.app.job.JobService;
+import android.content.ComponentName;
+import android.content.Context;
+import android.os.Handler;
+import android.os.Looper;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import org.json.JSONException;
+
+public final class WidgetRefreshJob extends JobService {
+    private static final ExecutorService WORKERS = Executors.newFixedThreadPool(3);
+    private final Handler main = new Handler(Looper.getMainLooper());
+    private final Map<JobParameters, Future<?>> active = new HashMap<>();
+
+    static void schedule(Context context, WidgetKind kind) {
+        if (kind.jobId == 0 || WidgetProvider.ids(context, kind).length == 0) return;
+        JobScheduler scheduler = context.getSystemService(JobScheduler.class);
+        if (scheduler.getPendingJob(kind.jobId) != null) return;
+        JobInfo job = new JobInfo.Builder(kind.jobId, new ComponentName(context, WidgetRefreshJob.class))
+                .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)
+                .setPersisted(true)
+                .build();
+        scheduler.schedule(job);
+    }
+
+    @Override public boolean onStartJob(JobParameters params) {
+        WidgetKind kind = WidgetKind.values()[params.getJobId() - 1];
+        if (WidgetProvider.ids(this, kind).length == 0) return false;
+        Future<?> task = WORKERS.submit(() -> {
+            var day = SchoolMeals.today();
+            boolean failed = refresh(kind);
+            boolean dateChanged = kind != WidgetKind.WEATHER && !day.equals(SchoolMeals.today());
+            main.post(() -> {
+                if (active.remove(params) == null) return;
+                WidgetProvider.renderAll(this, kind, failed);
+                jobFinished(params, failed || dateChanged);
+            });
+        });
+        active.put(params, task);
+        return true;
+    }
+
+    private boolean refresh(WidgetKind kind) {
+        try {
+            WidgetData.refresh(this, kind);
+            return false;
+        } catch (IOException | JSONException error) {
+            return true;
+        }
+    }
+
+    @Override public boolean onStopJob(JobParameters params) {
+        Future<?> task = active.remove(params);
+        if (task != null) task.cancel(true);
+        return WidgetProvider.ids(this, WidgetKind.values()[params.getJobId() - 1]).length > 0;
+    }
+}

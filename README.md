@@ -8,4 +8,4 @@
 - O.Poong 아바타·펫·상점 기능
 - PWA 설치 및 일부 오프라인 기능
 
-홈 화면용 Android·iOS 급식 위젯은 [모바일 빌드 안내](mobile/README.md)에서 확인할 수 있습니다.
+홈 화면용 Android·iOS 위젯은 [모바일 빌드 안내](mobile/README.md)에서 확인할 수 있습니다.

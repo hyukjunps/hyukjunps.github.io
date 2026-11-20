@@ -1,0 +1,3 @@
+<resources>
+    <item name="widget_radius" type="dimen">@android:dimen/system_app_widget_background_radius</item>
+</resources>

@@ -1,18 +1,26 @@
 # 오풍 홈 화면 위젯
 
-풍산고 오늘 급식을 기기의 홈 화면에 표시합니다. 중식을 우선 표시하고, 중식이 없는 날에는 첫 끼니를 표시합니다. 날짜는 한국 시간으로 계산하며, 위젯을 누르면 기존 오풍 급식 화면이 열립니다. 조식·중식·석식 전체와 알레르기 정보는 오풍에서 확인할 수 있습니다.
+| 위젯 | 홈 화면에 표시되는 정보 | 누르면 열리는 화면 |
+| --- | --- | --- |
+| 오늘 급식 | 오늘 식단. 중식을 우선 표시하며, 중식이 없으면 첫 끼니를 표시합니다. | 오풍 급식 |
+| 풍산고 날씨 | 풍산고의 현재 기온·하늘 상태·습도와 관측 시각 | 오풍 홈의 날씨 카드 |
+| 학사일정 | 오늘부터 7일 동안 예정된 학사일정 | 오풍 학사일정 |
+| 온웨이에듀 | 상벌점·외출 관리 시스템 바로가기 | 온웨이에듀 로그인 |
 
-위젯은 나이스 공개 급식 API를 사용합니다. 연결이 끊겨도 이전에 받아 둔 당일 메뉴가 있으면 표시합니다. 자동 새로고침 시간은 기기에서 결정합니다. 오풍 웹의 시간표는 각 브라우저에 직접 입력해 저장하기 때문에 이 버전의 위젯에는 포함하지 않았습니다.
+날짜는 한국 시간 기준입니다. 급식은 나이스 공개 API, 학사일정은 오풍에 공개된 학교 공식 일정 자료를 사용합니다. 날씨는 오풍의 기존 날씨 API를 사용합니다. 최신 오풍 날씨를 받을 수 없으면 풍산고 위치의 [Open-Meteo](https://open-meteo.com/) 데이터를 사용하고 위젯에 출처를 표시합니다. 기기 위치 권한은 필요하지 않습니다. 새로고침 시각은 기기가 정합니다.
 
 ## Android
 
-1. Android Studio에서 `mobile/android`를 열고 Android SDK 35를 설치합니다.
-2. Gradle 8.9와 JDK 17 이상으로 앱을 빌드합니다. Gradle이 설치된 환경에서는 `gradle :app:assembleDebug`를 실행하면 `app/build/outputs/apk/debug/app-debug.apk`가 생성됩니다.
-3. Android 8 이상 기기에 앱을 설치합니다. 앱에서 **급식 위젯 추가**를 선택하거나 홈 화면의 위젯 목록에서 **오풍**을 찾습니다.
+1. Android 8 이상 기기에 APK를 설치합니다.
+2. 오풍 앱에서 원하는 위젯의 **추가**를 누르거나, 홈 화면을 길게 눌러 위젯 목록에서 **오풍**을 선택합니다.
+3. 이전 디버그 APK와 서명이 다르다는 메시지가 나오면 기존 오풍 테스트 앱을 삭제한 뒤 새 APK를 설치합니다. 설치 후 위젯을 다시 추가합니다.
+
+소스에서 빌드하려면 Android Studio에서 `mobile/android`를 열고 Android SDK 35를 설치합니다. JDK 17과 Gradle 8.9 환경에서 `gradle :app:assembleDebug`를 실행하면 `app/build/outputs/apk/debug/app-debug.apk`가 생성됩니다.
 
 ## iOS
 
-1. Mac에서 Xcode와 XcodeGen을 설치합니다. Homebrew에서는 `brew install xcodegen`으로 XcodeGen을 설치할 수 있습니다.
-2. `mobile/ios`에서 `xcodegen generate`를 실행하고 `OPoong.xcodeproj`를 엽니다.
-3. iPhone 또는 iPad 실기기에서 실행하려면 Xcode의 Signing & Capabilities에서 앱과 위젯 타깃의 개발 팀을 지정합니다. 기존에 등록된 번들 ID와 충돌하는 경우 앱과 위젯의 번들 ID를 함께 변경합니다. 위젯의 번들 ID는 앱의 번들 ID로 시작해야 합니다.
-4. iOS 또는 iPadOS 17 이상에서 오풍 앱을 한 번 연 뒤 홈 화면의 위젯 목록에서 **오풍**을 찾습니다.
+1. Mac에서 Xcode와 XcodeGen을 설치합니다. Homebrew에서는 `brew install xcodegen`을 실행합니다.
+2. `mobile/ios`에서 `xcodegen generate`를 실행한 다음 `OPoong.xcodeproj`를 엽니다.
+3. iPhone 또는 iPad에 설치하려면 앱과 위젯 타깃의 Signing & Capabilities에서 개발 팀을 설정하고 실행합니다. 번들 ID 충돌 시 두 타깃의 ID를 함께 수정합니다. 위젯의 번들 ID는 앱의 번들 ID로 시작해야 합니다.
+4. iOS 17 이상에서 오풍 앱을 한 번 연 뒤 홈 화면 위젯 목록에서 **오풍**을 검색합니다.
+5. 시뮬레이터용 ZIP으로 확인하려면 Mac에서 압축을 풀고, 실행 중인 iOS 시뮬레이터에 `xcrun simctl install booted OPoong.app`으로 설치합니다.
