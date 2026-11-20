@@ -33,8 +33,8 @@ public final class WidgetRefreshJob extends JobService {
     }
 
     @Override public boolean onStartJob(JobParameters params) {
-        WidgetKind kind = WidgetKind.values()[params.getJobId() - 1];
-        if (WidgetProvider.ids(this, kind).length == 0) return false;
+        WidgetKind kind = WidgetKind.forJob(params.getJobId());
+        if (kind == null || WidgetProvider.ids(this, kind).length == 0) return false;
         Future<?> task = WORKERS.submit(() -> {
             var day = SchoolMeals.today();
             boolean failed = refresh(kind);
@@ -61,6 +61,7 @@ public final class WidgetRefreshJob extends JobService {
     @Override public boolean onStopJob(JobParameters params) {
         Future<?> task = active.remove(params);
         if (task != null) task.cancel(true);
-        return WidgetProvider.ids(this, WidgetKind.values()[params.getJobId() - 1]).length > 0;
+        WidgetKind kind = WidgetKind.forJob(params.getJobId());
+        return kind != null && WidgetProvider.ids(this, kind).length > 0;
     }
 }

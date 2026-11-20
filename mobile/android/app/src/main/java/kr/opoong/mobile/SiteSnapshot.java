@@ -27,7 +27,8 @@ final class SiteSnapshot {
           const date = ddayToday();
           const keepPast = localStorage.getItem('opoong_dday_expire_v1') === '0';
           const saved = clean(read('opoong_ddays_v1', []));
-          const automatic = localStorage.getItem('opoong_dday_auto_v1') === '1'
+          const auto = localStorage.getItem('opoong_dday_auto_v1') !== '0';
+          const automatic = auto
             ? clean((typeof ddayAutoItems !== 'undefined' && ddayAutoItems.length)
                 ? ddayAutoItems : read('opoong_dday_auto_cache_v1', {}).items).filter(item => item.date >= date)
             : [];
@@ -38,7 +39,7 @@ final class SiteSnapshot {
                 .map(({period, start, end}) => ({
                     period, start, end, subject: classNowSubject(table, period, dayIndex).slice(0, 60)
                 })).filter(slot => slot.subject);
-          return {date, keepPast, ddays: saved.concat(automatic), slots};
+          return {date, keepPast, auto, ddays: automatic.concat(saved), slots};
         })()
         """;
 
@@ -53,8 +54,10 @@ final class SiteSnapshot {
         String data = ddays.toString();
         boolean keepPast = snapshot.optBoolean("keepPast");
         var cache = context.getSharedPreferences(CACHE, Context.MODE_PRIVATE);
-        if (data.equals(cache.getString("ddays", null)) && keepPast == cache.getBoolean("keepPast", false)) return;
-        cache.edit().putString("ddays", data).putBoolean("keepPast", keepPast).apply();
+        boolean auto = snapshot.optBoolean("auto", true);
+        if (data.equals(cache.getString("ddays", null)) && keepPast == cache.getBoolean("keepPast", false)
+                && auto == cache.getBoolean("auto", true)) return;
+        cache.edit().putString("ddays", data).putBoolean("keepPast", keepPast).putBoolean("auto", auto).apply();
         WidgetProvider.renderAll(context, WidgetKind.DDAY, false);
     }
 
@@ -81,10 +84,20 @@ final class SiteSnapshot {
         } catch (JSONException error) {
             // A fresh snapshot will repopulate the cache on opening the app.
         }
+        if (cache.getBoolean("auto", true)) {
+            var recommendation = WidgetData.suggestedDday(context, today);
+            if (recommendation != null && (upcoming == null || !recommendation.day().isAfter(upcoming.date()))) {
+                upcoming = new Dday(recommendation.day(), recommendation.title());
+            }
+        }
         Dday choice = upcoming == null && cache.getBoolean("keepPast", false) ? past : upcoming;
         if (choice == null) {
-            return new WidgetData.Card("나의 D-DAY", "일정 추가", "누르고 오풍에서 날짜를 등록하세요",
-                    "누르고 날짜를 등록하세요", "오풍에서 설정  ↗");
+            if (cache.getBoolean("auto", true)) {
+                return new WidgetData.Card("나의 D-DAY", "일정 확인 중", "가까운 학교 일정을 찾아요",
+                        "학교 일정 자동 추천", "");
+            }
+            return new WidgetData.Card("나의 D-DAY", "일정 추가", "누르고 날짜를 등록하세요",
+                    "누르고 날짜를 등록하세요", "");
         }
         long days = ChronoUnit.DAYS.between(today, choice.date());
         String count = days > 0 ? "D-" + days : days < 0 ? "D+" + -days : "D-DAY";

@@ -13,7 +13,7 @@ enum WidgetKind {
     ONWAY("온웨이에듀", "상벌점 · 외출 관리", "https://ps.onwayedu.co.kr/login/login.php",
             WidgetProvider.Onway.class, R.drawable.onway_background, R.drawable.onway_symbol, "#A3F3DC", 0),
     DDAY("나의 D-DAY", "저장한 일정까지 남은 날", "https://hyukjunps.github.io/?opoong=dday",
-            WidgetProvider.Dday.class, R.drawable.dday_background, R.drawable.dday_symbol, "#F6D2FF", 0);
+            WidgetProvider.Dday.class, R.drawable.dday_background, R.drawable.dday_symbol, "#F6D2FF", 4);
 
     final String label;
     final String description;
@@ -23,6 +23,11 @@ enum WidgetKind {
     final int symbol;
     final int accent;
     final int jobId;
+
+    static WidgetKind forJob(int id) {
+        for (var kind : values()) if (kind.jobId == id) return kind;
+        return null;
+    }
 
     WidgetKind(String label, String description, String url, Class<? extends AppWidgetProvider> provider,
                int background, int symbol, String accent, int jobId) {

@@ -12,11 +12,11 @@
             android:importantForAccessibility="no" android:src="@drawable/onway_symbol"/>
     </LinearLayout>
     <TextView android:id="@+id/widget_title" android:text="온웨이에듀" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:layout_marginTop="4dp" android:textColor="#FFF9FA" android:textSize="23sp"
+        android:layout_marginTop="4dp" android:textColor="#FFF9FA" android:textSize="27sp"
         android:fontFamily="sans-serif" android:textStyle="bold" android:includeFontPadding="false" android:maxLines="1" android:ellipsize="end"/>
     <TextView android:id="@+id/widget_detail" android:text="상벌점 · 외출 관리" android:layout_width="match_parent" android:layout_height="0dp"
         android:layout_weight="1" android:layout_marginTop="3dp" android:textColor="#E9E8F2"
-        android:textSize="14sp" android:includeFontPadding="false" android:maxLines="3" android:ellipsize="end"/>
+        android:textSize="17sp" android:includeFontPadding="false" android:maxLines="3" android:ellipsize="end"/>
     <TextView android:id="@+id/widget_footer" android:text="로그인 열기 ↗" android:layout_width="match_parent" android:layout_height="wrap_content"
         android:layout_marginTop="4dp" android:textColor="#CAC6D7" android:textSize="12sp" android:maxLines="1"
         android:ellipsize="end"/>

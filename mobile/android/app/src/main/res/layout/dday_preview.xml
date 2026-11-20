@@ -12,11 +12,11 @@
             android:importantForAccessibility="no" android:src="@drawable/dday_symbol"/>
     </LinearLayout>
     <TextView android:id="@+id/widget_title" android:text="D-12" android:layout_width="match_parent" android:layout_height="wrap_content"
-        android:layout_marginTop="4dp" android:textColor="#FFF9FA" android:textSize="33sp"
+        android:layout_marginTop="4dp" android:textColor="#FFF9FA" android:textSize="38sp"
         android:fontFamily="sans-serif" android:textStyle="bold" android:includeFontPadding="false" android:maxLines="1" android:ellipsize="end"/>
     <TextView android:id="@+id/widget_detail" android:text="기말고사" android:layout_width="match_parent" android:layout_height="0dp"
         android:layout_weight="1" android:layout_marginTop="3dp" android:textColor="#E9E8F2"
-        android:textSize="14sp" android:includeFontPadding="false" android:maxLines="3" android:ellipsize="end"/>
+        android:textSize="17sp" android:includeFontPadding="false" android:maxLines="3" android:ellipsize="end"/>
     <TextView android:id="@+id/widget_footer" android:text="12월 2일 수" android:layout_width="match_parent" android:layout_height="wrap_content"
         android:layout_marginTop="4dp" android:textColor="#CAC6D7" android:textSize="12sp" android:maxLines="1"
         android:ellipsize="end"/>

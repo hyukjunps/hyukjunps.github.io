@@ -17,6 +17,7 @@ import java.time.YearMonth;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
 import org.json.JSONException;
@@ -35,7 +36,8 @@ final class WidgetData {
     private static final String SCHEDULE_URL = "https://hyukjunps.github.io/data/schedule/";
 
     record Card(String label, String title, String detail, String compactDetail, String footer) {}
-    private record Event(LocalDate day, String title) {}
+    record Event(LocalDate day, String title) {}
+    private record ScheduleWindow(List<Event> events, boolean complete) {}
 
     static Card card(Context context, WidgetKind kind, boolean failed) {
         LocalDate today = SchoolMeals.today();
@@ -77,12 +79,45 @@ final class WidgetData {
     }
 
     private static Card scheduleCard(Context context, LocalDate today) {
+        var week = scheduleWindow(context, today, 7);
+        Event mandatory = scheduleWindow(context, today, 30).events().stream()
+                .filter(event -> mandatoryReturn(event.title())).findFirst().orElse(null);
+        Event first = mandatory != null ? mandatory : week.events().stream().findFirst().orElse(null);
+        if (first == null) return week.complete()
+                ? new Card("학사일정", "일정 없음", "앞으로 7일", "앞으로 7일", "") : null;
+        String date = first.day().format(SHORT_DATE) + " · " + eventLabel(first.day(), today);
+        if (!first.day().equals(today) && !first.day().equals(today.plusDays(1))) {
+            date = first.day().format(LABEL_DATE);
+        }
+        List<String> lines = new ArrayList<>();
+        lines.add(date);
+        for (Event event : week.events()) {
+            if (event.equals(first) || (mandatory != null && mandatoryReturn(event.title()))) continue;
+            lines.add(eventLabel(event.day(), today) + " · " + event.title());
+            if (lines.size() == 4) break;
+        }
+        return new Card("학사일정", mandatory == null ? first.title() : "필수 귀가",
+                String.join("\n", lines), date, "");
+    }
+
+    static Event suggestedDday(Context context, LocalDate today) {
+        return scheduleWindow(context, today, 60).events().stream()
+                .filter(event -> event.title().matches(".*(귀가|수능|대학수학능력시험|고사|시험|학력평가|모의평가).*"))
+                .min(Comparator.comparing(Event::day).thenComparingInt(event -> mandatoryReturn(event.title()) ? 0 : 1))
+                .orElse(null);
+    }
+
+    private static boolean mandatoryReturn(String title) {
+        return title.replaceAll("\\s+", "").contains("필수귀가");
+    }
+
+    private static ScheduleWindow scheduleWindow(Context context, LocalDate today, int days) {
         List<Event> events = new ArrayList<>();
         String selectedMonth = "";
         JSONObject byDate = null;
         boolean complete = true;
         java.util.Set<String> seen = new java.util.HashSet<>();
-        for (int offset = 0; offset < 7; offset++) {
+        for (int offset = 0; offset < days; offset++) {
             LocalDate day = today.plusDays(offset);
             String month = day.format(MONTH);
             if (!month.equals(selectedMonth)) {
@@ -103,19 +138,7 @@ final class WidgetData {
                 if (!title.isEmpty() && seen.add(key)) events.add(new Event(day, title));
             }
         }
-        if (events.isEmpty()) return complete
-                ? new Card("학사일정", "예정된 일정 없음", "오늘부터 7일 기준", "오늘부터 7일 기준", "풍산고등학교") : null;
-        Event first = events.get(0);
-        List<String> lines = new ArrayList<>();
-        for (int i = 1; i < Math.min(3, events.size()); i++) {
-            Event event = events.get(i);
-            lines.add(eventLabel(event.day(), today) + " · " + event.title());
-        }
-        String firstDate = eventLabel(first.day(), today);
-        return new Card("학사일정", first.title(),
-                lines.isEmpty() ? "학교 일정 자세히 보기" : String.join("\n", lines),
-                lines.isEmpty() ? "일정 자세히 보기" : lines.get(0),
-                complete ? firstDate + " · 앞으로 7일" : firstDate + " · 일부 일정");
+        return new ScheduleWindow(events, complete);
     }
 
     private static String eventLabel(LocalDate day, LocalDate today) {
@@ -127,16 +150,28 @@ final class WidgetData {
         switch (kind) {
             case MEAL -> SchoolMeals.refresh(context, today);
             case WEATHER -> refreshWeather(context);
-            case SCHEDULE -> {
-                YearMonth first = YearMonth.from(today);
-                YearMonth last = YearMonth.from(today.plusDays(6));
-                try {
-                    refreshSchedule(context, first);
-                } finally {
-                    if (!first.equals(last)) refreshSchedule(context, last);
-                }
+            case SCHEDULE -> refreshScheduleWindow(context, today, 30);
+            case DDAY -> refreshScheduleWindow(context, today, 60);
+            case ONWAY -> { }
+        }
+    }
+
+    private static void refreshScheduleWindow(Context context, LocalDate today, int days)
+            throws IOException, JSONException {
+        YearMonth last = YearMonth.from(today.plusDays(days - 1));
+        Exception firstFailure = null;
+        boolean loaded = false;
+        for (YearMonth month = YearMonth.from(today); !month.isAfter(last); month = month.plusMonths(1)) {
+            try {
+                refreshSchedule(context, month);
+                loaded = true;
+            } catch (IOException | JSONException error) {
+                if (firstFailure == null) firstFailure = error;
             }
-            case ONWAY, DDAY -> { }
+        }
+        if (!loaded) {
+            if (firstFailure instanceof JSONException error) throw error;
+            if (firstFailure instanceof IOException error) throw error;
         }
     }
 
@@ -187,8 +222,9 @@ final class WidgetData {
         return code >= 51 ? "비" : "현재 날씨";
     }
 
-    private static void refreshSchedule(Context context, YearMonth month) throws IOException, JSONException {
+    private static synchronized void refreshSchedule(Context context, YearMonth month) throws IOException, JSONException {
         String key = month.format(MONTH);
+        if (cached(context, "schedule-" + key, Duration.ofMinutes(25)) != null) return;
         JSONObject data = request(SCHEDULE_URL + key + ".json", 6500);
         if (!data.optBoolean("ok") || !key.equals(data.optString("ym"))) throw new IOException("Schedule month mismatch");
         save(context, "schedule-" + key, data.getJSONObject("byDate"), System.currentTimeMillis());

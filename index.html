@@ -2597,6 +2597,7 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--pri)}
       <div class="firstStartActions">
         <button id="firstStartBtn" class="bigBtn" type="button" onclick="window.OPOONG_START_SAFE && window.OPOONG_START_SAFE(event)">시작하기</button>
         <button class="btn ghost" type="button" onclick="skipFirstSetup()">설정 없이 둘러보기</button>
+        <button class="btn ghost" type="button" onclick="openOpoongBackup()">백업·복원</button>
         <button id="firstStartInstallBtn" class="btn ghost" type="button">앱 설치</button>
       </div>
     </div>
@@ -5663,7 +5664,7 @@ function ddayToday(){
   const get=type=>parts.find(p=>p.type===type).value;
   return get("year")+"-"+get("month")+"-"+get("day");
 }
-function ddayAutoEnabled(){try{return localStorage.getItem(DDAY_AUTO_KEY)==="1";}catch{return false;}}
+function ddayAutoEnabled(){try{return localStorage.getItem(DDAY_AUTO_KEY)!=="0";}catch{return true;}}
 function ddayExpireEnabled(){try{return localStorage.getItem(DDAY_EXPIRE_KEY)!=="0";}catch{return true;}}
 function syncDdayOptions(){
   const auto=$("#ddayAutoToggle"),expire=$("#ddayExpireToggle");
@@ -5722,6 +5723,20 @@ async function refreshAutoDdays(force=false){
   }finally{ddayAutoLoading=false;renderDdayWidget();}
 }
 function initAutoDdays(){
+  if(ddayAutoEnabled() && !ddayAutoFetchedAt){
+    try{
+      const cache=JSON.parse(localStorage.getItem(DDAY_AUTO_CACHE_KEY)||"null");
+      if(cache && Array.isArray(cache.items)){
+        const today=ddayToday();
+        ddayAutoItems=cache.items.filter(item=>item.date>=today);
+        const date=new Intl.DateTimeFormat("sv-SE",{timeZone:"Asia/Seoul"}).format(cache.updatedAt);
+        if(date===today){
+          ddayLastDate=today;
+          ddayAutoFetchedAt=cache.updatedAt;
+        }
+      }
+    }catch{}
+  }
   syncDdayOptions();renderDdayWidget();refreshAutoDdays();
   ddayLastDate=ddayToday();
 }
@@ -5757,7 +5772,7 @@ function renderDdayWidget(){
   if(!body||!status)return;
   const saved=loadDdays();
   const auto=ddayAutoEnabled()?ddayAutoItems.filter(item=>item.date>=ddayToday()):[];
-  const items=saved.concat(auto.filter(item=>!saved.some(x=>x.title===item.title&&x.date===item.date))).sort((a,b)=>a.date.localeCompare(b.date));
+  const items=auto.concat(saved.filter(item=>!auto.some(x=>x.title===item.title&&x.date===item.date))).sort((a,b)=>a.date.localeCompare(b.date));
   status.textContent="저장 "+saved.length+"개"+(ddayAutoEnabled()?" · 자동 "+auto.length+"개":"");
   body.innerHTML=items.length?'<div class="ddayList">'+items.map(item=>`
     <div class="ddayItem">
@@ -6166,10 +6181,23 @@ function initAdminPointMode(){const logo=document.getElementById("adminLogoTrigg
   <button class="thumbTab" data-view="schedule" type="button" onclick="go('schedule');scheduleLoadMonth()"><span aria-hidden="true">▤</span>일정</button>
   <button id="thumbMenuButton" class="thumbTab" type="button" onclick="openThumbMenu()" aria-haspopup="dialog" aria-controls="thumbMenu" aria-expanded="false"><span aria-hidden="true">☰</span>전체</button>
 </nav>
+<dialog id="opoongBackup" aria-labelledby="opoongBackupTitle" style="width:min(92vw,420px);border:1px solid var(--line);border-radius:20px;padding:22px;color:var(--text);background:var(--card,var(--bg))">
+  <form method="dialog" style="float:right"><button class="btn ghost" aria-label="닫기">닫기</button></form>
+  <h2 id="opoongBackupTitle" style="margin:0 0 15px">오풍 백업·복원</h2>
+  <p>시간표, 디데이, 맞춤 설정과 오풍 기록을 다른 기기로 옮길 수 있어요.</p>
+  <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:14px">
+    <button id="opoongBackupExport" class="btn ghost" type="button">백업 파일 저장</button>
+    <button class="btn primary" type="button" onclick="document.getElementById('opoongBackupFile').click()">백업 파일 불러오기</button>
+    <input id="opoongBackupFile" type="file" accept=".json,application/json" hidden>
+  </div>
+  <p id="opoongBackupStatus" role="status"></p>
+</dialog>
+<script src="./opoong-backup.js" defer></script>
 <dialog id="thumbMenu" class="thumbMenu" aria-labelledby="thumbMenuTitle">
   <header class="thumbMenuHead"><div><span>O.Poong</span><h2 id="thumbMenuTitle">전체 메뉴</h2></div><button type="button" onclick="closeThumbMenu()" aria-label="전체 메뉴 닫기">×</button></header>
   <nav id="thumbMenuGrid" class="thumbMenuGrid" aria-label="전체 메뉴"></nav>
   <button class="thumbSettings" type="button" onclick="closeThumbMenu();startFirstSetup()">맞춤 설정</button>
+  <button class="thumbSettings" type="button" onclick="closeThumbMenu();openOpoongBackup()">백업·복원</button>
 </dialog>
 <script>
 let adRemovalTimer;

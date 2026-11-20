@@ -102,17 +102,18 @@ public abstract class WidgetProvider extends AppWidgetProvider {
         var metrics = context.getResources().getDisplayMetrics();
         float fontScale = Math.max(1, context.getResources().getConfiguration().fontScale);
         float usableHeight = height / fontScale;
-        boolean compact = width < 180 || usableHeight < 120;
-        boolean large = width >= 270 && usableHeight >= 165;
-        boolean showFooter = usableHeight >= 124;
+        boolean compact = width < 175 || usableHeight < 128;
+        boolean large = width >= 255 && usableHeight >= 160;
+        boolean showFooter = usableHeight >= 158 && !card.footer().isEmpty();
         boolean numeric = (kind == WidgetKind.WEATHER && card.title().endsWith("°"))
                 || (kind == WidgetKind.DDAY && card.title().startsWith("D"));
-        int padding = Math.round((large ? 18 : compact ? 10 : 14) * metrics.density);
-        int topBottom = Math.round((large ? 13 : compact ? 7 : 10) * metrics.density);
+        int padding = Math.round((large ? 17 : compact ? 8 : 12) * metrics.density);
+        int topBottom = Math.round((large ? 12 : compact ? 6 : 8) * metrics.density);
 
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_card);
         views.setInt(R.id.widget_root, "setBackgroundResource", kind.background);
         views.setViewPadding(R.id.widget_root, padding, topBottom, padding, topBottom);
+        views.setViewVisibility(R.id.widget_header, usableHeight < 107 ? View.GONE : View.VISIBLE);
         views.setImageViewResource(R.id.widget_symbol, kind.symbol);
         views.setViewVisibility(R.id.widget_symbol, width < 135 ? View.GONE : View.VISIBLE);
         views.setTextColor(R.id.widget_label, kind.accent);
@@ -122,11 +123,14 @@ public abstract class WidgetProvider extends AppWidgetProvider {
         views.setTextViewText(R.id.widget_detail, compact ? card.compactDetail() : card.detail());
         views.setTextViewText(R.id.widget_footer, card.footer());
         views.setViewVisibility(R.id.widget_footer, showFooter ? View.VISIBLE : View.GONE);
-        views.setTextViewTextSize(R.id.widget_label, TypedValue.COMPLEX_UNIT_SP, large ? 15 : 13);
-        views.setTextViewTextSize(R.id.widget_title, TypedValue.COMPLEX_UNIT_SP,
-                numeric ? (large ? 44 : compact ? 29 : 36) : (large ? 28 : compact ? 19 : 23));
-        views.setTextViewTextSize(R.id.widget_detail, TypedValue.COMPLEX_UNIT_SP, large ? 17 : 14);
-        views.setTextViewTextSize(R.id.widget_footer, TypedValue.COMPLEX_UNIT_SP, large ? 14 : 12);
+        views.setTextViewTextSize(R.id.widget_label, TypedValue.COMPLEX_UNIT_SP, large ? 16 : 13);
+        boolean narrow = width / Math.min(fontScale, 1.5f) < 140;
+        int titleSize = numeric ? (large ? 50 : compact ? 32 : 41)
+                : (large ? 32 : compact ? (narrow && kind == WidgetKind.ONWAY ? 20 : 23) : 27);
+        views.setTextViewTextSize(R.id.widget_title, TypedValue.COMPLEX_UNIT_SP, titleSize);
+        views.setTextViewTextSize(R.id.widget_detail, TypedValue.COMPLEX_UNIT_SP,
+                large ? 20 : compact ? 16 : 18);
+        views.setTextViewTextSize(R.id.widget_footer, TypedValue.COMPLEX_UNIT_SP, large ? 15 : 13);
         views.setInt(R.id.widget_title, "setMaxLines", large && !numeric ? 2 : 1);
         views.setInt(R.id.widget_detail, "setMaxLines", large ? 5 : compact ? 2 : 3);
 

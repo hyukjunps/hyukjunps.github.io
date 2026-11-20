@@ -22,6 +22,7 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.ValueCallback;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
@@ -40,6 +41,8 @@ public final class MainActivity extends Activity {
     private static final String ORIGIN = "https://" + HOST;
     private static final String HOME = ORIGIN + "/";
     private static final int NOTIFICATION_REQUEST = 41;
+    private static final int BACKUP_PICKER_REQUEST = 42;
+    private ValueCallback<Uri[]> backupPicker;
     private static final ZoneId SEOUL = ZoneId.of("Asia/Seoul");
     private static final int SURFACE = 0xFF101320;
     private WebView site;
@@ -126,7 +129,28 @@ public final class MainActivity extends Activity {
         settings.setDomStorageEnabled(true);
         settings.setAllowFileAccess(false);
         settings.setAllowContentAccess(false);
-        site.setWebChromeClient(new WebChromeClient());
+        site.setWebChromeClient(new WebChromeClient() {
+            @Override public boolean onShowFileChooser(WebView view, ValueCallback<Uri[]> result,
+                                                       FileChooserParams params) {
+                if (!isSite(view.getUrl() == null ? null : Uri.parse(view.getUrl()))) {
+                    result.onReceiveValue(null);
+                    return true;
+                }
+                if (backupPicker != null) backupPicker.onReceiveValue(null);
+                backupPicker = result;
+                var picker = new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE)
+                        .setType("*/*").putExtra(Intent.EXTRA_MIME_TYPES,
+                                new String[]{"application/json", "text/plain", "application/octet-stream"});
+                try {
+                    startActivityForResult(picker, BACKUP_PICKER_REQUEST);
+                } catch (ActivityNotFoundException error) {
+                    backupPicker = null;
+                    result.onReceiveValue(null);
+                    toast("파일 앱을 열 수 없어요.");
+                }
+                return true;
+            }
+        });
         site.setWebViewClient(new WebViewClient() {
             @Override public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 Uri target = request.getUrl();
@@ -173,6 +197,21 @@ public final class MainActivity extends Activity {
         } else {
             site.loadUrl(HOME);
         }
+    }
+
+    @Override protected void onActivityResult(int request, int code, Intent data) {
+        super.onActivityResult(request, code, data);
+        if (request != BACKUP_PICKER_REQUEST || backupPicker == null) return;
+        Uri file = code == RESULT_OK && data != null ? data.getData() : null;
+        var result = backupPicker;
+        backupPicker = null;
+        result.onReceiveValue(file != null && "content".equals(file.getScheme()) ? new Uri[]{file} : null);
+    }
+
+    private void openBackup() {
+        setPanel(false);
+        onReady = "if (typeof openOpoongBackup === 'function') openOpoongBackup(true);";
+        site.loadUrl(HOME);
     }
 
     private void readSite(Consumer<JSONObject> done) {
@@ -233,6 +272,13 @@ public final class MainActivity extends Activity {
         help.setPadding(0, dp(5), 0, dp(20));
         content.addView(help);
         for (WidgetKind kind : WidgetKind.values()) addCard(content, kind);
+
+        Button restore = new Button(this);
+        restore.setText("브라우저 설정 복원");
+        restore.setTextColor(Color.WHITE);
+        restore.setBackgroundTintList(ColorStateList.valueOf(0xFF30385B));
+        restore.setOnClickListener(view -> openBackup());
+        content.addView(restore, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
         Button now = new Button(this);
         now.setText("수업 Now Bar 켜기");
@@ -334,6 +380,8 @@ public final class MainActivity extends Activity {
 
     @Override protected void onDestroy() {
         site.removeCallbacks(synchronize);
+        if (backupPicker != null) backupPicker.onReceiveValue(null);
+        backupPicker = null;
         ((ViewGroup) site.getParent()).removeView(site);
         site.destroy();
         super.onDestroy();
