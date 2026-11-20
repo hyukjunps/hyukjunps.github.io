@@ -30,9 +30,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.function.Consumer;
 import org.json.JSONObject;
 import org.json.JSONException;
 
@@ -43,17 +40,17 @@ public final class MainActivity extends Activity {
     private static final int NOTIFICATION_REQUEST = 41;
     private static final int BACKUP_PICKER_REQUEST = 42;
     private ValueCallback<Uri[]> backupPicker;
-    private static final ZoneId SEOUL = ZoneId.of("Asia/Seoul");
     private static final int SURFACE = 0xFF101320;
     private WebView site;
     private ScrollView panel;
     private Button panelButton;
+    private Button morningButton;
     private String onReady;
     private boolean active;
     private final Runnable synchronize = new Runnable() {
         @Override public void run() {
             if (!active) return;
-            readSite(null);
+            readSite();
             site.postDelayed(this, 2500);
         }
     };
@@ -162,7 +159,7 @@ public final class MainActivity extends Activity {
 
             @Override public void onPageFinished(WebView view, String url) {
                 if (!isSite(Uri.parse(url))) return;
-                readSite(null);
+                readSite();
                 if (onReady != null && "/".equals(Uri.parse(url).getPath())) {
                     String action = onReady;
                     onReady = null;
@@ -214,10 +211,9 @@ public final class MainActivity extends Activity {
         site.loadUrl(HOME);
     }
 
-    private void readSite(Consumer<JSONObject> done) {
+    private void readSite() {
         String url = site.getUrl();
         if (url == null || !isSite(Uri.parse(url))) {
-            if (done != null) done.accept(null);
             return;
         }
         site.evaluateJavascript(SiteSnapshot.SCRIPT, result -> {
@@ -230,31 +226,41 @@ public final class MainActivity extends Activity {
             } catch (JSONException ignored) {
                 // The next read can run once the site has finished loading.
             }
-            if (done != null) done.accept(snapshot);
         });
     }
 
-    private void startNowBar() {
-        readSite(snapshot -> {
-            var lesson = SiteSnapshot.lesson(snapshot, ZonedDateTime.now(SEOUL));
-            if (lesson == null) {
-                toast("현재 추적할 수업이 없어요. 오풍 시간표에 과목을 입력하고 수업 시간에 켜 주세요.");
-                return;
-            }
-            if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
-                    != PackageManager.PERMISSION_GRANTED) {
-                requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_REQUEST);
-                return;
-            }
-            if (!ClassNowNotification.post(this, lesson)) toast("설정에서 오풍 알림을 허용해 주세요.");
-            else toast("수업 남은 시간을 알림에서 확인할 수 있어요.");
-        });
+    private void toggleMorning() {
+        if (MorningMeal.enabled(this)) {
+            MorningMeal.setEnabled(this, false);
+            updateMorningButton();
+            return;
+        }
+        if (Build.VERSION.SDK_INT >= 33 && checkSelfPermission(Manifest.permission.POST_NOTIFICATIONS)
+                != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS}, NOTIFICATION_REQUEST);
+            return;
+        }
+        enableMorning();
+    }
+
+    private void enableMorning() {
+        if (!getSystemService(android.app.NotificationManager.class).areNotificationsEnabled()) {
+            toast("갤럭시 설정에서 오풍 알림을 허용해 주세요.");
+            return;
+        }
+        MorningMeal.setEnabled(this, true);
+        updateMorningButton();
+        toast("학교 급식이 있는 날, 오전 7시부터 알림을 보내요.");
+    }
+
+    private void updateMorningButton() {
+        morningButton.setText(MorningMeal.enabled(this) ? "아침 급식 알림 끄기" : "아침 7시 급식 알림 켜기");
     }
 
     @Override public void onRequestPermissionsResult(int code, String[] permissions, int[] results) {
         super.onRequestPermissionsResult(code, permissions, results);
         if (code == NOTIFICATION_REQUEST && results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED) {
-            startNowBar();
+            enableMorning();
         }
     }
 
@@ -280,15 +286,12 @@ public final class MainActivity extends Activity {
         restore.setOnClickListener(view -> openBackup());
         content.addView(restore, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
 
-        Button now = new Button(this);
-        now.setText("수업 Now Bar 켜기");
-        now.setTextColor(Color.WHITE);
-        now.setBackgroundTintList(ColorStateList.valueOf(0xFF30385B));
-        now.setOnClickListener(view -> startNowBar());
-        content.addView(now, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        TextView nowHelp = label("저장한 시간표로 이번 교시 종료나 다음 교시 시작까지 남은 시간을 표시해요.", 14, 0xFFD4D9EA, false);
-        nowHelp.setPadding(dp(8), dp(4), dp(8), 0);
-        content.addView(nowHelp);
+        morningButton = new Button(this);
+        updateMorningButton();
+        morningButton.setTextColor(Color.WHITE);
+        morningButton.setBackgroundTintList(ColorStateList.valueOf(0xFF30385B));
+        morningButton.setOnClickListener(view -> toggleMorning());
+        content.addView(morningButton, ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         return scroll;
     }
 
@@ -324,6 +327,10 @@ public final class MainActivity extends Activity {
     }
 
     private void pin(WidgetKind kind) {
+        if (kind == WidgetKind.DDAY) {
+            startActivity(new Intent(this, DdayConfigureActivity.class).setAction(DdayConfigureActivity.ADD));
+            return;
+        }
         AppWidgetManager manager = AppWidgetManager.getInstance(this);
         if (!manager.isRequestPinAppWidgetSupported() || !manager.requestPinAppWidget(
                 new ComponentName(this, kind.provider), null, null)) {
@@ -361,7 +368,7 @@ public final class MainActivity extends Activity {
     @Override protected void onPause() {
         active = false;
         site.removeCallbacks(synchronize);
-        readSite(null);
+        readSite();
         site.onPause();
         super.onPause();
     }

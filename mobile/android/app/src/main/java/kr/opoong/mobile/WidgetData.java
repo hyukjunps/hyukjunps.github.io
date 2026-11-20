@@ -62,7 +62,7 @@ final class WidgetData {
         if (meals == null) return null;
         String date = day.format(LABEL_DATE);
         if (meals.isEmpty()) return new Card("오늘 급식", "등록된 식단 없음", "급식 페이지에서 확인", "급식 페이지에서 확인", date);
-        var meal = meals.stream().filter(item -> item.code() == 2).findFirst().orElse(meals.get(0));
+        var meal = MealTime.select(meals, SchoolMeals.Meal::code, java.time.LocalTime.now(MealTime.SEOUL));
         List<String> dishes = meal.dishes();
         return new Card("오늘 급식", meal.name(), String.join(" · ", dishes),
                 String.join(" · ", dishes.subList(0, Math.min(3, dishes.size()))), date);
@@ -100,9 +100,25 @@ final class WidgetData {
                 String.join("\n", lines), date, "");
     }
 
+    static boolean hasSchoolSchedule(Context context, LocalDate day) {
+        return cached(context, "schedule-" + day.format(MONTH), Duration.ofHours(48)) != null;
+    }
+
     static Event suggestedDday(Context context, LocalDate today) {
+        return suggestedDday(context, today, title -> isHomeDay(title) || isExamDay(title));
+    }
+
+    static boolean isHomeDay(String title) {
+        return title.contains("귀가");
+    }
+
+    static boolean isExamDay(String title) {
+        return title.matches(".*(수능|대학수학능력시험|고사|시험|학력평가|모의평가).*");
+    }
+
+    static Event suggestedDday(Context context, LocalDate today, java.util.function.Predicate<String> match) {
         return scheduleWindow(context, today, 60).events().stream()
-                .filter(event -> event.title().matches(".*(귀가|수능|대학수학능력시험|고사|시험|학력평가|모의평가).*"))
+                .filter(event -> match.test(event.title()))
                 .min(Comparator.comparing(Event::day).thenComparingInt(event -> mandatoryReturn(event.title()) ? 0 : 1))
                 .orElse(null);
     }

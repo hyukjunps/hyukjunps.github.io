@@ -34,6 +34,7 @@ public abstract class WidgetProvider extends AppWidgetProvider {
 
     public static final class Dday extends WidgetProvider {
         @Override WidgetKind kind() { return WidgetKind.DDAY; }
+        @Override public void onDeleted(Context context, int[] ids) { DdayChoice.remove(context, ids); }
     }
 
     @Override public void onReceive(Context context, Intent intent) {
@@ -52,7 +53,7 @@ public abstract class WidgetProvider extends AppWidgetProvider {
     }
 
     @Override public void onAppWidgetOptionsChanged(Context context, AppWidgetManager manager, int id, Bundle options) {
-        manager.updateAppWidget(id, sizedViews(context, kind(), WidgetData.card(context, kind(), false), options));
+        manager.updateAppWidget(id, sizedViews(context, kind(), card(context, kind(), id, false), options, id));
     }
 
     @Override public void onDisabled(Context context) {
@@ -69,21 +70,27 @@ public abstract class WidgetProvider extends AppWidgetProvider {
 
     private static void render(Context context, WidgetKind kind, AppWidgetManager manager, int[] ids, boolean failed) {
         if (ids.length == 0) return;
-        var card = WidgetData.card(context, kind, failed);
+        var sharedCard = kind == WidgetKind.DDAY ? null : WidgetData.card(context, kind, failed);
         for (int id : ids) {
-            manager.updateAppWidget(id, sizedViews(context, kind, card, manager.getAppWidgetOptions(id)));
+            var contents = sharedCard == null ? card(context, kind, id, failed) : sharedCard;
+            manager.updateAppWidget(id, sizedViews(context, kind, contents, manager.getAppWidgetOptions(id), id));
         }
     }
 
+    private static WidgetData.Card card(Context context, WidgetKind kind, int id, boolean failed) {
+        var choice = kind == WidgetKind.DDAY ? DdayChoice.load(context, id) : null;
+        return choice == null ? WidgetData.card(context, kind, failed) : choice.card(context, SchoolMeals.today(), failed);
+    }
+
     @SuppressWarnings("deprecation")
-    private static RemoteViews sizedViews(Context context, WidgetKind kind, WidgetData.Card card, Bundle options) {
+    private static RemoteViews sizedViews(Context context, WidgetKind kind, WidgetData.Card card, Bundle options, int id) {
         if (Build.VERSION.SDK_INT >= 31) {
             var sizes = options.<SizeF>getParcelableArrayList(AppWidgetManager.OPTION_APPWIDGET_SIZES);
             if (sizes != null && !sizes.isEmpty()) {
                 Map<SizeF, RemoteViews> layouts = new LinkedHashMap<>();
                 for (SizeF size : sizes) {
                     if (size.getWidth() > 0 && size.getHeight() > 0 && layouts.size() < 16) {
-                        layouts.put(size, cardView(context, kind, card, size.getWidth(), size.getHeight()));
+                        layouts.put(size, cardView(context, kind, card, size.getWidth(), size.getHeight(), id));
                     }
                 }
                 if (!layouts.isEmpty()) return new RemoteViews(layouts);
@@ -94,11 +101,11 @@ public abstract class WidgetProvider extends AppWidgetProvider {
         int maxWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_WIDTH, minWidth);
         int minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 120);
         int maxHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MAX_HEIGHT, minHeight);
-        return new RemoteViews(cardView(context, kind, card, maxWidth, minHeight),
-                cardView(context, kind, card, minWidth, maxHeight));
+        return new RemoteViews(cardView(context, kind, card, maxWidth, minHeight, id),
+                cardView(context, kind, card, minWidth, maxHeight, id));
     }
 
-    private static RemoteViews cardView(Context context, WidgetKind kind, WidgetData.Card card, float width, float height) {
+    private static RemoteViews cardView(Context context, WidgetKind kind, WidgetData.Card card, float width, float height, int id) {
         var metrics = context.getResources().getDisplayMetrics();
         float fontScale = Math.max(1, context.getResources().getConfiguration().fontScale);
         float usableHeight = height / fontScale;
@@ -134,9 +141,11 @@ public abstract class WidgetProvider extends AppWidgetProvider {
         views.setInt(R.id.widget_title, "setMaxLines", large && !numeric ? 2 : 1);
         views.setInt(R.id.widget_detail, "setMaxLines", large ? 5 : compact ? 2 : 3);
 
-        var intent = new Intent(Intent.ACTION_VIEW, Uri.parse(kind.url), context, MainActivity.class);
+        Intent intent = kind == WidgetKind.DDAY
+                ? new Intent(context, DdayConfigureActivity.class).putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
+                : new Intent(Intent.ACTION_VIEW, Uri.parse(kind.url), context, MainActivity.class);
         views.setOnClickPendingIntent(R.id.widget_root, PendingIntent.getActivity(
-                context, kind.ordinal(), intent, PendingIntent.FLAG_IMMUTABLE));
+                context, kind == WidgetKind.DDAY ? id : kind.ordinal(), intent, PendingIntent.FLAG_IMMUTABLE));
         return views;
     }
 }

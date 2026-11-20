@@ -2,8 +2,6 @@ package kr.opoong.mobile;
 
 import android.content.Context;
 import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
@@ -15,7 +13,7 @@ final class SiteSnapshot {
     static final String SCRIPT = """
         (() => {
           if (location.origin !== 'https://hyukjunps.github.io' ||
-              typeof ddayToday !== 'function' || typeof ttLoad !== 'function') return null;
+              typeof ddayToday !== 'function') return null;
           const clean = items => (Array.isArray(items) ? items : [])
             .filter(item => item && typeof item.title === 'string' && typeof item.date === 'string')
             .slice(0, 100)
@@ -32,21 +30,13 @@ final class SiteSnapshot {
             ? clean((typeof ddayAutoItems !== 'undefined' && ddayAutoItems.length)
                 ? ddayAutoItems : read('opoong_dday_auto_cache_v1', {}).items).filter(item => item.date >= date)
             : [];
-          const dayIndex = (new Date(date + 'T00:00:00Z').getUTCDay() + 6) % 7;
-          const table = ttLoad();
-          const slots = typeof CLASS_NOW_SCHEDULE === 'undefined' || dayIndex > 4
-            ? [] : CLASS_NOW_SCHEDULE.filter(slot => slot.period && slot.period <= table.periods)
-                .map(({period, start, end}) => ({
-                    period, start, end, subject: classNowSubject(table, period, dayIndex).slice(0, 60)
-                })).filter(slot => slot.subject);
-          return {date, keepPast, auto, ddays: automatic.concat(saved), slots};
+          return {keepPast, auto, ddays: automatic.concat(saved)};
         })()
         """;
 
     private static final DateTimeFormatter DATE_LABEL = DateTimeFormatter.ofPattern("M월 d일 EEE", Locale.KOREAN);
     private static final String CACHE = "opoong-site";
     record Dday(LocalDate date, String title) {}
-    record Lesson(int period, String subject, long deadline, boolean upcoming) {}
 
     static void saveDdays(Context context, JSONObject snapshot) {
         JSONArray ddays = snapshot.optJSONArray("ddays");
@@ -99,29 +89,14 @@ final class SiteSnapshot {
             return new WidgetData.Card("나의 D-DAY", "일정 추가", "누르고 날짜를 등록하세요",
                     "누르고 날짜를 등록하세요", "");
         }
-        long days = ChronoUnit.DAYS.between(today, choice.date());
-        String count = days > 0 ? "D-" + days : days < 0 ? "D+" + -days : "D-DAY";
-        String footer = choice.date().format(DATE_LABEL);
-        return new WidgetData.Card("나의 D-DAY", count, choice.title(), choice.title(), footer);
+        return ddayEventCard("나의 D-DAY", today, choice.title(), choice.date());
     }
 
-    static Lesson lesson(JSONObject snapshot, ZonedDateTime now) {
-        if (snapshot == null || !now.toLocalDate().toString().equals(snapshot.optString("date"))) return null;
-        JSONArray slots = snapshot.optJSONArray("slots");
-        if (slots == null) return null;
-        for (int index = 0; index < slots.length(); index++) {
-            JSONObject slot = slots.optJSONObject(index);
-            if (slot == null) continue;
-            try {
-                var start = now.toLocalDate().atTime(LocalTime.parse(slot.getString("start"))).atZone(now.getZone());
-                var end = now.toLocalDate().atTime(LocalTime.parse(slot.getString("end"))).atZone(now.getZone());
-                if (!now.isBefore(end)) continue;
-                boolean upcoming = now.isBefore(start);
-                if (upcoming && start.isAfter(now.plusMinutes(20))) return null;
-                return new Lesson(slot.getInt("period"), slot.getString("subject"),
-                        (upcoming ? start : end).toInstant().toEpochMilli(), upcoming);
-            } catch (JSONException | java.time.DateTimeException error) { continue; }
-        }
-        return null;
+    static WidgetData.Card ddayEventCard(String label, LocalDate today, String title, LocalDate date) {
+        long days = ChronoUnit.DAYS.between(today, date);
+        String count = days > 0 ? "D-" + days : days < 0 ? "D+" + -days : "D-DAY";
+        String footer = date.format(DATE_LABEL);
+        return new WidgetData.Card(label, count, title, title, footer);
     }
+
 }

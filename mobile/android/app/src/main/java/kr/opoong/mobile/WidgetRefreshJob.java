@@ -33,6 +33,16 @@ public final class WidgetRefreshJob extends JobService {
     }
 
     @Override public boolean onStartJob(JobParameters params) {
+        if (params.getJobId() == MorningMeal.JOB_ID) {
+            var work = WORKERS.submit(() -> {
+                boolean retry = MorningMeal.deliver(this, params.getExtras().getString(MorningMeal.JOB_DAY));
+                main.post(() -> {
+                    if (active.remove(params) != null) jobFinished(params, retry);
+                });
+            });
+            active.put(params, work);
+            return true;
+        }
         WidgetKind kind = WidgetKind.forJob(params.getJobId());
         if (kind == null || WidgetProvider.ids(this, kind).length == 0) return false;
         Future<?> task = WORKERS.submit(() -> {
@@ -61,6 +71,7 @@ public final class WidgetRefreshJob extends JobService {
     @Override public boolean onStopJob(JobParameters params) {
         Future<?> task = active.remove(params);
         if (task != null) task.cancel(true);
+        if (params.getJobId() == MorningMeal.JOB_ID) return MorningMeal.enabled(this);
         WidgetKind kind = WidgetKind.forJob(params.getJobId());
         return kind != null && WidgetProvider.ids(this, kind).length > 0;
     }
