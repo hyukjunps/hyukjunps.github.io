@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">오풍</string>
+    <string name="widget_name">오풍 · 오늘 급식</string>
+    <string name="widget_description">풍산고의 오늘 급식을 보고 오풍 급식 화면을 열어요.</string>
+</resources>
