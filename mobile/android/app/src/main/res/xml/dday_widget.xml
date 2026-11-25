@@ -1,0 +1,11 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:configure="kr.opoong.mobile.DdayConfigureActivity"
+    android:widgetFeatures="reconfigurable"
+    android:initialLayout="@layout/widget_card"
+    android:previewLayout="@layout/dday_preview"
+    android:minWidth="120dp" android:minHeight="130dp"
+    android:minResizeWidth="120dp" android:minResizeHeight="105dp"
+    android:targetCellWidth="2" android:targetCellHeight="2"
+    android:description="@string/dday_description"
+    android:updatePeriodMillis="1800000"
+    android:resizeMode="horizontal|vertical" android:widgetCategory="home_screen"/>

@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">오풍</string>
+    <string name="meal_name">오풍 · 오늘 급식</string>
+    <string name="weather_name">오풍 · 풍산고 날씨</string>
+    <string name="schedule_name">오풍 · 학사일정</string>
+    <string name="onway_name">오풍 · 온웨이에듀</string>
+    <string name="meal_description">풍산고의 오늘 식단을 확인해요.</string>
+    <string name="weather_description">풍산고 주변의 현재 기온과 날씨를 확인해요.</string>
+    <string name="schedule_description">오늘부터 7일 동안의 학사일정을 확인해요.</string>
+    <string name="onway_description">온웨이에듀 로그인 화면을 열어요.</string>
+    <string name="dday_name">오풍 · 나의 D-DAY</string>
+    <string name="dday_description">오풍에서 저장한 일정까지 남은 날을 확인해요.</string>
+    <string name="loading">불러오는 중</string>
+</resources>
