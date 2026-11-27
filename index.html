@@ -2554,6 +2554,14 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--pri)}
 .thumbSettings{width:100%;min-height:48px;margin-top:14px;border:1px solid var(--line);border-radius:14px;background:var(--card2);color:var(--text);font:inherit;cursor:pointer}
 .adRemovalBanner[hidden]{display:none!important}.adRemovalBanner{position:fixed;z-index:1600;bottom:22px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:10px;width:min(420px,calc(100% - 28px));padding:8px 8px 8px 16px;border:1px solid var(--line);border-radius:18px;background:var(--card);color:var(--text);box-shadow:0 6px 30px #0002;font-size:13px;line-height:1.5}.adRemovalCheck{display:grid;place-items:center;width:26px;height:26px;flex-shrink:0;border-radius:50%;background:#e3f5ed;color:#18734b}.adRemovalBanner>span:nth-child(2){flex:1}.adRemovalSub{display:block;color:var(--muted);font-size:11px}
 #view-home .homeDashboardWidgets .widget[data-home-widget="weather"]{max-height:100px!important;align-self:start}
+#homeVideoButton{margin-top:12px}
+#homeVideoButton[hidden]{display:none!important}
+.homeVideoDialog{width:min(880px,calc(100% - 24px));box-sizing:border-box;border:1px solid var(--line);border-radius:20px;padding:clamp(12px,3vw,22px);background:var(--card);color:var(--text)}
+.homeVideoDialog::backdrop{background:rgba(0,0,0,.65)}
+.homeVideoHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.homeVideoHeader h2{margin:0;font-size:18px}
+.homeVideoDialog video{display:block;width:100%;max-height:72vh;background:#000;border-radius:10px}
+.homeVideoDialog [role="status"]:empty{display:none}
 #view-home .widget[data-home-widget="weather"] .weatherTemp{font-size:22px!important}
 @media(max-width:760px){
  body{padding-bottom:calc(82px + env(safe-area-inset-bottom))!important}
@@ -2678,6 +2686,7 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--pri)}
               <button class="btn ghost" type="button" onclick="go('timetable'); ttRenderTable();">시간표 열기</button>
               <button class="btn ghost" type="button" onclick="go('schedule'); scheduleLoadMonth();">학사일정 보기</button>
             </div>
+            <button class="btn primary" id="homeVideoButton" type="button" aria-haspopup="dialog" aria-controls="homeVideoDialog" hidden>▶ 영상 재생</button>
           </div>
 
           <aside class="homeDashboardWidgets" aria-label="오늘의 위젯">
@@ -4806,6 +4815,7 @@ function updateUserBadge(){
   const badge = $("#userBadge");
   if(!badge) return;
   const name = String(localStorage.getItem(USER_NAME_KEY) || "").trim();
+  window.updateHomeVideoButton?.(name);
   if(!name){
     badge.style.display = "none";
     badge.textContent = "사용자";
@@ -6194,6 +6204,15 @@ function initAdminPointMode(){const logo=document.getElementById("adminLogoTrigg
   <p id="opoongBackupStatus" role="status"></p>
 </dialog>
 <script src="./opoong-backup.js" defer></script>
+<dialog id="homeVideoDialog" class="homeVideoDialog" aria-labelledby="homeVideoTitle">
+  <div class="homeVideoHeader">
+    <h2 id="homeVideoTitle">영상 재생</h2>
+    <form method="dialog"><button class="btn ghost" type="submit">닫기</button></form>
+  </div>
+  <p role="status"></p>
+  <video controls playsinline preload="none" aria-label="영상"></video>
+</dialog>
+<script src="./opoong-home-video.js" defer></script>
 <dialog id="thumbMenu" class="thumbMenu" aria-labelledby="thumbMenuTitle">
   <header class="thumbMenuHead"><div><span>O.Poong</span><h2 id="thumbMenuTitle">전체 메뉴</h2></div><button type="button" onclick="closeThumbMenu()" aria-label="전체 메뉴 닫기">×</button></header>
   <nav id="thumbMenuGrid" class="thumbMenuGrid" aria-label="전체 메뉴"></nav>
