@@ -2660,7 +2660,7 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--pri)}
       <div class="sideNavTitle">메뉴</div>
       <nav class="navGrid">
         <a class="navBtn" data-view="home" href="/" onclick="event.preventDefault(); go('home')"><span class="left"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 10 9-7 9 7v10H3z"/><path d="M9 20v-7h6v7"/></svg></span><span><span class="title">홈</span><br><span class="hint">대시보드</span></span></span><span>›</span></a>
-        <a class="navBtn" data-view="meal" href="/?page=meal" onclick="event.preventDefault(); go('meal'); setTodayAndLoad();"><span class="left"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v6a3 3 0 0 0 6 0V3M7 3v18M20 21V3c-4 1-5 5-5 9h5"/></svg></span><span><span class="title">급식</span><br><span class="hint">일별/월별</span></span></span><span>›</span></a>
+        <a class="navBtn" data-view="meal" href="/?page=meal" onclick="event.preventDefault(); go('meal'); loadDefaultMeal();"><span class="left"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 3v6a3 3 0 0 0 6 0V3M7 3v18M20 21V3c-4 1-5 5-5 9h5"/></svg></span><span><span class="title">급식</span><br><span class="hint">일별/월별</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="schedule" href="/?page=schedule" onclick="event.preventDefault(); go('schedule'); scheduleLoadMonth();"><span class="left"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4m10-4v4M3 11h18m-13 4h2m4 0h2"/></svg></span><span><span class="title">학사일정</span><br><span class="hint">월별 달력</span></span></span><span>›</span></a>
         <a class="navBtn" data-view="timetable" href="/?page=timetable" onclick="event.preventDefault(); go('timetable'); ttRenderTable();"><span class="left"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 9v12m-6-6h18"/></svg></span><span><span class="title">시간표</span><br><span class="hint">로컬 저장</span></span></span><span>›</span></a>
         <a class="navBtn goHomeNav" data-view="gohome" href="/?page=gohome" onclick="event.preventDefault(); go('gohome')"><span class="left"><span class="icon" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 21H4V3h6m5 4 5 5-5 5m-7-5h12"/></svg></span><span><span class="title">집가고 싶어요</span><br><span class="hint">이 기기에 누적</span></span></span><span class="goHomeNavCount" id="goHomeNavCount">0</span></a>
@@ -2682,7 +2682,7 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--pri)}
             <h2 id="personalHeroLine" class="homeDashboardTitle">오늘도 O.Poong에서 필요한 정보를 확인해보세요.</h2>
             <p id="personalHeroWeatherLine" class="homeDashboardMessage">오늘 급식과 시간표, 필요한 학교 소식을 한눈에 확인하세요.</p>
             <div class="heroActions">
-              <button class="bigBtn" type="button" onclick="go('meal'); setTodayAndLoad();">오늘 급식 보기</button>
+              <button class="bigBtn" type="button" onclick="go('meal'); loadDefaultMeal();">급식 보기</button>
               <button class="btn ghost" type="button" onclick="go('timetable'); ttRenderTable();">시간표 열기</button>
               <button class="btn ghost" type="button" onclick="go('schedule'); scheduleLoadMonth();">학사일정 보기</button>
             </div>
@@ -2691,7 +2691,7 @@ input[type="checkbox"],input[type="radio"]{accent-color:var(--pri)}
 
           <aside class="homeDashboardWidgets" aria-label="오늘의 위젯">
             <div class="widget" data-home-widget="meal">
-              <div class="widgetHead"><b>오늘의 급식</b><span class="pill" id="homeMealDate">-</span></div>
+              <div class="widgetHead"><b id="homeMealTitle">오늘의 급식</b><span class="pill" id="homeMealDate">-</span></div>
               <div class="widgetBody" id="homeMealBody"><div class="muted">불러오는 중…</div></div>
             </div>
             <div class="widget" data-home-widget="schedule">
@@ -4538,7 +4538,7 @@ function initRoute(){
 
   go(view);
 
-  if(view === "meal") setTodayAndLoad();
+  if(view === "meal") loadDefaultMeal();
   if(view === "schedule") scheduleLoadMonth();
   if(view === "timetable") ttRenderTable();
 }
@@ -5075,13 +5075,14 @@ function setNotice(kind,text,show=true){
   box.style.display = show ? "block" : "none";
 }
 async function initMeals(){
-  $("#date").value = todayStr();
+  $("#date").value = mealPreview().date;
+  $("#date").addEventListener("input", () => { autoMealPreview = null; });
   const now = new Date();
   $("#mealMonth").value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}`;
   renderAllergySelector();
   renderFavoriteFoodEditor();
 }
-let mealMode = "day", mealRequestId = 0;
+let mealMode = "day", mealRequestId = 0, autoMealPreview = null;
 const MEAL_WEEKDAYS = ["일", "월", "화", "수", "목", "금", "토"];
 function mealWeekDates(iso){
   const start = ymdToDateObj(iso);
@@ -5129,7 +5130,8 @@ function mealThisWeek(){
   $("#date").value = new Intl.DateTimeFormat('sv-SE',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
   return mealLoadWeek();
 }
-async function onDay(){
+async function onDay(preview){
+  autoMealPreview = preview || null;
   const request = ++mealRequestId;
   mealSetMode("day"); mealClearCopy();
   try{
@@ -5140,10 +5142,12 @@ async function onDay(){
     const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
     if(request !== mealRequestId) return;
     if(!meals.length){
-      $("#meals").innerHTML = `<div class="notice">선택한 날짜에는 급식 정보가 없어요.</div>`;
+      $("#meals").innerHTML = `<div class="notice">${preview?.tomorrow ? "내일 조식 정보가 없어요." : "선택한 날짜에는 급식 정보가 없어요."}</div>`;
       setNotice("", "급식 정보가 없습니다.", true); return;
     }
-    $("#meals").innerHTML = `<h3 style="margin:0 0 10px">${mealDateLabel(ymd)} 급식</h3>` + meals.map(m=>`
+    const breakfastMissing = preview?.tomorrow && !meals.some(isBreakfast);
+    $("#meals").innerHTML = `<h3 style="margin:0 0 10px">${mealDateLabel(ymd)} 급식</h3>` +
+      (breakfastMissing ? '<div class="notice">내일 조식 정보가 없어요.</div>' : "") + meals.map(m=>`
       <div class="notice"><b style="color:var(--text)">${escapeHtml(m.type)}</b>
         ${m.cal ? `<span class="pill">${escapeHtml(m.cal)}</span>` : ""}
         <ul style="margin:10px 0 0;padding-left:18px;line-height:1.8">${m.menu.map(renderMenuItem).join("")}</ul>
@@ -5159,10 +5163,14 @@ function moveDate(days){
   d.setDate(d.getDate() + days * (mealMode === "week" ? 7 : 1));
   $("#date").value = dateToYMD(d); mealQuerySelected();
 }
-function setTodayAndLoad(){ $("#date").value = todayStr(); return onDay(); }
+function loadDefaultMeal(preview = mealPreview()){
+  $("#date").value = preview.date;
+  return onDay(preview);
+}
 function mealLoadWeek(){ return mealLoadRange("week"); }
 function mealLoadMonth(){ return mealLoadRange("month"); }
 async function mealLoadRange(mode){
+  autoMealPreview = null;
   const request = ++mealRequestId;
   mealSetMode(mode); mealClearCopy();
   $("#mealMonthTable").innerHTML = `<div class="notice">불러오는 중…</div>`;
@@ -6091,17 +6099,54 @@ window.addEventListener("load",()=>{
 });
 window.addEventListener("resize",fitHomeWidgets);
 
-function homeMealPeriod(){
-  const hour=Number(new Intl.DateTimeFormat("en-GB",{timeZone:"Asia/Seoul",hour:"2-digit",hourCycle:"h23"}).format(new Date()));
-  return hour<10?"조식":hour<15?"중식":"석식";
+const MEAL_PREVIEW_CUTOFF = (18 * 60 + 30) * 60000;
+function mealPreview(now = new Date()){
+  // Korea Standard Time is UTC+9. Use UTC accessors on the shifted date.
+  const korea = new Date(now.getTime() + 9 * 60 * 60000);
+  const elapsed = korea.getTime() % 86400000;
+  const nextBoundary = [10 * 3600000, 15 * 3600000, MEAL_PREVIEW_CUTOFF, 86400000]
+    .find(boundary => boundary > elapsed);
+  const tomorrow = elapsed >= MEAL_PREVIEW_CUTOFF;
+  if(tomorrow) korea.setUTCDate(korea.getUTCDate() + 1);
+  const date = korea.toISOString().slice(0,10);
+  const period = tomorrow || elapsed < 10 * 3600000 ? "조식" : elapsed < 15 * 3600000 ? "중식" : "석식";
+  return {date, period, tomorrow, refreshIn: nextBoundary - elapsed};
 }
-function renderHomeMealOverview(meals){
-  if(!meals.length)return '<div class="muted">오늘 급식 정보가 없습니다.</div>';
-  const preferred=homeMealPeriod();
-  const featured=meals.find(meal=>String(meal.type).includes(preferred))||meals[0];
+function isBreakfast(meal){ return meal.type.includes("조식"); }
+function renderHomeMealOverview(meals, preview){
+  const preferred = meals.find(meal => meal.type.includes(preview.period));
+  const featured = preferred || (preview.tomorrow ? null : meals[0]);
   const render=meal=>'<div class="homeMealBlock"><b>'+escapeHtml(meal.type)+'</b><ul>'+meal.menu.map(renderMenuItem).join("")+'</ul></div>';
   const others=meals.filter(meal=>meal!==featured);
-  return '<div class="homeMealEyebrow">지금 확인할 급식</div>'+render(featured)+(others.length?'<details class="homeMealMore" ontoggle="handleHomeMealToggle(this)"><summary>다른 식사 '+others.length+'개 보기</summary>'+others.map(render).join("")+'</details>':"");
+  const main = featured
+    ? '<div class="homeMealEyebrow">'+(preview.tomorrow ? "내일 아침 식단" : "지금 확인할 급식")+'</div>'+render(featured)
+    : '<div class="muted">'+(preview.tomorrow ? "내일 조식 정보가 없어요." : "오늘 급식 정보가 없습니다.")+'</div>';
+  return main+(others.length?'<details class="homeMealMore" ontoggle="handleHomeMealToggle(this)"><summary>다른 식사 '+others.length+'개 보기</summary>'+others.map(render).join("")+'</details>':"");
+}
+let homeMealPreview, homeMealRequestId = 0, mealPreviewTimer;
+async function renderHomeMeal(preview = mealPreview()){
+  homeMealPreview = preview;
+  const request = ++homeMealRequestId;
+  const ymd = toYMDNoDash(preview.date);
+  $("#homeMealTitle").textContent = preview.tomorrow ? "내일의 급식" : "오늘의 급식";
+  $("#homeMealDate").textContent = ymd2str(ymd);
+  $("#homeMealBody").innerHTML = '<div class="muted">불러오는 중…</div>';
+  try{
+    const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
+    if(request === homeMealRequestId) $("#homeMealBody").innerHTML = renderHomeMealOverview(meals, preview);
+  }catch{
+    if(request === homeMealRequestId) $("#homeMealBody").innerHTML = '<div class="muted">급식 정보를 불러오지 못했어요.</div>';
+  }
+}
+function refreshMealPreview(){
+  const preview = mealPreview();
+  clearTimeout(mealPreviewTimer);
+  mealPreviewTimer = setTimeout(refreshMealPreview, preview.refreshIn);
+  const dateChanged = previous => previous?.date !== preview.date || previous.tomorrow !== preview.tomorrow;
+  if($("#view-home").classList.contains("active") &&
+     (dateChanged(homeMealPreview) || homeMealPreview.period !== preview.period)) renderHomeMeal(preview);
+  if($("#view-meal").classList.contains("active") &&
+     autoMealPreview && dateChanged(autoMealPreview)) loadDefaultMeal(preview);
 }
 
 async function renderHomeWidgets(){
@@ -6109,15 +6154,7 @@ async function renderHomeWidgets(){
   renderDdayWidget();
   renderPersonalHeroLine();
   renderHomeWeather();
-  try{
-    const ymd = toYMDNoDash(todayStr());
-    $("#homeMealDate").textContent = ymd2str(ymd);
-    $("#homeMealBody").innerHTML = `<div class="muted">불러오는 중…</div>`;
-    const meals = await fetchMealsDay(SD_SCHUL_CODE, ymd);
-    $("#homeMealBody").innerHTML = meals.length
-      ? renderHomeMealOverview(meals)
-      : `<div class="muted">오늘 급식 정보가 없습니다.</div>`;
-  }catch{ $("#homeMealBody").innerHTML = `<div class="muted">급식 정보를 불러오지 못했어요.</div>`; }
+  renderHomeMeal();
 
   try{
     $("#homeSchDate").textContent = todayStr();
@@ -6152,6 +6189,10 @@ window.addEventListener("load",()=>{
   const now = new Date();
   $("#schMonth").value = `${now.getFullYear()}-${pad2(now.getMonth()+1)}`;
   initRoute();
+  refreshMealPreview();
+  document.addEventListener("visibilitychange", () => {
+    if(!document.hidden) refreshMealPreview();
+  });
   openFirstSetupIfNeeded();
   if("serviceWorker" in navigator){
     navigator.serviceWorker.register("./service-worker.js").catch(()=>{});
@@ -6187,7 +6228,7 @@ function initAdminPointMode(){const logo=document.getElementById("adminLogoTrigg
 </aside>
 <nav class="thumbNav" aria-label="하단 주요 메뉴">
   <button class="thumbTab" data-view="home" type="button" onclick="go('home')"><span aria-hidden="true">⌂</span>홈</button>
-  <button class="thumbTab" data-view="meal" type="button" onclick="go('meal');setTodayAndLoad()"><span aria-hidden="true">♨</span>급식</button>
+  <button class="thumbTab" data-view="meal" type="button" onclick="go('meal');loadDefaultMeal()"><span aria-hidden="true">♨</span>급식</button>
   <button class="thumbTab" data-view="timetable" type="button" onclick="go('timetable')"><span aria-hidden="true">▦</span>시간표</button>
   <button class="thumbTab" data-view="schedule" type="button" onclick="go('schedule');scheduleLoadMonth()"><span aria-hidden="true">▤</span>일정</button>
   <button id="thumbMenuButton" class="thumbTab" type="button" onclick="openThumbMenu()" aria-haspopup="dialog" aria-controls="thumbMenu" aria-expanded="false"><span aria-hidden="true">☰</span>전체</button>
